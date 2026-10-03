@@ -186,4 +186,15 @@ select pg_temp.reset();
 delete from auth.users where id='a0000000-0000-0000-0000-000000000003';
 select pg_temp.expect('acceptance record kept after user deletion', (select count(*) from legal_acceptances where user_id='a0000000-0000-0000-0000-000000000003'), 1);
 
+
+-- a staff user who authored content can be deleted (account deletion must not be blocked)
+insert into posts(client_id,network,language,created_by) values ('c1000000-0000-0000-0000-000000000001','instagram','en','a0000000-0000-0000-0000-000000000002');
+insert into post_comments(post_id,client_id,author,body)
+  select id,client_id,'a0000000-0000-0000-0000-000000000002','hi' from posts where created_by='a0000000-0000-0000-0000-000000000002' limit 1;
+insert into conversations(client_id,created_by) values ('c1000000-0000-0000-0000-000000000001','a0000000-0000-0000-0000-000000000002');
+delete from auth.users where id='a0000000-0000-0000-0000-000000000002';
+select pg_temp.expect('user who authored content can be deleted', (select count(*) from auth.users where id='a0000000-0000-0000-0000-000000000002'), 0);
+select pg_temp.expect('their invitation is kept, author cleared', (select count(*) from invitations where token_hash='hash-1' and created_by is null), 1);
+select pg_temp.expect('their post is kept, author cleared', (select count(*) from posts where caption is null and created_by is null and client_id='c1000000-0000-0000-0000-000000000001' and network='instagram' and language='en' and id in (select post_id from post_comments)), 1);
+
 \echo ALL TENANT ISOLATION TESTS PASSED
