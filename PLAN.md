@@ -113,9 +113,102 @@ English, French, Spanish from day one (UI strings in message catalogs). Content 
 | Standing rules | Client corrections become dated rules; affected planned posts are flagged |
 | Quality check | Auto pass: stats vs proof list, objections, voice, single CTA, rules |
 
-## 5. Phases
+## 5. Security
 
-1. **Foundation**: repo, Next.js, Supabase, auth, roles, RLS, i18n, base layout and theming tokens.
+Orbita holds client business data, social account tokens and ad accounts, so security is a design constraint from phase 1, not a later phase.
+
+### 5.1 Authentication and sessions
+- Supabase Auth with email + password and magic link. Passkeys/OAuth later.
+- **MFA (TOTP) required for admin and team**, optional for clients.
+- Password policy and breached-password check; rate limiting and lockout on login.
+- Short-lived access tokens with refresh rotation; session revocation and "sign out everywhere".
+- Invitations only: clients cannot self-register. Invite links are single-use and expire.
+
+### 5.2 Authorization and tenant isolation
+- **Row-level security on every table, default deny.** Policies derive from `agency_id` / `client_id` on the user's profile.
+- Roles: `admin`, `team`, `client`. Permissions are checked in RLS and again in server code (defense in depth).
+- Service-role key is server-only, never shipped to the browser; used only in jobs and narrow server functions.
+- Automated tenant-isolation tests: a client user must fail to read or write any other client's rows, files, conversations and metrics. These run in CI and block merges.
+- Storage buckets are private; files are served through signed URLs scoped per client.
+
+### 5.3 Secrets and third-party tokens
+- Social/ad OAuth tokens are **encrypted at rest** (envelope encryption: per-record data key, master key in a managed KMS or Supabase Vault; never in env files or the repo).
+- Least-privilege OAuth scopes per network; request publish scopes only when publishing is enabled.
+- Token refresh and revocation handled by the connector layer; a client can disconnect an account at any time, which deletes its tokens.
+- Secrets live in Vercel/Supabase secret stores. Secret scanning and pre-commit hooks; `.env*` git-ignored.
+
+### 5.4 Application security
+- Input validation on every server boundary (zod schemas); output encoding by default.
+- CSRF protection on mutating routes; SameSite, Secure, HttpOnly cookies.
+- Security headers: strict CSP, HSTS, `frame-ancestors 'none'`, `X-Content-Type-Options`, Referrer-Policy, Permissions-Policy.
+- Rate limiting per user, per client and per IP on auth, agent, upload and sync endpoints.
+- File uploads: type and size allowlist, content sniffing, image re-encoding for logos; SVG sanitized or disallowed.
+- SSRF protection on any URL fetched on a user's behalf (competitor links, scraping): allowlist schemes, block private/internal IP ranges, timeouts and size caps.
+- Webhooks from platforms verified by signature; idempotent handlers.
+
+### 5.5 AI agent security
+- **Prompt-injection hardening**: scraped competitor content, comments and uploaded text are treated as untrusted data, never as instructions. They are delimited and cannot trigger tool calls on their own.
+- The agent only has tools scoped to the current client; tenant context is set server-side, never taken from the model or the client.
+- State-changing tools (update brief, publish, delete) require explicit user confirmation or a human approval step.
+- Approved-proof-list enforcement: stats not in `proof_items` are blocked by the quality check.
+- No client data is shared across clients in prompts or memory. Per-client usage caps and cost alerts stop runaway loops.
+- Log tool calls for audit. Do not log full secrets or tokens.
+
+### 5.6 Data protection and privacy
+- Encryption in transit (TLS) and at rest (managed by Supabase). Backups with point-in-time recovery; restore tested.
+- Data minimization: store only metrics and content needed, not raw private messages.
+- Privacy compliance planning: GDPR, Quebec Law 25 and CCPA-style rights. Consent record, data export and deletion per client, data retention policy, subprocessor list (Supabase, Vercel, Anthropic, data providers).
+- Client offboarding: disconnect accounts, revoke tokens, export, then delete on request.
+- Data residency decision (region) recorded before launch.
+
+### 5.7 Audit, monitoring and incident response
+- Append-only `audit_log` (who, what, when, from where) for logins, role changes, connection changes, publishes, exports and deletions. Visible to admins.
+- Error and uptime monitoring (Sentry or similar) with PII scrubbing; alerts on auth anomalies and failed sync spikes.
+- Documented incident response: token revocation runbook, user notification process.
+
+### 5.8 Supply chain and delivery
+- Lockfile, dependency review and automated updates (Dependabot or Renovate); `npm audit` in CI.
+- CI gates: lint, typecheck, tests, tenant-isolation tests, secret scan, dependency audit.
+- Protected `main`, required reviews, no direct pushes, preview deployments per PR with separate non-production data.
+- Separate environments (local, preview, production) with separate Supabase projects and keys.
+- Migrations are versioned and reviewed; RLS changes require a test.
+
+### 5.9 Platform compliance
+- Follow Meta, TikTok, LinkedIn and YouTube developer policies, including data use limits and deletion callbacks.
+- Do not scrape platforms in violation of their terms; use official APIs or compliant data providers.
+- Third-party data provider contracts reviewed before client data goes to them.
+
+## 6. Repository structure
+
+```
+orbita/
+  apps/
+    web/                    Next.js app (App Router)
+      src/app/[locale]/     routes: (agency) and (portal) groups
+      src/components/
+      src/lib/              supabase clients, auth, i18n, theming
+      src/messages/         en.json, fr.json, es.json
+  packages/
+    connectors/             one module per network + shared interface
+    agent/                  prompts, tools, quality check, content-engine logic
+    db/                     generated types, query helpers
+    security/               crypto helpers, validators, rate limit, ssrf guard
+    ui/                     shared components and design tokens
+  supabase/
+    migrations/             SQL migrations (schema + RLS)
+    tests/                  RLS and tenant-isolation tests
+    seed.sql
+  jobs/                     queue functions: metrics sync, research, publish
+  docs/                     security.md, runbooks, ADRs
+  .github/workflows/        CI (lint, test, audit, secret scan)
+  PLAN.md
+```
+
+A monorepo (pnpm workspaces) keeps connectors, agent and security code independent and testable, so they can move to a separate worker service later without rewrites.
+
+## 7. Phases
+
+1. **Foundation and security baseline**: monorepo, Next.js, Supabase, auth with MFA, roles, default-deny RLS, tenant-isolation tests, security headers, CI gates, audit log, i18n, theming tokens.
 2. **Clients**: client CRUD, branding (logo, colors), client portal login, invitations.
 3. **Brand training**: brief schema, proof items, rules, chat with the agent that fills the brief.
 4. **Posts**: calendar views, post detail, script view, teleprompter, statuses, approvals, CSV export.
@@ -124,10 +217,12 @@ English, French, Spanish from day one (UI strings in message catalogs). Content 
 7. **Competitors**: manual links, research jobs, trend insights, idea suggestions.
 8. **Publishing**: queue, per-network publish, platform app review.
 9. **Campaigns**: Meta Ads connector and campaign view.
-10. **Hardening**: usage caps, audit log, monitoring, reports.
+10. **Hardening**: usage caps, monitoring and alerting, backup restore test, privacy export/delete flows, pen-test and security review, reports.
 
-## 6. Open items
+## 8. Open items
 - Style reference and Orbita visual identity.
 - First test client.
 - Platform app review for Meta and TikTok (start early, it takes time).
 - Competitor data provider choice.
+- Data residency region and privacy policy / terms (legal review).
+- Master key management choice (Supabase Vault vs cloud KMS).
