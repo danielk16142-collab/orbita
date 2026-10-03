@@ -1,5 +1,35 @@
 {
-  "app": { "name": "Orbita" },
-  "login": { "title": "Iniciar sesión", "email": "Correo electrónico", "password": "Contraseña", "submit": "Entrar", "invalid": "Correo o contraseña no válidos.", "captcha": "Completa la verificación de seguridad.", "tooMany": "Demasiados intentos. Inténtalo más tarde." },
-  "dashboard": { "title": "Inicio", "welcome": "Bienvenido a Orbita" }
+  "app": {
+    "name": "Orbita"
+  },
+  "login": {
+    "title": "Iniciar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "submit": "Entrar",
+    "invalid": "Correo o contraseña no válidos.",
+    "captcha": "Completa la verificación de seguridad.",
+    "tooMany": "Demasiados intentos. Inténtalo más tarde."
+  },
+  "dashboard": {
+    "eyebrow": "Tu agencia",
+    "title": "Inicio",
+    "welcome": "Bienvenido a Orbita",
+    "connectHint": "Conecta una cuenta para ver datos en vivo",
+    "cards": {
+      "followers": "Seguidores",
+      "reach": "Alcance",
+      "engagement": "Interacción",
+      "nextPosts": "Próximas publicaciones"
+    }
+  },
+  "nav": {
+    "tagline": "Hub de marketing",
+    "home": "Inicio",
+    "posts": "Publicaciones",
+    "agent": "Agente",
+    "clients": "Clientes",
+    "settings": "Ajustes",
+    "secure": "Sesión protegida"
+  }
 }

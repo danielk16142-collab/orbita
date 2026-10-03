@@ -1,5 +1,35 @@
 {
-  "app": { "name": "Orbita" },
-  "login": { "title": "Sign in", "email": "Email", "password": "Password", "submit": "Sign in", "invalid": "Invalid email or password.", "captcha": "Please complete the security check.", "tooMany": "Too many attempts. Try again later." },
-  "dashboard": { "title": "Home", "welcome": "Welcome to Orbita" }
+  "app": {
+    "name": "Orbita"
+  },
+  "login": {
+    "title": "Sign in",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "invalid": "Invalid email or password.",
+    "captcha": "Please complete the security check.",
+    "tooMany": "Too many attempts. Try again later."
+  },
+  "dashboard": {
+    "eyebrow": "Your agency",
+    "title": "Home",
+    "welcome": "Welcome to Orbita",
+    "connectHint": "Connect an account to see live data",
+    "cards": {
+      "followers": "Followers",
+      "reach": "Reach",
+      "engagement": "Engagement",
+      "nextPosts": "Next posts"
+    }
+  },
+  "nav": {
+    "tagline": "Marketing hub",
+    "home": "Home",
+    "posts": "Posts",
+    "agent": "Agent",
+    "clients": "Clients",
+    "settings": "Settings",
+    "secure": "Protected session"
+  }
 }
