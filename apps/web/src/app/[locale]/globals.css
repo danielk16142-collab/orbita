@@ -82,3 +82,5 @@ input { width: 100%; padding: .7rem .8rem; border: 2px solid var(--line); border
 .legal-nav, .legal-links { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; font-family: var(--font-mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; }
 .legal-links { margin-top: 2rem; justify-content: center; }
 .legal-nav a[aria-current="page"] { background: var(--brand); color: var(--brand-ink); padding: 0 .35rem; }
+select, textarea { color: var(--ink); background: #fff; }
+small { color: var(--dim); display: block; margin-top: .3rem; }

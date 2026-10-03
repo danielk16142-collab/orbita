@@ -212,7 +212,7 @@ A monorepo (pnpm workspaces) keeps connectors, agent and security code independe
 
 ## 7. Phases
 
-1. **Foundation and security baseline** (in progress: schema, RLS + isolation tests, security package, Turnstile login, CSP/headers, i18n, CI done; MFA, invitations, audit writes, shared rate limiter remaining): monorepo, Next.js, Supabase, auth with MFA, roles, default-deny RLS, tenant-isolation tests, security headers, CI gates, audit log, i18n, theming tokens.
+1. **Foundation and security baseline** (done, see below): monorepo, Next.js, Supabase, auth with MFA, roles, default-deny RLS, tenant-isolation tests, security headers, CI gates, audit log, i18n, theming tokens.
 2. **Clients**: client CRUD, branding (logo, colors), client portal login, invitations.
 3. **Brand training**: brief schema, proof items, rules, chat with the agent that fills the brief.
 4. **Posts**: calendar views, post detail, script view, teleprompter, statuses, approvals, CSV export.
@@ -222,6 +222,10 @@ A monorepo (pnpm workspaces) keeps connectors, agent and security code independe
 8. **Publishing**: queue, per-network publish, platform app review.
 9. **Campaigns**: Meta Ads connector and campaign view.
 10. **Hardening**: usage caps, monitoring and alerting, backup restore test, privacy export/delete flows, pen-test and security review, reports.
+
+## 7.1 Phase 2 status (access and clients)
+Built: server-only service client, audit log writes, session guards with MFA (AAL2) for staff, invitations (hashed single-use tokens, Turnstile, consent recorded), Clients section with branding (private logo bucket, re-encoded uploads, contrast-checked colors, admin lock), client portal themed per client at `/{locale}/portal`, Settings with Privacy (requests, export, account deletion, admin queue), re-acceptance of terms on version change, bootstrap script, Upstash-backed rate limiter, email interface (Resend). Setup: `docs/setup.md`.
+Not yet verified: the authenticated flows end to end against a real Supabase project (only database policies, security helpers, build and unauthenticated access rules are tested). Retention/purge jobs and French/Spanish legal text remain.
 
 ## 8. Open items
 - Style reference and Orbita visual identity.

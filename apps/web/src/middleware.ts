@@ -6,7 +6,7 @@ import { routing } from "./i18n/routing";
 
 const intl = createIntlMiddleware(routing);
 // Pages reachable without a session: sign-in and the legal documents (platforms require public policy URLs).
-const PUBLIC = /^\/(en|fr|es)\/(login|legal\/[a-z-]+)\/?$/;
+const PUBLIC = /^\/(en|fr|es)\/(login|legal\/[a-z-]+|invite\/[A-Za-z0-9_-]{43})\/?$/;
 
 export async function middleware(req: NextRequest) {
   const nonce = btoa(crypto.randomUUID());

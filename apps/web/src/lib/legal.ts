@@ -6,6 +6,13 @@ export const LEGAL_DOCS = [
   "privacy-policy", "terms-of-service", "cookie-policy", "acceptable-use",
   "data-processing-agreement", "subprocessors", "data-deletion",
 ] as const;
+/**
+ * Versions users must have accepted. Bump a version when its document changes materially:
+ * everyone is asked to accept again on next sign-in.
+ */
+export const LEGAL_VERSIONS = { "privacy-policy": "0.1", "terms-of-service": "0.1" } as const;
+export const REQUIRED_ACCEPTANCES = Object.keys(LEGAL_VERSIONS) as (keyof typeof LEGAL_VERSIONS)[];
+
 export type LegalDoc = (typeof LEGAL_DOCS)[number];
 
 export function isLegalDoc(s: string): s is LegalDoc { return (LEGAL_DOCS as readonly string[]).includes(s); }

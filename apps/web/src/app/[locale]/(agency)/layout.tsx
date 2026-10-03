@@ -1,9 +1,11 @@
 import { getTranslations } from "next-intl/server";
 import { Nav } from "@/components/nav";
+import { requireStaff } from "@/lib/session";
 
 export default async function AgencyLayout({ children, params }: { children: React.ReactNode; params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations("nav");
+  await requireStaff(locale); // sign-in + terms + MFA (AAL2) + role, for every staff page
   return (
     <div className="shell">
       <aside className="sidebar">

@@ -21,6 +21,9 @@
     "./rate-limit": "./src/rate-limit.ts",
     "./turnstile": "./src/turnstile.ts",
     "./crypto": "./src/crypto.ts",
-    "./ssrf": "./src/ssrf.ts"
+    "./ssrf": "./src/ssrf.ts",
+    "./color": "./src/color.ts",
+    "./invitation": "./src/invitation.ts",
+    "./image": "./src/image.ts"
   }
 }

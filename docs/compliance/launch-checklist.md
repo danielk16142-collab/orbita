@@ -12,10 +12,10 @@ Company name, address, privacy contact and person in charge of personal informat
 - [ ] Privacy impact assessment (PIA) for the platform: AI processing, competitor research, cross-border hosting
 
 ## Product
-- [ ] Settings → Privacy: request form, account deletion, data export (build in phase 2)
-- [ ] Invitation acceptance records consent in `legal_acceptances` with document versions
-- [ ] Re-prompt users when a document version changes
-- [ ] Disconnect account deletes tokens immediately (tested)
+- [x] Settings → Privacy: request form, account deletion, data export (built; test against a real Supabase project)
+- [x] Invitation acceptance records consent in `legal_acceptances` with document versions (built)
+- [x] Re-prompt users when a document version changes (`LEGAL_VERSIONS` in `apps/web/src/lib/legal.ts`)
+- [ ] Disconnect account deletes tokens immediately (tested) (with connectors, phase 3)
 - [ ] Retention jobs implemented for the schedule in the Privacy Policy (conversations 12 months, logs 12 months, offboarding purge)
 - [ ] Backups: restore tested; confirm roll-off within 35 days
 - [ ] Cookie audit still shows only essential cookies

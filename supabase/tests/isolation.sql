@@ -133,4 +133,57 @@ select pg_temp.as_user('b0000000-0000-0000-0000-000000000001');
 select pg_temp.expect('adminB cannot see agency A requests', (select count(*) from data_requests), 0);
 select pg_temp.reset();
 
+
+-- invitations and storage
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000002'); -- team A
+insert into invitations(agency_id,client_id,email,role,token_hash)
+  values (:agA,'c1000000-0000-0000-0000-000000000001','new@a1.test','client','hash-1');
+select pg_temp.expect('team can invite a client user', (select count(*) from invitations), 1);
+select pg_temp.expect_error('team cannot invite an admin',
+  $$insert into invitations(agency_id,email,role,token_hash) values ('aaaaaaaa-0000-0000-0000-000000000001','x@a.test','admin','hash-2')$$);
+select pg_temp.expect_error('team cannot invite for another agency client',
+  $$insert into invitations(agency_id,client_id,email,role,token_hash) values ('aaaaaaaa-0000-0000-0000-000000000001','c3000000-0000-0000-0000-000000000003','x@b.test','client','hash-3')$$);
+select pg_temp.expect_error('token hash is not readable', $$select token_hash from invitations$$);
+select pg_temp.expect_error('client invitation needs a client',
+  $$insert into invitations(agency_id,email,role,token_hash) values ('aaaaaaaa-0000-0000-0000-000000000001','x@a.test','client','hash-4')$$);
+select pg_temp.reset();
+
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000001'); -- admin A
+insert into invitations(agency_id,email,role,token_hash) values (:agA,'staff@a.test','team','hash-5');
+select pg_temp.expect('admin can invite staff', (select count(*) from invitations), 2);
+select pg_temp.reset();
+
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000003'); -- client A1
+select pg_temp.expect('client user cannot see invitations', (select count(*) from invitations), 0);
+select pg_temp.reset();
+select pg_temp.as_user('b0000000-0000-0000-0000-000000000001'); -- admin B
+select pg_temp.expect('other agency cannot see invitations', (select count(*) from invitations), 0);
+select pg_temp.reset();
+
+-- logos: path convention {client_id}/file
+insert into storage.buckets(id,name) values ('client-logos','client-logos') on conflict do nothing;
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000003'); -- client A1 (branding unlocked? it was locked earlier)
+select pg_temp.expect_error('locked branding blocks client logo upload',
+  $$insert into storage.objects(bucket_id,name) values ('client-logos','c1000000-0000-0000-0000-000000000001/logo.webp')$$);
+select pg_temp.reset();
+update clients set branding_locked=false where id='c1000000-0000-0000-0000-000000000001';
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000003');
+insert into storage.objects(bucket_id,name) values ('client-logos','c1000000-0000-0000-0000-000000000001/logo.webp');
+select pg_temp.expect('client uploads own logo when unlocked', (select count(*) from storage.objects), 1);
+select pg_temp.expect_error('client cannot upload into another client folder',
+  $$insert into storage.objects(bucket_id,name) values ('client-logos','c2000000-0000-0000-0000-000000000002/logo.webp')$$);
+select pg_temp.expect_error('non-uuid folder is rejected',
+  $$insert into storage.objects(bucket_id,name) values ('client-logos','../etc/logo.webp')$$);
+select pg_temp.reset();
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000004'); -- client A2
+select pg_temp.expect('other client cannot see the logo', (select count(*) from storage.objects), 0);
+select pg_temp.reset();
+select pg_temp.as_user('b0000000-0000-0000-0000-000000000001');
+select pg_temp.expect('other agency cannot see the logo', (select count(*) from storage.objects), 0);
+select pg_temp.reset();
+
+-- consent records survive account deletion
+delete from auth.users where id='a0000000-0000-0000-0000-000000000003';
+select pg_temp.expect('acceptance record kept after user deletion', (select count(*) from legal_acceptances where user_id='a0000000-0000-0000-0000-000000000003'), 1);
+
 \echo ALL TENANT ISOLATION TESTS PASSED

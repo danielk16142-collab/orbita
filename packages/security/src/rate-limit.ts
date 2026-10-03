@@ -19,3 +19,38 @@ export function memoryRateLimiter(limit: number, windowMs: number, now = () => D
     },
   };
 }
+
+/**
+ * Shared fixed-window limiter on Upstash Redis (REST). Works across serverless instances.
+ * If Redis is unreachable it falls back to the per-instance limiter: failing closed would
+ * lock everyone out of sign-in during a Redis outage.
+ */
+export function upstashRateLimiter(
+  cfg: { url: string; token: string; prefix?: string },
+  limit: number,
+  windowMs: number,
+  fetchImpl: typeof fetch = fetch,
+): RateLimiter {
+  const fallback = memoryRateLimiter(limit, windowMs);
+  const windowSec = Math.max(1, Math.ceil(windowMs / 1000));
+  return {
+    async hit(key) {
+      try {
+        const k = `${cfg.prefix ?? "rl"}:${key}`;
+        const res = await fetchImpl(`${cfg.url.replace(/\/$/, "")}/pipeline`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${cfg.token}`, "Content-Type": "application/json" },
+          body: JSON.stringify([["INCR", k], ["EXPIRE", k, windowSec, "NX"], ["PTTL", k]]),
+          signal: AbortSignal.timeout(1500),
+        });
+        if (!res.ok) throw new Error("upstash " + res.status);
+        const out = (await res.json()) as { result: number }[];
+        const count = Number(out[0].result);
+        const ttl = Number(out[2].result);
+        return { allowed: count <= limit, remaining: Math.max(0, limit - count), resetAt: Date.now() + (ttl > 0 ? ttl : windowMs) };
+      } catch {
+        return fallback.hit(key);
+      }
+    },
+  };
+}

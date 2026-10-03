@@ -4,15 +4,17 @@ import Script from "next/script";
 import { loginAction } from "./actions";
 import { LegalLinks } from "@/components/legal-links";
 
-export default async function LoginPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ error?: string }> }) {
+export default async function LoginPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ error?: string; welcome?: string }> }) {
   const { locale } = await params;
   const t = await getTranslations("login");
-  const { error } = await searchParams;
+  const { error, welcome } = await searchParams;
+  const ti = await getTranslations("invite");
   const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
     <main className="auth-wrap">
       <p className="eyebrow">Orbita</p>
       <h1>{t("title")}</h1>
+      {welcome && <p role="status" className="card" style={{ marginBottom: "1rem" }}>{ti("done")}</p>}
       <form action={loginAction} className="card">
         <label htmlFor="email">{t("email")}</label>
         <input id="email" name="email" type="email" autoComplete="email" required />

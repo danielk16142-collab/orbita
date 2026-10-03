@@ -2,10 +2,10 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { memoryRateLimiter } from "@orbita/security/rate-limit";
+import { limiter as getLimiter } from "@/lib/rate-limit";
 import { supabaseServer } from "@/lib/supabase/server";
 
-const limiter = memoryRateLimiter(10, 15 * 60 * 1000); // swap for a shared store on Vercel
+const limiter = getLimiter("login", 10, 15 * 60 * 1000); // Upstash when configured, in-memory in dev
 const Input = z.object({ email: z.string().email().max(254), password: z.string().min(1).max(256) });
 
 export async function loginAction(form: FormData) {
