@@ -11,6 +11,7 @@
     "test": "echo \"no web tests yet\""
   },
   "dependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
     "@orbita/security": "workspace:*",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.45.0",
