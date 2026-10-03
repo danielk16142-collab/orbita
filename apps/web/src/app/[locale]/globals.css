@@ -71,3 +71,14 @@ input { width: 100%; padding: .7rem .8rem; border: 2px solid var(--line); border
   .sidebar { flex-direction: row; flex-wrap: wrap; align-items: center; }
   .sidebar-foot { display: none; }
 }
+
+.legal { max-width: 52rem; margin: 6vh auto; padding: 0 1rem; }
+.prose { background: var(--card); border: 2px solid var(--line); border-radius: var(--radius); padding: 1.5rem clamp(1rem, 4vw, 2.5rem); box-shadow: var(--shadow); line-height: 1.6; margin: 1.25rem 0; }
+.prose h1 { font-size: clamp(2rem, 1.4rem + 2.5vw, 3.2rem); }
+.prose h2 { margin-top: 2rem; }
+.prose table { width: 100%; border-collapse: collapse; font-size: .92rem; display: block; overflow-x: auto; }
+.prose th, .prose td { border: 1px solid var(--line); padding: .5rem .6rem; text-align: left; vertical-align: top; }
+.prose th { background: var(--paper); font-family: var(--font-mono); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; }
+.legal-nav, .legal-links { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; font-family: var(--font-mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; }
+.legal-links { margin-top: 2rem; justify-content: center; }
+.legal-nav a[aria-current="page"] { background: var(--brand); color: var(--brand-ink); padding: 0 .35rem; }

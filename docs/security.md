@@ -35,3 +35,6 @@ Turnstile is on the login form. Add it to any other form reachable without a ses
 
 ## Known gaps (tracked in PLAN.md)
 MFA enrollment UI, invitations, audit-log writes from server code, shared-store rate limiting, RLS tests against a full Supabase stack.
+
+## Privacy and legal
+See `docs/compliance/` (data map, rights requests, incident response, launch checklist). Public documents are in `apps/web/content/legal/`. Run `pnpm --filter @orbita/web legal:check --strict` before release.

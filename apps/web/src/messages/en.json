@@ -31,5 +31,18 @@
     "clients": "Clients",
     "settings": "Settings",
     "secure": "Protected session"
+  },
+  "legal": {
+    "englishPrevails": "This document is currently available in English only. The English version prevails.",
+    "docs": {
+      "privacy-policy": "Privacy Policy",
+      "terms-of-service": "Terms of Service",
+      "cookie-policy": "Cookie Policy",
+      "acceptable-use": "Acceptable Use",
+      "data-processing-agreement": "Data Processing Agreement",
+      "subprocessors": "Subprocessors",
+      "data-deletion": "Data deletion"
+    },
+    "all": "Legal documents"
   }
 }

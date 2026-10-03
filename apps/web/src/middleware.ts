@@ -5,7 +5,8 @@ import { securityHeaders } from "@orbita/security/headers";
 import { routing } from "./i18n/routing";
 
 const intl = createIntlMiddleware(routing);
-const PUBLIC = /^\/(en|fr|es)\/login\/?$/;
+// Pages reachable without a session: sign-in and the legal documents (platforms require public policy URLs).
+const PUBLIC = /^\/(en|fr|es)\/(login|legal\/[a-z-]+)\/?$/;
 
 export async function middleware(req: NextRequest) {
   const nonce = btoa(crypto.randomUUID());

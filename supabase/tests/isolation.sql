@@ -98,4 +98,39 @@ select pg_temp.as_user('a0000000-0000-0000-0000-000000000001');
 select pg_temp.expect_error('admin cannot write audit_log', $$insert into audit_log(action) values ('x')$$);
 select pg_temp.reset();
 
+
+-- legal: acceptances are own-only and append-only; requests are scoped and guarded
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000003');
+insert into legal_acceptances(user_id,agency_id,document,version)
+  values ('a0000000-0000-0000-0000-000000000003',:agA,'privacy-policy','0.1');
+select pg_temp.expect_error('cannot record acceptance for someone else',
+  $$insert into legal_acceptances(user_id,agency_id,document,version) values ('a0000000-0000-0000-0000-000000000004','aaaaaaaa-0000-0000-0000-000000000001','privacy-policy','0.1')$$);
+select pg_temp.expect_error('acceptances cannot be edited',
+  $$update legal_acceptances set version='9'$$);
+select pg_temp.expect_error('acceptances cannot be deleted',
+  $$delete from legal_acceptances$$);
+insert into data_requests(agency_id,requester_id,kind)
+  values (:agA,'a0000000-0000-0000-0000-000000000003','delete');
+select pg_temp.expect_error('cannot file a request as already completed',
+  $$insert into data_requests(agency_id,requester_id,kind,status) values ('aaaaaaaa-0000-0000-0000-000000000001','a0000000-0000-0000-0000-000000000003','access','completed')$$);
+update data_requests set status='completed';
+select pg_temp.expect('requester cannot close their own request', (select count(*) from data_requests where status='completed'), 0);
+select pg_temp.reset();
+
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000004');
+select pg_temp.expect('other client user cannot see the request', (select count(*) from data_requests), 0);
+select pg_temp.expect('other client user cannot see acceptances', (select count(*) from legal_acceptances), 0);
+select pg_temp.reset();
+
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000001');
+select pg_temp.expect('adminA sees the request', (select count(*) from data_requests), 1);
+update data_requests set status='in_progress';
+select pg_temp.expect('adminA can work the request', (select count(*) from data_requests where status='in_progress'), 1);
+select pg_temp.expect_error('adminA cannot change the due date', $$update data_requests set due_at = now() + interval '1 year'$$);
+select pg_temp.reset();
+
+select pg_temp.as_user('b0000000-0000-0000-0000-000000000001');
+select pg_temp.expect('adminB cannot see agency A requests', (select count(*) from data_requests), 0);
+select pg_temp.reset();
+
 \echo ALL TENANT ISOLATION TESTS PASSED

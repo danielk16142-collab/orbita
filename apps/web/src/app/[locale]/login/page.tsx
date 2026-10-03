@@ -2,8 +2,10 @@ import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
 import Script from "next/script";
 import { loginAction } from "./actions";
+import { LegalLinks } from "@/components/legal-links";
 
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+export default async function LoginPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ error?: string }> }) {
+  const { locale } = await params;
   const t = await getTranslations("login");
   const { error } = await searchParams;
   const nonce = (await headers()).get("x-nonce") ?? undefined;
@@ -21,6 +23,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <button type="submit" className="btn" style={{ width: "100%", marginTop: "1.25rem" }}>{t("submit")}</button>
         {error && <p className="error" role="alert">{t(error === "captcha" ? "captcha" : error === "rate" ? "tooMany" : "invalid")}</p>}
       </form>
+      <LegalLinks locale={locale} />
       <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="afterInteractive" nonce={nonce} async defer />
     </main>
   );

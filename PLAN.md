@@ -174,7 +174,10 @@ Orbita holds client business data, social account tokens and ad accounts, so sec
 - Separate environments (local, preview, production) with separate Supabase projects and keys.
 - Migrations are versioned and reviewed; RLS changes require a test.
 
-### 5.9 Platform compliance
+### 5.9 Legal documents and compliance pack
+Public documents (privacy policy, terms, cookie policy, acceptable use, DPA, subprocessors, data deletion) are served at `/{locale}/legal/{doc}` from `apps/web/content/legal/`. `legal_acceptances` records which version each user accepted; `data_requests` tracks rights requests against a 30-day deadline. Internal procedures (data map, rights requests, incident response, launch checklist) are in `docs/compliance/`. English drafts exist; French and Spanish follow legal review. `legal:check --strict` blocks release while placeholders remain.
+
+### 5.10 Platform compliance
 - Follow Meta, TikTok, LinkedIn and YouTube developer policies, including data use limits and deletion callbacks.
 - Do not scrape platforms in violation of their terms; use official APIs or compliant data providers.
 - Third-party data provider contracts reviewed before client data goes to them.
@@ -225,5 +228,6 @@ A monorepo (pnpm workspaces) keeps connectors, agent and security code independe
 - First test client.
 - Platform app review for Meta and TikTok (start early, it takes time).
 - Competitor data provider choice.
-- Data residency region and privacy policy / terms (legal review).
+- Fill legal placeholders, lawyer review, then French and Spanish translations (see `docs/compliance/launch-checklist.md`).
+- Data residency region.
 - Master key management choice (Supabase Vault vs cloud KMS).
