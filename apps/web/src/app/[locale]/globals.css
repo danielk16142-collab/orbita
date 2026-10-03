@@ -1,0 +1,19 @@
+/* Design tokens. Client branding overrides --brand / --accent at runtime (see lib/theme). */
+:root {
+  --brand: #4f46e5;
+  --accent: #0ea5e9;
+  --bg: #ffffff;
+  --fg: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0b0f19; --fg: #f3f4f6; --muted: #9ca3af; --border: #1f2937; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+main { max-width: 28rem; margin: 10vh auto; padding: 0 1rem; }
+label { display: block; margin: 1rem 0 .25rem; font-size: .9rem; }
+input { width: 100%; padding: .6rem; border: 1px solid var(--border); border-radius: .5rem; background: transparent; color: inherit; }
+button { margin-top: 1.25rem; width: 100%; padding: .7rem; border: 0; border-radius: .5rem; background: var(--brand); color: #fff; font-weight: 600; cursor: pointer; }
+.error { color: #dc2626; margin-top: .75rem; }

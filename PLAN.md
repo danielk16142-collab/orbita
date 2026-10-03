@@ -142,6 +142,7 @@ Orbita holds client business data, social account tokens and ad accounts, so sec
 - CSRF protection on mutating routes; SameSite, Secure, HttpOnly cookies.
 - Security headers: strict CSP, HSTS, `frame-ancestors 'none'`, `X-Content-Type-Options`, Referrer-Policy, Permissions-Policy.
 - Rate limiting per user, per client and per IP on auth, agent, upload and sync endpoints.
+- **Cloudflare Turnstile** on login and every public form, verified server-side (login is verified by Supabase CAPTCHA so the auth API can't be hit directly). Optional **Cloudflare proxy/WAF** with rate-limit rules in front of production. Setup in `docs/security.md`.
 - File uploads: type and size allowlist, content sniffing, image re-encoding for logos; SVG sanitized or disallowed.
 - SSRF protection on any URL fetched on a user's behalf (competitor links, scraping): allowlist schemes, block private/internal IP ranges, timeouts and size caps.
 - Webhooks from platforms verified by signature; idempotent handlers.
@@ -208,7 +209,7 @@ A monorepo (pnpm workspaces) keeps connectors, agent and security code independe
 
 ## 7. Phases
 
-1. **Foundation and security baseline**: monorepo, Next.js, Supabase, auth with MFA, roles, default-deny RLS, tenant-isolation tests, security headers, CI gates, audit log, i18n, theming tokens.
+1. **Foundation and security baseline** (in progress: schema, RLS + isolation tests, security package, Turnstile login, CSP/headers, i18n, CI done; MFA, invitations, audit writes, shared rate limiter remaining): monorepo, Next.js, Supabase, auth with MFA, roles, default-deny RLS, tenant-isolation tests, security headers, CI gates, audit log, i18n, theming tokens.
 2. **Clients**: client CRUD, branding (logo, colors), client portal login, invitations.
 3. **Brand training**: brief schema, proof items, rules, chat with the agent that fills the brief.
 4. **Posts**: calendar views, post detail, script view, teleprompter, statuses, approvals, CSV export.

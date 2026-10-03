@@ -1,0 +1,5 @@
+{
+  "app": { "name": "Orbita" },
+  "login": { "title": "Connexion", "email": "Courriel", "password": "Mot de passe", "submit": "Se connecter", "invalid": "Courriel ou mot de passe invalide.", "captcha": "Veuillez compléter la vérification de sécurité.", "tooMany": "Trop de tentatives. Réessayez plus tard." },
+  "dashboard": { "title": "Accueil", "welcome": "Bienvenue sur Orbita" }
+}
