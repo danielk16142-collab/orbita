@@ -22,6 +22,9 @@ importers:
       '@orbita/connectors':
         specifier: workspace:*
         version: link:../../packages/connectors
+      '@orbita/content':
+        specifier: workspace:*
+        version: link:../../packages/content
       '@orbita/security':
         specifier: workspace:*
         version: link:../../packages/security

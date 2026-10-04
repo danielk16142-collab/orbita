@@ -7,7 +7,7 @@ const Uuid = z.string().uuid();
 export type AgentActor = {
   sb: NonNullable<Awaited<ReturnType<typeof getSession>>>["sb"];
   userId: string; profile: Profile; clientId: string;
-  client: { id: string; name: string; languages: ("en" | "fr" | "es")[]; markets: string[] };
+  client: { id: string; name: string; languages: ("en" | "fr" | "es")[]; markets: string[]; timezone: string };
 };
 export type AccessResult = { ok: true; actor: AgentActor } | { ok: false; status: 401 | 403 | 404 };
 
@@ -23,7 +23,7 @@ export async function resolveAgentActor(requestedClientId?: string | null): Prom
   if (s.profile.role === "client") clientId = s.profile.client_id;
   else clientId = Uuid.safeParse(requestedClientId).success ? (requestedClientId as string) : null;
   if (!clientId) return { ok: false, status: 404 };
-  const { data: client } = await s.sb.from("clients").select("id, name, languages, markets").eq("id", clientId).maybeSingle();
+  const { data: client } = await s.sb.from("clients").select("id, name, languages, markets, timezone").eq("id", clientId).maybeSingle();
   if (!client) return { ok: false, status: 404 }; // also what other agencies' clients look like: RLS hides them
   return { ok: true, actor: { sb: s.sb, userId: s.user.id, profile: s.profile, clientId, client: client as AgentActor["client"] } };
 }

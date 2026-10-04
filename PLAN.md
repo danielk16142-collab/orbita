@@ -240,6 +240,9 @@ Client-owned Claude keys (BYOK): designed in `docs/byok.md`; the single seam `re
 Built: Instagram (Instagram API with Instagram Login) and TikTok (Login Kit v2 + Display API) adapters from the platforms' current documentation, read-only; signed OAuth state with nonce cookie; encrypted per-account tokens; sync engine (token refresh, daily follower snapshots, reach, last 30 posts) run after connect, on Refresh and by cron; Connections screens (agency client tab and portal); dashboards with stat tiles, follower trend chart and top posts (validated chart colors, hover/keyboard, table view, mobile-safe); analytics shared with the agent (best posting windows from real post history, format and post performance); Meta deauthorize and data-deletion callbacks. Setup: `docs/connectors.md`.
 Not verified here: real OAuth and live API responses (need developer apps and platform app review). Publishing is a later phase.
 
+## 7.5 Phase 5 status (posts calendar)
+Built: month/week/day calendar (agenda on phones) with client/network/status filters, unscheduled list and quick add; post detail with reel script table, carousel slides, static brief, caption and hashtags with copy; staff editor (validated structured content); approval flow (client approves a draft or sends an approved post back with a required comment; staff move posts through the workflow; editing an approved post resets it to draft, enforced in the database); comments; per-client timezone with scheduling instants computed in it; full-screen teleprompter (hook choice, speed, text size, mirror, countdown, keyboard controls, preferences kept in the browser); CSV export (formula-injection safe, rate-limited, audited). Publishing to networks is a later phase.
+
 ## 8. Open items
 - Style reference and Orbita visual identity.
 - First test client.

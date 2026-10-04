@@ -4,6 +4,7 @@ import { z } from "zod";
 import { getTranslations } from "next-intl/server";
 import { requireStaff } from "@/lib/session";
 import { BrandingPanel } from "@/components/branding-panel";
+import { TimezoneForm } from "@/components/posts/timezone-form";
 import { AgentPanel } from "@/components/agent/agent-panel";
 import { ConnectionsPanel } from "@/components/connections/connections-panel";
 import { deleteClientAction, inviteAction, revokeInvitationAction } from "../actions";
@@ -44,6 +45,7 @@ export default async function ClientDetail({ params, searchParams }: {
           <div className="card">
             <p className="eyebrow">{t("languages")}</p><p>{client.languages.join(", ").toUpperCase()}</p>
             <p className="eyebrow">{t("markets")}</p><p>{client.markets.join(", ") || "—"}</p>
+            <TimezoneForm clientId={id} value={client.timezone ?? "UTC"} />
           </div>
           {isAdmin && (
             <form action={deleteClientAction} className="card" style={{ marginTop: "1.5rem" }}>

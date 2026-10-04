@@ -29,7 +29,8 @@
     "zod": "^3.23.0",
     "@orbita/agent": "workspace:*",
     "@anthropic-ai/sdk": "latest",
-    "@orbita/connectors": "workspace:*"
+    "@orbita/connectors": "workspace:*",
+    "@orbita/content": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
