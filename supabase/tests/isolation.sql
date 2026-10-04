@@ -261,4 +261,33 @@ select pg_temp.as_user('b0000000-0000-0000-0000-000000000001'); -- admin B
 select pg_temp.expect('other agency sees no strategies or research', (select count(*) from strategies) + (select count(*) from research_notes), 0);
 select pg_temp.reset();
 
+
+-- connectors: accounts, posts, sync runs
+insert into social_accounts(id,client_id,network,external_id,handle,encrypted_tokens,last_synced_at,token_expires_at)
+  values ('d2000000-0000-0000-0000-000000000002','c1000000-0000-0000-0000-000000000001','tiktok','tt1','acme','v1.cipher-text-here',now(),now()+interval '1 day');
+insert into account_posts(account_id,client_id,external_id,metrics) values ('d2000000-0000-0000-0000-000000000002','c1000000-0000-0000-0000-000000000001','p1','{"views":10}');
+insert into sync_runs(account_id,client_id,status) values ('d2000000-0000-0000-0000-000000000002','c1000000-0000-0000-0000-000000000001','ok');
+insert into metrics_daily values ('d2000000-0000-0000-0000-000000000002','c1000000-0000-0000-0000-000000000001',current_date,'followers',120);
+
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000005'); -- client A1 user
+select pg_temp.expect('client user sees its account (non-secret columns)', (select count(*) from social_accounts where last_synced_at is not null), 1);
+select pg_temp.expect_error('tokens are still unreadable', $$select encrypted_tokens from social_accounts$$);
+select pg_temp.expect_error('select * is refused too (it includes tokens)', $$select * from social_accounts$$);
+select pg_temp.expect('client user sees its posts, runs and metrics', (select count(*) from account_posts) + (select count(*) from sync_runs) + (select count(*) from metrics_daily where metric='followers'), 3);
+select pg_temp.expect_error('cannot write posts', $$insert into account_posts(account_id,client_id,external_id) values ('d2000000-0000-0000-0000-000000000002','c1000000-0000-0000-0000-000000000001','x')$$);
+select pg_temp.expect_error('cannot write sync runs', $$insert into sync_runs(account_id,client_id) values ('d2000000-0000-0000-0000-000000000002','c1000000-0000-0000-0000-000000000001')$$);
+select pg_temp.expect_error('cannot edit account state', $$update social_accounts set status='active'$$);
+select pg_temp.reset();
+
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000004'); -- client A2 user
+select pg_temp.expect('other client sees no connector data',
+  (select count(*) from account_posts) + (select count(*) from sync_runs) + (select count(*) from metrics_daily where metric='followers'), 0);
+select pg_temp.reset();
+select pg_temp.as_user('b0000000-0000-0000-0000-000000000001'); -- admin B
+select pg_temp.expect('other agency sees no connector data',
+  (select count(*) from account_posts) + (select count(*) from sync_runs) + (select count(*) from social_accounts), 0);
+select pg_temp.reset();
+delete from social_accounts where id='d2000000-0000-0000-0000-000000000002';
+select pg_temp.expect('removing an account removes its posts, runs and metrics', (select count(*) from account_posts) + (select count(*) from sync_runs) + (select count(*) from metrics_daily where metric='followers'), 0);
+
 \echo ALL TENANT ISOLATION TESTS PASSED
