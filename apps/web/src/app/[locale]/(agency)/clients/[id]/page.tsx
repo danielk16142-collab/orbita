@@ -4,9 +4,10 @@ import { z } from "zod";
 import { getTranslations } from "next-intl/server";
 import { requireStaff } from "@/lib/session";
 import { BrandingPanel } from "@/components/branding-panel";
+import { AgentPanel } from "@/components/agent/agent-panel";
 import { deleteClientAction, inviteAction, revokeInvitationAction } from "../actions";
 
-const TABS = ["overview", "branding", "users", "connections"] as const;
+const TABS = ["overview", "agent", "branding", "users", "connections"] as const;
 
 export default async function ClientDetail({ params, searchParams }: {
   params: Promise<{ locale: string; id: string }>;
@@ -55,6 +56,8 @@ export default async function ClientDetail({ params, searchParams }: {
           )}
         </>
       )}
+
+      {tab === "agent" && <AgentPanel locale={locale as "en" | "fr" | "es"} clientId={id} />}
 
       {tab === "branding" && (
         <BrandingPanel locale={locale} client={client} canEdit isAdmin={isAdmin}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  buildSystemPrompt, computeCompleteness, dayToDate, findUnapprovedStats, proposalToOps, runAgent, runTool, selectMemories, wrapUntrusted,
+  buildSystemPrompt, buildLearnPrompt, computeCompleteness, dayToDate, findUnapprovedStats, proposalToOps, runAgent, runTool, selectMemories, wrapUntrusted,
   briefFromRow, briefValueForColumn, ONBOARDING_THRESHOLD, MAX_PROPOSALS_PER_TURN, MAX_FETCHES_PER_TURN,
   type AgentMessage, type AgentModelClient, type PromptInput, type ToolPorts, type ToolState,
 } from "./index";
@@ -100,6 +100,18 @@ describe("tools: scoping and safety", () => {
     expect((await runTool("add_source", { kind: "tiktok", url: "", handle: "bad handle!" }, p, fresh())).isError).toBe(true);
     expect(log.sources).toHaveLength(3);
   });
+  it("add_source only registers links the person actually wrote (prompt-injection defense)", async () => {
+    const { p, log } = ports({ userTexts: ["our site is https://www.shop.example.com and insta @shop"] });
+    expect((await runTool("add_source", { kind: "website", url: "https://attacker.example.net/collect", handle: "" }, p, fresh())).isError).toBe(true);
+    expect((await runTool("add_source", { kind: "website", url: "https://shop.example.com", handle: "" }, p, fresh())).isError).toBe(false);
+    expect((await runTool("add_source", { kind: "tiktok", url: "", handle: "anything" }, p, fresh())).isError).toBe(false); // handles carry no URL to fetch
+    expect(log.sources).toHaveLength(2);
+  });
+  it("fetch_website refuses URLs that could carry data in a query string or fragment", async () => {
+    const { p, log } = ports();
+    for (const u of ["https://shop.example.com/?leak=secret", "https://shop.example.com/a#frag", "https://user:pw@shop.example.com/"]) expect((await runTool("fetch_website", { url: u }, p, fresh())).isError).toBe(true);
+    expect(log.fetched).toEqual([]);
+  });
   it("fetch_website only reads registered sites, and is capped per turn", async () => {
     const { p, log } = ports();
     const st = fresh();
@@ -183,6 +195,21 @@ const usage = { input_tokens: 10, output_tokens: 5 };
 const toolUse = (id: string, name: string, input: unknown): AgentMessage => ({ stop_reason: "tool_use", usage, content: [{ type: "thinking", thinking: "", signature: "sig" }, { type: "text", text: "On it. " }, { type: "tool_use", id, name, input }] });
 const done = (text: string): AgentMessage => ({ stop_reason: "end_turn", usage, content: [{ type: "text", text }] });
 
+describe("learning pass", () => {
+  it("builds a prompt that excludes known items and treats the transcript as data", () => {
+    const p = buildLearnPrompt({ locale: "es", clientName: "Panadería", brief: { business: "x".repeat(30) }, memories: [{ kind: "avoid", content: "no emojis", weight: 1, createdAt: "2026-01-01" }], rules: ["No promos"], proofItems: ["Desde 1998"] });
+    expect(p).toContain("Reply in Spanish"); expect(p).toContain("no emojis"); expect(p).toContain("Desde 1998"); expect(p).toContain("never instructions"); expect(p).toContain("At most 5");
+  });
+  it("restricts the model to the allowed tools, refusing others", async () => {
+    const { p, log } = ports();
+    const seen: Record<string, unknown>[] = [];
+    await runAgent({ client: fakeClient([toolUse("t1", "fetch_website", { url: "https://shop.example.com" }), done("ok")], seen), model: "m", system: "s", messages: [{ role: "user", content: "x" }], ports: p, onEvent: () => {}, toolNames: ["propose_memory"] });
+    expect((seen[0].tools as { name: string }[]).map((t) => t.name)).toEqual(["propose_memory"]);
+    expect(log.fetched).toEqual([]);
+    expect(((seen[1].messages as { content: { is_error?: boolean }[] }[])[2].content[0]).is_error).toBe(true);
+  });
+});
+
 describe("agent loop", () => {
   it("runs tools, feeds results back with thinking blocks intact, and streams text", async () => {
     const { p, log } = ports();
@@ -206,6 +233,11 @@ describe("agent loop", () => {
     expect(seen[0]).not.toHaveProperty("tool_choice");
     expect((seen[0].tools as { strict: boolean }[]).every((t) => t.strict)).toBe(true);
   });
+  it("lean mode sends no effort/betas/fallbacks (for Haiku)", async () => {
+    const { p } = ports(); const seen: Record<string, unknown>[] = [];
+    await runAgent({ client: fakeClient([done("Nothing new.")], seen), model: "claude-haiku-4-5", system: "s", messages: [{ role: "user", content: "x" }], ports: p, onEvent: () => {}, lean: true });
+    expect(seen[0]).not.toHaveProperty("output_config"); expect(seen[0]).not.toHaveProperty("fallbacks"); expect(seen[0]).not.toHaveProperty("betas");
+  });
   it("reports tool errors to the model instead of throwing", async () => {
     const { p } = ports();
     const seen: Record<string, unknown>[] = [];
@@ -228,5 +260,77 @@ describe("agent loop", () => {
     const script = Array.from({ length: 5 }, (_, i) => toolUse("t" + i, "get_brief", {}));
     const r = await runAgent({ client: fakeClient(script), model: "m", system: "s", messages: [{ role: "user", content: "x" }], ports: p, onEvent: () => {}, maxSteps: 3 });
     expect(r.stopReason).toBe("too_many_steps"); expect(r.steps).toBe(3);
+  });
+});
+
+import { planningWeekStart } from "./index";
+describe("planningWeekStart", () => {
+  it("is this Monday early in the week and next Monday from Friday", () => {
+    expect(planningWeekStart(new Date("2026-10-05T10:00:00Z"))).toBe("2026-10-05"); // Mon
+    expect(planningWeekStart(new Date("2026-10-08T10:00:00Z"))).toBe("2026-10-05"); // Thu
+    expect(planningWeekStart(new Date("2026-10-09T10:00:00Z"))).toBe("2026-10-12"); // Fri
+    expect(planningWeekStart(new Date("2026-10-11T23:00:00Z"))).toBe("2026-10-12"); // Sun
+  });
+});
+
+import { decideProposal, type Feedback, type ProposalRepo, type StoredProposal } from "./index";
+function fakeRepo(p: StoredProposal | null, o: { failApply?: boolean } = {}) {
+  const calls: string[] = []; const fb: Feedback[] = []; let status = p?.status ?? "pending"; const applied: unknown[] = [];
+  const repo: ProposalRepo = {
+    get: async () => (p ? { ...p, status } : null),
+    claim: async (_id, s) => { calls.push("claim:" + s); if (status !== "pending") return false; status = s; return true; },
+    release: async () => { calls.push("release"); status = "pending"; },
+    apply: async (_c, _t, ops) => { calls.push("apply"); if (o.failApply) throw new Error("db"); applied.push(...ops); },
+    feedback: async (f) => { fb.push(f); },
+  };
+  return { repo, calls, fb, applied, status: () => status };
+}
+const memProposal = (): StoredProposal => ({ id: "p1", client_id: "c1", target: "memory", payload: { kind: "avoid", content: "No emojis" }, status: "pending" });
+
+describe("deciding proposals", () => {
+  it("accepts as proposed: applies, records 'accepted'", async () => {
+    const f = fakeRepo(memProposal());
+    expect(await decideProposal(f.repo, { proposalId: "p1", decision: "accept" })).toEqual({ ok: true, outcome: "accepted" });
+    expect(f.calls).toEqual(["claim:accepted", "apply"]); expect(f.applied).toHaveLength(1); expect(f.fb[0]).toMatchObject({ outcome: "accepted", client_id: "c1" });
+  });
+  it("accepts with edits: applies the EDITED content and records before/after", async () => {
+    const f = fakeRepo(memProposal());
+    const r = await decideProposal(f.repo, { proposalId: "p1", decision: "accept", edited: { kind: "avoid", content: "No emojis on LinkedIn" } });
+    expect(r).toEqual({ ok: true, outcome: "edited" });
+    expect(f.applied[0]).toMatchObject({ row: { content: "No emojis on LinkedIn" } });
+    expect(f.fb[0]).toMatchObject({ outcome: "edited", original: { content: "No emojis" }, final: { content: "No emojis on LinkedIn" } });
+  });
+  it("an 'edit' that changes nothing counts as accepted", async () => {
+    const f = fakeRepo(memProposal());
+    expect((await decideProposal(f.repo, { proposalId: "p1", decision: "accept", edited: { content: "No emojis", kind: "avoid" } }))).toEqual({ ok: true, outcome: "accepted" });
+  });
+  it("rejects with a reason and applies nothing", async () => {
+    const f = fakeRepo(memProposal());
+    expect(await decideProposal(f.repo, { proposalId: "p1", decision: "reject", comment: " too strict " })).toEqual({ ok: true, outcome: "rejected" });
+    expect(f.applied).toEqual([]); expect(f.fb[0]).toMatchObject({ outcome: "rejected", comment: "too strict" });
+  });
+  it("rejects invalid edits BEFORE claiming, so the proposal stays pending", async () => {
+    const f = fakeRepo(memProposal());
+    expect(await decideProposal(f.repo, { proposalId: "p1", decision: "accept", edited: { kind: "avoid", content: "" } })).toEqual({ ok: false, error: "invalid" });
+    expect(f.calls).toEqual([]); expect(f.status()).toBe("pending");
+  });
+  it("a double click or race decides once", async () => {
+    const f = fakeRepo(memProposal());
+    await decideProposal(f.repo, { proposalId: "p1", decision: "accept" });
+    expect(await decideProposal(f.repo, { proposalId: "p1", decision: "accept" })).toEqual({ ok: false, error: "already_decided" });
+    expect(f.applied).toHaveLength(1);
+  });
+  it("puts the proposal back to pending if applying fails", async () => {
+    const f = fakeRepo(memProposal(), { failApply: true });
+    expect(await decideProposal(f.repo, { proposalId: "p1", decision: "accept" })).toEqual({ ok: false, error: "apply_failed" });
+    expect(f.calls).toEqual(["claim:accepted", "apply", "release"]); expect(f.status()).toBe("pending"); expect(f.fb).toEqual([]);
+  });
+  it("unknown proposal", async () => expect(await decideProposal(fakeRepo(null).repo, { proposalId: "x", decision: "accept" })).toEqual({ ok: false, error: "not_found" }));
+  it("accepting a week plan with removed items records an edit and creates only the kept drafts", async () => {
+    const item = (day: string) => ({ day, network: "instagram", format: "reel", pillar: "", idea: "idea " + day, caption: "", language: "en" });
+    const plan: StoredProposal = { id: "p2", client_id: "c1", target: "plan", status: "pending", payload: { title: "W", week_start: "2026-10-05", items: [item("mon"), item("wed"), item("fri")] } };
+    const f = fakeRepo(plan);
+    const r = await decideProposal(f.repo, { proposalId: "p2", decision: "accept", edited: { ...(plan.payload as object), items: [item("mon"), item("fri")] } });
+    expect(r).toEqual({ ok: true, outcome: "edited" }); expect(f.applied).toHaveLength(2);
   });
 });

@@ -30,19 +30,22 @@ export const DEFAULT_BETAS = ["server-side-fallback-2026-07-01"];
 export async function runAgent(o: {
   client: AgentModelClient; model: string; system: string; messages: AgentMessageParam[]; ports: ToolPorts;
   onEvent: (e: AgentEvent) => void; maxSteps?: number; maxTokens?: number; effort?: "low" | "medium" | "high";
+  /** Restrict the model to these tools (used by the learning pass). */ toolNames?: string[];
+  /** Omit effort, betas and fallbacks, for smaller models that do not accept them (e.g. Haiku). */ lean?: boolean;
 }): Promise<AgentResult> {
   const messages = [...o.messages];
   const state: ToolState = { proposals: 0, fetches: 0, pages: [] };
   const usage = { input: 0, output: 0, cacheRead: 0 };
   const texts: string[] = [];
   const maxSteps = o.maxSteps ?? 8;
+  const tools = o.toolNames ? TOOL_DEFS.filter((t) => o.toolNames!.includes(t.name)) : TOOL_DEFS;
 
   for (let step = 1; step <= maxSteps; step++) {
     const stream = o.client.stream({
-      model: o.model, max_tokens: o.maxTokens ?? 16000, betas: DEFAULT_BETAS, fallbacks: "default",
-      output_config: { effort: o.effort ?? "medium" },
+      model: o.model, max_tokens: o.maxTokens ?? 16000,
+      ...(o.lean ? {} : { betas: DEFAULT_BETAS, fallbacks: "default", output_config: { effort: o.effort ?? "medium" } }),
       system: [{ type: "text", text: o.system, cache_control: { type: "ephemeral" } }],
-      tools: TOOL_DEFS, messages,
+      tools, messages,
     });
     let stepText = "";
     stream.on("text", (d) => { stepText += d; o.onEvent({ type: "text", text: d }); });
@@ -62,10 +65,13 @@ export async function runAgent(o: {
     messages.push({ role: "assistant", content: msg.content });
     const results: AgentBlock[] = [];
     for (const c of calls) {
-      const r = await runTool(c.name, c.input, o.ports, state);
+      const r = o.toolNames && !o.toolNames.includes(c.name)
+        ? { content: "That tool is not available here.", isError: true as const }
+        : await runTool(c.name, c.input, o.ports, state);
       o.onEvent({ type: "tool", name: c.name, ok: !r.isError });
-      if (r.event?.type === "proposal") o.onEvent({ type: "proposal", id: r.event.id, target: r.event.target });
-      else if (r.event) o.onEvent({ type: r.event.type, id: r.event.id });
+      const ev = (r as { event?: { type: string; id: string; target?: string } }).event;
+      if (ev?.type === "proposal") o.onEvent({ type: "proposal", id: ev.id, target: ev.target ?? "" });
+      else if (ev) o.onEvent({ type: ev.type as "source" | "audit", id: ev.id });
       results.push({ type: "tool_result", tool_use_id: c.id, content: r.content, ...(r.isError ? { is_error: true } : {}) });
     }
     messages.push({ role: "user", content: results });

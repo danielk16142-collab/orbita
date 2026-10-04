@@ -65,3 +65,15 @@ export function localeFrom(form: FormData): "en" | "fr" | "es" {
   const l = String(form.get("locale") ?? "en");
   return l === "fr" || l === "es" ? l : "en";
 }
+
+/**
+ * Same checks as requireUser/requireStaff, but for route handlers, which cannot redirect.
+ * Returns why the caller must be refused, or null if the session is fully cleared.
+ */
+export async function sessionProblem(s: NonNullable<Awaited<ReturnType<typeof getSession>>>): Promise<"mfa" | "terms" | null> {
+  const { data } = await s.sb.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (s.profile.role !== "client" && data?.currentLevel !== "aal2") return "mfa";
+  if (data?.nextLevel === "aal2" && data.currentLevel !== "aal2") return "mfa";
+  if (!(await hasAcceptedCurrentTerms(s.sb, s.user.id))) return "terms";
+  return null;
+}

@@ -227,6 +227,10 @@ A monorepo (pnpm workspaces) keeps connectors, agent and security code independe
 Built: server-only service client, audit log writes, session guards with MFA (AAL2) for staff, invitations (hashed single-use tokens, Turnstile, consent recorded), Clients section with branding (private logo bucket, re-encoded uploads, contrast-checked colors, admin lock), client portal themed per client at `/{locale}/portal`, Settings with Privacy (requests, export, account deletion, admin queue), re-acceptance of terms on version change, bootstrap script, Upstash-backed rate limiter, email interface (Resend). Setup: `docs/setup.md`.
 Not yet verified: the authenticated flows end to end against a real Supabase project (only database policies, security helpers, build and unauthenticated access rules are tested). Retention/purge jobs and French/Spanish legal text remain.
 
+## 7.2 Phase 3 status (brand-training agent)
+Built: onboarding (website and social links first, audit, adaptive interview) and everyday partner chat in one place; weekly plans the user edits and accepts into draft posts; every learned item is a suggestion a person accepts, edits or rejects; accept/edit/reject recorded as learning signal; periodic "what's worth remembering" pass on a cheap model; completeness meter; per-client daily token cap; prompt-injection defenses (untrusted page content, registered-sites-only fetching, links only from what the person wrote, no query strings, images blocked); SSRF-safe fetcher with robots.txt and a connect-time DNS guard.
+Not verified here: live model behavior and the signed-in flows (need ANTHROPIC_API_KEY and a Supabase project). Social networks are not read directly (no scraping): the agent asks for numbers until the connectors phase.
+
 ## 8. Open items
 - Style reference and Orbita visual identity.
 - First test client.

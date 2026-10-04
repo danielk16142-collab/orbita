@@ -25,3 +25,8 @@ Admin: **Clients → New client → Branding** (logo, colors, optional lock) →
 
 ## 5. Tests
 `pnpm test` (security package), `pnpm test:rls` (tenant isolation on Postgres), `pnpm typecheck`, `pnpm build`.
+
+## 6. The agent
+Set `ANTHROPIC_API_KEY` (server only). Optional: `ORBITA_AGENT_MODEL` (default `claude-opus-5-5`; `claude-sonnet-5-5` is cheaper), `ORBITA_LEARN_MODEL` (default `claude-haiku-4-5`), `AGENT_DAILY_TOKEN_CAP` per client per day (default 500000).
+Each client's chat is at **Clients -> (client) -> Agent** for the agency and **Agent** in the client portal.
+Manual test: add the client's website and social links in the Agent panel, ask it to review the site, answer its questions, accept or edit the suggestions, ask for next week's plan and accept it (drafts appear in `posts`), then add a "never use emojis" preference and check the next draft follows it.

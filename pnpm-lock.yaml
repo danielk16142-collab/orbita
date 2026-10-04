@@ -10,9 +10,15 @@ importers:
 
   apps/web:
     dependencies:
+      '@anthropic-ai/sdk':
+        specifier: latest
+        version: 0.131.0(zod@3.25.76)
       '@fontsource-variable/bricolage-grotesque':
         specifier: ^5.3.0
         version: 5.3.0
+      '@orbita/agent':
+        specifier: workspace:*
+        version: link:../../packages/agent
       '@orbita/security':
         specifier: workspace:*
         version: link:../../packages/security

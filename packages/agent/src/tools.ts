@@ -14,6 +14,8 @@ export interface ToolPorts {
   getBrief(): Promise<{ brief: Record<string, unknown>; score: number; missing: string[] }>;
   createProposal(p: { target: ProposalTarget; payload: unknown; reason?: string }): Promise<{ id: string }>;
   weekStart: string;
+  /** Everything the PERSON typed in this conversation. When set, the agent may only register URLs the person actually wrote. */
+  userTexts?: string[];
   resolver?: (host: string) => Promise<string[]>; // tests only
 }
 export type ToolState = { proposals: number; fetches: number; pages: { url: string; title: string }[] };
@@ -94,6 +96,11 @@ export async function runTool(name: string, input: unknown, ports: ToolPorts, st
       case "add_source": {
         const { kind, url, handle } = a as z.infer<typeof Inputs.add_source>;
         if (!url && !handle) return err("Provide a url or a handle.");
+        // Injection defense: text on a fetched page must not be able to make the agent register (and then read) a site of the attacker's choosing.
+        if (url && ports.userTexts) {
+          let host = ""; try { host = new URL(url).hostname.toLowerCase().replace(/^www\./, ""); } catch { /* validated below */ }
+          if (!host || !ports.userTexts.some((t) => t.toLowerCase().includes(host))) return err("I can only add a link the user has written in this conversation. Ask them for it.");
+        }
         if (url) {
           if (kind === "website") await assertSafeUrl(url, { resolver: ports.resolver });
           else {
@@ -110,6 +117,8 @@ export async function runTool(name: string, input: unknown, ports: ToolPorts, st
       }
       case "fetch_website": {
         const { url } = a as z.infer<typeof Inputs.fetch_website>;
+        // No query strings or fragments: they are the easy way to smuggle data out inside a URL.
+        try { const u = new URL(url); if (u.search || u.hash || u.username || u.password) return err("Use the plain page address, without ? parameters or #."); } catch { return err("Invalid URL."); }
         if (state.fetches >= MAX_FETCHES_PER_TURN) return err("Page limit for this reply reached. Continue in your next reply.");
         // The model may only read sites the client registered: injected text on a page cannot send it elsewhere.
         const sites = (await ports.listSources()).filter((s) => s.kind === "website" && s.url);
