@@ -1,6 +1,10 @@
 /* Orbita design tokens. Palette from the agency brand; client branding overrides
    --brand / --brand-ink at runtime (see lib/theme.ts). */
 :root {
+  /* Data viz: validated with the dataviz validator (light surface). Series color follows the entity (network), never rank.
+     Only light is defined because the app has no dark theme yet; add the dark steps from the palette when it does. */
+  --surface-1: #fcfcfb; --text-primary: #0b0b0b; --text-secondary: #52514e; --grid: #e8e7e3;
+  --series-1: #2a78d6; --series-2: #eb6834; --series-3: #1baf7a; --series-4: #eda100; --series-5: #e87ba4;
   --brand: #ff4e1b;
   --brand-soft: #ff8c6b;
   --brand-deep: #c83a0e;
@@ -111,3 +115,40 @@ ul.plain li { display: flex; justify-content: space-between; gap: .75rem; align-
 .source-form { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .75rem; align-items: center; }
 details { margin: .25rem 0; } summary { cursor: pointer; }
 @media (max-width: 980px) { .agent-grid { grid-template-columns: 1fr; } .agent-log { max-height: 50vh; } }
+
+.conn-account { border-top: 2px solid var(--line); padding-top: .75rem; margin-top: .75rem; }
+.conn-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin: .5rem 0; }
+.conn-msg { margin: 0; color: var(--dim); }
+.badge { display: inline-block; padding: .05rem .5rem; border: 2px solid var(--line); border-radius: 99px; font-size: .78rem; background: #fff; }
+.badge.active { background: var(--brand); color: var(--brand-ink); }
+.badge.expired { background: #fff1f0; border-color: #b42318; color: #b42318; }
+
+/* Dashboard */
+.tiles { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); margin-top: .75rem; }
+.stat-tile { display: grid; gap: .25rem; align-content: start; }
+.stat-value { font-family: var(--font-display); font-weight: 800; font-size: clamp(2.2rem, 1.8rem + 1.6vw, 3rem); letter-spacing: -.04em; line-height: 1; font-variant-numeric: proportional-nums; }
+.stat-delta { margin: 0; font-weight: 600; } .stat-vs { color: var(--dim); font-weight: 400; font-size: .85rem; margin: 0; }
+.spark { width: 96px; height: 28px; margin-top: .25rem; }
+.mini-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; margin: .5rem 0 1rem; }
+.mini-stats dt { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+.mini-stats dd { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; letter-spacing: -.03em; }
+.chart { margin: 0; background: var(--surface-1); }
+.chart-title { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; letter-spacing: -.02em; margin-bottom: .5rem; }
+.chart-legend { list-style: none; display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; padding: 0; margin: 0 0 .5rem; color: var(--text-secondary); font-size: .9rem; }
+.chart-legend li { display: flex; align-items: center; gap: .4rem; }
+.chart-box { position: relative; }
+.chart-box > svg { width: 100%; height: auto; display: block; overflow: visible; }
+.chart-tip svg { display: inline-block; vertical-align: middle; }
+.axis-text { fill: var(--text-secondary); font: 11px var(--font-body); }
+.end-label { fill: var(--text-primary); font: 600 12px var(--font-body); }
+.chart-tip { position: absolute; top: 0; transform: translateX(-50%); background: var(--surface-1); color: var(--text-primary); border: 1px solid var(--grid); border-radius: 8px; padding: .4rem .6rem; font-size: .85rem; box-shadow: 0 2px 8px rgba(0,0,0,.12); pointer-events: none; white-space: nowrap; z-index: 2; }
+.chart-table { margin-top: .75rem; } .chart-table table { margin-top: .5rem; }
+.data-table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.data-table th, .data-table td, .chart-table th, .chart-table td { text-align: left; padding: .45rem .5rem; border-bottom: 1px solid var(--grid); font-weight: 400; }
+.data-table thead th, .chart-table thead th { font-family: var(--font-mono); font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); font-weight: 400; }
+.data-table tbody th { font-weight: 600; }
+.swatch { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: .3rem; }
+.rate-bar { display: inline-block; height: 8px; background: var(--series-1); border-radius: 0 4px 4px 0; vertical-align: middle; margin-right: .4rem; }
+
+.table-scroll { overflow-x: auto; max-width: 100%; }
+.table-scroll table { min-width: 100%; }

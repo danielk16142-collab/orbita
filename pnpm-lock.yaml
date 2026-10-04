@@ -19,6 +19,9 @@ importers:
       '@orbita/agent':
         specifier: workspace:*
         version: link:../../packages/agent
+      '@orbita/connectors':
+        specifier: workspace:*
+        version: link:../../packages/connectors
       '@orbita/security':
         specifier: workspace:*
         version: link:../../packages/security

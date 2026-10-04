@@ -5,13 +5,14 @@ import { getTranslations } from "next-intl/server";
 import { requireStaff } from "@/lib/session";
 import { BrandingPanel } from "@/components/branding-panel";
 import { AgentPanel } from "@/components/agent/agent-panel";
+import { ConnectionsPanel } from "@/components/connections/connections-panel";
 import { deleteClientAction, inviteAction, revokeInvitationAction } from "../actions";
 
 const TABS = ["overview", "agent", "branding", "users", "connections"] as const;
 
 export default async function ClientDetail({ params, searchParams }: {
   params: Promise<{ locale: string; id: string }>;
-  searchParams: Promise<{ tab?: string; saved?: string; error?: string; invited?: string }>;
+  searchParams: Promise<{ tab?: string; saved?: string; error?: string; invited?: string; connected?: string; connect?: string }>;
 }) {
   const { locale, id } = await params;
   const q = await searchParams;
@@ -96,7 +97,7 @@ export default async function ClientDetail({ params, searchParams }: {
         </>
       )}
 
-      {tab === "connections" && <p className="card">{t("connectionsSoon")}</p>}
+      {tab === "connections" && <ConnectionsPanel locale={locale} clientId={id} flash={{ connected: q.connected, connect: q.connect, error: q.error }} />}
     </>
   );
 }

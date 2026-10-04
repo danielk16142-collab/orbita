@@ -1,6 +1,7 @@
 import "server-only";
 import { briefFromRow, computeCompleteness, fetchPage, type ToolPorts } from "@orbita/agent";
 import type { AgentActor } from "./access";
+import { analyticsText, loadAnalyticsData } from "@/lib/analytics/load";
 
 /**
  * Tool ports for ONE client. The client id is fixed here, on the server: no tool argument can change it.
@@ -45,6 +46,9 @@ export function makePorts(actor: AgentActor, o: { conversationId: string | null;
       const brief = briefFromRow(row as Record<string, unknown> | null);
       const { score, missing } = computeCompleteness(brief, { hasSources: (count ?? 0) > 0 });
       return { brief, score, missing };
+    },
+    async getAnalytics(network) {
+      return analyticsText(await loadAnalyticsData(sb, clientId), network);
     },
     async saveResearch(n) {
       const { data, error } = await sb.from("research_notes").insert({ client_id: clientId, kind: n.kind, title: n.title, summary: n.summary, sources: n.sources, created_by: userId }).select("id").single();

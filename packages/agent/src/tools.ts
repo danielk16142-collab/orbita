@@ -13,6 +13,8 @@ export interface ToolPorts {
   saveAudit(report: AuditReport, pages: { url: string; title: string }[]): Promise<{ id: string }>;
   getBrief(): Promise<{ brief: Record<string, unknown>; score: number; missing: string[] }>;
   createProposal(p: { target: ProposalTarget; payload: unknown; reason?: string }): Promise<{ id: string }>;
+  /** Analytics text for the client, optionally for one network. Built from synced data by the server. */
+  getAnalytics(network: string): Promise<string>;
   saveResearch(n: { kind: ResearchKind; title: string; summary: string; sources: { title: string; url: string }[] }): Promise<{ id: string }>;
   weekStart: string;
   /** Everything the PERSON typed in this conversation. When set, the agent may only register URLs the person actually wrote. */
@@ -43,6 +45,8 @@ export const TOOL_DEFS = [
     input_schema: { type: "object", properties: { url: str }, required: ["url"], additionalProperties: false } },
   { name: "save_audit", strict: true, description: "Save your audit of the client's current online presence after reading their website and hearing about their social accounts. Be honest and specific; say what you could not see.",
     input_schema: { type: "object", properties: { summary: str, strengths: strList, weaknesses: strList, opportunities: strList, social_notes: str, missing_info: strList }, required: ["summary", "strengths", "weaknesses", "opportunities", "social_notes", "missing_info"], additionalProperties: false } },
+  { name: "get_account_analytics", strict: true, description: "Get the performance numbers of the client's connected accounts: followers and growth, reach, engagement by post and format, best and weakest recent posts, and the best posting windows. Use it before planning or when asked how things are going. Pass \"all\" or one network.",
+    input_schema: { type: "object", properties: { network: { type: "string", enum: ["all", ...NETWORKS] } }, required: ["network"], additionalProperties: false } },
   { name: "get_brief", strict: true, description: "Get the current brand profile, how complete it is, and which sections are missing.",
     input_schema: { type: "object", properties: {}, required: [], additionalProperties: false } },
   { name: "propose_brief_update", strict: true, description: "Suggest setting a section of the brand profile. The user must accept it. For personas, objections and pillars, put one item per line.",
@@ -83,6 +87,7 @@ const Inputs = {
     opportunities: z.array(z.string().max(500)).max(12), social_notes: z.string().max(3000), missing_info: z.array(z.string().max(300)).max(12),
   }),
   get_brief: z.object({}),
+  get_account_analytics: z.object({ network: z.enum(["all", ...NETWORKS]) }),
   propose_brief_update: PAYLOADS.brief.extend({ reason: z.string().max(1000) }),
   propose_memory: PAYLOADS.memory.extend({ reason: z.string().max(1000) }),
   propose_proof_item: PAYLOADS.proof_item,
@@ -159,6 +164,7 @@ export async function runTool(name: string, input: unknown, ports: ToolPorts, st
         return ok({ saved: true, id: r.id }, { type: "audit", id: r.id });
       }
       case "get_brief": return ok(await ports.getBrief());
+      case "get_account_analytics": return { content: wrapUntrusted("account analytics", await ports.getAnalytics((a as { network: string }).network), 8000), isError: false };
       case "save_research": {
         const n = a as unknown as z.infer<typeof Inputs.save_research>;
         if (state.research >= MAX_RESEARCH_PER_TURN) return err("Research note limit for this reply reached.");

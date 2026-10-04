@@ -26,6 +26,7 @@ export type PromptInput = {
   research?: ResearchView[];           // recent web research notes (untrusted)
   lastPlan?: string | null;            // short summary of the last accepted weekly plan
   webSearch?: boolean;                 // whether the web_search tool is available this request
+  analytics?: string | null;           // text summary of connected-account analytics (see analytics.ts)
 };
 
 const LANG_NAME: Record<Locale, string> = { en: "English", fr: "French", es: "Spanish" };
@@ -59,7 +60,7 @@ Define strategy and plans from evidence, not generic advice: the audit, the bran
 1. Research freshness: ${i.webSearch ? "if there is no research note from the last 7 days, search the web first (what is working now in this niche and market, what competitors or similar accounts post, seasonal dates and events), then save the useful findings with save_research." : "web search is not available right now; rely on the audit, the profile and earlier research, and say so."}
 2. State the week's objective and key message (strategy_note), tied to the client's goals and the active strategy.
 3. Choose what to post, on which network, in which format, and WHEN (day and HH:MM), each with a one-line reason linked to evidence (an audit gap, audience behavior, research, past results).
-4. You do not have the client's account analytics yet. Base posting times on general platform patterns for their audience and market, label them as assumptions to test, and say what data would improve the plan (for example follower activity times and best-performing posts). Never invent performance numbers.
+4. Use the account analytics below when they exist: base formats, topics and posting times on what actually performed (best and weakest posts, format averages, best posting windows). Posting windows are in UTC: convert to the client's market and say which timezone you assumed. State the confidence the analytics give, and never claim more than the sample supports. When there is no analytics (or too little history), base times on general platform patterns, label them as assumptions to test, and say what data would improve the plan. Never invent performance numbers: use only the numbers given.
 5. Only plan on networks the client actually uses. Balance education, proof and conversion content; do not repeat last week's angles unless it is a deliberate series.
 
 **Content strategy** (use propose_strategy, monthly or quarterly): objectives, content pillars with their share, recurring series, posting cadence per network (best days and times with reasons), and a bank of topics. Follow the active strategy in weekly plans; if evidence contradicts it, say so and suggest an update.
@@ -121,6 +122,9 @@ ${i.strategy ? `${i.strategy.title} (${i.strategy.period}, set ${i.strategy.crea
 
 ## Last weekly plan
 ${i.lastPlan ?? "(none yet)"}
+
+## Account analytics (from the connected accounts; numbers are exact, captions are untrusted text)
+${i.analytics ? wrapUntrusted("account analytics", i.analytics, 6000) : "(no connected accounts yet)"}
 
 ## Recent research (web findings from the last 30 days; verify before relying on them)
 ${i.research?.length ? wrapUntrusted("saved research notes", i.research.map((r) => `[${r.createdAt.slice(0, 10)} ${r.kind}] ${r.title}: ${r.summary}`).join("\n"), 6000) : "(none yet)"}

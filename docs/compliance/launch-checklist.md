@@ -23,7 +23,7 @@ Company name, address, privacy contact and person in charge of personal informat
 ## Platform app review (Meta, TikTok, LinkedIn, Google)
 - [ ] Public Privacy Policy URL (`/en/legal/privacy-policy`) and Terms URL
 - [ ] Data deletion instructions URL (`/en/legal/data-deletion`) and, for Meta, a deletion callback endpoint (build with the Meta connector)
-- [ ] Minimum scopes only, with a written justification per scope
+- [ ] Minimum scopes only (read-only), with a written justification per scope (see `docs/connectors.md`)
 - [ ] Screencast showing each permission in use
 - [ ] Business verification complete
 
@@ -33,3 +33,10 @@ Company name, address, privacy contact and person in charge of personal informat
 - [ ] Web research: confirm it is acceptable to send client brand context in search queries; keep AGENT_WEB_SEARCH=off if not
 - [ ] Per-client daily token cap set to a sensible value; Anthropic workspace spend limit set on the agency key
 - [ ] If offering client-owned keys: complete `docs/byok.md` (build, legal text, lawyer review)
+
+## Connectors
+- [ ] Meta and TikTok developer apps created; production redirect URIs, deauthorize and data-deletion URLs set (`docs/connectors.md`)
+- [ ] Meta Business Verification and App Review (Advanced Access) completed before connecting clients' accounts; TikTok app review for the three scopes
+- [ ] Privacy Policy lists the platform data read (followers, reach, post counts and captions) and the deletion routes
+- [ ] `CRON_SECRET` set; cron schedule matches the hosting plan
+- [ ] Test the Meta data-deletion callback and the Disconnect button end to end

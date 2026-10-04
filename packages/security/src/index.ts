@@ -6,3 +6,4 @@ export * from "./headers";
 export * from "./color";
 export * from "./invitation";
 export * from "./image";
+export * from "./bearer";

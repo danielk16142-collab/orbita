@@ -7,6 +7,8 @@ import { routing } from "./i18n/routing";
 const intl = createIntlMiddleware(routing);
 // Pages reachable without a session: sign-in and the legal documents (platforms require public policy URLs).
 const PUBLIC = /^\/(en|fr|es)\/(login|legal\/[a-z-]+|invite\/[A-Za-z0-9_-]{43})\/?$/;
+// Development-only visual preview (the page itself returns 404 in production).
+const DEV_PREVIEW = /^\/(en|fr|es)\/dev\/preview\/?$/;
 
 export async function middleware(req: NextRequest) {
   const nonce = btoa(crypto.randomUUID());
@@ -31,7 +33,7 @@ export async function middleware(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const path = req.nextUrl.pathname;
   let out: NextResponse = res;
-  if (!user && !PUBLIC.test(path) && /^\/(en|fr|es)(\/|$)/.test(path)) {
+  if (!user && !PUBLIC.test(path) && !(process.env.NODE_ENV !== "production" && DEV_PREVIEW.test(path)) && /^\/(en|fr|es)(\/|$)/.test(path)) {
     const locale = path.split("/")[1];
     out = NextResponse.redirect(new URL(`/${locale}/login`, req.url));
     res.cookies.getAll().forEach((c) => out.cookies.set(c));

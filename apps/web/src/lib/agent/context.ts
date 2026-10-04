@@ -1,6 +1,7 @@
 import "server-only";
 import { briefFromRow, computeCompleteness, planningWeekStart, type AuditReport, type Memory, type PromptInput, type Source } from "@orbita/agent";
 import type { AgentActor } from "./access";
+import { analyticsText, loadAnalyticsData } from "@/lib/analytics/load";
 
 type Sb = AgentActor["sb"];
 
@@ -15,6 +16,7 @@ export type ClientContext = {
   strategy: { title: string; period: string; createdAt: string; content: Record<string, unknown> } | null;
   research: { id: string; kind: string; title: string; summary: string; sources: { title: string; url: string }[]; createdAt: string }[];
   lastPlan: string | null;
+  analytics: string | null;
 };
 
 /** Everything the agent should know about one client, read through the user's own RLS-bound session. */
@@ -33,6 +35,7 @@ export async function loadClientContext(sb: Sb, clientId: string): Promise<Clien
     sb.from("research_notes").select("id, kind, title, summary, sources, created_at").eq("client_id", clientId).gte("created_at", since).order("created_at", { ascending: false }).limit(8),
     sb.from("proposals").select("payload").eq("client_id", clientId).eq("target", "plan").eq("status", "accepted").order("decided_at", { ascending: false }).limit(1),
   ]);
+  const analytics = analyticsText(await loadAnalyticsData(sb, clientId));
   const lp = plan.data?.[0]?.payload as { title?: string; strategy_note?: string; items?: { day: string; network: string; format: string; idea: string }[] } | undefined;
   const fromFeedback = (fb.data ?? []).flatMap((r) => {
     const items = (r.final as { items?: { network?: string; idea?: string; caption?: string }[] } | null)?.items ?? [];
@@ -47,6 +50,7 @@ export async function loadClientContext(sb: Sb, clientId: string): Promise<Clien
     rules: (rules.data ?? []).map((r) => r.rule),
     strategy: strat.data ? { title: strat.data.title, period: strat.data.period, createdAt: strat.data.created_at, content: strat.data.content as Record<string, unknown> } : null,
     research: (res.data ?? []).map((r) => ({ id: r.id, kind: r.kind, title: r.title, summary: r.summary, sources: (r.sources as { title: string; url: string }[]) ?? [], createdAt: r.created_at })),
+    analytics,
     lastPlan: lp ? `${lp.title ?? "Plan"}: ${lp.strategy_note ?? ""} | ${(lp.items ?? []).map((i) => `${i.day} ${i.network} ${i.format}: ${i.idea}`).join("; ")}`.slice(0, 1500) : null,
     examples: [...(posts.data ?? []).map((p) => `${p.network} (${p.language}): ${[p.idea, p.caption].filter(Boolean).join(" / ")}`.slice(0, 300)), ...fromFeedback],
   };
@@ -63,6 +67,6 @@ export function promptInput(actor: AgentActor, ctx: ClientContext, locale: "en" 
     brief: briefFromRow(ctx.briefRow), memories: ctx.memories, sources: ctx.sources, proofItems: ctx.proofItems, rules: ctx.rules,
     recentExamples: ctx.examples, audit: ctx.audit, briefUpdatedAt: (ctx.briefRow?.updated_at as string | undefined) ?? null,
     today: now.toISOString().slice(0, 10), weekStart: planningWeekStart(now),
-    strategy: ctx.strategy, research: ctx.research, lastPlan: ctx.lastPlan, webSearch: !!opts.webSearch,
+    strategy: ctx.strategy, research: ctx.research, lastPlan: ctx.lastPlan, analytics: ctx.analytics, webSearch: !!opts.webSearch,
   };
 }

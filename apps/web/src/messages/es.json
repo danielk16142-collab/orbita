@@ -20,8 +20,33 @@
       "followers": "Seguidores",
       "reach": "Alcance",
       "engagement": "Interacción",
-      "nextPosts": "Próximas publicaciones"
-    }
+      "nextPosts": "Próximas publicaciones",
+      "postsPublished": "Publicaciones"
+    },
+    "emptyTitle": "Conecta una cuenta para ver tus números",
+    "emptyText": "Cuando conectes una cuenta de Instagram o TikTok, esta página mostrará seguidores, alcance, interacción y tus mejores publicaciones.",
+    "connectCta": "Conectar una cuenta",
+    "updated": "Actualizado {when}",
+    "firstUpdate": "Primera actualización en curso. Los números aparecen en unos minutos.",
+    "vsMonthAgo": "vs hace 30 días",
+    "vsPrevious": "vs los 30 días anteriores",
+    "noData": "Aún sin datos",
+    "reachNote": "Solo Instagram",
+    "followersChart": "Seguidores en el tiempo",
+    "tableView": "Vista de tabla",
+    "date": "Fecha",
+    "trendBuilding": "La tendencia se construye día a día: registramos los seguidores una vez al día.",
+    "byNetwork": "Por red",
+    "network": "Red",
+    "postsLast30": "Publicaciones (30 días)",
+    "topPosts": "Mejores publicaciones, últimos 30 días",
+    "noPosts": "No hay publicaciones en los últimos 30 días.",
+    "post": "Publicación",
+    "views": "Visualizaciones",
+    "untitled": "(sin texto)",
+    "noClients": "Aún no hay clientes. Crea uno en Clientes.",
+    "notConnected": "Aún no hay cuenta conectada.",
+    "openDashboard": "Abrir panel"
   },
   "nav": {
     "tagline": "Hub de marketing",
@@ -380,5 +405,66 @@
     "research": "Investigación",
     "noResearch": "No hay investigación reciente. Pídeme que investigue qué funciona en este nicho antes de planificar.",
     "researchHint": "Los hallazgos vienen de la web pública. Verifícalos antes de fiarte de ellos."
+  },
+  "connections": {
+    "title": "Cuentas conectadas",
+    "intro": "Conecta tus cuentas sociales para que el panel y el agente trabajen con números reales.",
+    "readOnly": "Orbita solo lee tus datos. Nunca publica, envía mensajes ni cambia nada en tus cuentas. Puedes desconectar cuando quieras.",
+    "networks": {
+      "instagram": "Instagram",
+      "tiktok": "TikTok"
+    },
+    "hints": {
+      "instagram": "Cuentas de empresa o de creador.",
+      "tiktok": "Tu perfil de TikTok."
+    },
+    "noAccounts": "Aún no conectada.",
+    "connect": "Conectar",
+    "addAnother": "Conectar otra cuenta",
+    "reconnect": "Reconectar",
+    "notConfigured": "Aún no disponible: las credenciales de la aplicación no están configuradas.",
+    "status": {
+      "active": "Conectada",
+      "expired": "Hay que reconectar"
+    },
+    "lastSync": "Última actualización: {when}",
+    "neverSynced": "Primera actualización en curso",
+    "refresh": "Actualizar datos",
+    "refreshed": "Actualizado.",
+    "working": "Actualizando…",
+    "disconnect": "Desconectar",
+    "confirmDisconnect": "¿Quitar esta cuenta y sus datos guardados?",
+    "yesDisconnect": "Sí, desconectar",
+    "cancel": "Cancelar",
+    "readsTitle": "Qué leemos",
+    "reads": {
+      "instagram": {
+        "profile": "Nombre del perfil, seguidores y número de publicaciones",
+        "media": "Tus publicaciones: texto, fecha, enlace y contadores",
+        "insights": "Alcance, visualizaciones y cifras de interacción"
+      },
+      "tiktok": {
+        "profile": "Nombre del perfil",
+        "stats": "Seguidores, seguidos, me gusta totales y número de videos",
+        "videos": "Tus videos: descripción, fecha, enlace, visualizaciones, me gusta, comentarios, compartidos"
+      }
+    },
+    "flash": {
+      "connected": "Cuenta conectada. La primera actualización puede tardar unos minutos.",
+      "denied": "Conexión cancelada. No se conectó nada.",
+      "failed": "No pudimos conectar la cuenta. Inténtalo de nuevo.",
+      "not_configured": "Esta red aún no está disponible.",
+      "rate": "Demasiados intentos. Inténtalo más tarde.",
+      "invalid": "El enlace de conexión venció. Empieza de nuevo."
+    },
+    "errors": {
+      "reconnect": "La conexión venció. Vuelve a conectar.",
+      "rate_limited": "La plataforma nos pidió esperar. Reintentaremos automáticamente.",
+      "failed": "La última actualización falló. Reintentaremos automáticamente.",
+      "forbidden": "No puedes hacerlo ahora.",
+      "not_found": "No encontrado.",
+      "bad_request": "Solicitud no válida.",
+      "unauthorized": "Inicia sesión de nuevo."
+    }
   }
 }

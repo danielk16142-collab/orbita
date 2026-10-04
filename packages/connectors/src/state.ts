@@ -5,7 +5,7 @@ import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
  * can't be replayed by someone else, for another client, or after 10 minutes. A matching nonce cookie
  * (set at /start, checked at /callback) ties the callback to the same browser.
  */
-export type OAuthState = { u: string; c: string; n: string; nonce: string; exp: number };
+export type OAuthState = { u: string; c: string; n: string; nonce: string; exp: number; l?: string };
 
 const b64 = (b: Buffer | string) => Buffer.from(b).toString("base64url");
 

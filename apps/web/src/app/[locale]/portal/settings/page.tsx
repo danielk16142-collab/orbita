@@ -2,8 +2,9 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { requireClientUser } from "@/lib/session";
 import { BrandingPanel } from "@/components/branding-panel";
+import { ConnectionsPanel } from "@/components/connections/connections-panel";
 
-export default async function PortalSettings({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ saved?: string; error?: string }> }) {
+export default async function PortalSettings({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ saved?: string; error?: string; connected?: string; connect?: string }> }) {
   const { locale } = await params;
   const q = await searchParams;
   const t = await getTranslations("settings");
@@ -14,6 +15,7 @@ export default async function PortalSettings({ params, searchParams }: { params:
     <>
       <p className="eyebrow">{t("eyebrow")}</p>
       <h1>{t("title")}</h1>
+      <ConnectionsPanel locale={locale} flash={{ connected: q.connected, connect: q.connect }} />
       {client && <BrandingPanel locale={locale} client={client} canEdit={!client.branding_locked}
         logos={{ light: await sign(client.logo_light_path), dark: await sign(client.logo_dark_path) }} saved={q.saved === "1"} error={q.error} />}
       <div className="grid">

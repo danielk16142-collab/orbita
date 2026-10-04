@@ -67,3 +67,15 @@ describe("upstash limiter", () => {
     expect((await rl.hit("k")).allowed).toBe(false);
   });
 });
+
+import { bearerMatches } from "./bearer";
+describe("bearer secret check", () => {
+  const secret = "a-long-random-cron-secret-123";
+  it("accepts only the exact secret", () => {
+    expect(bearerMatches(`Bearer ${secret}`, secret)).toBe(true);
+    for (const h of [null, undefined, "", secret, `bearer ${secret}`, `Bearer ${secret}x`, `Bearer ${secret.slice(0, -1)}`, "Bearer wrong"]) expect(bearerMatches(h as string, secret)).toBe(false);
+  });
+  it("fails closed when no usable secret is configured", () => {
+    for (const s of [undefined, null, "", "short"]) expect(bearerMatches(`Bearer ${s}`, s as string)).toBe(false);
+  });
+});

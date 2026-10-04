@@ -1,17 +1,16 @@
 import { getTranslations } from "next-intl/server";
+import { requireClientUser } from "@/lib/session";
+import { ClientDashboard } from "@/components/dashboard/client-dashboard";
 
-export default async function PortalHome() {
+export default async function PortalHome({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const t = await getTranslations("portal");
-  const d = await getTranslations("dashboard");
+  const { sb, profile } = await requireClientUser(locale);
   return (
     <>
       <p className="eyebrow">{t("eyebrow")}</p>
       <h1>{t("title")}</h1>
-      <div className="grid">
-        {(["followers", "reach", "engagement", "nextPosts"] as const).map((k) => (
-          <section key={k} className="card"><p className="eyebrow">{d(`cards.${k}`)}</p><div className="kpi">—</div></section>
-        ))}
-      </div>
+      <ClientDashboard sb={sb} clientId={profile.client_id} locale={locale} connectHref={`/${locale}/portal/settings`} />
     </>
   );
 }

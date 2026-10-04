@@ -20,6 +20,7 @@ function ports(over: Partial<ToolPorts> = {}) {
     getBrief: async () => ({ brief: {}, score: 0, missing: [] }),
     createProposal: async (x) => { log.proposals.push(x); return { id: "p" + log.proposals.length }; },
     saveResearch: async (n) => { log.research.push(n); return { id: "r" + log.research.length }; },
+    getAnalytics: async (n) => `analytics for ${n}: 1234 followers`,
     ...over,
   };
   return { p, log };
@@ -414,5 +415,21 @@ describe("web search and long server turns", () => {
     expect((seen[0].tools as { name: string }[]).map((t) => t.name)).toContain("web_search");
     const second = seen[1].messages as { role: string; content: { type: string }[] }[];
     expect(second[second.length - 1]).toMatchObject({ role: "assistant" }); expect(second[second.length - 1].content[0].type).toBe("server_tool_use");
+  });
+});
+
+
+describe("analytics in the agent", () => {
+  it("get_account_analytics returns the server-built summary, wrapped as untrusted, and validates the network", async () => {
+    const { p } = ports();
+    const r = await runTool("get_account_analytics", { network: "tiktok" }, p, fresh());
+    expect(r.isError).toBe(false); expect(r.content).toContain("analytics for tiktok: 1234 followers"); expect(r.content).toContain("<untrusted");
+    expect((await runTool("get_account_analytics", { network: "myspace" }, p, fresh())).isError).toBe(true);
+  });
+  it("the prompt uses analytics when present and says to label assumptions when absent", () => {
+    const base: PromptInput = { locale: "en", clientName: "B", clientLanguages: ["en"], markets: [], brief: {}, memories: [], sources: [], proofItems: [], rules: [], recentExamples: [], audit: null, briefUpdatedAt: null, today: "2026-10-03", weekStart: "2026-10-05" };
+    const withData = buildSystemPrompt({ ...base, analytics: "instagram: 900 followers\nBest posting windows (UTC)" });
+    expect(withData).toContain("900 followers"); expect(withData).toContain("account analytics"); expect(withData).toContain("Posting windows are in UTC");
+    expect(buildSystemPrompt(base)).toContain("(no connected accounts yet)");
   });
 });

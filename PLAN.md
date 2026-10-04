@@ -236,6 +236,10 @@ Built: the agent writes **reel scripts** (3 hook options, scene table with timin
 Not yet: scheduled background research (needs the job queue; today research runs on demand and when the agent finds notes older than 7 days), account analytics (connectors), a posts calendar with script/teleprompter view (Posts phase; the data is already stored on `posts.content`).
 Client-owned Claude keys (BYOK): designed in `docs/byok.md`; the single seam `resolveModelAccess()` is in place.
 
+## 7.4 Phase 4 status (connectors, live metrics, analytics)
+Built: Instagram (Instagram API with Instagram Login) and TikTok (Login Kit v2 + Display API) adapters from the platforms' current documentation, read-only; signed OAuth state with nonce cookie; encrypted per-account tokens; sync engine (token refresh, daily follower snapshots, reach, last 30 posts) run after connect, on Refresh and by cron; Connections screens (agency client tab and portal); dashboards with stat tiles, follower trend chart and top posts (validated chart colors, hover/keyboard, table view, mobile-safe); analytics shared with the agent (best posting windows from real post history, format and post performance); Meta deauthorize and data-deletion callbacks. Setup: `docs/connectors.md`.
+Not verified here: real OAuth and live API responses (need developer apps and platform app review). Publishing is a later phase.
+
 ## 8. Open items
 - Style reference and Orbita visual identity.
 - First test client.

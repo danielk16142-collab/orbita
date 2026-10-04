@@ -20,8 +20,33 @@
       "followers": "Followers",
       "reach": "Reach",
       "engagement": "Engagement",
-      "nextPosts": "Next posts"
-    }
+      "nextPosts": "Next posts",
+      "postsPublished": "Posts published"
+    },
+    "emptyTitle": "Connect an account to see your numbers",
+    "emptyText": "Once an Instagram or TikTok account is connected, this page shows followers, reach, engagement and your best posts.",
+    "connectCta": "Connect an account",
+    "updated": "Updated {when}",
+    "firstUpdate": "First update in progress. Numbers appear in a few minutes.",
+    "vsMonthAgo": "vs 30 days ago",
+    "vsPrevious": "vs previous 30 days",
+    "noData": "No data yet",
+    "reachNote": "Instagram only",
+    "followersChart": "Followers over time",
+    "tableView": "Table view",
+    "date": "Date",
+    "trendBuilding": "The trend builds up day by day: we record followers once a day.",
+    "byNetwork": "By network",
+    "network": "Network",
+    "postsLast30": "Posts (30 days)",
+    "topPosts": "Best posts, last 30 days",
+    "noPosts": "No posts in the last 30 days.",
+    "post": "Post",
+    "views": "Views",
+    "untitled": "(no caption)",
+    "noClients": "No clients yet. Create one in Clients.",
+    "notConnected": "No account connected yet.",
+    "openDashboard": "Open dashboard"
   },
   "nav": {
     "tagline": "Marketing hub",
@@ -380,5 +405,66 @@
     "research": "Research",
     "noResearch": "No recent research. Ask me to research what is working in this niche before planning.",
     "researchHint": "Findings come from the public web. Check them before relying on them."
+  },
+  "connections": {
+    "title": "Connected accounts",
+    "intro": "Connect your social accounts so the dashboard and the agent work from real numbers.",
+    "readOnly": "Orbita only reads your data. It never posts, messages or changes anything on your accounts. You can disconnect at any time.",
+    "networks": {
+      "instagram": "Instagram",
+      "tiktok": "TikTok"
+    },
+    "hints": {
+      "instagram": "Business or Creator accounts.",
+      "tiktok": "Your TikTok profile."
+    },
+    "noAccounts": "Not connected yet.",
+    "connect": "Connect",
+    "addAnother": "Connect another account",
+    "reconnect": "Reconnect",
+    "notConfigured": "Not available yet: the app credentials have not been set up.",
+    "status": {
+      "active": "Connected",
+      "expired": "Reconnect needed"
+    },
+    "lastSync": "Last updated {when}",
+    "neverSynced": "First update in progress",
+    "refresh": "Refresh data",
+    "refreshed": "Updated.",
+    "working": "Updating…",
+    "disconnect": "Disconnect",
+    "confirmDisconnect": "Remove this account and its stored data?",
+    "yesDisconnect": "Yes, disconnect",
+    "cancel": "Cancel",
+    "readsTitle": "What we read",
+    "reads": {
+      "instagram": {
+        "profile": "Profile name, followers and number of posts",
+        "media": "Your posts: caption, date, link and counts",
+        "insights": "Reach, views and engagement numbers"
+      },
+      "tiktok": {
+        "profile": "Profile name",
+        "stats": "Followers, following, total likes and video count",
+        "videos": "Your videos: description, date, link, views, likes, comments, shares"
+      }
+    },
+    "flash": {
+      "connected": "Account connected. The first update can take a few minutes.",
+      "denied": "Connection cancelled. Nothing was connected.",
+      "failed": "We couldn't connect the account. Please try again.",
+      "not_configured": "This network is not available yet.",
+      "rate": "Too many attempts. Try again later.",
+      "invalid": "The connection link expired. Please start again."
+    },
+    "errors": {
+      "reconnect": "The connection expired. Please reconnect.",
+      "rate_limited": "The platform asked us to wait. We'll retry automatically.",
+      "failed": "The last update failed. We'll retry automatically.",
+      "forbidden": "You can't do that right now.",
+      "not_found": "Not found.",
+      "bad_request": "Invalid request.",
+      "unauthorized": "Please sign in again."
+    }
   }
 }

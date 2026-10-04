@@ -20,8 +20,33 @@
       "followers": "Abonnés",
       "reach": "Portée",
       "engagement": "Engagement",
-      "nextPosts": "Prochaines publications"
-    }
+      "nextPosts": "Prochaines publications",
+      "postsPublished": "Publications"
+    },
+    "emptyTitle": "Connectez un compte pour voir vos chiffres",
+    "emptyText": "Une fois un compte Instagram ou TikTok connecté, cette page affiche les abonnés, la portée, l'engagement et vos meilleures publications.",
+    "connectCta": "Connecter un compte",
+    "updated": "Mis à jour : {when}",
+    "firstUpdate": "Première mise à jour en cours. Les chiffres arrivent dans quelques minutes.",
+    "vsMonthAgo": "vs il y a 30 jours",
+    "vsPrevious": "vs les 30 jours précédents",
+    "noData": "Pas encore de données",
+    "reachNote": "Instagram seulement",
+    "followersChart": "Abonnés dans le temps",
+    "tableView": "Vue tableau",
+    "date": "Date",
+    "trendBuilding": "La tendance se construit jour après jour : nous enregistrons les abonnés une fois par jour.",
+    "byNetwork": "Par réseau",
+    "network": "Réseau",
+    "postsLast30": "Publications (30 jours)",
+    "topPosts": "Meilleures publications, 30 derniers jours",
+    "noPosts": "Aucune publication dans les 30 derniers jours.",
+    "post": "Publication",
+    "views": "Vues",
+    "untitled": "(sans légende)",
+    "noClients": "Aucun client pour l'instant. Créez-en un dans Clients.",
+    "notConnected": "Aucun compte connecté.",
+    "openDashboard": "Ouvrir le tableau de bord"
   },
   "nav": {
     "tagline": "Hub marketing",
@@ -380,5 +405,66 @@
     "research": "Recherche",
     "noResearch": "Aucune recherche récente. Demandez-moi d'explorer ce qui fonctionne dans ce créneau avant de planifier.",
     "researchHint": "Les constats viennent du web public. Vérifiez-les avant de vous y fier."
+  },
+  "connections": {
+    "title": "Comptes connectés",
+    "intro": "Connectez vos comptes sociaux pour que le tableau de bord et l'agent travaillent avec des chiffres réels.",
+    "readOnly": "Orbita lit seulement vos données. Il ne publie, n'écrit et ne modifie jamais rien sur vos comptes. Vous pouvez vous déconnecter en tout temps.",
+    "networks": {
+      "instagram": "Instagram",
+      "tiktok": "TikTok"
+    },
+    "hints": {
+      "instagram": "Comptes professionnels ou créateur.",
+      "tiktok": "Votre profil TikTok."
+    },
+    "noAccounts": "Pas encore connecté.",
+    "connect": "Connecter",
+    "addAnother": "Connecter un autre compte",
+    "reconnect": "Reconnecter",
+    "notConfigured": "Pas encore disponible : les identifiants de l'application ne sont pas configurés.",
+    "status": {
+      "active": "Connecté",
+      "expired": "Reconnexion nécessaire"
+    },
+    "lastSync": "Dernière mise à jour : {when}",
+    "neverSynced": "Première mise à jour en cours",
+    "refresh": "Actualiser les données",
+    "refreshed": "Mis à jour.",
+    "working": "Mise à jour…",
+    "disconnect": "Déconnecter",
+    "confirmDisconnect": "Retirer ce compte et ses données conservées?",
+    "yesDisconnect": "Oui, déconnecter",
+    "cancel": "Annuler",
+    "readsTitle": "Ce que nous lisons",
+    "reads": {
+      "instagram": {
+        "profile": "Nom du profil, abonnés et nombre de publications",
+        "media": "Vos publications : légende, date, lien et compteurs",
+        "insights": "Portée, vues et chiffres d'engagement"
+      },
+      "tiktok": {
+        "profile": "Nom du profil",
+        "stats": "Abonnés, abonnements, mentions J'aime et nombre de vidéos",
+        "videos": "Vos vidéos : description, date, lien, vues, mentions J'aime, commentaires, partages"
+      }
+    },
+    "flash": {
+      "connected": "Compte connecté. La première mise à jour peut prendre quelques minutes.",
+      "denied": "Connexion annulée. Rien n'a été connecté.",
+      "failed": "Impossible de connecter le compte. Réessayez.",
+      "not_configured": "Ce réseau n'est pas encore disponible.",
+      "rate": "Trop de tentatives. Réessayez plus tard.",
+      "invalid": "Le lien de connexion a expiré. Recommencez."
+    },
+    "errors": {
+      "reconnect": "La connexion a expiré. Veuillez vous reconnecter.",
+      "rate_limited": "La plateforme nous demande d'attendre. Nous réessaierons automatiquement.",
+      "failed": "La dernière mise à jour a échoué. Nous réessaierons automatiquement.",
+      "forbidden": "Action impossible pour l'instant.",
+      "not_found": "Introuvable.",
+      "bad_request": "Demande invalide.",
+      "unauthorized": "Veuillez vous reconnecter."
+    }
   }
 }
