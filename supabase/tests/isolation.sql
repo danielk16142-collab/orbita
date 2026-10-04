@@ -197,4 +197,41 @@ select pg_temp.expect('user who authored content can be deleted', (select count(
 select pg_temp.expect('their invitation is kept, author cleared', (select count(*) from invitations where token_hash='hash-1' and created_by is null), 1);
 select pg_temp.expect('their post is kept, author cleared', (select count(*) from posts where caption is null and created_by is null and client_id='c1000000-0000-0000-0000-000000000001' and network='instagram' and language='en' and id in (select post_id from post_comments)), 1);
 
+
+-- agent tables (client A1 id c100..., user a..03 was deleted above, so use staff and a fresh client user)
+insert into auth.users(id) values ('a0000000-0000-0000-0000-000000000005');
+insert into profiles(user_id,agency_id,client_id,role) values ('a0000000-0000-0000-0000-000000000005',:agA,'c1000000-0000-0000-0000-000000000001','client');
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000005'); -- client A1 user
+insert into proposals(client_id,target,payload) values ('c1000000-0000-0000-0000-000000000001','memory','{"kind":"avoid","content":"no emojis"}');
+select pg_temp.expect('client user can see their proposal', (select count(*) from proposals), 1);
+select pg_temp.expect_error('new proposal cannot be pre-accepted',
+  $$insert into proposals(client_id,target,payload,status) values ('c1000000-0000-0000-0000-000000000001','memory','{}','accepted')$$);
+select pg_temp.expect_error('cannot propose for another client',
+  $$insert into proposals(client_id,target,payload) values ('c2000000-0000-0000-0000-000000000002','memory','{}')$$);
+update proposals set status='accepted';
+select pg_temp.expect('client user can accept a pending proposal', (select count(*) from proposals where status='accepted' and decided_by='a0000000-0000-0000-0000-000000000005'), 1);
+select pg_temp.expect_error('a decided proposal cannot change again', $$update proposals set status='rejected'$$);
+select pg_temp.expect_error('proposal content is immutable', $$update proposals set payload='{"x":1}'$$);
+insert into brand_memories(client_id,kind,content) values ('c1000000-0000-0000-0000-000000000001','avoid','no emojis');
+select pg_temp.expect('client user can add a memory', (select count(*) from brand_memories), 1);
+update brand_memories set status='archived';
+select pg_temp.expect('client user can archive a memory', (select count(*) from brand_memories where status='archived'), 1);
+insert into client_sources(client_id,kind,url) values ('c1000000-0000-0000-0000-000000000001','website','https://example.com');
+select pg_temp.expect_error('sources must be https',
+  $$insert into client_sources(client_id,kind,url) values ('c1000000-0000-0000-0000-000000000001','website','http://example.com/x')$$);
+select pg_temp.expect_error('sources cannot target another client',
+  $$insert into client_sources(client_id,kind,url) values ('c2000000-0000-0000-0000-000000000002','website','https://x.example.com')$$);
+insert into generation_feedback(client_id,outcome) values ('c1000000-0000-0000-0000-000000000001','accepted');
+select pg_temp.expect_error('feedback is append-only', $$update generation_feedback set outcome='rejected'$$);
+select pg_temp.reset();
+
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000004'); -- client A2 user
+select pg_temp.expect('other client sees no proposals/memories/sources/feedback',
+  (select count(*) from proposals) + (select count(*) from brand_memories) + (select count(*) from client_sources) + (select count(*) from generation_feedback), 0);
+select pg_temp.reset();
+select pg_temp.as_user('b0000000-0000-0000-0000-000000000001'); -- admin B
+select pg_temp.expect('other agency sees no agent data',
+  (select count(*) from proposals) + (select count(*) from brand_memories) + (select count(*) from client_sources) + (select count(*) from audits), 0);
+select pg_temp.reset();
+
 \echo ALL TENANT ISOLATION TESTS PASSED
