@@ -249,8 +249,8 @@ insert into research_notes(client_id,kind,title,summary) values ('c1000000-0000-
 select pg_temp.expect('client user sees its research', (select count(*) from research_notes), 1);
 select pg_temp.expect_error('bad research kind rejected', $$insert into research_notes(client_id,kind,title,summary) values ('c1000000-0000-0000-0000-000000000001','gossip','t','s')$$);
 insert into posts(client_id,network,language,type,status,content,suggested_time) values
-  ('c1000000-0000-0000-0000-000000000001','instagram','en','carousel','draft','{"slides":[{"title":"a"}]}','18:30');
-select pg_temp.expect('structured content stored on a draft post', (select count(*) from posts where suggested_time='18:30' and content is not null), 1);
+  ('c1000000-0000-0000-0000-000000000001','instagram','en','carousel','idea','{"slides":[{"title":"a"}]}','18:30');
+select pg_temp.expect('structured content stored on a post', (select count(*) from posts where suggested_time='18:30' and content is not null), 1);
 select pg_temp.expect_error('suggested time must be HH:MM',
   $$insert into posts(client_id,network,language,suggested_time) values ('c1000000-0000-0000-0000-000000000001','instagram','en','6pm')$$);
 select pg_temp.reset();
@@ -289,5 +289,47 @@ select pg_temp.expect('other agency sees no connector data',
 select pg_temp.reset();
 delete from social_accounts where id='d2000000-0000-0000-0000-000000000002';
 select pg_temp.expect('removing an account removes its posts, runs and metrics', (select count(*) from account_posts) + (select count(*) from sync_runs) + (select count(*) from metrics_daily where metric='followers'), 0);
+
+
+-- posts calendar: approval rules, comment integrity, timezone
+insert into posts(id,client_id,network,language,type,status,caption,planned_date,source) values
+  ('f1000000-0000-0000-0000-000000000001','c1000000-0000-0000-0000-000000000001','instagram','en','reel','draft','Original caption','2026-10-12','agent'),
+  ('f2000000-0000-0000-0000-000000000002','c2000000-0000-0000-0000-000000000002','instagram','en','reel','draft','A2 caption','2026-10-12','agent');
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000005'); -- client A1 user
+update posts set status='approved' where id='f1000000-0000-0000-0000-000000000001';
+select pg_temp.expect('client can approve a draft', (select count(*) from posts where id='f1000000-0000-0000-0000-000000000001' and status='approved'), 1);
+update posts set status='draft' where id='f1000000-0000-0000-0000-000000000001';
+select pg_temp.expect('client can request changes (back to draft)', (select count(*) from posts where id='f1000000-0000-0000-0000-000000000001' and status='draft'), 1);
+select pg_temp.expect_error('client cannot edit the caption', $$update posts set caption='hacked' where id='f1000000-0000-0000-0000-000000000001'$$);
+select pg_temp.expect_error('client cannot move the date', $$update posts set planned_date='2026-12-01' where id='f1000000-0000-0000-0000-000000000001'$$);
+select pg_temp.expect_error('client cannot schedule or publish', $$update posts set status='scheduled' where id='f1000000-0000-0000-0000-000000000001'$$);
+select pg_temp.expect_error('client cannot publish', $$update posts set status='published' where id='f1000000-0000-0000-0000-000000000001'$$);
+delete from posts where id='f1000000-0000-0000-0000-000000000001';
+select pg_temp.expect('client cannot delete posts (0 rows)', (select count(*) from posts where id='f1000000-0000-0000-0000-000000000001'), 1);
+insert into posts(client_id,network,language,status,source,idea) values ('c1000000-0000-0000-0000-000000000001','tiktok','en','idea','manual','An idea');
+select pg_temp.expect('client can add an idea', (select count(*) from posts where idea='An idea' and created_by='a0000000-0000-0000-0000-000000000005'), 1);
+select pg_temp.expect_error('client cannot add a draft', $$insert into posts(client_id,network,language,status,source) values ('c1000000-0000-0000-0000-000000000001','tiktok','en','draft','manual')$$);
+select pg_temp.expect_error('client cannot add an agent post', $$insert into posts(client_id,network,language,status,source) values ('c1000000-0000-0000-0000-000000000001','tiktok','en','idea','agent')$$);
+-- comments
+insert into post_comments(post_id,client_id,author,body) values ('f1000000-0000-0000-0000-000000000001','c1000000-0000-0000-0000-000000000001','a0000000-0000-0000-0000-000000000004','Please change the hook');
+select pg_temp.expect('comment author is forced to the signed-in user', (select count(*) from post_comments where author='a0000000-0000-0000-0000-000000000005'), 1);
+select pg_temp.expect_error('cannot comment on another client post (post/client mismatch)',
+  $$insert into post_comments(post_id,client_id,author,body) values ('f2000000-0000-0000-0000-000000000002','c1000000-0000-0000-0000-000000000001','a0000000-0000-0000-0000-000000000005','x')$$);
+select pg_temp.reset();
+
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000001'); -- admin A
+update posts set status='approved' where id='f1000000-0000-0000-0000-000000000001';
+update posts set caption='Edited by staff' where id='f1000000-0000-0000-0000-000000000001';
+select pg_temp.expect('editing an approved post sends it back to draft', (select count(*) from posts where id='f1000000-0000-0000-0000-000000000001' and status='draft' and caption='Edited by staff'), 1);
+update posts set status='approved' where id='f1000000-0000-0000-0000-000000000001';
+update posts set status='scheduled' where id='f1000000-0000-0000-0000-000000000001';
+select pg_temp.expect('staff can schedule an approved post without losing status', (select count(*) from posts where id='f1000000-0000-0000-0000-000000000001' and status='scheduled'), 1);
+update clients set timezone='America/Toronto' where id='c1000000-0000-0000-0000-000000000001';
+select pg_temp.expect('timezone can be set', (select count(*) from clients where timezone='America/Toronto'), 1);
+select pg_temp.expect_error('timezone length is bounded', $$update clients set timezone=repeat('x',80) where id='c1000000-0000-0000-0000-000000000001'$$);
+select pg_temp.reset();
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000004'); -- other client
+select pg_temp.expect('other client sees none of those posts or comments', (select count(*) from posts where client_id='c1000000-0000-0000-0000-000000000001') + (select count(*) from post_comments where client_id='c1000000-0000-0000-0000-000000000001'), 0);
+select pg_temp.reset();
 
 \echo ALL TENANT ISOLATION TESTS PASSED

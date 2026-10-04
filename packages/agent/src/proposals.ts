@@ -1,10 +1,11 @@
 import { z } from "zod";
 import { briefValueForColumn, SECTION_COLUMN } from "./brief";
+import { CarouselContent, ReelContent, StaticContent } from "@orbita/content";
 import { BRIEF_SECTIONS, CONTENT_FORMATS, DAYS, LOCALES, MEMORY_KINDS, NETWORKS, type BriefSection, type Day } from "./types";
 
 const s = (max: number) => z.string().trim().min(1).max(max);
 
-const hhmm = z.string().regex(/^(([01]\d|2[0-3]):[0-5]\d)?$/);
+import { hhmm } from "@orbita/content";
 
 export const PlanItemSchema = z.object({
   day: z.enum(DAYS), network: z.enum(NETWORKS), format: s(60), pillar: z.string().trim().max(80),
@@ -12,19 +13,7 @@ export const PlanItemSchema = z.object({
   time: hhmm, why: z.string().trim().max(300),
 });
 
-// ---- finished pieces of content ----
-export const ReelContent = z.object({
-  duration_seconds: z.number().int().min(5).max(180),
-  hook_options: z.array(s(200)).min(1).max(3),
-  scenes: z.array(z.object({ seconds: s(20), visual: s(300), voiceover: z.string().trim().max(600), on_screen_text: z.string().trim().max(200) })).min(1).max(15),
-  cta: s(200), audio_note: z.string().trim().max(200),
-});
-export const CarouselContent = z.object({
-  slides: z.array(z.object({ title: s(120), body: z.string().trim().max(500), visual: z.string().trim().max(300) })).min(2).max(12),
-  cta: s(200),
-});
-export const StaticContent = z.object({ headline: s(160), visual_brief: s(500), cta: s(200) });
-
+// ---- finished pieces of content: shared with the post editor and teleprompter ----
 const PostBase = {
   day: z.enum(DAYS), week_start: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), network: z.enum(NETWORKS), language: z.enum(LOCALES),
   pillar: z.string().trim().max(80), idea: s(500), caption: z.string().trim().max(2200),
@@ -35,6 +24,7 @@ export const PostPayload = z.discriminatedUnion("format", [
   z.object({ format: z.literal("carousel"), content: CarouselContent, ...PostBase }),
   z.object({ format: z.literal("static"), content: StaticContent, ...PostBase }),
 ]);
+export { CarouselContent, ReelContent, StaticContent };
 export const PostInputBase = PostBase; // the model never sets week_start; see tools.ts
 
 // ---- content strategy ----
@@ -98,7 +88,7 @@ export function proposalToOps(target: ProposalTarget, payload: unknown): Op[] {
         row: {
           network: it.network, language: it.language, type: it.format.toLowerCase().slice(0, 60), pillar: it.pillar || null,
           status: "draft", caption: it.caption || null, idea: it.idea, source: "agent",
-          scheduled_at: `${dayToDate(p.week_start, it.day)}T12:00:00Z`, suggested_time: it.time || null,
+          planned_date: dayToDate(p.week_start, it.day), suggested_time: it.time || null,
           content: it.why ? { rationale: it.why } : null,
         },
       }));
@@ -109,7 +99,7 @@ export function proposalToOps(target: ProposalTarget, payload: unknown): Op[] {
         op: "insert", table: "posts",
         row: {
           network: p.network, language: p.language, type: p.format, pillar: p.pillar || null, status: "draft", caption: p.caption || null,
-          hashtags: p.hashtags, idea: p.idea, source: "agent", scheduled_at: `${dayToDate(p.week_start, p.day)}T12:00:00Z`,
+          hashtags: p.hashtags, idea: p.idea, source: "agent", planned_date: dayToDate(p.week_start, p.day),
           suggested_time: p.suggested_time || null, content: p.content,
         },
       }];

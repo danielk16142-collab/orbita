@@ -162,8 +162,8 @@ describe("proposals -> operations", () => {
       { day: "wed", network: "tiktok", format: "Reel", pillar: "proof", idea: "Customer story", caption: "", language: "es", time: "19:00", why: "evening scroll" },
       { day: "fri", network: "linkedin", format: "Post", pillar: "", idea: "Team intro", caption: "Hello", language: "en", time: "", why: "" }] });
     expect(ops).toHaveLength(2);
-    expect(ops[0]).toMatchObject({ table: "posts", row: { network: "tiktok", status: "draft", source: "agent", scheduled_at: "2026-10-07T12:00:00Z", suggested_time: "19:00", content: { rationale: "evening scroll" }, type: "reel", caption: null } });
-    expect(ops[1]).toMatchObject({ row: { network: "linkedin", scheduled_at: "2026-10-09T12:00:00Z", caption: "Hello", suggested_time: null, content: null } });
+    expect(ops[0]).toMatchObject({ table: "posts", row: { network: "tiktok", status: "draft", source: "agent", planned_date: "2026-10-07", suggested_time: "19:00", content: { rationale: "evening scroll" }, type: "reel", caption: null } });
+    expect(ops[1]).toMatchObject({ row: { network: "linkedin", planned_date: "2026-10-09", caption: "Hello", suggested_time: null, content: null } });
   });
   it("re-validates on accept: edited payloads must still be valid", () => {
     expect(() => proposalToOps("memory", { kind: "avoid", content: "" })).toThrow();
@@ -363,7 +363,7 @@ describe("finished content tools", () => {
   it("accepting a post proposal makes one draft with the structured content and suggested time", () => {
     const ops = proposalToOps("post", { ...reelIn, format: "reel", week_start: "2026-10-05" });
     expect(ops).toHaveLength(1);
-    expect(ops[0]).toMatchObject({ op: "insert", table: "posts", row: { type: "reel", status: "draft", source: "agent", network: "tiktok", language: "es", suggested_time: "19:00", scheduled_at: "2026-10-06T12:00:00Z", hashtags: ["pan", "horneado"], content: { duration_seconds: 30 } } });
+    expect(ops[0]).toMatchObject({ op: "insert", table: "posts", row: { type: "reel", status: "draft", source: "agent", network: "tiktok", language: "es", suggested_time: "19:00", planned_date: "2026-10-06", hashtags: ["pan", "horneado"], content: { duration_seconds: 30 } } });
   });
   it("drafts and learning suggestions have separate limits", async () => {
     const { p } = ports(); const st = fresh();
