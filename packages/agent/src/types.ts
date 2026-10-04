@@ -10,6 +10,11 @@ export type SourceKind = (typeof SOURCE_KINDS)[number];
 export const MEMORY_KINDS = ["preference", "rule", "fact", "example", "avoid"] as const;
 export type MemoryKind = (typeof MEMORY_KINDS)[number];
 
+export const CONTENT_FORMATS = ["reel", "carousel", "static"] as const;
+export type ContentFormat = (typeof CONTENT_FORMATS)[number];
+export const RESEARCH_KINDS = ["trend", "competitor", "audience", "idea"] as const;
+export type ResearchKind = (typeof RESEARCH_KINDS)[number];
+
 export const DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 export type Day = (typeof DAYS)[number];
 
@@ -30,5 +35,5 @@ export type AuditReport = {
 };
 
 export type PlanItem = {
-  day: Day; network: Network; format: string; pillar: string; idea: string; caption: string; language: Locale;
+  day: Day; network: Network; format: string; pillar: string; idea: string; caption: string; language: Locale; time: string; why: string;
 };

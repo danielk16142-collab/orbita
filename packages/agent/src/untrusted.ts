@@ -5,6 +5,6 @@
  */
 export function wrapUntrusted(source: string, text: string, maxChars = 12000): string {
   const clean = text.replace(/<\s*\/?\s*untrusted/gi, "[untrusted").slice(0, maxChars);
-  const safeSource = source.replace(/[^\w.:/#?=&%@+\-]/g, "").slice(0, 200);
+  const safeSource = source.replace(/[^\w .:/#?=&%@+\-]/g, "").slice(0, 200);
   return `<untrusted source="${safeSource}">\n${clean}\n</untrusted>`;
 }

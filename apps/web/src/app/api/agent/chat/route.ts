@@ -3,7 +3,7 @@ import { briefFromRow, buildSystemPrompt, computeCompleteness, ONBOARDING_THRESH
 import { resolveAgentActor } from "@/lib/agent/access";
 import { completenessOf, loadClientContext, promptInput } from "@/lib/agent/context";
 import { makePorts } from "@/lib/agent/ports";
-import { agentConfigured, chatModel, createModelClient } from "@/lib/agent/model";
+import { resolveModelAccess, webSearchTools } from "@/lib/agent/model";
 import { overDailyCap, recordUsage } from "@/lib/agent/usage";
 import { json, sameOrigin } from "@/lib/agent/http";
 import { limiter } from "@/lib/rate-limit";
@@ -22,7 +22,6 @@ const LEARN_EVERY = 8; // user messages
 
 export async function POST(req: Request) {
   if (!sameOrigin(req)) return json({ error: "forbidden" }, 403);
-  if (!agentConfigured()) return json({ error: "not_configured" }, 503);
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return json({ error: "bad_request" }, 400);
   const body = parsed.data;
@@ -31,6 +30,8 @@ export async function POST(req: Request) {
   const access = await resolveAgentActor(body.clientId);
   if (!access.ok) return json({ error: access.status === 401 ? "unauthorized" : access.status === 403 ? "forbidden" : "not_found" }, access.status);
   const actor = access.actor;
+  const ai = await resolveModelAccess(actor);
+  if (!ai) return json({ error: "not_configured" }, 503);
 
   if (!(await limiter("agent-chat", 20, 10 * 60_000).hit(actor.userId)).allowed) return json({ error: "rate_limited" }, 429);
   if (await overDailyCap(actor)) return json({ error: "daily_cap" }, 429);
@@ -62,7 +63,8 @@ export async function POST(req: Request) {
   await actor.sb.from("messages").insert({ conversation_id: conversationId, client_id: actor.clientId, role: "user", content: { text: body.message } });
   const { count: userMsgs } = await actor.sb.from("messages").select("id", { count: "exact", head: true }).eq("conversation_id", conversationId).eq("role", "user");
 
-  const input = promptInput(actor, ctx, body.locale);
+  const serverTools = webSearchTools(ai.chatModel);
+  const input = promptInput(actor, ctx, body.locale, { webSearch: serverTools.length > 0 });
   const userTexts = [...history.filter((m) => m.role === "user").map((m) => String(m.content)), body.message];
   const ports = makePorts(actor, { conversationId, weekStart: input.weekStart, userTexts });
   const convId = conversationId;
@@ -75,8 +77,8 @@ export async function POST(req: Request) {
       send({ type: "meta", conversationId: convId });
       try {
         const result = await runAgent({
-          client: createModelClient(), model: chatModel(), system: buildSystemPrompt(input),
-          messages: [...history, { role: "user", content: body.message }], ports,
+          client: ai.client, model: ai.chatModel, system: buildSystemPrompt(input),
+          messages: [...history, { role: "user", content: body.message }], ports, serverTools,
           onEvent: (e: AgentEvent) => send(e),
         });
         if (result.text.trim()) await actor.sb.from("messages").insert({ conversation_id: convId, client_id: actor.clientId, role: "assistant", content: { text: result.text } });

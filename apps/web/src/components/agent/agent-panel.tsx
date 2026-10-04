@@ -5,7 +5,7 @@ import { resolveAgentActor } from "@/lib/agent/access";
 import { completenessOf, loadClientContext } from "@/lib/agent/context";
 import { AgentChat } from "./agent-chat";
 import { ProposalCard, type ProposalView } from "./proposal-card";
-import { AddSourceForm, ArchiveMemoryButton, RemoveSourceButton } from "./small-actions";
+import { AddSourceForm, ArchiveMemoryButton, DeleteResearchButton, RemoveSourceButton } from "./small-actions";
 
 /** Chat plus everything the agent knows about one client. Used by the agency (client tab) and the client portal. */
 export async function AgentPanel({ locale, clientId }: { locale: "en" | "fr" | "es"; clientId?: string }) {
@@ -39,6 +39,28 @@ export async function AgentPanel({ locale, clientId }: { locale: "en" | "fr" | "
         <section className="card">
           <h2>{t("suggestions")}</h2>
           {pending?.length ? pending.map((p) => <ProposalCard key={p.id} clientId={cid} proposal={p as unknown as ProposalView} />) : <p>{t("noSuggestions")}</p>}
+        </section>
+
+        <section className="card">
+          <h2>{t("strategy")}</h2>
+          {ctx.strategy ? (() => {
+            const c = ctx.strategy.content as { objectives?: string[]; pillars?: { name: string; share_percent: number }[]; cadence?: { network: string; posts_per_week: number; best_days: string[]; best_time: string }[]; topics?: string[] };
+            return (<>
+              <p><strong>{ctx.strategy.title}</strong> · {t(`periods.${ctx.strategy.period}`)}</p>
+              {c.objectives?.length ? <details open><summary>{t("objectives")}</summary><ul>{c.objectives.map((o, i) => <li key={i}>{o}</li>)}</ul></details> : null}
+              {c.pillars?.length ? <details><summary>{t("pillars")}</summary><ul>{c.pillars.map((x, i) => <li key={i}>{x.name} ({x.share_percent}%)</li>)}</ul></details> : null}
+              {c.cadence?.length ? <details><summary>{t("cadence")}</summary><ul>{c.cadence.map((x, i) => <li key={i}>{x.network}: {x.posts_per_week}/{t("perWeek")} · {x.best_days.map((d) => t(`days.${d}`)).join(", ")} {x.best_time}</li>)}</ul></details> : null}
+              {c.topics?.length ? <details><summary>{t("topics")}</summary><ul>{c.topics.map((x, i) => <li key={i}>{x}</li>)}</ul></details> : null}
+            </>);
+          })() : <p>{t("noStrategy")}</p>}
+        </section>
+
+        <section className="card">
+          <h2>{t("research")}</h2>
+          {ctx.research.length ? <ul className="plain">{ctx.research.map((r) => (
+            <li key={r.id}><details><summary><strong>{r.kind}</strong> {r.title}</summary><p>{r.summary}</p>{r.sources.length > 0 && <ul>{r.sources.map((s, i) => <li key={i}><a href={s.url} target="_blank" rel="noopener noreferrer nofollow">{s.title || s.url}</a></li>)}</ul>}</details><DeleteResearchButton id={r.id} clientId={cid} /></li>
+          ))}</ul> : <p>{t("noResearch")}</p>}
+          <small>{t("researchHint")}</small>
         </section>
 
         <section className="card">

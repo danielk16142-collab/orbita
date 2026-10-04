@@ -230,8 +230,10 @@
     "open": "Abrir",
     "starters": {
       "onboard": "Empecemos: este es nuestro sitio web y nuestras cuentas sociales",
-      "plan": "Planifica las publicaciones de la próxima semana",
-      "ideas": "Dame ideas de contenido para este mes"
+      "plan": "Planifica las publicaciones de la próxima semana con la estrategia detrás",
+      "ideas": "Dame ideas de contenido para este mes",
+      "strategy": "Construye una estrategia de contenido para este trimestre",
+      "reel": "Escribe un guion de reel sobre nuestro producto estrella"
     },
     "placeholder": "Escribe un mensaje (Enter para enviar, Shift+Enter para nueva línea)",
     "send": "Enviar",
@@ -268,7 +270,9 @@
       "memory": "Recordar esto",
       "proof_item": "Estadística aprobada",
       "rule": "Regla permanente",
-      "plan": "Plan semanal"
+      "plan": "Plan semanal",
+      "strategy": "Estrategia de contenido",
+      "post": "Publicación en borrador"
     },
     "memoryKind": "Tipo",
     "memoryKinds": {
@@ -333,6 +337,48 @@
     "noMemories": "Nada todavía. Acepta sugerencias para enseñarme.",
     "archive": "Olvidar",
     "brief": "Perfil de marca",
-    "notKnown": "aún no se sabe"
+    "notKnown": "aún no se sabe",
+    "formats": {
+      "reel": "Reel",
+      "carousel": "Carrusel",
+      "static": "Publicación estática"
+    },
+    "acceptPost": "Guardar como borrador",
+    "acceptStrategy": "Adoptar esta estrategia",
+    "time": "Hora",
+    "pillar": "Pilar de contenido",
+    "hooks": "Opciones de gancho",
+    "hook": "Gancho",
+    "script": "Guion",
+    "visual": "Visual",
+    "voiceover": "Voz en off",
+    "onScreen": "Texto en pantalla",
+    "cta": "Llamada a la acción",
+    "slides": "Diapositivas",
+    "slide": "Diapositiva {n}",
+    "slideTitle": "Título",
+    "slideBody": "Texto",
+    "headline": "Titular en la imagen",
+    "visualBrief": "Indicaciones visuales para el diseñador",
+    "hashtags": "Hashtags",
+    "postHint": "Se guarda como borrador en el calendario, con el guion o las diapositivas adjuntas.",
+    "periods": {
+      "month": "Estrategia mensual",
+      "quarter": "Estrategia trimestral"
+    },
+    "objectives": "Objetivos",
+    "pillars": "Pilares de contenido",
+    "series": "Series recurrentes",
+    "cadence": "Frecuencia de publicación",
+    "topics": "Banco de temas (uno por línea)",
+    "rationale": "Por qué esta estrategia",
+    "perWeek": "semana",
+    "strategyNote": "Objetivo y mensaje clave de la semana",
+    "whyThis": "Por qué esta publicación, este día y esta hora",
+    "strategy": "Estrategia de contenido",
+    "noStrategy": "Aún no hay estrategia. Pídeme que construya una para el mes o el trimestre.",
+    "research": "Investigación",
+    "noResearch": "No hay investigación reciente. Pídeme que investigue qué funciona en este nicho antes de planificar.",
+    "researchHint": "Los hallazgos vienen de la web pública. Verifícalos antes de fiarte de ellos."
   }
 }

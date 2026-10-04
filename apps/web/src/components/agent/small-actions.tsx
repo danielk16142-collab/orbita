@@ -2,7 +2,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { addSourceAction, archiveMemoryAction, removeSourceAction } from "@/lib/agent-actions";
+import { addSourceAction, archiveMemoryAction, deleteResearchAction, removeSourceAction } from "@/lib/agent-actions";
 
 export function ArchiveMemoryButton({ id, clientId }: { id: string; clientId?: string }) {
   const t = useTranslations("agent"); const router = useRouter(); const [pending, start] = useTransition();
@@ -34,4 +34,9 @@ export function AddSourceForm({ clientId }: { clientId?: string }) {
       {error && <p className="error" role="alert">{t("sourceInvalid")}</p>}
     </form>
   );
+}
+
+export function DeleteResearchButton({ id, clientId }: { id: string; clientId?: string }) {
+  const t = useTranslations("agent"); const router = useRouter(); const [pending, start] = useTransition();
+  return <button type="button" className="btn ghost small" disabled={pending} onClick={() => start(async () => { await deleteResearchAction({ clientId, id }); router.refresh(); })}>{t("remove")}</button>;
 }

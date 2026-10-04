@@ -46,6 +46,11 @@ export function makePorts(actor: AgentActor, o: { conversationId: string | null;
       const { score, missing } = computeCompleteness(brief, { hasSources: (count ?? 0) > 0 });
       return { brief, score, missing };
     },
+    async saveResearch(n) {
+      const { data, error } = await sb.from("research_notes").insert({ client_id: clientId, kind: n.kind, title: n.title, summary: n.summary, sources: n.sources, created_by: userId }).select("id").single();
+      if (error || !data) throw new Error("Could not save the research note");
+      return { id: data.id };
+    },
     async createProposal(p) {
       const { data, error } = await sb.from("proposals").insert({
         client_id: clientId, conversation_id: o.conversationId, target: p.target, payload: p.payload, reason: p.reason ?? null,

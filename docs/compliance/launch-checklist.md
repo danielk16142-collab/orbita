@@ -26,3 +26,10 @@ Company name, address, privacy contact and person in charge of personal informat
 - [ ] Minimum scopes only, with a written justification per scope
 - [ ] Screencast showing each permission in use
 - [ ] Business verification complete
+
+## Agent and AI
+- [ ] Anthropic: confirm current terms for API data retention and model training; sign a DPA; record the region
+- [ ] Privacy Policy section on AI processing reviewed by a lawyer (what is sent, retention, no training)
+- [ ] Web research: confirm it is acceptable to send client brand context in search queries; keep AGENT_WEB_SEARCH=off if not
+- [ ] Per-client daily token cap set to a sensible value; Anthropic workspace spend limit set on the agency key
+- [ ] If offering client-owned keys: complete `docs/byok.md` (build, legal text, lawyer review)

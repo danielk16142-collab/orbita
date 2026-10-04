@@ -59,7 +59,7 @@ export function AgentChat({ locale, clientId, initialMessages, initialConversati
           let ev: Ev; try { ev = JSON.parse(part.slice(6)); } catch { continue; }
           if (ev.type === "meta" && ev.conversationId) conv.current = ev.conversationId;
           else if (ev.type === "text" && ev.text) setMessages((m) => { const c = [...m]; const last = c[c.length - 1]; c[c.length - 1] = { ...last, text: last.text + ev.text }; return c; });
-          else if (["proposal", "source", "audit"].includes(ev.type)) touched = true;
+          else if (["proposal", "source", "audit", "research"].includes(ev.type)) touched = true;
           else if (ev.type === "error") setError(t.has(`errors.${ev.code}`) ? t(`errors.${ev.code}`) : t("errors.generic"));
           else if (ev.type === "done") learnDue = !!ev.learnDue;
         }
@@ -73,7 +73,7 @@ export function AgentChat({ locale, clientId, initialMessages, initialConversati
     }
   }
 
-  const starters = [t("starters.onboard"), t("starters.plan"), t("starters.ideas")];
+  const starters = [t("starters.onboard"), t("starters.plan"), t("starters.strategy"), t("starters.reel"), t("starters.ideas")];
   return (
     <section className="card agent-chat" aria-label={t("title")}>
       <div className="agent-log" role="log" aria-live="polite" aria-busy={busy}>

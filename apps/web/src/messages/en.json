@@ -230,8 +230,10 @@
     "open": "Open",
     "starters": {
       "onboard": "Let's get started: here are our website and social accounts",
-      "plan": "Plan this coming week of posts",
-      "ideas": "Give me content ideas for this month"
+      "plan": "Plan this coming week of posts with the strategy behind it",
+      "ideas": "Give me content ideas for this month",
+      "strategy": "Build a content strategy for this quarter",
+      "reel": "Write a reel script about our best-selling product"
     },
     "placeholder": "Write a message (Enter to send, Shift+Enter for a new line)",
     "send": "Send",
@@ -268,7 +270,9 @@
       "memory": "Remember this",
       "proof_item": "Approved statistic",
       "rule": "Standing rule",
-      "plan": "Weekly plan"
+      "plan": "Weekly plan",
+      "strategy": "Content strategy",
+      "post": "Draft post"
     },
     "memoryKind": "Type",
     "memoryKinds": {
@@ -333,6 +337,48 @@
     "noMemories": "Nothing yet. Accept suggestions to teach me.",
     "archive": "Forget",
     "brief": "Brand profile",
-    "notKnown": "not known yet"
+    "notKnown": "not known yet",
+    "formats": {
+      "reel": "Reel",
+      "carousel": "Carousel",
+      "static": "Static post"
+    },
+    "acceptPost": "Save as draft",
+    "acceptStrategy": "Adopt this strategy",
+    "time": "Time",
+    "pillar": "Content pillar",
+    "hooks": "Hook options",
+    "hook": "Hook",
+    "script": "Script",
+    "visual": "Visual",
+    "voiceover": "Voiceover",
+    "onScreen": "On-screen text",
+    "cta": "Call to action",
+    "slides": "Slides",
+    "slide": "Slide {n}",
+    "slideTitle": "Title",
+    "slideBody": "Text",
+    "headline": "Headline on the image",
+    "visualBrief": "Visual brief for the designer",
+    "hashtags": "Hashtags",
+    "postHint": "Saved as a draft post in the calendar, with the script or slides attached.",
+    "periods": {
+      "month": "Monthly strategy",
+      "quarter": "Quarterly strategy"
+    },
+    "objectives": "Objectives",
+    "pillars": "Content pillars",
+    "series": "Recurring series",
+    "cadence": "Posting cadence",
+    "topics": "Topic bank (one per line)",
+    "rationale": "Why this strategy",
+    "perWeek": "week",
+    "strategyNote": "This week's objective and key message",
+    "whyThis": "Why this post, this day and time",
+    "strategy": "Content strategy",
+    "noStrategy": "No strategy yet. Ask me to build one for this month or quarter.",
+    "research": "Research",
+    "noResearch": "No recent research. Ask me to research what is working in this niche before planning.",
+    "researchHint": "Findings come from the public web. Check them before relying on them."
   }
 }

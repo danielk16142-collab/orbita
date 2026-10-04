@@ -231,6 +231,11 @@ Not yet verified: the authenticated flows end to end against a real Supabase pro
 Built: onboarding (website and social links first, audit, adaptive interview) and everyday partner chat in one place; weekly plans the user edits and accepts into draft posts; every learned item is a suggestion a person accepts, edits or rejects; accept/edit/reject recorded as learning signal; periodic "what's worth remembering" pass on a cheap model; completeness meter; per-client daily token cap; prompt-injection defenses (untrusted page content, registered-sites-only fetching, links only from what the person wrote, no query strings, images blocked); SSRF-safe fetcher with robots.txt and a connect-time DNS guard.
 Not verified here: live model behavior and the signed-in flows (need ANTHROPIC_API_KEY and a Supabase project). Social networks are not read directly (no scraping): the agent asks for numbers until the connectors phase.
 
+## 7.3 Agent as strategist (content formats, weekly strategy, research)
+Built: the agent writes **reel scripts** (3 hook options, scene table with timing/visual/voiceover/on-screen text, one CTA), **carousels** (slides) and **static posts** (headline, visual brief, caption) as structured draft posts the user edits and accepts; **weekly plans** with an objective, a posting day and time and a reason per post, tied to evidence; a **monthly/quarterly content strategy** (objectives, pillars with share, series, cadence per network, topic bank) that becomes the active strategy guiding later plans; **web research** (Anthropic web search) saved as research notes, shown to the model as untrusted and visible/deletable by users; continuity from the last accepted plan. Posting times are labelled assumptions until account analytics are connected (connectors phase).
+Not yet: scheduled background research (needs the job queue; today research runs on demand and when the agent finds notes older than 7 days), account analytics (connectors), a posts calendar with script/teleprompter view (Posts phase; the data is already stored on `posts.content`).
+Client-owned Claude keys (BYOK): designed in `docs/byok.md`; the single seam `resolveModelAccess()` is in place.
+
 ## 8. Open items
 - Style reference and Orbita visual identity.
 - First test client.
@@ -238,4 +243,5 @@ Not verified here: live model behavior and the signed-in flows (need ANTHROPIC_A
 - Competitor data provider choice.
 - Fill legal placeholders, lawyer review, then French and Spanish translations (see `docs/compliance/launch-checklist.md`).
 - Data residency region.
+- BYOK decisions (see `docs/byok.md`): who sets the key, default mode, plan policy.
 - Master key management choice (Supabase Vault vs cloud KMS).

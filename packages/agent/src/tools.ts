@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { assertSafeUrl, UnsafeUrlError } from "@orbita/security/ssrf";
-import { PAYLOADS, type ProposalTarget } from "./proposals";
-import { DAYS, LOCALES, MEMORY_KINDS, NETWORKS, SOURCE_KINDS, BRIEF_SECTIONS, type AuditReport, type Source, type SourceKind } from "./types";
+import { CarouselContent, PAYLOADS, PostInputBase, ReelContent, StaticContent, StrategyContent, type ProposalTarget } from "./proposals";
+import { DAYS, LOCALES, MEMORY_KINDS, NETWORKS, SOURCE_KINDS, BRIEF_SECTIONS, CONTENT_FORMATS, RESEARCH_KINDS, type AuditReport, type ResearchKind, type Source, type SourceKind } from "./types";
 import type { SiteSnapshot } from "./site";
 import { wrapUntrusted } from "./untrusted";
 
@@ -13,15 +13,18 @@ export interface ToolPorts {
   saveAudit(report: AuditReport, pages: { url: string; title: string }[]): Promise<{ id: string }>;
   getBrief(): Promise<{ brief: Record<string, unknown>; score: number; missing: string[] }>;
   createProposal(p: { target: ProposalTarget; payload: unknown; reason?: string }): Promise<{ id: string }>;
+  saveResearch(n: { kind: ResearchKind; title: string; summary: string; sources: { title: string; url: string }[] }): Promise<{ id: string }>;
   weekStart: string;
   /** Everything the PERSON typed in this conversation. When set, the agent may only register URLs the person actually wrote. */
   userTexts?: string[];
   resolver?: (host: string) => Promise<string[]>; // tests only
 }
-export type ToolState = { proposals: number; fetches: number; pages: { url: string; title: string }[] };
-export type ToolResult = { content: string; isError: boolean; event?: { type: "proposal"; id: string; target: ProposalTarget } | { type: "source" | "audit"; id: string } };
+export type ToolState = { proposals: number; drafts: number; fetches: number; research: number; pages: { url: string; title: string }[] };
+export type ToolResult = { content: string; isError: boolean; event?: { type: "proposal"; id: string; target: ProposalTarget } | { type: "source" | "audit" | "research"; id: string } };
 
-export const MAX_PROPOSALS_PER_TURN = 6;
+export const MAX_PROPOSALS_PER_TURN = 6; // learning suggestions
+export const MAX_DRAFTS_PER_TURN = 8; // plans, posts and strategies
+export const MAX_RESEARCH_PER_TURN = 6;
 export const MAX_FETCHES_PER_TURN = 6;
 
 const SOCIAL_HOSTS: Record<string, string[]> = {
@@ -51,10 +54,25 @@ export const TOOL_DEFS = [
   { name: "propose_rule", strict: true, description: "Suggest a standing rule for all future content (e.g. a restriction from the client). The user must accept it.",
     input_schema: { type: "object", properties: { rule: str, reason: str }, required: ["rule", "reason"], additionalProperties: false } },
   { name: "propose_week_plan", strict: true, description: "Propose a plan of posts for the current week (or the next). The user can edit it and accept it, which saves each item as a draft post in their calendar. Use only networks the client uses.",
-    input_schema: { type: "object", properties: { title: str, reason: str, items: { type: "array", items: { type: "object", properties: {
-      day: { type: "string", enum: [...DAYS] }, network: { type: "string", enum: [...NETWORKS] }, format: { ...str, description: "e.g. reel, carousel, story, post, short, article" }, pillar: { ...str, description: "content pillar, or empty string" },
+    input_schema: { type: "object", properties: { title: str, reason: str, strategy_note: { ...str, description: "The week's objective, key message, and why this mix of posts. Name the evidence (audit, research, past results) and any assumption." }, items: { type: "array", items: { type: "object", properties: {
+      day: { type: "string", enum: [...DAYS] }, network: { type: "string", enum: [...NETWORKS] }, format: { ...str, description: "reel, carousel, static, story, text post, article..." }, pillar: { ...str, description: "content pillar, or empty string" },
       idea: { ...str, description: "what the post is about and its hook" }, caption: { ...str, description: "draft caption or script outline, or empty string" }, language: { type: "string", enum: [...LOCALES] },
-    }, required: ["day", "network", "format", "pillar", "idea", "caption", "language"], additionalProperties: false } } }, required: ["title", "reason", "items"], additionalProperties: false } },
+      time: { ...str, description: "Suggested posting time as HH:MM (24h), or empty string" }, why: { ...str, description: "One line: why this post, this day and this time" },
+    }, required: ["day", "network", "format", "pillar", "idea", "caption", "language", "time", "why"], additionalProperties: false } } }, required: ["title", "reason", "strategy_note", "items"], additionalProperties: false } },
+  { name: "propose_reel", strict: true, description: "Write a finished reel/short-video script as a draft post for the user to review. Give 3 hook options (strongest first), a scene-by-scene table with timing, visuals, voiceover and on-screen text, and exactly one call to action. Natural spoken language, short sentences.",
+    input_schema: { type: "object", properties: { day: { type: "string", enum: [...DAYS] }, network: { type: "string", enum: [...NETWORKS] }, language: { type: "string", enum: [...LOCALES] }, pillar: { ...str, description: "content pillar, or empty string" }, idea: { ...str, description: "what it is about and the angle" }, caption: { ...str, description: "full caption, written natively in the language" }, hashtags: { ...strList, description: "hashtags without the # sign; empty list if none" }, suggested_time: { ...str, description: "HH:MM (24h) or empty string" }, reason: { ...str, description: "why this piece, why now" }, content: { type: "object", properties: { duration_seconds: { type: "integer" }, hook_options: strList, scenes: { type: "array", items: { type: "object", properties: { seconds: { ...str, description: "e.g. 0-3s" }, visual: str, voiceover: str, on_screen_text: str }, required: ["seconds", "visual", "voiceover", "on_screen_text"], additionalProperties: false } }, cta: str, audio_note: { ...str, description: "music or sound suggestion, or empty string" } }, required: ["duration_seconds", "hook_options", "scenes", "cta", "audio_note"], additionalProperties: false } }, required: ["day", "network", "language", "pillar", "idea", "caption", "hashtags", "suggested_time", "reason", "content"], additionalProperties: false } },
+  { name: "propose_carousel", strict: true, description: "Write a finished carousel as a draft post for the user to review: 6-10 slides, slide 1 is the hook, one idea per slide, last slide is the call to action.",
+    input_schema: { type: "object", properties: { day: { type: "string", enum: [...DAYS] }, network: { type: "string", enum: [...NETWORKS] }, language: { type: "string", enum: [...LOCALES] }, pillar: { ...str, description: "content pillar, or empty string" }, idea: { ...str, description: "what it is about and the angle" }, caption: { ...str, description: "full caption, written natively in the language" }, hashtags: { ...strList, description: "hashtags without the # sign; empty list if none" }, suggested_time: { ...str, description: "HH:MM (24h) or empty string" }, reason: { ...str, description: "why this piece, why now" }, content: { type: "object", properties: { slides: { type: "array", items: { type: "object", properties: { title: str, body: str, visual: { ...str, description: "what the slide looks like, or empty string" } }, required: ["title", "body", "visual"], additionalProperties: false } }, cta: str }, required: ["slides", "cta"], additionalProperties: false } }, required: ["day", "network", "language", "pillar", "idea", "caption", "hashtags", "suggested_time", "reason", "content"], additionalProperties: false } },
+  { name: "propose_static_post", strict: true, description: "Write a finished single-image (static) post as a draft for the user to review: a headline for the image, a visual brief for the designer, a caption and one call to action.",
+    input_schema: { type: "object", properties: { day: { type: "string", enum: [...DAYS] }, network: { type: "string", enum: [...NETWORKS] }, language: { type: "string", enum: [...LOCALES] }, pillar: { ...str, description: "content pillar, or empty string" }, idea: { ...str, description: "what it is about and the angle" }, caption: { ...str, description: "full caption, written natively in the language" }, hashtags: { ...strList, description: "hashtags without the # sign; empty list if none" }, suggested_time: { ...str, description: "HH:MM (24h) or empty string" }, reason: { ...str, description: "why this piece, why now" }, content: { type: "object", properties: { headline: str, visual_brief: str, cta: str }, required: ["headline", "visual_brief", "cta"], additionalProperties: false } }, required: ["day", "network", "language", "pillar", "idea", "caption", "hashtags", "suggested_time", "reason", "content"], additionalProperties: false } },
+  { name: "propose_strategy", strict: true, description: "Propose a monthly or quarterly content strategy for this client: objectives, content pillars with their share, recurring series, posting cadence per network (best days and times, with reasons), and a bank of topics. Base it on the audit, brand profile, learned preferences and research. The user must accept it; the active strategy then guides weekly plans.",
+    input_schema: { type: "object", properties: { title: str, period: { type: "string", enum: ["month", "quarter"] }, reason: str, content: { type: "object", properties: {
+      objectives: strList, pillars: { type: "array", items: { type: "object", properties: { name: str, angle: str, share_percent: { type: "integer" } }, required: ["name", "angle", "share_percent"], additionalProperties: false } },
+      series: { type: "array", items: { type: "object", properties: { name: str, subject: str, networks: { type: "array", items: { type: "string", enum: [...NETWORKS] } }, formats: { type: "array", items: { type: "string", enum: [...CONTENT_FORMATS] } } }, required: ["name", "subject", "networks", "formats"], additionalProperties: false } },
+      cadence: { type: "array", items: { type: "object", properties: { network: { type: "string", enum: [...NETWORKS] }, posts_per_week: { type: "integer" }, best_days: { type: "array", items: { type: "string", enum: [...DAYS] } }, best_time: { ...str, description: "HH:MM or empty string" }, why: str }, required: ["network", "posts_per_week", "best_days", "best_time", "why"], additionalProperties: false } },
+      topics: strList, rationale: str }, required: ["objectives", "pillars", "series", "cadence", "topics", "rationale"], additionalProperties: false } }, required: ["title", "period", "reason", "content"], additionalProperties: false } },
+  { name: "save_research", strict: true, description: "Save a useful finding from your web research (a trend, what competitors or similar accounts do, audience insight, or a content idea) so future plans can use it. Summarize in your own words, name the sources. Do not save anything you could not support.",
+    input_schema: { type: "object", properties: { kind: { type: "string", enum: [...RESEARCH_KINDS] }, title: str, summary: str, sources: { type: "array", items: { type: "object", properties: { title: str, url: str }, required: ["title", "url"], additionalProperties: false } } }, required: ["kind", "title", "summary", "sources"], additionalProperties: false } },
 ] as const;
 
 const Inputs = {
@@ -69,7 +87,15 @@ const Inputs = {
   propose_memory: PAYLOADS.memory.extend({ reason: z.string().max(1000) }),
   propose_proof_item: PAYLOADS.proof_item,
   propose_rule: PAYLOADS.rule.extend({ reason: z.string().max(1000) }),
-  propose_week_plan: z.object({ title: PAYLOADS.plan.shape.title, reason: z.string().max(1000), items: PAYLOADS.plan.shape.items }),
+  propose_week_plan: z.object({ title: PAYLOADS.plan.shape.title, reason: z.string().max(1000), strategy_note: PAYLOADS.plan.shape.strategy_note, items: PAYLOADS.plan.shape.items }),
+  propose_reel: z.object({ ...PostInputBase, week_start: z.string().optional(), reason: z.string().max(1000), content: ReelContent }),
+  propose_carousel: z.object({ ...PostInputBase, week_start: z.string().optional(), reason: z.string().max(1000), content: CarouselContent }),
+  propose_static_post: z.object({ ...PostInputBase, week_start: z.string().optional(), reason: z.string().max(1000), content: StaticContent }),
+  propose_strategy: z.object({ title: PAYLOADS.strategy.shape.title, period: PAYLOADS.strategy.shape.period, reason: z.string().max(1000), content: StrategyContent }),
+  save_research: z.object({
+    kind: z.enum(RESEARCH_KINDS), title: z.string().trim().min(1).max(200), summary: z.string().trim().min(1).max(2000),
+    sources: z.array(z.object({ title: z.string().trim().max(200), url: z.string().trim().max(500) })).max(5),
+  }),
 };
 
 const err = (m: string): ToolResult => ({ content: m, isError: true });
@@ -133,15 +159,32 @@ export async function runTool(name: string, input: unknown, ports: ToolPorts, st
         return ok({ saved: true, id: r.id }, { type: "audit", id: r.id });
       }
       case "get_brief": return ok(await ports.getBrief());
+      case "save_research": {
+        const n = a as unknown as z.infer<typeof Inputs.save_research>;
+        if (state.research >= MAX_RESEARCH_PER_TURN) return err("Research note limit for this reply reached.");
+        // Sources are references only (never fetched here): keep clean https links.
+        const sources = n.sources.filter((x) => { try { const u = new URL(x.url); return u.protocol === "https:" && !u.username && !u.password; } catch { return false; } });
+        const r = await ports.saveResearch({ kind: n.kind, title: n.title, summary: n.summary, sources });
+        state.research++;
+        return ok({ saved: true, id: r.id }, { type: "research", id: r.id });
+      }
       default: {
-        // propose_*: nothing is written to the brand profile. A person accepts or rejects it.
-        if (state.proposals >= MAX_PROPOSALS_PER_TURN) return err("Suggestion limit for this reply reached. Mention the rest in plain text.");
-        const target = ({ propose_brief_update: "brief", propose_memory: "memory", propose_proof_item: "proof_item", propose_rule: "rule", propose_week_plan: "plan" } as const)[name as never] as ProposalTarget;
+        // propose_*: nothing is written to the brand profile or calendar. A person accepts or rejects it.
+        const TARGETS = {
+          propose_brief_update: "brief", propose_memory: "memory", propose_proof_item: "proof_item", propose_rule: "rule",
+          propose_week_plan: "plan", propose_reel: "post", propose_carousel: "post", propose_static_post: "post", propose_strategy: "strategy",
+        } as const;
+        const target: ProposalTarget = TARGETS[name as keyof typeof TARGETS];
+        const isDraft = target === "plan" || target === "post" || target === "strategy";
+        if (isDraft ? state.drafts >= MAX_DRAFTS_PER_TURN : state.proposals >= MAX_PROPOSALS_PER_TURN) return err("Limit for this reply reached. Mention the rest in plain text and continue in your next reply.");
         const { reason, ...payload } = a as { reason?: string } & Record<string, unknown>;
-        const full = target === "plan" ? { ...payload, week_start: ports.weekStart } : payload;
+        // The week is set by the server, never by the model.
+        const format = ({ propose_reel: "reel", propose_carousel: "carousel", propose_static_post: "static" } as Record<string, string>)[name];
+        const full = target === "plan" ? { ...payload, week_start: ports.weekStart }
+          : target === "post" ? { ...payload, format, week_start: ports.weekStart } : payload;
         PAYLOADS[target].parse(full);
         const r = await ports.createProposal({ target, payload: full, reason: reason || undefined });
-        state.proposals++;
+        if (isDraft) state.drafts++; else state.proposals++;
         return ok({ suggested: true, id: r.id, note: "Shown to the user as a suggestion. It is not saved until they accept it." }, { type: "proposal", id: r.id, target });
       }
     }

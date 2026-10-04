@@ -14,7 +14,7 @@ export type AgentEvent =
   | { type: "text"; text: string }
   | { type: "tool"; name: string; ok: boolean }
   | { type: "proposal"; id: string; target: string }
-  | { type: "source" | "audit"; id: string }
+  | { type: "source" | "audit" | "research"; id: string }
   | { type: "error"; code: "refused" | "too_many_steps" | "truncated" };
 
 export type AgentResult = { text: string; usage: { input: number; output: number; cacheRead: number }; stopReason: string; steps: number };
@@ -32,13 +32,15 @@ export async function runAgent(o: {
   onEvent: (e: AgentEvent) => void; maxSteps?: number; maxTokens?: number; effort?: "low" | "medium" | "high";
   /** Restrict the model to these tools (used by the learning pass). */ toolNames?: string[];
   /** Omit effort, betas and fallbacks, for smaller models that do not accept them (e.g. Haiku). */ lean?: boolean;
+  /** Server-side tools (e.g. web search) added next to our own tools. Their results arrive inside the assistant turn. */ serverTools?: Record<string, unknown>[];
 }): Promise<AgentResult> {
   const messages = [...o.messages];
-  const state: ToolState = { proposals: 0, fetches: 0, pages: [] };
+  const state: ToolState = { proposals: 0, drafts: 0, fetches: 0, research: 0, pages: [] };
   const usage = { input: 0, output: 0, cacheRead: 0 };
   const texts: string[] = [];
   const maxSteps = o.maxSteps ?? 8;
-  const tools = o.toolNames ? TOOL_DEFS.filter((t) => o.toolNames!.includes(t.name)) : TOOL_DEFS;
+  const ownTools = o.toolNames ? TOOL_DEFS.filter((t) => o.toolNames!.includes(t.name)) : TOOL_DEFS;
+  const tools = [...ownTools, ...(o.serverTools ?? [])];
 
   for (let step = 1; step <= maxSteps; step++) {
     const stream = o.client.stream({
@@ -58,6 +60,8 @@ export async function runAgent(o: {
     const stop = msg.stop_reason ?? "end_turn";
     // A refusal can cut a tool call off mid-input: never run tools from that turn.
     if (stop === "refusal") { o.onEvent({ type: "error", code: "refused" }); return { text: texts.join("\n\n"), usage, stopReason: stop, steps: step }; }
+    // A long server-side tool turn (web search) can pause: send the assistant turn back unchanged to let it continue.
+    if (stop === "pause_turn") { messages.push({ role: "assistant", content: msg.content }); continue; }
     const calls = msg.content.filter((b) => b.type === "tool_use") as (AgentBlock & { id: string; name: string; input: unknown })[];
     if (stop === "max_tokens" && calls.length) { o.onEvent({ type: "error", code: "truncated" }); return { text: texts.join("\n\n"), usage, stopReason: stop, steps: step }; }
     if (stop !== "tool_use" || calls.length === 0) return { text: texts.join("\n\n"), usage, stopReason: stop, steps: step };

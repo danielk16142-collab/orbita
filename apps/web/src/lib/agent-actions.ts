@@ -55,7 +55,7 @@ export async function addSourceAction(input: unknown): Promise<ActionResult> {
   const g = await gate(p.data.clientId);
   if (!g.actor) return { ok: false, error: g.error };
   // Same validation as the agent's own add_source tool (SSRF checks for websites, domain checks for social links).
-  const r = await runTool("add_source", { kind: p.data.kind, url: p.data.url, handle: p.data.handle }, makePorts(g.actor, { conversationId: null, weekStart: "" }), { proposals: 0, fetches: 0, pages: [] });
+  const r = await runTool("add_source", { kind: p.data.kind, url: p.data.url, handle: p.data.handle }, makePorts(g.actor, { conversationId: null, weekStart: "" }), { proposals: 0, drafts: 0, fetches: 0, research: 0, pages: [] });
   if (r.isError) return { ok: false, error: "invalid" };
   await audit({ agencyId: g.actor.profile.agency_id, actor: g.actor.userId, action: "agent.source_added", entity: "client", entityId: g.actor.clientId, meta: { kind: p.data.kind } });
   return { ok: true };
@@ -69,5 +69,16 @@ export async function removeSourceAction(input: unknown): Promise<ActionResult> 
   const { data } = await g.actor.sb.from("client_sources").delete().eq("id", p.data.id).eq("client_id", g.actor.clientId).select("id");
   if (!data?.length) return { ok: false, error: "not_found" };
   await audit({ agencyId: g.actor.profile.agency_id, actor: g.actor.userId, action: "agent.source_removed", entity: "client", entityId: g.actor.clientId });
+  return { ok: true };
+}
+
+export async function deleteResearchAction(input: unknown): Promise<ActionResult> {
+  const p = z.object({ ...Base, id: Uuid }).safeParse(input);
+  if (!p.success) return { ok: false, error: "bad_request" };
+  const g = await gate(p.data.clientId);
+  if (!g.actor) return { ok: false, error: g.error };
+  const { data } = await g.actor.sb.from("research_notes").delete().eq("id", p.data.id).eq("client_id", g.actor.clientId).select("id");
+  if (!data?.length) return { ok: false, error: "not_found" };
+  await audit({ agencyId: g.actor.profile.agency_id, actor: g.actor.userId, action: "agent.research_deleted", entity: "research", entityId: p.data.id });
   return { ok: true };
 }

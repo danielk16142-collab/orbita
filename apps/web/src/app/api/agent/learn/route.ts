@@ -3,7 +3,7 @@ import { buildLearnPrompt, runAgent, wrapUntrusted } from "@orbita/agent";
 import { resolveAgentActor } from "@/lib/agent/access";
 import { loadClientContext } from "@/lib/agent/context";
 import { makePorts } from "@/lib/agent/ports";
-import { agentConfigured, createModelClient, learnModel } from "@/lib/agent/model";
+import { resolveModelAccess } from "@/lib/agent/model";
 import { overDailyCap, recordUsage } from "@/lib/agent/usage";
 import { json, sameOrigin } from "@/lib/agent/http";
 import { promptInput } from "@/lib/agent/context";
@@ -23,12 +23,13 @@ const LEARN_TOOLS = ["propose_memory", "propose_rule", "propose_brief_update", "
  */
 export async function POST(req: Request) {
   if (!sameOrigin(req)) return json({ error: "forbidden" }, 403);
-  if (!agentConfigured()) return json({ error: "not_configured" }, 503);
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return json({ error: "bad_request" }, 400);
   const access = await resolveAgentActor(parsed.data.clientId);
   if (!access.ok) return json({ error: access.status === 401 ? "unauthorized" : access.status === 403 ? "forbidden" : "not_found" }, access.status);
   const actor = access.actor;
+  const ai = await resolveModelAccess(actor);
+  if (!ai) return json({ error: "not_configured" }, 503);
   if (!(await limiter("agent-learn", 10, 60 * 60_000).hit(actor.userId)).allowed) return json({ error: "rate_limited" }, 429);
   if (await overDailyCap(actor)) return json({ error: "daily_cap" }, 429);
 
@@ -46,7 +47,7 @@ export async function POST(req: Request) {
   let proposals = 0;
   try {
     const result = await runAgent({
-      client: createModelClient(), model: learnModel(), lean: true, toolNames: LEARN_TOOLS, maxSteps: 3, maxTokens: 3000,
+      client: ai.client, model: ai.learnModel, lean: true, toolNames: LEARN_TOOLS, maxSteps: 3, maxTokens: 3000,
       system: buildLearnPrompt({ locale: parsed.data.locale, clientName: actor.client.name, brief: input.brief, memories: ctx.memories, rules: ctx.rules, proofItems: ctx.proofItems }),
       messages: [{ role: "user", content: wrapUntrusted("conversation", transcript, 30_000) }], ports,
       onEvent: (e) => { if (e.type === "proposal") proposals++; },

@@ -234,4 +234,31 @@ select pg_temp.expect('other agency sees no agent data',
   (select count(*) from proposals) + (select count(*) from brand_memories) + (select count(*) from client_sources) + (select count(*) from audits), 0);
 select pg_temp.reset();
 
+
+-- strategies, research notes, structured post content
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000005'); -- client A1 user
+insert into strategies(client_id,title,period,content) values ('c1000000-0000-0000-0000-000000000001','Q4','quarter','{"objectives":["grow"]}');
+select pg_temp.expect_error('only one active strategy per client',
+  $$insert into strategies(client_id,title,period,content) values ('c1000000-0000-0000-0000-000000000001','Q4b','quarter','{}')$$);
+update strategies set active=false;
+insert into strategies(client_id,title,period,content) values ('c1000000-0000-0000-0000-000000000001','Q4b','quarter','{}');
+select pg_temp.expect('a new strategy can replace the old one', (select count(*) from strategies where active), 1);
+select pg_temp.expect_error('cannot create a strategy for another client',
+  $$insert into strategies(client_id,title,period,content) values ('c2000000-0000-0000-0000-000000000002','x','month','{}')$$);
+insert into research_notes(client_id,kind,title,summary) values ('c1000000-0000-0000-0000-000000000001','trend','Short reels','Trend summary');
+select pg_temp.expect('client user sees its research', (select count(*) from research_notes), 1);
+select pg_temp.expect_error('bad research kind rejected', $$insert into research_notes(client_id,kind,title,summary) values ('c1000000-0000-0000-0000-000000000001','gossip','t','s')$$);
+insert into posts(client_id,network,language,type,status,content,suggested_time) values
+  ('c1000000-0000-0000-0000-000000000001','instagram','en','carousel','draft','{"slides":[{"title":"a"}]}','18:30');
+select pg_temp.expect('structured content stored on a draft post', (select count(*) from posts where suggested_time='18:30' and content is not null), 1);
+select pg_temp.expect_error('suggested time must be HH:MM',
+  $$insert into posts(client_id,network,language,suggested_time) values ('c1000000-0000-0000-0000-000000000001','instagram','en','6pm')$$);
+select pg_temp.reset();
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000004'); -- client A2 user
+select pg_temp.expect('other client sees no strategies or research', (select count(*) from strategies) + (select count(*) from research_notes), 0);
+select pg_temp.reset();
+select pg_temp.as_user('b0000000-0000-0000-0000-000000000001'); -- admin B
+select pg_temp.expect('other agency sees no strategies or research', (select count(*) from strategies) + (select count(*) from research_notes), 0);
+select pg_temp.reset();
+
 \echo ALL TENANT ISOLATION TESTS PASSED

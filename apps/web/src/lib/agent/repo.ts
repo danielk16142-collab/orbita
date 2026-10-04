@@ -33,6 +33,11 @@ export function supabaseProposalRepo(actor: AgentActor): ProposalRepo {
             ? await sb.from("brand_briefs").update({ [op.column]: op.value, version: ((row.version as number) ?? 1) + 1, completeness: score, updated_at: new Date().toISOString() }).eq("client_id", clientId)
             : await sb.from("brand_briefs").insert({ client_id: clientId, [op.column]: op.value, completeness: score });
           if (error) throw new Error("brief update failed");
+        } else if (op.op === "activate_strategy") {
+          // One active strategy per client: retire the current one, then add the new one (history is kept).
+          await sb.from("strategies").update({ active: false }).eq("client_id", clientId).eq("active", true);
+          const { error } = await sb.from("strategies").insert({ ...op.row, client_id: clientId, created_by: userId, active: true });
+          if (error) throw new Error("strategy insert failed");
         } else {
           const extra = op.table === "posts" ? { created_by: userId } : {};
           inserts.set(op.table, [...(inserts.get(op.table) ?? []), { ...op.row, ...extra, client_id: clientId }]);

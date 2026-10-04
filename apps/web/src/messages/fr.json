@@ -230,8 +230,10 @@
     "open": "Ouvrir",
     "starters": {
       "onboard": "Commençons : voici notre site web et nos comptes sociaux",
-      "plan": "Planifie les publications de la semaine prochaine",
-      "ideas": "Donne-moi des idées de contenu pour ce mois-ci"
+      "plan": "Planifie les publications de la semaine prochaine avec la stratégie derrière",
+      "ideas": "Donne-moi des idées de contenu pour ce mois-ci",
+      "strategy": "Bâtis une stratégie de contenu pour ce trimestre",
+      "reel": "Écris un script de reel sur notre produit vedette"
     },
     "placeholder": "Écrivez un message (Entrée pour envoyer, Maj+Entrée pour une nouvelle ligne)",
     "send": "Envoyer",
@@ -268,7 +270,9 @@
       "memory": "À retenir",
       "proof_item": "Statistique approuvée",
       "rule": "Règle permanente",
-      "plan": "Plan hebdomadaire"
+      "plan": "Plan hebdomadaire",
+      "strategy": "Stratégie de contenu",
+      "post": "Publication en brouillon"
     },
     "memoryKind": "Type",
     "memoryKinds": {
@@ -333,6 +337,48 @@
     "noMemories": "Rien pour l'instant. Acceptez des suggestions pour m'apprendre.",
     "archive": "Oublier",
     "brief": "Profil de marque",
-    "notKnown": "pas encore connu"
+    "notKnown": "pas encore connu",
+    "formats": {
+      "reel": "Reel",
+      "carousel": "Carrousel",
+      "static": "Publication statique"
+    },
+    "acceptPost": "Enregistrer comme brouillon",
+    "acceptStrategy": "Adopter cette stratégie",
+    "time": "Heure",
+    "pillar": "Pilier de contenu",
+    "hooks": "Options d'accroche",
+    "hook": "Accroche",
+    "script": "Script",
+    "visual": "Visuel",
+    "voiceover": "Voix hors champ",
+    "onScreen": "Texte à l'écran",
+    "cta": "Appel à l'action",
+    "slides": "Diapositives",
+    "slide": "Diapositive {n}",
+    "slideTitle": "Titre",
+    "slideBody": "Texte",
+    "headline": "Titre sur l'image",
+    "visualBrief": "Consigne visuelle pour le designer",
+    "hashtags": "Mots-clics",
+    "postHint": "Enregistrée comme brouillon dans le calendrier, avec le script ou les diapositives.",
+    "periods": {
+      "month": "Stratégie mensuelle",
+      "quarter": "Stratégie trimestrielle"
+    },
+    "objectives": "Objectifs",
+    "pillars": "Piliers de contenu",
+    "series": "Séries récurrentes",
+    "cadence": "Fréquence de publication",
+    "topics": "Banque de sujets (un par ligne)",
+    "rationale": "Pourquoi cette stratégie",
+    "perWeek": "semaine",
+    "strategyNote": "Objectif et message clé de la semaine",
+    "whyThis": "Pourquoi cette publication, ce jour et cette heure",
+    "strategy": "Stratégie de contenu",
+    "noStrategy": "Aucune stratégie pour l'instant. Demandez-moi d'en bâtir une pour le mois ou le trimestre.",
+    "research": "Recherche",
+    "noResearch": "Aucune recherche récente. Demandez-moi d'explorer ce qui fonctionne dans ce créneau avant de planifier.",
+    "researchHint": "Les constats viennent du web public. Vérifiez-les avant de vous y fier."
   }
 }
