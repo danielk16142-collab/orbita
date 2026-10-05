@@ -56,7 +56,8 @@
     "clients": "Clients",
     "settings": "Settings",
     "secure": "Protected session",
-    "privacy": "Privacy"
+    "privacy": "Privacy",
+    "menu": "Menu"
   },
   "legal": {
     "englishPrevails": "This document is currently available in English only. The English version prevails.",

@@ -56,7 +56,8 @@
     "clients": "Clients",
     "settings": "Paramètres",
     "secure": "Session protégée",
-    "privacy": "Confidentialité"
+    "privacy": "Confidentialité",
+    "menu": "Menu"
   },
   "legal": {
     "englishPrevails": "Ce document n'est actuellement offert qu'en anglais. La version anglaise prévaut.",
