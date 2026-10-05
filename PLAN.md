@@ -244,7 +244,8 @@ Not verified here: real OAuth and live API responses (need developer apps and pl
 Built: month/week/day calendar (agenda on phones) with client/network/status filters, unscheduled list and quick add; post detail with reel script table, carousel slides, static brief, caption and hashtags with copy; staff editor (validated structured content); approval flow (client approves a draft or sends an approved post back with a required comment; staff move posts through the workflow; editing an approved post resets it to draft, enforced in the database); comments; per-client timezone with scheduling instants computed in it; full-screen teleprompter (hook choice, speed, text size, mirror, countdown, keyboard controls, preferences kept in the browser); CSV export (formula-injection safe, rate-limited, audited). Publishing to networks is a later phase.
 
 ## 8. Open items
-- Style reference and Orbita visual identity.
+- Style reference and Orbita visual identity (logo integrated: sidebar, phone bar, sign-in, favicon, emails).
+- Client logos: the upload stays in Branding/Settings, but the portal sidebar now shows the Orbita logo + business name. Reuse the uploaded logo later (reports, emails, portal home header).
 - First test client.
 - Platform app review for Meta and TikTok (start early, it takes time).
 - Competitor data provider choice.
