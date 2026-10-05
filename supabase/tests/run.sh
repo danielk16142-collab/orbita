@@ -8,3 +8,4 @@ export PGDATABASE="$DB"
 psql -v ON_ERROR_STOP=1 -q -f stub_auth.sql
 for f in ../migrations/*.sql; do psql -v ON_ERROR_STOP=1 -q -f "$f"; done
 psql -v ON_ERROR_STOP=1 -f isolation.sql
+psql -v ON_ERROR_STOP=1 -f returning.sql
