@@ -404,7 +404,24 @@
     "noStrategy": "Aucune stratégie pour l'instant. Demandez-moi d'en bâtir une pour le mois ou le trimestre.",
     "research": "Recherche",
     "noResearch": "Aucune recherche récente. Demandez-moi d'explorer ce qui fonctionne dans ce créneau avant de planifier.",
-    "researchHint": "Les constats viennent du web public. Vérifiez-les avant de vous y fier."
+    "researchHint": "Les constats viennent du web public. Vérifiez-les avant de vous y fier.",
+    "welcome": {
+      "greeting": "Bonjour ! Avant de planifier quoi que ce soit, j'aimerais comprendre l'entreprise.",
+      "q1": "Que fait l'entreprise, et qui sont ses clients ?",
+      "q2": "Qu'aimeriez-vous le plus accomplir avec votre marketing dans les prochains mois ?",
+      "hint": "Choisissez les objectifs ci-dessous qui conviennent, et ajoutez des détails avec vos mots. Je vous proposerai des pistes, puis je vous demanderai le site web et les comptes sociaux.",
+      "goalsLabel": "Objectifs",
+      "goalsPrefix": "Mes objectifs",
+      "goals": {
+        "sales": "Plus de ventes ou de réservations",
+        "awareness": "Être mieux connu",
+        "followers": "Gagner des abonnés",
+        "offer": "Lancer une offre",
+        "trust": "Bâtir la confiance et les avis",
+        "educate": "Éduquer l'audience",
+        "consistency": "Publier régulièrement, gagner du temps"
+      }
+    }
   },
   "connections": {
     "title": "Comptes connectés",

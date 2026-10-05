@@ -64,7 +64,7 @@ export async function POST(req: Request) {
   const { count: userMsgs } = await actor.sb.from("messages").select("id", { count: "exact", head: true }).eq("conversation_id", conversationId).eq("role", "user");
 
   const serverTools = webSearchTools(ai.chatModel);
-  const input = promptInput(actor, ctx, body.locale, { webSearch: serverTools.length > 0 });
+  const input = promptInput(actor, ctx, body.locale, { webSearch: serverTools.length > 0, firstTurn: score < ONBOARDING_THRESHOLD && userMsgs === 1 });
   const userTexts = [...history.filter((m) => m.role === "user").map((m) => String(m.content)), body.message];
   const ports = makePorts(actor, { conversationId, weekStart: input.weekStart, userTexts });
   const convId = conversationId;

@@ -60,13 +60,13 @@ export function completenessOf(ctx: ClientContext) {
   return computeCompleteness(briefFromRow(ctx.briefRow), { hasSources: ctx.sources.length > 0 });
 }
 
-export function promptInput(actor: AgentActor, ctx: ClientContext, locale: "en" | "fr" | "es", opts: { webSearch?: boolean; now?: Date } = {}): PromptInput {
+export function promptInput(actor: AgentActor, ctx: ClientContext, locale: "en" | "fr" | "es", opts: { webSearch?: boolean; firstTurn?: boolean; now?: Date } = {}): PromptInput {
   const now = opts.now ?? new Date();
   return {
     locale, clientName: actor.client.name, clientLanguages: actor.client.languages, markets: actor.client.markets, timezone: actor.client.timezone,
     brief: briefFromRow(ctx.briefRow), memories: ctx.memories, sources: ctx.sources, proofItems: ctx.proofItems, rules: ctx.rules,
     recentExamples: ctx.examples, audit: ctx.audit, briefUpdatedAt: (ctx.briefRow?.updated_at as string | undefined) ?? null,
     today: now.toISOString().slice(0, 10), weekStart: planningWeekStart(now),
-    strategy: ctx.strategy, research: ctx.research, lastPlan: ctx.lastPlan, analytics: ctx.analytics, webSearch: !!opts.webSearch,
+    strategy: ctx.strategy, research: ctx.research, lastPlan: ctx.lastPlan, analytics: ctx.analytics, webSearch: !!opts.webSearch, firstTurn: !!opts.firstTurn,
   };
 }

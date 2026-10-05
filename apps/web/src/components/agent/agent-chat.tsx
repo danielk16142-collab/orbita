@@ -8,20 +8,23 @@ type Msg = { role: "user" | "assistant"; text: string };
 type Ev = { type: string; text?: string; conversationId?: string; code?: string; learnDue?: boolean };
 
 /** A normal chat. Streams the agent's reply and refreshes the page when it adds suggestions, sources or an audit. */
-export function AgentChat({ locale, clientId, initialMessages, initialConversationId }: {
-  locale: string; clientId?: string; initialMessages: Msg[]; initialConversationId: string | null;
+const GOALS = ["sales", "awareness", "followers", "offer", "trust", "educate", "consistency"] as const;
+
+export function AgentChat({ locale, clientId, initialMessages, initialConversationId, onboarding = false }: {
+  locale: string; clientId?: string; initialMessages: Msg[]; initialConversationId: string | null; onboarding?: boolean;
 }) {
   const t = useTranslations("agent");
   const router = useRouter();
   const [messages, setMessages] = useState<Msg[]>(initialMessages);
   const [input, setInput] = useState("");
+  const [goals, setGoals] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const conv = useRef<string | null>(initialConversationId);
   const end = useRef<HTMLDivElement>(null);
   const [, startRefresh] = useTransition();
-  useEffect(() => { end.current?.scrollIntoView({ behavior: "smooth", block: "end" }); }, [messages]);
+  useEffect(() => { if (messages.length) end.current?.scrollIntoView({ behavior: "smooth", block: "end" }); }, [messages]);
 
   const refresh = () => startRefresh(() => router.refresh());
 
@@ -73,11 +76,31 @@ export function AgentChat({ locale, clientId, initialMessages, initialConversati
     }
   }
 
-  const starters = [t("starters.onboard"), t("starters.plan"), t("starters.strategy"), t("starters.reel"), t("starters.ideas")];
+  const welcome = messages.length === 0 && onboarding;
+  const toggleGoal = (g: string) => setGoals((cur) => (cur.includes(g) ? cur.filter((x) => x !== g) : [...cur, g]));
+  /** Chips picked in the welcome are sent together with whatever was typed, as one message. */
+  function submit() {
+    const picked = welcome ? goals.map((g) => t(`welcome.goals.${g}`)) : [];
+    const text = [picked.length ? `${t("welcome.goalsPrefix")}: ${picked.join(", ")}.` : "", input.trim()].filter(Boolean).join("\n");
+    if (picked.length) setGoals([]);
+    void send(text);
+  }
+  const starters = [t("starters.plan"), t("starters.strategy"), t("starters.reel"), t("starters.ideas")];
   return (
     <section className="card agent-chat" aria-label={t("title")}>
       <div className="agent-log" role="log" aria-live="polite" aria-busy={busy}>
-        {messages.length === 0 && (
+        {welcome && (
+          <div className="agent-msg assistant">
+            <span className="eyebrow">{t("assistant")}</span>
+            <p>{t("welcome.greeting")}</p>
+            <ol><li>{t("welcome.q1")}</li><li>{t("welcome.q2")}</li></ol>
+            <p className="stat-vs">{t("welcome.hint")}</p>
+            <div className="agent-goals" role="group" aria-label={t("welcome.goalsLabel")}>
+              {GOALS.map((g) => <button key={g} type="button" className="btn ghost small" aria-pressed={goals.includes(g)} onClick={() => toggleGoal(g)} disabled={busy}>{t(`welcome.goals.${g}`)}</button>)}
+            </div>
+          </div>
+        )}
+        {messages.length === 0 && !welcome && (
           <div>
             <p>{t("intro")}</p>
             <div className="agent-starters">{starters.map((s) => <button key={s} type="button" className="btn ghost" onClick={() => send(s)} disabled={busy}>{s}</button>)}</div>
@@ -93,13 +116,13 @@ export function AgentChat({ locale, clientId, initialMessages, initialConversati
       </div>
       {error && <p className="error" role="alert">{error}</p>}
       {note && <p role="status">{note}</p>}
-      <form onSubmit={(e) => { e.preventDefault(); void send(input); }} className="agent-form">
+      <form onSubmit={(e) => { e.preventDefault(); submit(); }} className="agent-form">
         <label htmlFor="agent-input" className="sr-only">{t("placeholder")}</label>
         <textarea id="agent-input" value={input} rows={2} maxLength={8000} placeholder={t("placeholder")} disabled={busy}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); void send(input); } }} />
+          onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); submit(); } }} />
         <div className="agent-actions">
-          <button type="submit" className="btn" disabled={busy || !input.trim()}>{t("send")}</button>
+          <button type="submit" className="btn" disabled={busy || (!input.trim() && !(welcome && goals.length))}>{t("send")}</button>
           <button type="button" className="btn ghost" disabled={busy || !conv.current} onClick={() => void learn(false)}>{t("learnNow")}</button>
         </div>
       </form>

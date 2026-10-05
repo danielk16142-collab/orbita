@@ -211,3 +211,8 @@ details { margin: .25rem 0; } summary { cursor: pointer; }
 .tp-line { margin: 0 0 1.1em; } .tp-hook { color: var(--brand); } .tp-cta { color: #ffd34e; }
 .tp-cue { display: block; font-family: var(--font-mono); font-weight: 400; font-size: .35em; color: #888; letter-spacing: .05em; }
 .tp-count { position: fixed; inset: 0; display: grid; place-items: center; font-size: 30vmin; font-weight: 800; color: var(--brand); background: rgba(0,0,0,.6); pointer-events: none; z-index: 2; }
+
+/* Agent welcome */
+.agent-goals { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .6rem; }
+.agent-goals .btn[aria-pressed="true"] { background: var(--brand); color: var(--brand-ink); }
+.agent-msg ol { margin: .25rem 0; padding-left: 1.25rem; }

@@ -28,6 +28,7 @@ export type PromptInput = {
   lastPlan?: string | null;            // short summary of the last accepted weekly plan
   webSearch?: boolean;                 // whether the web_search tool is available this request
   analytics?: string | null;           // text summary of connected-account analytics (see analytics.ts)
+  firstTurn?: boolean;                 // onboarding, and the person's first message answers the welcome (business and goals)
 };
 
 const LANG_NAME: Record<Locale, string> = { en: "English", fr: "French", es: "Spanish" };
@@ -42,10 +43,12 @@ export function buildSystemPrompt(i: PromptInput): string {
 
   const mode = onboarding ? `## Mode: getting to know the business (profile ${score}% complete)
 Work through this order, and skip anything already known:
-1. If there is no website or social account on file, ask for them FIRST (website, Instagram, TikTok, and LinkedIn/YouTube/Facebook if used). Save each with add_source as soon as it is given.
-2. ${hasWebsite ? "A website is on file: read it with fetch_website (homepage first, then the pages that matter: services/menu/products, about, contact, pricing). Then call save_audit with an honest audit." : "Once a website is known, read it with fetch_website, then call save_audit."} Say plainly what you could and could not see. You cannot browse Instagram or TikTok: for social accounts ask for what you need (follower count, how often they post, their best and worst posts, what they have tried).
-3. Then interview. Ask at most 3 questions at a time, about the biggest gaps: ${missing.slice(0, 4).join(", ") || "none"}. Keep questions concrete and easy to answer, and say why you are asking when it is not obvious.
-4. Whenever you learn something, record it with the propose_* tools. Do not wait until the end.` : `## Mode: everyday marketing partner (profile ${score}% complete)
+1. The business and its goals come FIRST. If the profile does not say what the business does, who it serves, and what they want to achieve, ask for exactly that before anything else (one short message, two or three questions). Do not start with links or technical questions.${i.firstTurn ? `
+   The chat opened with a welcome that already asked about the business and the goals, so the person's first message is their answer (it may include goals they picked from a list). Reply in this shape: (a) reflect what you understood in one or two lines; (b) give 2-3 concrete suggestions tailored to it, clearly labelled as suggestions (which goal to prioritize, content angles worth testing, a quick win for this week), using no statistics you were not given; (c) record what you learned with propose_brief_update; (d) then ask for the website and social accounts.` : ""}
+2. Then, if there is no website or social account on file, ask for them (website, Instagram, TikTok, and LinkedIn/YouTube/Facebook if used). Save each with add_source as soon as it is given.
+3. ${hasWebsite ? "A website is on file: read it with fetch_website (homepage first, then the pages that matter: services/menu/products, about, contact, pricing). Then call save_audit with an honest audit." : "Once a website is known, read it with fetch_website, then call save_audit."} Say plainly what you could and could not see. You cannot browse Instagram or TikTok: for social accounts ask for what you need (follower count, how often they post, their best and worst posts, what they have tried).
+4. Then interview. Ask at most 3 questions at a time, about the biggest gaps: ${missing.slice(0, 4).join(", ") || "none"}. Keep questions concrete and easy to answer, and say why you are asking when it is not obvious.
+5. Whenever you learn something, record it with the propose_* tools. Do not wait until the end.` : `## Mode: everyday marketing partner (profile ${score}% complete)
 You know this business. Be a proactive, practical partner: brainstorm ideas, shape campaigns, draft captions and scripts, and build weekly plans with propose_week_plan. Ask a clarifying question only when the answer would change the result. ${missing.length ? `Gaps you may fill in naturally when relevant: ${missing.slice(0, 3).join(", ")}.` : ""}${stale ? " The profile has not been updated for over 60 days: offer a quick refresh (new offers, goals, results) at a natural moment." : ""}`;
 
   return `You are Orbita's marketing partner for "${i.clientName}". Today is ${i.today}. Weekly plans you propose are for the week starting Monday ${i.weekStart}.

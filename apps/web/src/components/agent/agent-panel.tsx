@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { BRIEF_SECTIONS, briefFromRow } from "@orbita/agent";
+import { BRIEF_SECTIONS, briefFromRow, ONBOARDING_THRESHOLD } from "@orbita/agent";
 import { resolveAgentActor } from "@/lib/agent/access";
 import { completenessOf, loadClientContext } from "@/lib/agent/context";
 import { AgentChat } from "./agent-chat";
@@ -28,7 +28,7 @@ export async function AgentPanel({ locale, clientId }: { locale: "en" | "fr" | "
 
   return (
     <div className="agent-grid">
-      <AgentChat locale={locale} clientId={cid} initialMessages={initial} initialConversationId={conv?.id ?? null} />
+      <AgentChat locale={locale} clientId={cid} initialMessages={initial} initialConversationId={conv?.id ?? null} onboarding={score < ONBOARDING_THRESHOLD} />
       <aside className="agent-side">
         <section className="card">
           <p className="eyebrow">{t("completeness")}</p>

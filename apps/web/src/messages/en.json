@@ -404,7 +404,24 @@
     "noStrategy": "No strategy yet. Ask me to build one for this month or quarter.",
     "research": "Research",
     "noResearch": "No recent research. Ask me to research what is working in this niche before planning.",
-    "researchHint": "Findings come from the public web. Check them before relying on them."
+    "researchHint": "Findings come from the public web. Check them before relying on them.",
+    "welcome": {
+      "greeting": "Hi! Before we plan anything, I'd like to understand the business.",
+      "q1": "What does the business do, and who are its customers?",
+      "q2": "What do you most want to achieve with your marketing over the next few months?",
+      "hint": "Pick any goals below that fit, and add details in your own words. I'll suggest next steps and ask for the website and social accounts afterwards.",
+      "goalsLabel": "Goals",
+      "goalsPrefix": "My goals",
+      "goals": {
+        "sales": "More sales or bookings",
+        "awareness": "Be better known",
+        "followers": "Grow followers",
+        "offer": "Launch an offer",
+        "trust": "Build trust and reviews",
+        "educate": "Educate the audience",
+        "consistency": "Post consistently, save time"
+      }
+    }
   },
   "connections": {
     "title": "Connected accounts",

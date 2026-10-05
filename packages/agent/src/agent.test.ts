@@ -64,10 +64,18 @@ describe("system prompt", () => {
   it("starts by asking for website and socials when none are known (onboarding)", () => {
     const p = buildSystemPrompt(base);
     expect(p).toContain("getting to know the business");
-    expect(p).toMatch(/ask for them FIRST/);
+    expect(p).toMatch(/business and its goals come FIRST/);
+    expect(p).toMatch(/if there is no website or social account on file, ask for them/i);
+    expect(p).not.toContain("welcome that already asked");
     expect(p).toContain("Reply in French");
     expect(p).toContain("Founded in 1998");
     expect(p).toContain("No emojis on LinkedIn");
+  });
+  it("on the first turn it treats the message as the answer to the welcome and offers suggestions", () => {
+    const p = buildSystemPrompt({ ...base, firstTurn: true });
+    expect(p).toContain("welcome that already asked about the business and the goals");
+    expect(p).toContain("2-3 concrete suggestions");
+    expect(p.indexOf("business and its goals come FIRST")).toBeLessThan(p.indexOf("ask for them (website"));
   });
   it("becomes an everyday partner once the profile is complete, and injects learned memories", () => {
     const full = { business: "x".repeat(30), goals: "x".repeat(30), offers: "x".repeat(30), voice: "x".repeat(30), restrictions: "x".repeat(30), competitors: "x".repeat(30), channels: "x".repeat(30), personas: ["a"], objections: ["b"], pillars: ["c"] };
