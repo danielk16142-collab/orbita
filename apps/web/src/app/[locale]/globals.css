@@ -241,3 +241,14 @@ details { margin: .25rem 0; } summary { cursor: pointer; }
 .brand-logo { display: block; width: 100%; max-width: 200px; height: auto; }
 .auth-logo { display: block; width: min(260px, 70%); height: auto; margin-bottom: 1.25rem; }
 @media (max-width: 820px) { .logo.brand { padding: .15rem .25rem; } .brand-logo { width: 150px; } }
+
+/* Portal header: Orbita logo, then the business name */
+.portal-head { display: grid; gap: .6rem; }
+.portal-client { display: grid; gap: .1rem; min-width: 0; padding: 0 .25rem; }
+.portal-name { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; letter-spacing: -.02em; line-height: 1.15; overflow-wrap: anywhere; }
+.portal-client small { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .2em; color: var(--mist); text-transform: uppercase; }
+@media (max-width: 820px) {
+  .portal-head { gap: .15rem; min-width: 0; }
+  .portal-name { font-size: .95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 62vw; }
+  .portal-client small { display: none; }
+}

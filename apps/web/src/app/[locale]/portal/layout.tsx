@@ -4,24 +4,21 @@ import { Sidebar } from "@/components/sidebar";
 import { requireClientUser } from "@/lib/session";
 import { themeVars } from "@/lib/theme";
 
-/** Client portal: same shell, themed with the client's own logo and colors. */
+/** Client portal: same shell and Orbita logo, with the business name and the client's own colors. */
 export default async function PortalLayout({ children, params }: { children: React.ReactNode; params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations("portal");
   const tn = await getTranslations("nav");
   const { sb, profile } = await requireClientUser(locale);
-  const { data: client } = await sb.from("clients").select("name, primary_color, accent_color, logo_dark_path").eq("id", profile.client_id).single();
-  // The sidebar is dark, so it uses the logo variant made for dark backgrounds.
-  const logo = client?.logo_dark_path ? (await sb.storage.from("client-logos").createSignedUrl(client.logo_dark_path, 3600)).data?.signedUrl : null;
+  const { data: client } = await sb.from("clients").select("name, primary_color, accent_color").eq("id", profile.client_id).single();
   const vars = themeVars({ primary: client?.primary_color, accent: client?.accent_color }) as React.CSSProperties;
   return (
     <div className="shell" style={vars}>
       <Sidebar menuLabel={tn("menu")}
-        logo={<div className="logo">
-          {logo
-            // eslint-disable-next-line @next/next/no-img-element
-            ? <img src={logo} alt={client?.name ?? ""} style={{ maxWidth: 180, maxHeight: 48 }} />
-            : <><div className="logo-mark" aria-hidden>{(client?.name ?? "O").slice(0, 1).toUpperCase()}</div><div><div className="logo-name">{client?.name}</div><div className="logo-sub">{t("tagline")}</div></div></>}
+        logo={<div className="logo brand portal-head">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="brand-logo" src="/brand/orbita-logo-light.svg" alt="Orbita" width={716} height={203} />
+          <div className="portal-client"><span className="portal-name">{client?.name}</span><small>{t("tagline")}</small></div>
         </div>}>
         <Nav locale={locale} items={[
           { href: "portal", label: t("home") },
