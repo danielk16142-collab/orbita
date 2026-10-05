@@ -10,7 +10,10 @@ export default async function Preview({ params }: { params: Promise<{ locale: st
   return (
     <div className="shell">
       <Sidebar menuLabel="Menu"
-        logo={<div className="logo"><div className="logo-mark" aria-hidden>O</div><div><div className="logo-name">Orbita</div><div className="logo-sub">Marketing OS</div></div></div>}
+        logo={<div className="logo brand">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="brand-logo" src="/brand/orbita-logo-light.svg" alt="Orbita" width={716} height={203} />
+        </div>}
         foot={<div className="sidebar-foot">Protected session</div>}>
         <Nav locale={locale} items={[{ href: "dashboard", label: "Home" }, { href: "posts", label: "Posts" }, { href: "agent", label: "Agent" }, { href: "clients", label: "Clients" }, { href: "settings", label: "Settings" }]} />
       </Sidebar>

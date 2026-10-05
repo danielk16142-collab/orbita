@@ -235,3 +235,9 @@ details { margin: .25rem 0; } summary { cursor: pointer; }
 .agent-goals { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .6rem; }
 .agent-goals .btn[aria-pressed="true"] { background: var(--brand); color: var(--brand-ink); }
 .agent-msg ol { margin: .25rem 0; padding-left: 1.25rem; }
+
+/* Orbita logo */
+.logo.brand { padding: .25rem .25rem 1.25rem; }
+.brand-logo { display: block; width: 100%; max-width: 200px; height: auto; }
+.auth-logo { display: block; width: min(260px, 70%); height: auto; margin-bottom: 1.25rem; }
+@media (max-width: 820px) { .logo.brand { padding: .15rem .25rem; } .brand-logo { width: 150px; } }

@@ -12,7 +12,8 @@ export default async function LoginPage({ params, searchParams }: { params: Prom
   const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
     <main className="auth-wrap">
-      <p className="eyebrow">Orbita</p>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img className="auth-logo" src="/brand/orbita-logo.svg" alt="Orbita" width={716} height={203} />
       <h1>{t("title")}</h1>
       {welcome && <p role="status" className="card" style={{ marginBottom: "1rem" }}>{ti("done")}</p>}
       <form action={loginAction} className="card">
