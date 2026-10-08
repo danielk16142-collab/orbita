@@ -5,7 +5,7 @@ import { loadClientContext } from "@/lib/agent/context";
 import { makePorts } from "@/lib/agent/ports";
 import { resolveModelAccess } from "@/lib/agent/model";
 import { overDailyCap, recordUsage } from "@/lib/agent/usage";
-import { json, sameOrigin } from "@/lib/agent/http";
+import { describeModelError, json, sameOrigin } from "@/lib/agent/http";
 import { promptInput } from "@/lib/agent/context";
 import { limiter } from "@/lib/rate-limit";
 import { audit } from "@/lib/audit";
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
     });
     await recordUsage(actor, result.usage.input + result.usage.output);
   } catch (e) {
-    console.error("agent learn failed:", e instanceof Error ? e.name : "unknown");
+    console.error("agent learn failed:", describeModelError(e));
     return json({ error: "model_error" }, 502);
   }
   await audit({ agencyId: actor.profile.agency_id, actor: actor.userId, action: "agent.learn", entity: "client", entityId: actor.clientId, meta: { proposals } });

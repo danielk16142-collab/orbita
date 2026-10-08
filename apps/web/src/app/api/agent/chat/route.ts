@@ -5,7 +5,7 @@ import { completenessOf, loadClientContext, promptInput } from "@/lib/agent/cont
 import { makePorts } from "@/lib/agent/ports";
 import { resolveModelAccess, webSearchTools } from "@/lib/agent/model";
 import { overDailyCap, recordUsage } from "@/lib/agent/usage";
-import { json, sameOrigin } from "@/lib/agent/http";
+import { describeModelError, json, sameOrigin } from "@/lib/agent/http";
 import { limiter } from "@/lib/rate-limit";
 import { audit } from "@/lib/audit";
 
@@ -86,7 +86,7 @@ export async function POST(req: Request) {
         await audit({ agencyId: actor.profile.agency_id, actor: actor.userId, action: "agent.chat", entity: "client", entityId: actor.clientId, meta: { steps: result.steps, tokens: result.usage.input + result.usage.output, stop: result.stopReason } });
         send({ type: "done", learnDue: (userMsgs ?? 0) > 0 && (userMsgs ?? 0) % LEARN_EVERY === 0 });
       } catch (e) {
-        console.error("agent chat failed:", e instanceof Error ? e.name : "unknown");
+        console.error("agent chat failed:", describeModelError(e), `model=${ai.chatModel}`);
         send({ type: "error", code: "model_error" }); // never leak provider details to the browser
       } finally {
         open = false;
