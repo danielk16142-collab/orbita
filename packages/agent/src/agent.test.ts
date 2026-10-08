@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  buildSystemPrompt, buildLearnPrompt, computeCompleteness, dayToDate, findUnapprovedStats, proposalToOps, runAgent, runTool, selectMemories, wrapUntrusted,
+  buildSystemPrompt, buildLearnPrompt, STRICT_TOOL_NAMES, MAX_STRICT_TOOLS, computeCompleteness, dayToDate, findUnapprovedStats, proposalToOps, runAgent, runTool, selectMemories, wrapUntrusted,
   briefFromRow, briefValueForColumn, ONBOARDING_THRESHOLD, MAX_PROPOSALS_PER_TURN, MAX_FETCHES_PER_TURN, MAX_DRAFTS_PER_TURN,
   type AgentMessage, type AgentModelClient, type PromptInput, type ToolPorts, type ToolState,
 } from "./index";
@@ -93,6 +93,16 @@ describe("system prompt", () => {
 });
 
 describe("tools: scoping and safety", () => {
+  it("validates the large non-strict tool inputs itself: malformed content is rejected and nothing is proposed", async () => {
+    const { p } = ports(); const st = fresh();
+    const bad = { network: "instagram", language: "en", idea: "x", reason: "r", content: { hook_options: [], scenes: [], cta: "", duration_seconds: 1 } };
+    expect((await runTool("propose_reel", bad, p, st)).isError).toBe(true);
+    expect((await runTool("propose_carousel", { ...bad, content: { slides: [{ title: "a" }], cta: "" } }, p, st)).isError).toBe(true);
+    expect((await runTool("propose_static_post", { ...bad, content: { headline: "" } }, p, st)).isError).toBe(true);
+    expect((await runTool("propose_week_plan", { title: "t", reason: "r", strategy_note: "n", items: "not a list" }, p, st)).isError).toBe(true);
+    expect((await runTool("propose_strategy", { title: "t", period: "month", reason: "r", content: {} }, p, st)).isError).toBe(true);
+    expect(st.proposals).toBe(0);
+  });
   it("rejects invalid input and unknown tools", async () => {
     const { p } = ports();
     expect((await runTool("nope", {}, p, fresh())).isError).toBe(true);
@@ -241,7 +251,10 @@ describe("agent loop", () => {
     expect(seen[0]).toMatchObject({ model: "claude-opus-5-5", fallbacks: "default", betas: ["server-side-fallback-2026-07-01"], output_config: { effort: "medium" } });
     expect((seen[0].system as { cache_control: unknown }[])[0].cache_control).toEqual({ type: "ephemeral" });
     expect(seen[0]).not.toHaveProperty("tool_choice");
-    expect((seen[0].tools as { strict: boolean }[]).every((t) => t.strict)).toBe(true);
+    const sent = seen[0].tools as { name: string; strict?: boolean }[];
+    expect(sent.filter((t) => t.strict).map((t) => t.name).sort()).toEqual([...STRICT_TOOL_NAMES].sort());
+    for (const big of ["propose_week_plan", "propose_reel", "propose_carousel", "propose_static_post", "propose_strategy"]) expect(sent.find((t) => t.name === big)?.strict).toBeFalsy();
+    expect(STRICT_TOOL_NAMES.length).toBeLessThanOrEqual(MAX_STRICT_TOOLS);
   });
   it("lean mode sends no effort/betas/fallbacks (for Haiku)", async () => {
     const { p } = ports(); const seen: Record<string, unknown>[] = [];
