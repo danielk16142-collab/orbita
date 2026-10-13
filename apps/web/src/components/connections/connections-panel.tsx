@@ -7,7 +7,7 @@ import { AccountActions } from "./account-actions";
 const SCOPE_KEYS: Record<string, string[]> = { instagram: ["profile", "media", "insights"], tiktok: ["profile", "stats", "videos"] };
 
 /** Connected accounts and the Connect buttons. Read-only access: we never post, message or change anything on a connected account. */
-export async function ConnectionsPanel({ locale, clientId, flash }: { locale: string; clientId?: string; flash?: { connected?: string; connect?: string; error?: string } }) {
+export async function ConnectionsPanel({ locale, clientId, flash }: { locale: string; clientId?: string; flash?: { connected?: string; connect?: string; error?: string; step?: string } }) {
   const t = await getTranslations("connections");
   const access = await resolveAgentActor(clientId);
   if (!access.ok) notFound();
@@ -21,7 +21,7 @@ export async function ConnectionsPanel({ locale, clientId, flash }: { locale: st
       <h2>{t("title")}</h2>
       <p>{t("intro")}</p>
       <p className="card" role="note">{t("readOnly")}</p>
-      {flashKey && t.has(`flash.${flashKey}`) && <p role="status" className={flashKey === "connected" ? "card" : "error"}>{t(`flash.${flashKey}`)}</p>}
+      {flashKey && t.has(`flash.${flashKey}`) && <p role="status" className={flashKey === "connected" ? "card" : "error"}>{t(`flash.${flashKey}`)}{flashKey === "failed" && flash?.step && t.has(`flash.steps.${flash.step}`) && <> {t(`flash.steps.${flash.step}`)}</>}</p>}
       <div className="grid">
         {CONNECTOR_NETWORKS.map((n) => {
           const mine = (accounts ?? []).filter((a) => a.network === n);

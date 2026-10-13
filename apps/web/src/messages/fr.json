@@ -554,7 +554,13 @@
       "failed": "Impossible de connecter le compte. Réessayez.",
       "not_configured": "Ce réseau n'est pas encore disponible.",
       "rate": "Trop de tentatives. Réessayez plus tard.",
-      "invalid": "Le lien de connexion a expiré. Recommencez."
+      "invalid": "Le lien de connexion a expiré. Recommencez.",
+      "steps": {
+        "token": "(Étape : connexion au réseau. Vérifiez l’ID et le secret de l’app dans Vercel.)",
+        "account": "(Étape : lecture du compte. Il doit s’agir d’un compte professionnel ou créateur.)",
+        "key": "(Étape : chiffrement des jetons. ORBITA_MASTER_KEY dans Vercel doit faire 32 octets, en base64.)",
+        "save": "(Étape : enregistrement du compte. Une migration ou la clé de service Supabase manque peut‑être.)"
+      }
     },
     "errors": {
       "reconnect": "La connexion a expiré. Veuillez vous reconnecter.",

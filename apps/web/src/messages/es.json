@@ -554,7 +554,13 @@
       "failed": "No pudimos conectar la cuenta. Inténtalo de nuevo.",
       "not_configured": "Esta red aún no está disponible.",
       "rate": "Demasiados intentos. Inténtalo más tarde.",
-      "invalid": "El enlace de conexión venció. Empieza de nuevo."
+      "invalid": "El enlace de conexión venció. Empieza de nuevo.",
+      "steps": {
+        "token": "(Paso: inicio de sesión con la red. Revisa el ID y el secreto de la app en Vercel.)",
+        "account": "(Paso: lectura de la cuenta. Debe ser una cuenta de empresa o de creador.)",
+        "key": "(Paso: cifrado de los tokens. ORBITA_MASTER_KEY en Vercel debe tener 32 bytes, en base64.)",
+        "save": "(Paso: guardado de la cuenta. Puede faltar una migración o la clave de servicio de Supabase.)"
+      }
     },
     "errors": {
       "reconnect": "La conexión venció. Vuelve a conectar.",
