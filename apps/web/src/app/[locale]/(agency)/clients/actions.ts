@@ -32,6 +32,27 @@ export async function createClientAction(form: FormData) {
   redirect(`/${locale}/clients/${data!.id}`);
 }
 
+/** Business details on the Profile tab (staff only: the database stops client users from renaming). */
+export async function updateClientAction(form: FormData) {
+  const locale = localeFrom(form);
+  const s = await requireStaff(locale);
+  const id = Uuid.parse(form.get("clientId"));
+  const back = `/${locale}/clients/${id}?tab=profile`;
+  const parsed = z.object({
+    name: z.string().trim().min(1).max(120),
+    languages: Locales,
+    markets: z.string().max(300),
+  }).safeParse({ name: form.get("name"), languages: form.getAll("languages"), markets: String(form.get("markets") ?? "") });
+  if (!parsed.success) redirect(`${back}&error=details`);
+  const { name, languages, markets } = parsed.data!;
+  const { data } = await s.sb.from("clients").update({
+    name, languages, markets: markets.split(",").map((m) => m.trim()).filter(Boolean).slice(0, 20),
+  }).eq("id", id).select("id");
+  if (!data?.length) redirect(`${back}&error=details`);
+  await audit({ agencyId: s.profile.agency_id, actor: s.user.id, action: "client.updated", entity: "client", entityId: id });
+  redirect(`${back}&saved=1`);
+}
+
 export async function deleteClientAction(form: FormData) {
   const locale = localeFrom(form);
   const s = await requireAdmin(locale);
@@ -40,8 +61,10 @@ export async function deleteClientAction(form: FormData) {
   // Typing the exact name guards against accidental deletion.
   if (!c || String(form.get("confirm") ?? "") !== c.name) redirect(`/${locale}/clients/${id}?error=confirm`);
   const admin = supabaseAdmin();
-  const { data: files } = await admin.storage.from("client-logos").list(id);
-  if (files?.length) await admin.storage.from("client-logos").remove(files.map((f) => `${id}/${f.name}`));
+  for (const bucket of ["client-logos", "brand-references"]) {
+    const { data: files } = await admin.storage.from(bucket).list(id, { limit: 1000 });
+    if (files?.length) await admin.storage.from(bucket).remove(files.map((f) => `${id}/${f.name}`));
+  }
   // Client users' accounts are removed with the client (profiles cascade); delete their auth users too.
   const { data: users } = await admin.from("profiles").select("user_id").eq("client_id", id);
   const { error } = await s.sb.from("clients").delete().eq("id", id);

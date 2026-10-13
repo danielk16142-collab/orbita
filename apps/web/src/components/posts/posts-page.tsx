@@ -3,7 +3,6 @@ import { getTranslations } from "next-intl/server";
 import { addDays, iso, navigate, rangeFor, validDate, VIEWS, type View } from "@orbita/content";
 import { requireStaff, requireUser } from "@/lib/session";
 import { CalendarView } from "./calendar-view";
-import { NewPostForm } from "./new-post-form";
 import { NETWORK_LABEL, type CalPost } from "./shared";
 
 type SP = { view?: string; date?: string; client?: string; network?: string; status?: string };
@@ -37,7 +36,10 @@ export async function PostsPage({ locale, searchParams, portal }: { locale: stri
   return (
     <>
       <p className="eyebrow">{t("eyebrow")}</p>
-      <h1>{t("title")}</h1>
+      <div className="page-head">
+        <h1>{t("title")}</h1>
+        <Link className="btn" href={`${base}/new?${new URLSearchParams({ ...(clientFilter && { client: clientFilter }), ...(view === "day" && { date: anchor }) })}`}>+ {t("createPost")}</Link>
+      </div>
       <div className="cal-toolbar">
         <div className="cal-nav" role="group" aria-label={t("navigate")}>
           <Link className="btn ghost small" href={qs({ date: navigate(view, anchor, -1) })} aria-label={t("previous")}>←</Link>
@@ -67,9 +69,6 @@ export async function PostsPage({ locale, searchParams, portal }: { locale: stri
           <ul className="plain">{(unscheduled as unknown as CalPost[]).map((p) => <li key={p.id}><Link href={`${base}/${p.id}`}>{(p.idea || p.caption || "—").slice(0, 80)}</Link><span className="stat-vs">{!portal && p.clients?.name ? `${p.clients.name} · ` : ""}{NETWORK_LABEL[p.network] ?? p.network} · {t(`statuses.${p.status}`)}</span></li>)}</ul>
         </section>
       )}
-      <div style={{ marginTop: "1.25rem" }}>
-        <NewPostForm locale={locale} staff={!portal} clients={clients ?? []} postHref={(id) => `${base}/${id}`} defaultDate={view === "day" ? anchor : ""} />
-      </div>
     </>
   );
 }

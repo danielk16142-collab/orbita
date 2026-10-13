@@ -11,7 +11,7 @@ function Chip({ p, href, t, showClient, long }: { p: CalPost; href: string; t: A
         {p.suggested_time && <span className="chip-time">{p.suggested_time}</span>} {postTitle(p, long ? 90 : 38)}
         {showClient && p.clients?.name && <span className="chip-client"> · {p.clients.name}</span>}
       </span>
-      <span className="chip-status">{t(`statuses.${p.status}`)}</span>
+      <span className="chip-status">{t(`formats.${p.type}` as never, { default: p.type } as never)} · {t(`statuses.${p.status}`)}</span>
     </Link>
   );
 }

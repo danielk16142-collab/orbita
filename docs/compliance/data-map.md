@@ -4,7 +4,7 @@
 |---|---|---|---|---|---|---|
 | Name, email, role, locale | `profiles`, Supabase Auth | Accounts, access control | Contract | Admin/team of agency; user | Active + 30 days | Password stored hashed by Supabase Auth |
 | MFA factors | Supabase Auth | Security | Legitimate interest | User | Active | |
-| Business/brand data | `clients`, `brand_briefs`, `proof_items`, `client_rules` | Provide service, train the agent | Contract | Staff of agency; that client's users | Active + 30 days after offboarding | |
+| Business/brand data | `clients` (including palette and fonts), `brand_briefs`, `proof_items`, `client_rules`, `brand_references` and the private `brand-references` bucket (reference images) | Provide service, train the agent | Contract | Staff of agency; that client's users | Active + 30 days after offboarding | |
 | Logos | Storage bucket (private) | Branding | Contract | As above (signed URLs) | As above | Re-encoded on upload |
 | Connected-account stats and posts | `metrics_daily`, `account_posts`, `sync_runs` | Dashboard and agent analytics | Contract + the user's authorization | Staff; that client's users | While connected; deleted on disconnect, offboarding or platform deletion request | Followers, reach, per-post counts and captions of the client's OWN public posts. No private messages, no audience personal data |
 | Social/ad tokens | `social_accounts.encrypted_tokens` | Sync and publish | Contract + user authorization | Server only (service role); never exposed to API roles | Until disconnect/revocation | Envelope-encrypted, AAD-bound to record |

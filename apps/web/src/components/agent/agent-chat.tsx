@@ -10,13 +10,15 @@ type Ev = { type: string; text?: string; conversationId?: string; code?: string;
 /** A normal chat. Streams the agent's reply and refreshes the page when it adds suggestions, sources or an audit. */
 const GOALS = ["sales", "awareness", "followers", "offer", "trust", "educate", "consistency"] as const;
 
-export function AgentChat({ locale, clientId, initialMessages, initialConversationId, onboarding = false }: {
+export function AgentChat({ locale, clientId, initialMessages, initialConversationId, onboarding = false, initialInput = "" }: {
   locale: string; clientId?: string; initialMessages: Msg[]; initialConversationId: string | null; onboarding?: boolean;
+  /** A request prepared by another screen (e.g. "write this carousel"). Shown in the box; the person still sends it. */
+  initialInput?: string;
 }) {
   const t = useTranslations("agent");
   const router = useRouter();
   const [messages, setMessages] = useState<Msg[]>(initialMessages);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(initialInput);
   const [goals, setGoals] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -76,7 +78,7 @@ export function AgentChat({ locale, clientId, initialMessages, initialConversati
     }
   }
 
-  const welcome = messages.length === 0 && onboarding;
+  const welcome = messages.length === 0 && onboarding && !initialInput;
   const toggleGoal = (g: string) => setGoals((cur) => (cur.includes(g) ? cur.filter((x) => x !== g) : [...cur, g]));
   /** Chips picked in the welcome are sent together with whatever was typed, as one message. */
   function submit() {
@@ -118,7 +120,7 @@ export function AgentChat({ locale, clientId, initialMessages, initialConversati
       {note && <p role="status">{note}</p>}
       <form onSubmit={(e) => { e.preventDefault(); submit(); }} className="agent-form">
         <label htmlFor="agent-input" className="sr-only">{t("placeholder")}</label>
-        <textarea id="agent-input" value={input} rows={2} maxLength={8000} placeholder={t("placeholder")} disabled={busy}
+        <textarea id="agent-input" value={input} rows={2} autoFocus={!!initialInput} maxLength={8000} placeholder={t("placeholder")} disabled={busy}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); submit(); } }} />
         <div className="agent-actions">
