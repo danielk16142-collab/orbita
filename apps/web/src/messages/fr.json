@@ -891,7 +891,8 @@
       "not_found": "Introuvable.",
       "bad_request": "Écrivez une question de quelques mots au moins.",
       "unauthorized": "Veuillez vous reconnecter.",
-      "saveFailed": "Impossible d'enregistrer. Veuillez réessayer."
+      "saveFailed": "Impossible d'enregistrer. Veuillez réessayer.",
+      "not_set_up": "Cela nécessite une mise à jour de la base de données qui n'a pas encore été appliquée. Demandez à votre administrateur d'exécuter les dernières migrations dans Supabase."
     }
   },
   "competitors": {
@@ -955,7 +956,8 @@
       "search_failed": "Les recherches web ont échoué cette fois. Réessayez dans un instant.",
       "model_error": "L'agent a eu un problème. Veuillez réessayer.",
       "not_found": "Introuvable.",
-      "ideas": "Certaines idées n'ont pas pu être ajoutées. Veuillez réessayer."
+      "ideas": "Certaines idées n'ont pas pu être ajoutées. Veuillez réessayer.",
+      "not_set_up": "Les concurrents nécessitent une mise à jour de la base de données qui n'a pas encore été appliquée (migration 0012_competitors.sql). Demandez à votre administrateur de l'exécuter dans Supabase, puis réessayez."
     }
   }
 }

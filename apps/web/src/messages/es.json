@@ -891,7 +891,8 @@
       "not_found": "No encontrado.",
       "bad_request": "Escribe una pregunta de al menos unas palabras.",
       "unauthorized": "Vuelve a iniciar sesión.",
-      "saveFailed": "No se pudo guardar. Inténtalo de nuevo."
+      "saveFailed": "No se pudo guardar. Inténtalo de nuevo.",
+      "not_set_up": "Esto necesita una actualización de la base de datos que todavía no se aplicó. Pide a tu administrador que ejecute las últimas migraciones en Supabase."
     }
   },
   "competitors": {
@@ -955,7 +956,8 @@
       "search_failed": "Las búsquedas web fallaron esta vez. Inténtalo de nuevo en un momento.",
       "model_error": "El agente tuvo un problema. Inténtalo de nuevo.",
       "not_found": "No encontrado.",
-      "ideas": "Algunas ideas no se pudieron agregar. Inténtalo de nuevo."
+      "ideas": "Algunas ideas no se pudieron agregar. Inténtalo de nuevo.",
+      "not_set_up": "Competidores necesita una actualización de la base de datos que todavía no se aplicó (migración 0012_competitors.sql). Pide a tu administrador que la ejecute en Supabase y vuelve a intentarlo."
     }
   }
 }
