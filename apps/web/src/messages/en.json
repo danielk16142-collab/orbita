@@ -757,7 +757,27 @@
     "briefHint": "What the agent knows about the brand. It fills this in from conversations; every change is a suggestion you accept.",
     "proof": "Approved facts",
     "rules": "Standing rules",
-    "toReview": "Suggestions to review"
+    "toReview": "Suggestions to review",
+    "latest": "Latest",
+    "seeAll": "See everything ({count})",
+    "memoryGroups": {
+      "preferences": "Business preferences",
+      "facts": "Facts"
+    },
+    "memoryGroupHints": {
+      "preferences": "How the business likes things done, what to avoid and standing rules.",
+      "facts": "What is true about the business, and examples to learn from."
+    },
+    "groupEmpty": "Nothing here yet.",
+    "memoryKindsPlural": {
+      "preference": "Preferences",
+      "avoid": "Things to avoid",
+      "rule": "Rules",
+      "fact": "Facts",
+      "example": "Examples"
+    },
+    "learnedOn": "Learned {date}",
+    "learnedIntro": "Everything the agent remembers about this brand. Open a line to read it in full; Forget removes it from what the agent uses."
   },
   "insights": {
     "eyebrow": "What is working",

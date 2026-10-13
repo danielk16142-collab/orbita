@@ -757,7 +757,27 @@
     "briefHint": "Ce que l'agent sait de la marque. Il le complète à partir des conversations; chaque changement est une suggestion que vous acceptez.",
     "proof": "Faits approuvés",
     "rules": "Règles permanentes",
-    "toReview": "Suggestions à examiner"
+    "toReview": "Suggestions à examiner",
+    "latest": "Les plus récents",
+    "seeAll": "Tout voir ({count})",
+    "memoryGroups": {
+      "preferences": "Préférences de l'entreprise",
+      "facts": "Faits"
+    },
+    "memoryGroupHints": {
+      "preferences": "Comment l'entreprise aime faire les choses, ce qu'il faut éviter et les règles permanentes.",
+      "facts": "Ce qui est vrai sur l'entreprise, et des exemples dont s'inspirer."
+    },
+    "groupEmpty": "Rien pour l'instant.",
+    "memoryKindsPlural": {
+      "preference": "Préférences",
+      "avoid": "À éviter",
+      "rule": "Règles",
+      "fact": "Faits",
+      "example": "Exemples"
+    },
+    "learnedOn": "Appris le {date}",
+    "learnedIntro": "Tout ce dont l'agent se souvient sur cette marque. Ouvrez une ligne pour la lire en entier; Oublier la retire de ce que l'agent utilise."
   },
   "insights": {
     "eyebrow": "Ce qui fonctionne",

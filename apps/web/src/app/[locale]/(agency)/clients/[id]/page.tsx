@@ -53,7 +53,7 @@ export default async function ClientDetail({ params, searchParams }: {
       <Tabs label={t("title")} current={tab} items={TABS.map((x) => ({ key: x, label: t(`tabs.${x}`), href: href(x) }))} />
 
       {tab === "profile" && (
-        <ProfilePanel locale={locale} clientId={id} staff client={client} flash={{ saved: q.saved === "1", error: q.error }}
+        <ProfilePanel locale={locale} clientId={id} staff client={client} learnedHref={`${base}/learned`} flash={{ saved: q.saved === "1", error: q.error }}
           danger={isAdmin && (
             <form action={deleteClientAction} className="card danger">
               <h2>{t("deleteClient")}</h2><p>{t("deleteWarn")}</p>

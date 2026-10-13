@@ -757,7 +757,27 @@
     "briefHint": "Lo que el agente sabe de la marca. Lo completa a partir de las conversaciones; cada cambio es una sugerencia que tú aceptas.",
     "proof": "Datos aprobados",
     "rules": "Reglas permanentes",
-    "toReview": "Sugerencias por revisar"
+    "toReview": "Sugerencias por revisar",
+    "latest": "Lo más reciente",
+    "seeAll": "Ver todo ({count})",
+    "memoryGroups": {
+      "preferences": "Preferencias del negocio",
+      "facts": "Datos"
+    },
+    "memoryGroupHints": {
+      "preferences": "Cómo le gusta al negocio hacer las cosas, qué evitar y las reglas permanentes.",
+      "facts": "Lo que es cierto sobre el negocio, y ejemplos de los que aprender."
+    },
+    "groupEmpty": "Nada por ahora.",
+    "memoryKindsPlural": {
+      "preference": "Preferencias",
+      "avoid": "Cosas a evitar",
+      "rule": "Reglas",
+      "fact": "Datos",
+      "example": "Ejemplos"
+    },
+    "learnedOn": "Aprendido el {date}",
+    "learnedIntro": "Todo lo que el agente recuerda de esta marca. Abre una línea para leerla completa; Olvidar la quita de lo que usa el agente."
   },
   "insights": {
     "eyebrow": "Lo que funciona",

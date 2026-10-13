@@ -4,6 +4,7 @@ import { Nav } from "@/components/nav";
 import { Sidebar } from "@/components/sidebar";
 import { Tabs } from "@/components/tabs";
 import { ProfileView } from "@/components/profile/profile-panel";
+import { MemoriesView } from "@/components/profile/memories";
 import { AuditView, ContentSuggestions, ProfileNudge, StrategyResearchView } from "@/components/agent/agent-views";
 import { AgentChat } from "@/components/agent/agent-chat";
 import { InsightsView } from "@/components/insights/insights-panel";
@@ -25,7 +26,11 @@ export default async function Preview({ params, searchParams }: { params: Promis
   const strategy = { title: "Autumn plan", period: "quarter", createdAt: day(10), content: { objectives: ["More weekend brunch bookings", "Grow Instagram followers in the neighbourhood"], pillars: [{ name: "Behind the counter", share_percent: 40 }, { name: "Menu and seasonal drinks", share_percent: 35 }, { name: "Community", share_percent: 25 }], cadence: [{ network: "instagram", posts_per_week: 4, best_days: ["tue", "thu", "sat"], best_time: "09:00" }, { network: "tiktok", posts_per_week: 3, best_days: ["wed", "fri"], best_time: "18:00" }], topics: ["Pumpkin spice, made right", "Meet the barista", "Brunch menu reveal"] } };
   const research = [{ id: "r1", kind: "trend", title: "Slow pour videos are getting saved", summary: "Short close ups of latte art and pour overs are among the most saved café posts this month.", sources: [{ title: "Example source", url: "https://example.com" }], createdAt: day(3) }];
   const briefRow = { brand: "Café Luna is a neighbourhood café in Montreal serving specialty coffee and weekend brunch.", voice: "Warm, simple, a little playful.", avoid: ["Corporate language"], personas: ["Young professionals nearby", "Weekend brunch groups"], content_pillars: ["Behind the counter", "Menu", "Community"] };
-  const memories = [{ id: "m1", kind: "preference" as const, content: "Always mention the oat milk option", weight: 1, createdAt: day(2) }];
+  const mem: [string, string][] = [["preference", "Always mention the oat milk option"], ["avoid", "No emojis in captions"], ["fact", "Open every day from 7:00 to 16:00, brunch on weekends until 15:00"],
+    ["rule", "Every post about a promotion must say when it ends"], ["preference", "Photos with natural light, never flash, and the wood counter in the background whenever possible so the place feels warm and familiar"],
+    ["fact", "Roasts its own beans in small batches"], ["example", "The pumpkin spice reel with the slow pour got the most saves this autumn"], ["avoid", "Do not compare with the chain café across the street"],
+    ["preference", "Captions short, two lines at most"], ["fact", "Most customers are young professionals working nearby"]];
+  const memories = mem.map(([kind, content], i) => ({ id: `m${i}`, kind: kind as "preference", content, weight: 1, createdAt: day(i + 1) }));
   const proposals = [{ id: "p1", target: "memory" as const, payload: { kind: "avoid", content: "No emojis in captions" }, reason: "You removed emojis from the last three captions." }];
 
   const data: AnalyticsData = { accounts: [], metrics: [], posts: [] };
@@ -50,7 +55,8 @@ export default async function Preview({ params, searchParams }: { params: Promis
         <p className="eyebrow">Clients</p>
         <div className="page-head"><h1 className="h1-client">{client.name}</h1><div className="btn-row"><a className="btn ghost" href="#">Content calendar</a><a className="btn" href="?tab=new">Create post</a></div></div>
         <Tabs label="Clients" current={tab} items={TABS.map((x) => ({ key: x, label: labels[x], href: href(x) }))} />
-        {tab === "profile" && <ProfileView locale={locale} client={client} ctx={{ briefRow, memories, sources, proofItems: ["Open since 2019 (source: owner)"], rules: [] }} proposals={proposals} staff clientId={client.id} />}
+        {tab === "profile" && <ProfileView locale={locale} client={client} ctx={{ briefRow, memories, sources, proofItems: ["Open since 2019 (source: owner)"], rules: [] }} proposals={proposals} staff clientId={client.id} learnedHref="?tab=learned" memoryTotal={memories.length} />}
+        {tab === "learned" && <><p className="page-intro stat-vs">Preview of the full page</p><MemoriesView locale={locale} memories={memories} clientId={client.id} /></>}
         {tab === "agent" && (<>
           <Tabs sub label="Agent" current={view} items={[["chat", "Chat"], ["strategy", "Strategy and research"], ["audit", "Audit"]].map(([k, l]) => ({ key: k, label: l, href: href("agent", k) }))} />
           {view === "strategy" && <StrategyResearchView locale={locale} strategy={strategy} research={research} askHref={() => "#"} />}

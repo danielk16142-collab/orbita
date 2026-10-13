@@ -389,3 +389,23 @@ ul.plain.recs li { justify-content: flex-start; align-items: flex-start; border-
 .ref-img img { position: absolute; inset: .4rem; width: calc(100% - .8rem); height: calc(100% - .8rem); max-width: none; max-height: none; object-fit: contain; }
 .flow-details .plan-row { grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: .75rem; }
 .flow-details input[type="date"] { min-width: 0; }
+
+/* What I've learned: preview on the profile, full page with collapsible lines */
+.mem-preview li { align-items: flex-start; border-bottom: 1px solid var(--grid); padding-bottom: .5rem; }
+.mem-preview li:last-child { border-bottom: 0; }
+.mem-text { min-width: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.page-intro { max-width: 46rem; margin: -.75rem 0 1.5rem; }
+.mem-group { border-top: 2px solid var(--line); padding-top: .5rem; margin-top: .75rem; }
+.mem-group > summary { padding: .35rem 0; font-family: var(--font-display); font-size: 1.05rem; }
+.mem-list { margin: .25rem 0 .5rem; gap: 0; }
+ul.plain.mem-list li { align-items: flex-start; border-bottom: 1px solid var(--grid); padding: .35rem 0; }
+ul.plain.mem-list li:last-child { border-bottom: 0; }
+.mem-line { flex: 1; min-width: 0; margin: 0; }
+.mem-line > summary { display: flex; gap: .4rem; align-items: baseline; padding: .3rem 0; list-style: none; }
+.mem-line > summary::-webkit-details-marker { display: none; }
+.mem-line > summary::before { content: "▸"; flex: none; color: var(--dim); }
+.mem-line[open] > summary::before { content: "▾"; }
+.mem-one { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mem-line[open] .mem-one { white-space: normal; overflow-wrap: break-word; }
+.mem-line .stat-vs { margin: 0 0 .25rem 1.2rem; }
+.stack > *, .mem-group, .mem-list, .mem-list li { min-width: 0; max-width: 100%; }
