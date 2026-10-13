@@ -54,7 +54,7 @@ export function nextPost(input: {
 
   const rule = input.cadence.find((c) => c.network === (input.network ?? "instagram")) ?? input.cadence[0];
   const best = input.windows?.windows ?? [];
-  const preferred = best.length ? best.map((w) => w.weekday) : (rule?.best_days ?? []).map((d) => DAY_NAMES.indexOf(d.toLowerCase())).filter((d) => d >= 0);
+  const preferred = best.length ? best.map((w) => w.weekday) : (rule?.best_days ?? []).map((d) => DAY_NAMES.findIndex((n) => n.startsWith(d.toLowerCase().slice(0, 3)))).filter((d) => d >= 0); // "fri" or "friday"
   let day = input.today;
   for (let i = 0; i < 7; i++) { const d = addDays(input.today, i); if (preferred.includes(weekday(d))) { day = d; break; } }
   const bucket = best.find((w) => w.weekday === weekday(day))?.bucket ?? null;

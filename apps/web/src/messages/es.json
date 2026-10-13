@@ -521,7 +521,11 @@
       "openCount": "{count, plural, one {# pendiente} other {# pendientes}}",
       "inProgress": "En curso",
       "noHandover": "Sin resumen"
-    }
+    },
+    "strategyDetails": "La estrategia completa",
+    "strategyViews": "Vistas de la estrategia",
+    "mindMap": "Mapa mental",
+    "calendarMap": "Calendario"
   },
   "connections": {
     "title": "Cuentas conectadas",
@@ -1143,6 +1147,155 @@
       "model_error": "El agente no está disponible ahora. Inténtalo en unos minutos.",
       "forbidden": "No puedes cambiar este plan.",
       "not_found": "Este plan ya no está disponible."
+    }
+  },
+  "strategyMap": {
+    "untagged": "Sin pilar",
+    "tagged": "{count, plural, =0 {Nada nuevo que ordenar.} one {# publicación ordenada.} other {# publicaciones ordenadas.}}",
+    "errors": {
+      "generic": "Algo salió mal. Inténtalo de nuevo.",
+      "not_configured": "El agente aún no está configurado.",
+      "rate_limited": "Demasiados intentos. Inténtalo en una hora.",
+      "daily_cap": "Se alcanzó el límite diario del agente. Inténtalo mañana.",
+      "no_strategy": "Primero crea una estrategia con objetivos y pilares.",
+      "no_result": "El agente no pudo hacerlo esta vez. Inténtalo de nuevo.",
+      "model_error": "El agente no está disponible. Inténtalo en unos minutos.",
+      "not_set_up": "Primero ejecuta la migración 0016 en Supabase.",
+      "forbidden": "No puedes cambiar esta estrategia."
+    },
+    "emptyTitle": "Aún no hay estrategia",
+    "emptyText": "Crea una estrategia de contenido con el agente: objetivos, para quién, pilares y ritmo. Aparecerá aquí como un mapa.",
+    "buildStrategy": "Crear una estrategia",
+    "prevMonth": "Mes anterior",
+    "nextMonth": "Mes siguiente",
+    "rowsBy": "Agrupar por",
+    "by": {
+      "pillar": "Pilares",
+      "format": "Formatos",
+      "network": "Redes"
+    },
+    "network": "Red",
+    "allNetworks": "Todas",
+    "goals": "Objetivos",
+    "goal": "Objetivo {n}",
+    "kpi": {
+      "followers": "Seguidores",
+      "reach": "Alcance (30 días)",
+      "engagement": "Interacción",
+      "month": "Publicadas este mes",
+      "planned": "{count} planeadas"
+    },
+    "mapTitle": "Este mes en el mapa",
+    "tagging": "Ordenando…",
+    "tag": "Ordenar {count, plural, one {# publicación} other {# publicaciones}} por pilar",
+    "week": "Semana {n}",
+    "weekCount": "{count} de {goal} publicaciones",
+    "planHere": "Planear una publicación de {pillar} en la semana {week}",
+    "gap": "Hueco",
+    "legendLive": "publicada",
+    "legendIdea": "punteado = idea",
+    "mixTitle": "Mezcla de pilares",
+    "mixHint": "Lo que pide la estrategia, lo planeado y lo publicado este mes.",
+    "mix": {
+      "target": "Meta",
+      "planned": "Planeado",
+      "published": "Publicado"
+    },
+    "rhythmTitle": "Ritmo",
+    "noRhythm": "La estrategia aún no tiene ritmo de publicación.",
+    "perWeek": "{count} por semana",
+    "days": {
+      "mon": "lun",
+      "tue": "mar",
+      "wed": "mié",
+      "thu": "jue",
+      "fri": "vie",
+      "sat": "sáb",
+      "sun": "dom"
+    },
+    "rhythmWeeks": "Publicaciones por semana frente a la meta",
+    "seriesTitle": "Series",
+    "topicsTitle": "Banco de temas",
+    "topicsHint": "{used} de {total} temas usados. Haz clic en uno para crearlo.",
+    "details": "Detalles",
+    "close": "Cerrar",
+    "livePost": "Publicación publicada",
+    "plannedPost": "Publicación planeada",
+    "m": {
+      "views": "Vistas",
+      "likes": "Me gusta",
+      "comments": "Comentarios",
+      "shares": "Compartidos",
+      "saves": "Guardados",
+      "rate": "Interacción"
+    },
+    "openPost": "Abrir la publicación",
+    "viewLive": "Ver en {network}",
+    "pillar": "Pilar",
+    "pillarMix": "Meta {target} % · planeado {planned} % · publicado {published} %",
+    "avgEngagement": "Interacción media:",
+    "bestPost": "Mejor publicación:",
+    "pillarPosts": "{count, plural, =0 {Sin publicaciones este mes} one {# publicación este mes} other {# publicaciones este mes}}",
+    "planForPillar": "Planear una publicación para este pilar",
+    "goalHint": "Las cifras con las que se mide este objetivo, de las cuentas conectadas.",
+    "why": "Por qué esta estrategia",
+    "planDay": "Planear",
+    "topic": "Tema",
+    "topicUsed": "Ya está en el calendario.",
+    "topicFree": "Aún no se ha usado.",
+    "createFromTopic": "Crear una publicación",
+    "series": "Serie",
+    "episodes": "{count, plural, =0 {Sin episodios} one {# episodio} other {# episodios}}",
+    "nextEpisode": "Planear el próximo episodio",
+    "nothingPlanned": "Nada planeado este mes. Haz clic en un hueco para planear una publicación.",
+    "connected": "Estrategia conectada.",
+    "mm": {
+      "planned": "{count} planeadas",
+      "published": "{count} publicadas",
+      "warn": {
+        "no_posts": "Sin publicaciones este mes",
+        "unserved": "Ningún pilar les habla",
+        "no_pillar": "Ningún pilar lo trabaja"
+      },
+      "warnLong": {
+        "no_posts": "No hay nada planeado ni publicado para este pilar este mes.",
+        "unserved": "Ningún pilar se dirige a este perfil. Pide al agente que ajuste la estrategia o planea una publicación para ellos.",
+        "no_pillar": "Ningún pilar trabaja aún hacia este objetivo."
+      },
+      "intro": "Haz clic en cualquier elemento para ver cómo se conecta: el objetivo que sirve, para quién es y las publicaciones detrás.",
+      "introLoose": "Por ahora los objetivos y los pilares están unidos de forma general. Conecta la estrategia para ver qué pilar sirve a qué objetivo y para quién es cada uno.",
+      "connecting": "Conectando…",
+      "reconnect": "Volver a conectar",
+      "connect": "Conectar mi estrategia",
+      "col": {
+        "business": "Negocio",
+        "goal": "Objetivos",
+        "persona": "Para quién",
+        "pillar": "Pilares",
+        "series": "Series"
+      },
+      "empty": {
+        "business": "",
+        "goal": "No hay objetivos en la estrategia.",
+        "persona": "Agrega perfiles de cliente en el Perfil.",
+        "pillar": "Aún no hay pilares.",
+        "series": "No hay series recurrentes."
+      },
+      "key": {
+        "serves": "sirve a un objetivo",
+        "speaks": "habla a",
+        "contains": "serie del pilar",
+        "loose": "aún sin conectar"
+      },
+      "servedBy": "Pilares que lo trabajan",
+      "notLinked": "Aún sin conectar.",
+      "solving": "Lo que resolvemos para ellos",
+      "talkingToThem": "Pilares que les hablan",
+      "shareLine": "{share} % de la estrategia · {planned} planeadas · {published} publicadas este mes",
+      "serves": "Sirve a",
+      "forWho": "Para",
+      "noPostsYet": "Nada aún este mes.",
+      "ideasFromTopics": "Ideas del banco de temas"
     }
   }
 }

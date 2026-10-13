@@ -25,3 +25,4 @@ export * from "./post-chat";
 export * from "./cadence";
 export * from "./kickstart";
 export * from "./threads";
+export * from "./strategy-map";

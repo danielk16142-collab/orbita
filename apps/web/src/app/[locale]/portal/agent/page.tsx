@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { requireClientUser } from "@/lib/session";
 import { AgentWorkspace, agentViewOf } from "@/components/agent/agent-workspace";
 
-export default async function PortalAgent({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ view?: string; ask?: string; format?: string; network?: string; idea?: string; thread?: string }> }) {
+export default async function PortalAgent({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ view?: string; ask?: string; format?: string; network?: string; idea?: string; thread?: string; month?: string; layout?: string }> }) {
   const { locale } = await params;
   const q = await searchParams;
   const t = await getTranslations("agent");
