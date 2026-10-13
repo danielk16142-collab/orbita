@@ -10,5 +10,6 @@
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
     "test:rls": "bash supabase/tests/run.sh"
-  }
+  },
+  "pnpm": { "overrides": { "postcss": ">=8.5.18" } }
 }

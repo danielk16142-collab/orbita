@@ -24,7 +24,7 @@ Company name, address, privacy contact and person in charge of personal informat
 - [ ] Public Privacy Policy URL (`/en/legal/privacy-policy`) and Terms URL
 - [ ] Data deletion instructions URL (`/en/legal/data-deletion`) and, for Meta, a deletion callback endpoint (build with the Meta connector)
 - [ ] Minimum scopes only (read-only), with a written justification per scope (see `docs/connectors.md`)
-- [ ] Screencast showing each permission in use
+- [ ] Screencast showing each permission in use (script in `docs/app-review.md`)
 - [ ] Business verification complete
 
 ## Agent and AI
