@@ -10,7 +10,8 @@ export default async function PortalHome({ params }: { params: Promise<{ locale:
     <>
       <p className="eyebrow">{t("eyebrow")}</p>
       <h1>{t("title")}</h1>
-      <ClientDashboard sb={sb} clientId={profile.client_id} locale={locale} connectHref={`/${locale}/portal/settings`} />
+      <ClientDashboard sb={sb} clientId={profile.client_id} locale={locale} connectHref={`/${locale}/portal/settings`}
+        links={{ postsBase: `/${locale}/portal/posts`, newPostHref: `/${locale}/portal/posts/new`, agentHref: `/${locale}/portal/agent` }} />
     </>
   );
 }

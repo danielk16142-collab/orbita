@@ -787,7 +787,8 @@
     },
     "chatErrors": {
       "not_set_up": "La discussion de publication nécessite une mise à jour de la base de données (migration 0013_post_chats.sql). Demandez à votre administrateur de l'exécuter dans Supabase."
-    }
+    },
+    "forIdea": "Pour l’idée : {idea}"
   },
   "profile": {
     "eyebrow": "Votre entreprise",
@@ -1029,6 +1030,39 @@
       "weak": "Ce mot de passe est trop facile à deviner. Essayez-en un plus long.",
       "same": "Choisissez un mot de passe que vous n’avez pas déjà utilisé ici.",
       "failed": "Impossible d’enregistrer le mot de passe. Demandez un nouveau lien et réessayez."
+    }
+  },
+  "cadence": {
+    "title": "Votre prochaine publication",
+    "untitled": "Publication sans titre",
+    "plannedFor": "Prévue pour {day}",
+    "openIt": "L’ouvrir",
+    "another": "En planifier une autre",
+    "fromStrategy": "Tiré de votre stratégie",
+    "fromResearch": "Tiré de vos recherches",
+    "bestDay": "Meilleur jour : {day}",
+    "createIt": "La créer",
+    "emptyTitle": "Planifiez votre prochaine publication",
+    "emptyWithStrategy": "Tous les sujets de votre stratégie sont déjà au calendrier. Ajoutez-en un nouveau ou demandez des idées à l’agent.",
+    "emptyNoStrategy": "Créez une stratégie de contenu avec l’agent et cette carte vous suggérera quoi publier, chaque semaine.",
+    "createPost": "Créer une publication",
+    "buildStrategy": "Créer une stratégie",
+    "thisWeek": "Cette semaine",
+    "ofGoal": "sur {goal} publications",
+    "goalMet": "Objectif atteint. Bravo.",
+    "toGo": "Encore {count, plural, one {# publication} other {# publications}}, {days, plural, one {# jour restant} other {# jours restants}}.",
+    "streak": "{count, plural, one {# semaine} other {# semaines}} de suite à l’objectif",
+    "weekLine": "Cette semaine : {done} sur {goal} publications",
+    "goalLabel": "Objectif hebdomadaire",
+    "perWeek": "{count} par semaine",
+    "goalFailed": "Impossible d’enregistrer l’objectif.",
+    "goalNotSetUp": "Exécutez la migration 0014 dans Supabase pour enregistrer l’objectif.",
+    "buckets": {
+      "morning": "matin",
+      "midday": "midi",
+      "afternoon": "après-midi",
+      "evening": "soirée",
+      "night": "nuit"
     }
   }
 }

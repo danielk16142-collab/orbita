@@ -787,7 +787,8 @@
     },
     "chatErrors": {
       "not_set_up": "The post chat needs a database update (migration 0013_post_chats.sql). Ask your administrator to run it in Supabase."
-    }
+    },
+    "forIdea": "For the idea: {idea}"
   },
   "profile": {
     "eyebrow": "Your business",
@@ -1029,6 +1030,39 @@
       "weak": "This password is too easy to guess. Try a longer one.",
       "same": "Choose a password you have not used here before.",
       "failed": "We could not save the password. Ask for a new link and try again."
+    }
+  },
+  "cadence": {
+    "title": "Your next post",
+    "untitled": "Untitled post",
+    "plannedFor": "Planned for {day}",
+    "openIt": "Open it",
+    "another": "Plan another",
+    "fromStrategy": "From your strategy",
+    "fromResearch": "From your research",
+    "bestDay": "Best day: {day}",
+    "createIt": "Create it",
+    "emptyTitle": "Plan your next post",
+    "emptyWithStrategy": "Every topic in your strategy is already on the calendar. Add a new one, or ask the agent for fresh ideas.",
+    "emptyNoStrategy": "Build a content strategy with the agent and this card will suggest what to post next, every week.",
+    "createPost": "Create a post",
+    "buildStrategy": "Build a strategy",
+    "thisWeek": "This week",
+    "ofGoal": "of {goal} posts",
+    "goalMet": "Goal met. Nice work.",
+    "toGo": "{count, plural, one {# more post} other {# more posts}} to go, {days, plural, one {# day left} other {# days left}}.",
+    "streak": "{count, plural, one {# week} other {# weeks}} in a row on goal",
+    "weekLine": "This week: {done} of {goal} posts",
+    "goalLabel": "Weekly goal",
+    "perWeek": "{count} per week",
+    "goalFailed": "Could not save the goal.",
+    "goalNotSetUp": "Run migration 0014 in Supabase to save the goal.",
+    "buckets": {
+      "morning": "morning",
+      "midday": "midday",
+      "afternoon": "afternoon",
+      "evening": "evening",
+      "night": "night"
     }
   }
 }

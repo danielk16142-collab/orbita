@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { fakeConnector, fakeEnabled } from "@orbita/connectors";
 import { DashboardView } from "@/components/dashboard/client-dashboard";
 import type { AnalyticsData } from "@/lib/analytics/load";
+import { bestPostingWindows, nextPost, weekProgress } from "@orbita/agent";
+import { NextPostCard } from "@/components/cadence/next-post-card";
 
 /** Development only (CONNECTORS_FAKE=1, never in production): the dashboard rendered from generated data, to review the screens. */
 export default async function Preview({ params }: { params: Promise<{ locale: string }> }) {
@@ -18,5 +20,12 @@ export default async function Preview({ params }: { params: Promise<{ locale: st
     for (const m of await c.fetchDailyMetrics(t, { since: new Date(until.getTime() - 70 * 86_400_000), until })) if (m.metric === "reach") data.metrics.push({ network, day: m.day, metric: "reach", value: m.value });
     for (const p of await c.fetchPosts(t, { limit: 30 })) data.posts.push({ network, publishedAt: p.publishedAt, mediaType: p.mediaType, caption: p.caption, permalink: p.permalink, metrics: p.metrics });
   }
-  return (<main className="content"><p className="eyebrow">Preview (generated data)</p><h1>Home</h1><DashboardView data={data} locale={locale} connectHref="#" now={now} /></main>);
+  const today = now.toISOString().slice(0, 10);
+  const cadence = {
+    next: nextPost({ today, planned: [], topics: ["Before and after: a homepage redesign in 60 seconds", "Three signs your website is costing you clients"], research: [], usedIdeas: [], windows: bestPostingWindows(data.posts), cadence: [{ network: "instagram", best_days: ["thursday"], best_time: "18:30" }] }),
+    week: weekProgress(data.posts.filter((p) => p.publishedAt).map((p) => p.publishedAt!.slice(0, 10)), today, 3), hasStrategy: true, goalSaved: true,
+  };
+  return (<main className="content"><p className="eyebrow">Preview (generated data)</p><h1>Home</h1>
+    <NextPostCard cadence={cadence} locale={locale} postsBase="#" newPostHref="#" agentHref="#" />
+    <DashboardView data={data} locale={locale} connectHref="#" now={now} /></main>);
 }
