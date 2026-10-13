@@ -45,7 +45,7 @@ export async function CalendarView({ locale, view, anchor, posts, postHref, dayH
   const month = view === "month" ? monthGrid(anchor).month : null;
   const heads = weeks[0].map((d) => wd.format(new Date(`${d}T12:00:00Z`)));
   return (
-    <section className={`cal cal-${view}`} aria-label={t("calendar")}>
+    <section className={`cal cal-view-${view}`} aria-label={t("calendar")}>
       <div className="cal-head" aria-hidden="true">{heads.map((h) => <span key={h}>{h}</span>)}</div>
       {weeks.map((w) => (
         <div key={w[0]} className="cal-week">
