@@ -9,7 +9,8 @@
     "submit": "Sign in",
     "invalid": "Invalid email or password.",
     "captcha": "Please complete the security check.",
-    "tooMany": "Too many attempts. Try again later."
+    "tooMany": "Too many attempts. Try again later.",
+    "forgot": "Forgot your password?"
   },
   "dashboard": {
     "eyebrow": "Your agency",
@@ -1004,6 +1005,30 @@
       "not_found": "Not found.",
       "ideas": "Some ideas could not be added. Please try again.",
       "not_set_up": "Competitors need a database update that has not been applied yet (migration 0012_competitors.sql). Ask your administrator to run it in Supabase, then try again."
+    }
+  },
+  "reset": {
+    "forgotTitle": "Reset your password",
+    "forgotIntro": "Enter your email and we will send you a link to set a new password.",
+    "email": "Email",
+    "send": "Send the link",
+    "sent": "If an account uses this email, a reset link is on its way. It works for one hour, in this same browser.",
+    "backToLogin": "Back to sign in",
+    "newTitle": "Choose a new password",
+    "newPassword": "New password",
+    "rules": "At least 10 characters.",
+    "confirm": "Repeat the new password",
+    "save": "Save the new password",
+    "errors": {
+      "invalid": "Enter a valid email.",
+      "captcha": "Please complete the security check.",
+      "rate": "Too many attempts. Try again later.",
+      "expired": "This reset link has expired or was already used. Ask for a new one.",
+      "mismatch": "The two passwords do not match.",
+      "short": "Use at least 10 characters.",
+      "weak": "This password is too easy to guess. Try a longer one.",
+      "same": "Choose a password you have not used here before.",
+      "failed": "We could not save the password. Ask for a new link and try again."
     }
   }
 }

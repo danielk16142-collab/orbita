@@ -9,7 +9,8 @@
     "submit": "Se connecter",
     "invalid": "Courriel ou mot de passe invalide.",
     "captcha": "Veuillez compléter la vérification de sécurité.",
-    "tooMany": "Trop de tentatives. Réessayez plus tard."
+    "tooMany": "Trop de tentatives. Réessayez plus tard.",
+    "forgot": "Mot de passe oublié ?"
   },
   "dashboard": {
     "eyebrow": "Votre agence",
@@ -1004,6 +1005,30 @@
       "not_found": "Introuvable.",
       "ideas": "Certaines idées n'ont pas pu être ajoutées. Veuillez réessayer.",
       "not_set_up": "Les concurrents nécessitent une mise à jour de la base de données qui n'a pas encore été appliquée (migration 0012_competitors.sql). Demandez à votre administrateur de l'exécuter dans Supabase, puis réessayez."
+    }
+  },
+  "reset": {
+    "forgotTitle": "Réinitialiser le mot de passe",
+    "forgotIntro": "Entrez votre courriel et nous vous enverrons un lien pour choisir un nouveau mot de passe.",
+    "email": "Courriel",
+    "send": "Envoyer le lien",
+    "sent": "Si un compte utilise ce courriel, un lien de réinitialisation est en route. Il est valable une heure, dans ce même navigateur.",
+    "backToLogin": "Retour à la connexion",
+    "newTitle": "Choisissez un nouveau mot de passe",
+    "newPassword": "Nouveau mot de passe",
+    "rules": "Au moins 10 caractères.",
+    "confirm": "Répétez le nouveau mot de passe",
+    "save": "Enregistrer le mot de passe",
+    "errors": {
+      "invalid": "Entrez un courriel valide.",
+      "captcha": "Veuillez compléter la vérification de sécurité.",
+      "rate": "Trop de tentatives. Réessayez plus tard.",
+      "expired": "Ce lien a expiré ou a déjà été utilisé. Demandez-en un nouveau.",
+      "mismatch": "Les deux mots de passe ne correspondent pas.",
+      "short": "Utilisez au moins 10 caractères.",
+      "weak": "Ce mot de passe est trop facile à deviner. Essayez-en un plus long.",
+      "same": "Choisissez un mot de passe que vous n’avez pas déjà utilisé ici.",
+      "failed": "Impossible d’enregistrer le mot de passe. Demandez un nouveau lien et réessayez."
     }
   }
 }
