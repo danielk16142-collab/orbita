@@ -707,7 +707,7 @@
     "ideaPlaceholder": "De quoi s'agit-il? Un produit, une offre, un conseil, une histoire…",
     "onePerNetwork": "Une publication est créée par réseau ({count}).",
     "writeWithAgent": "La rédiger avec l'agent",
-    "writeWithAgentHint": "Ouvre la discussion avec la demande prête. Vous la relisez avant que quoi que ce soit soit enregistré.",
+    "writeWithAgentHint": "Ouvre ici une discussion pour cette publication. Vous relisez le brouillon avant qu'il aille au calendrier.",
     "createDraft": "Créer le brouillon",
     "createIdea": "Enregistrer l'idée",
     "createHint": "L'ajoute au calendrier pour la rédiger vous-même.",
@@ -740,6 +740,46 @@
         "title": "Article",
         "text": "Un texte plus long pour LinkedIn."
       }
+    },
+    "ideas": {
+      "title": "Idées pour cette publication",
+      "more": "Plus d'idées",
+      "loading": "Recherche d'idées dans la stratégie, le plan et la recherche de la semaine…",
+      "fromAgent": "Selon la stratégie, le dernier plan et votre recherche. Choisissez-en une pour commencer, ou écrivez la vôtre.",
+      "fromStrategy": "Tirées des sujets de votre stratégie et de la recherche enregistrée.",
+      "failed": "Les idées n'ont pas pu se charger. Vous pouvez écrire votre propre idée.",
+      "none": "Pas encore d'idées. Écrivez la vôtre ci-dessous.",
+      "noStrategy": "Pas encore de stratégie. Créez-en une dans Agent › Stratégie pour voir des idées ici, ou écrivez la vôtre ci-dessous.",
+      "hookLabel": "Accroche :",
+      "sources": {
+        "strategy": "Stratégie",
+        "plan": "Plan de la semaine",
+        "research": "Recherche",
+        "brand": "Marque",
+        "results": "Résultats"
+      }
+    },
+    "chat": {
+      "title": "Rédiger avec l'agent",
+      "hint": "Cette discussion concerne seulement cette publication. Les brouillons apparaissent ici pour les modifier et les ajouter au calendrier.",
+      "backToDetails": "Retour aux détails",
+      "writing": "Rédaction…",
+      "placeholder": "Demandez des changements, par exemple : plus court, plus léger, ajouter une offre",
+      "saveText": "Enregistrer comme brouillon",
+      "savedText": "Enregistré dans le calendrier",
+      "accepted": "Enregistré dans le calendrier comme brouillon.",
+      "openCalendar": "Ouvrir le calendrier",
+      "rejected": "Brouillon écarté.",
+      "opening": "Écris un(e) {format} pour {where} en {language}, selon notre stratégie et notre recherche de la semaine.",
+      "openingAbout": "Écris un(e) {format} pour {where} en {language} sur : {idea}",
+      "quick": {
+        "shorter": "Plus court",
+        "hook": "Des accroches plus fortes",
+        "cta": "Changer l'appel à l'action"
+      }
+    },
+    "chatErrors": {
+      "not_set_up": "La discussion de publication nécessite une mise à jour de la base de données (migration 0013_post_chats.sql). Demandez à votre administrateur de l'exécuter dans Supabase."
     }
   },
   "profile": {

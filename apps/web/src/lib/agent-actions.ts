@@ -82,3 +82,13 @@ export async function deleteResearchAction(input: unknown): Promise<ActionResult
   await audit({ agencyId: g.actor.profile.agency_id, actor: g.actor.userId, action: "agent.research_deleted", entity: "research", entityId: p.data.id });
   return { ok: true };
 }
+
+/** One pending suggestion, for the post chat to show the draft it just wrote. RLS and the client filter decide visibility. */
+export async function getProposalAction(input: unknown): Promise<{ ok: true; proposal: { id: string; target: string; payload: unknown; reason: string | null } } | { ok: false; error: string }> {
+  const p = z.object({ ...Base, id: Uuid }).safeParse(input);
+  if (!p.success) return { ok: false, error: "bad_request" };
+  const g = await gate(p.data.clientId);
+  if (!g.actor) return { ok: false, error: g.error };
+  const { data } = await g.actor.sb.from("proposals").select("id, target, payload, reason").eq("id", p.data.id).eq("client_id", g.actor.clientId).eq("status", "pending").maybeSingle();
+  return data ? { ok: true, proposal: data } : { ok: false, error: "not_found" };
+}

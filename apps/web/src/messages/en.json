@@ -707,7 +707,7 @@
     "ideaPlaceholder": "What is it about? A product, an offer, a tip, a story…",
     "onePerNetwork": "One post is created per network ({count}).",
     "writeWithAgent": "Write it with the agent",
-    "writeWithAgentHint": "Opens the chat with the request ready. You review it before anything is saved.",
+    "writeWithAgentHint": "Opens a chat for this post right here. You review the draft before it goes to the calendar.",
     "createDraft": "Create draft",
     "createIdea": "Save idea",
     "createHint": "Adds it to the calendar so you can write it yourself.",
@@ -740,6 +740,46 @@
         "title": "Article",
         "text": "A longer piece for LinkedIn."
       }
+    },
+    "ideas": {
+      "title": "Ideas for this post",
+      "more": "More ideas",
+      "loading": "Finding ideas from this week's strategy, plan and research…",
+      "fromAgent": "Based on the strategy, the latest plan and your research. Pick one to start from, or write your own.",
+      "fromStrategy": "From your strategy topics and saved research.",
+      "failed": "Ideas could not load. You can still write your own idea.",
+      "none": "No ideas yet. Write your own below.",
+      "noStrategy": "No strategy yet. Build one in Agent › Strategy to get ideas here, or write your own below.",
+      "hookLabel": "Hook:",
+      "sources": {
+        "strategy": "Strategy",
+        "plan": "This week's plan",
+        "research": "Research",
+        "brand": "Brand",
+        "results": "Results"
+      }
+    },
+    "chat": {
+      "title": "Write with the agent",
+      "hint": "This chat is only for this post. Drafts appear here to edit and accept into the calendar.",
+      "backToDetails": "Back to details",
+      "writing": "Writing…",
+      "placeholder": "Ask for changes, for example: make it shorter, more playful, add an offer",
+      "saveText": "Save this as the draft",
+      "savedText": "Saved to the calendar",
+      "accepted": "Saved to the calendar as a draft.",
+      "openCalendar": "Open the calendar",
+      "rejected": "Draft discarded.",
+      "opening": "Write a {format} for {where} in {language}, based on our strategy and research for this week.",
+      "openingAbout": "Write a {format} for {where} in {language} about: {idea}",
+      "quick": {
+        "shorter": "Make it shorter",
+        "hook": "Give me stronger hooks",
+        "cta": "Change the call to action"
+      }
+    },
+    "chatErrors": {
+      "not_set_up": "The post chat needs a database update (migration 0013_post_chats.sql). Ask your administrator to run it in Supabase."
     }
   },
   "profile": {

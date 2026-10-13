@@ -21,6 +21,7 @@ export async function createPostAction(input: unknown): Promise<PostResult> {
   const p = z.object({
     clientId: Uuid.optional(), network: PostEdit.shape.network, language: PostEdit.shape.language, type: PostEdit.shape.type,
     idea: z.string().trim().min(1).max(2000), planned_date: PostEdit.shape.planned_date.optional(), status: z.enum(["idea", "draft"]).default("idea"),
+    caption: z.string().trim().max(2200).optional(),
   }).safeParse(input);
   if (!p.success) return fail("bad_request");
   const g = await gate(); if (!g.ok) return fail(g.error);
@@ -30,6 +31,7 @@ export async function createPostAction(input: unknown): Promise<PostResult> {
   const status = a.isStaff ? p.data.status : "idea"; // the database enforces this too
   const { data, error } = await a.sb.from("posts").insert({
     client_id: clientId, network: p.data.network, language: p.data.language, type: p.data.type, idea: p.data.idea, status, source: "manual",
+    ...(p.data.caption ? { caption: p.data.caption } : {}),
     planned_date: p.data.planned_date ?? null, created_by: a.userId,
   }).select("id").single();
   if (error || !data) return fail("forbidden");

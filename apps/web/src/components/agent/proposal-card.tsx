@@ -14,7 +14,7 @@ const MEMORY_KINDS = ["preference", "avoid", "rule", "fact", "example"];
 const field = { width: "100%", padding: ".5rem", border: "2px solid var(--line)", borderRadius: 10, font: "inherit", background: "#fff", color: "var(--ink)" } as const;
 
 /** One suggestion from the agent. Everything is editable before accepting; accepting with edits teaches the agent what you actually wanted. */
-export function ProposalCard({ proposal, clientId }: { proposal: ProposalView; clientId?: string }) {
+export function ProposalCard({ proposal, clientId, onDecided }: { proposal: ProposalView; clientId?: string; onDecided?: (decision: "accept" | "reject") => void }) {
   const t = useTranslations("agent");
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -33,7 +33,7 @@ export function ProposalCard({ proposal, clientId }: { proposal: ProposalView; c
     const edited = proposal.target === "plan" ? { ...p, items: items.filter((_, i) => included[i]) } : p;
     start(async () => {
       const r = await decideProposalAction({ clientId, proposalId: proposal.id, decision, comment: decision === "reject" ? why : undefined, edited: decision === "accept" ? edited : undefined });
-      if (r.ok) router.refresh();
+      if (r.ok) { onDecided?.(decision); router.refresh(); }
       else setError(t.has(`errors.${r.error}`) ? t(`errors.${r.error}`) : t("errors.generic"));
     });
   }
