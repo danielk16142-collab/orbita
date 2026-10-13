@@ -1,4 +1,5 @@
-import type { WindowsResult } from "./analytics";
+import { engagementRate, type PostRow, type WindowsResult } from "./analytics";
+const rateOf = engagementRate;
 
 /**
  * Posting cadence: what to post next and how this week is going against the posting goal.
@@ -65,4 +66,31 @@ export function nextPost(input: {
   const research = input.research.filter((r) => !used(r.title, input.usedIdeas));
   if (research.length) return { kind: "suggestion", title: research[0].title, why: research[0].summary.slice(0, 200), source: "research", day, time, bucket, network: rule?.network ?? null };
   return { kind: "empty", day };
+}
+
+const LIVE = ["idea", "draft", "approved", "scheduled"];
+
+/** The next `horizon` days from today: how many posts are planned, and which days have nothing yet. */
+export function weekAhead(planned: CadencePost[], today: string, goal: number, horizon = 7) {
+  const days = Array.from({ length: horizon }, (_, i) => addDays(today, i));
+  const busy = new Set(planned.filter((p) => p.planned_date && LIVE.includes(p.status)).map((p) => p.planned_date!));
+  const count = planned.filter((p) => p.planned_date && LIVE.includes(p.status) && p.planned_date >= today && p.planned_date <= days[horizon - 1]).length;
+  const openDays = days.filter((d) => !busy.has(d));
+  return { planned: count, goal, short: Math.max(0, goal - count), openDays };
+}
+
+/** Planned posts whose day passed in the last 30 days without being scheduled or published. Most recent first. */
+export function missedPosts(planned: CadencePost[], today: string): CadencePost[] {
+  const from = addDays(today, -30);
+  return planned.filter((p) => p.planned_date && p.planned_date < today && p.planned_date >= from && ["idea", "draft", "approved"].includes(p.status))
+    .sort((a, b) => b.planned_date!.localeCompare(a.planned_date!));
+}
+
+/** Last week (Monday to Sunday) in one line: how many posts went out and which one did best. `localDay` maps an instant to the client's calendar. */
+export function lastWeekRecap(posts: PostRow[], today: string, localDay: (iso: string) => string) {
+  const start = addDays(weekStartOf(today), -7), end = addDays(start, 6);
+  const week = posts.filter((p) => { if (!p.publishedAt) return false; const d = localDay(p.publishedAt); return d >= start && d <= end; });
+  const rated = week.map((p) => ({ p, r: p.metrics ? rateOf(p.metrics) : null })).filter((x) => x.r !== null).sort((a, b) => b.r! - a.r!);
+  const best = rated[0];
+  return { weekStart: start, posts: week.length, best: best ? { caption: (best.p.caption ?? "").replace(/\s+/g, " ").trim().slice(0, 90), permalink: best.p.permalink, rate: best.r!, network: best.p.network } : null };
 }

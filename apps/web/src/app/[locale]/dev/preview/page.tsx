@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { fakeConnector, fakeEnabled } from "@orbita/connectors";
 import { DashboardView } from "@/components/dashboard/client-dashboard";
 import type { AnalyticsData } from "@/lib/analytics/load";
-import { bestPostingWindows, nextPost, weekProgress } from "@orbita/agent";
+import { addDays, bestPostingWindows, lastWeekRecap, nextPost, weekAhead, weekProgress } from "@orbita/agent";
 import { NextPostCard } from "@/components/cadence/next-post-card";
 import { KickstartPanel } from "@/components/cadence/kickstart-panel";
 
@@ -24,7 +24,10 @@ export default async function Preview({ params }: { params: Promise<{ locale: st
   const today = now.toISOString().slice(0, 10);
   const cadence = {
     next: nextPost({ today, planned: [], topics: ["Before and after: a homepage redesign in 60 seconds", "Three signs your website is costing you clients"], research: [], usedIdeas: [], windows: bestPostingWindows(data.posts), cadence: [{ network: "instagram", best_days: ["thursday"], best_time: "18:30" }] }),
-    week: weekProgress(data.posts.filter((p) => p.publishedAt).map((p) => p.publishedAt!.slice(0, 10)), today, 3), hasStrategy: true, goalSaved: true,
+    week: weekProgress(data.posts.filter((p) => p.publishedAt).map((p) => p.publishedAt!.slice(0, 10)), today, 3), hasStrategy: true, goalSaved: true, today,
+    ahead: weekAhead([{ id: "p1", idea: "Reel", type: "reel", network: "instagram", status: "idea", planned_date: addDays(today, 2) }], today, 3),
+    missed: [{ id: "00000000-0000-0000-0000-000000000009", idea: "Carousel: five questions to ask before hiring a web designer", type: "carousel", network: "instagram", status: "draft", planned_date: addDays(today, -3) }],
+    recap: lastWeekRecap(data.posts, today, (iso) => iso.slice(0, 10)),
   };
   return (<main className="content"><p className="eyebrow">Preview (generated data)</p><h1>Home</h1>
     <KickstartPanel locale={locale} network="instagram" handle="dsigns_digitalsolutions" accountId="00000000-0000-0000-0000-000000000000" calendarHref="#"
@@ -37,6 +40,6 @@ export default async function Preview({ params }: { params: Promise<{ locale: st
           { day_offset: 3, format: "carousel", title: "Three signs your website is costing you clients", hook: "Sign 1 is the one nobody notices.", why: "Strategy pillar: education" },
           { day_offset: 6, format: "static", title: "Client quote: Recovery House Medellín", hook: "+85% sessions in 30 days.", why: "Proof from your case studies" }],
       } }} />
-    <NextPostCard cadence={cadence} locale={locale} postsBase="#" newPostHref="#" agentHref="#" />
+    <NextPostCard cadence={cadence} locale={locale} postsBase="#" newPostHref="#" agentHref="#" staff />
     <DashboardView data={data} locale={locale} connectHref="#" now={now} /></main>);
 }
