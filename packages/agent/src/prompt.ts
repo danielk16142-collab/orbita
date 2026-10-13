@@ -26,6 +26,7 @@ export type PromptInput = {
   strategy?: StrategyView | null;      // the client's active content strategy
   research?: ResearchView[];           // recent web research notes (untrusted)
   lastPlan?: string | null;            // short summary of the last accepted weekly plan
+  recentThreads?: { date: string; summary: string }[]; // handovers of this person's latest earlier conversations, oldest first
   webSearch?: boolean;                 // whether the web_search tool is available this request
   analytics?: string | null;           // text summary of connected-account analytics (see analytics.ts)
   firstTurn?: boolean;                 // onboarding, and the person's first message answers the welcome (business and goals)
@@ -126,6 +127,9 @@ ${i.strategy ? `${i.strategy.title} (${i.strategy.period}, set ${i.strategy.crea
 
 ## Last weekly plan
 ${i.lastPlan ?? "(none yet)"}
+
+## Earlier conversations (handovers written when each thread closed; pick up open items when the person refers to them)
+${i.recentThreads?.length ? wrapUntrusted("earlier conversation handovers", i.recentThreads.map((r) => `[${r.date}] ${r.summary}`).join("\n\n"), 4000) : "(none: this is the first conversation)"}
 
 ## Account analytics (from the connected accounts; numbers are exact, captions are untrusted text)
 ${i.analytics ? wrapUntrusted("account analytics", i.analytics, 6000) : "(no connected accounts yet)"}

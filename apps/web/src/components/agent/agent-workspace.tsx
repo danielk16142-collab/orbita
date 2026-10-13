@@ -8,8 +8,10 @@ import { Tabs } from "@/components/tabs";
 import { AgentChat } from "./agent-chat";
 import type { ProposalView } from "./proposal-card";
 import { AuditView, ContentSuggestions, ProfileNudge, StrategyView } from "./agent-views";
+import { AgentHistory } from "./agent-history";
+import { isCurrent, latestThread, recentHandovers } from "@/lib/agent/threads";
 
-export const AGENT_VIEWS = ["chat", "strategy", "audit"] as const;
+export const AGENT_VIEWS = ["chat", "strategy", "audit", "history"] as const;
 export type AgentView = (typeof AGENT_VIEWS)[number];
 export const agentViewOf = (v?: string): AgentView => ((AGENT_VIEWS as readonly string[]).includes(v ?? "") ? (v as AgentView) : "chat");
 /** Suggestions about content stay with the agent; suggestions about the brand itself are reviewed on the Profile. */
@@ -38,12 +40,17 @@ export async function AgentWorkspace({ locale, clientId, view, query, hrefFor, p
 
   if (view === "strategy") return <>{tabs}<StrategyView locale={locale} strategy={ctx.strategy} askHref={askHref} /></>;
   if (view === "audit") return <>{tabs}<AuditView locale={locale} audit={ctx.audit} sources={ctx.sources} askHref={askHref} profileHref={profileHref} /></>;
+  if (view === "history") return <>{tabs}<AgentHistory actor={actor} locale={locale} thread={query.thread} hrefFor={(thread) => hrefFor("history", thread ? { thread } : {})} /></>;
 
   const { score, missing } = completenessOf(ctx);
-  const [{ data: conv }, { data: pending }] = await Promise.all([
-    actor.sb.from("conversations").select("id").eq("client_id", actor.clientId).eq("created_by", actor.userId).neq("kind", "post").order("created_at", { ascending: false }).limit(1).maybeSingle(),
+  // One thread per day: continue today's open thread; otherwise start fresh and close the previous one in the background.
+  const [latest, handovers, { data: pending }] = await Promise.all([
+    latestThread(actor),
+    recentHandovers(actor, null, 1),
     actor.sb.from("proposals").select("id, target, payload, reason").eq("client_id", actor.clientId).eq("status", "pending").order("created_at", { ascending: false }).limit(30),
   ]);
+  const conv = latest && isCurrent(latest, actor.client.timezone ?? "UTC") ? latest : null;
+  const closePrevious = latest && !conv && latest.summary === null ? latest.id : null;
   const { data: msgs } = conv
     ? await actor.sb.from("messages").select("role, content").eq("conversation_id", conv.id).in("role", ["user", "assistant"]).order("created_at", { ascending: false }).limit(60)
     : { data: [] as { role: string; content: unknown }[] };
@@ -55,8 +62,9 @@ export async function AgentWorkspace({ locale, clientId, view, query, hrefFor, p
     <>
       {tabs}
       <div className="agent-grid">
-        <AgentChat key={query.ask ?? "chat"} locale={locale} clientId={cid} initialMessages={initial} initialConversationId={conv?.id ?? null}
-          onboarding={score < ONBOARDING_THRESHOLD} initialInput={askText(query, t, tp)} />
+        <AgentChat key={`${conv?.id ?? "new"}|${query.ask ?? ""}`} locale={locale} clientId={cid} initialMessages={initial} initialConversationId={conv?.id ?? null}
+          onboarding={score < ONBOARDING_THRESHOLD} initialInput={askText(query, t, tp)}
+          closePrevious={closePrevious} historyHref={hrefFor("history")} hasEarlier={handovers.length > 0 || !!closePrevious} />
         <aside className="agent-side">
           <ContentSuggestions proposals={content} clientId={cid} />
           <ProfileNudge score={score} missing={missing} pendingKnowledge={all.length - content.length} profileHref={profileHref} />

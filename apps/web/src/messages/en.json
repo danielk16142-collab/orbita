@@ -478,7 +478,8 @@
     "views": {
       "chat": "Chat",
       "strategy": "Strategy",
-      "audit": "Audit"
+      "audit": "Audit",
+      "history": "Past conversations"
     },
     "asks": {
       "strategy": "Build a content strategy for this quarter: objectives, content pillars, cadence per network and a topic bank.",
@@ -504,7 +505,23 @@
     "readyForReview": "Ready for review",
     "noContentSuggestions": "Plans and posts the agent prepares appear here.",
     "pendingKnowledge": "{count, plural, one {# thing} other {# things}} learned about the brand to review in the profile.",
-    "openProfile": "Open profile"
+    "openProfile": "Open profile",
+    "threads": {
+      "today": "Today's conversation",
+      "new": "New conversation",
+      "past": "Past conversations",
+      "started": "New conversation started. The previous one is being saved with a short summary, and I keep what I learned.",
+      "remembers": "New day, new thread. I still know your brand, your strategy and what we worked on before.",
+      "back": "All conversations",
+      "handover": "Summary",
+      "open": "Still open",
+      "pastTitle": "Past conversations",
+      "pastIntro": "Each day starts a new thread. When one closes, the agent saves what it learned and writes a short summary, so the next conversation picks up where you left off.",
+      "none": "No conversations yet.",
+      "openCount": "{count, plural, one {# open item} other {# open items}}",
+      "inProgress": "In progress",
+      "noHandover": "No summary"
+    }
   },
   "connections": {
     "title": "Connected accounts",

@@ -478,7 +478,8 @@
     "views": {
       "chat": "Discussion",
       "strategy": "Stratégie",
-      "audit": "Audit"
+      "audit": "Audit",
+      "history": "Conversations passées"
     },
     "asks": {
       "strategy": "Construis une stratégie de contenu pour ce trimestre : objectifs, piliers de contenu, cadence par réseau et banque de sujets.",
@@ -504,7 +505,23 @@
     "readyForReview": "Prêt à examiner",
     "noContentSuggestions": "Les plans et publications préparés par l'agent apparaissent ici.",
     "pendingKnowledge": "{count, plural, one {# élément appris} other {# éléments appris}} sur la marque à examiner dans le profil.",
-    "openProfile": "Ouvrir le profil"
+    "openProfile": "Ouvrir le profil",
+    "threads": {
+      "today": "Conversation du jour",
+      "new": "Nouvelle conversation",
+      "past": "Conversations passées",
+      "started": "Nouvelle conversation commencée. La précédente est enregistrée avec un court résumé, et je garde ce que j’ai appris.",
+      "remembers": "Nouveau jour, nouveau fil. Je connais toujours votre marque, votre stratégie et ce que nous avons fait avant.",
+      "back": "Toutes les conversations",
+      "handover": "Résumé",
+      "open": "Encore à faire",
+      "pastTitle": "Conversations passées",
+      "pastIntro": "Chaque jour commence un nouveau fil. Quand un fil se ferme, l’agent enregistre ce qu’il a appris et écrit un court résumé, pour que la conversation suivante reprenne là où vous vous êtes arrêté.",
+      "none": "Aucune conversation pour l’instant.",
+      "openCount": "{count, plural, one {# point ouvert} other {# points ouverts}}",
+      "inProgress": "En cours",
+      "noHandover": "Pas de résumé"
+    }
   },
   "connections": {
     "title": "Comptes connectés",
