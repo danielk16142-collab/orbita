@@ -100,7 +100,9 @@
       "connections": "Conexiones",
       "agent": "Agente",
       "profile": "Perfil",
-      "insights": "Análisis"
+      "insights": "Análisis",
+      "research": "Investigación",
+      "competitors": "Competidores"
     },
     "connectionsSoon": "Conecta Instagram, TikTok y más aquí (próxima fase).",
     "users": "Personas con acceso",
@@ -265,7 +267,9 @@
     "eyebrow": "Bienvenido",
     "title": "Inicio",
     "insights": "Análisis",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "research": "Investigación",
+    "competitors": "Competidores"
   },
   "acceptTerms": {
     "title": "Términos actualizados",
@@ -472,7 +476,7 @@
     },
     "views": {
       "chat": "Chat",
-      "strategy": "Estrategia e investigación",
+      "strategy": "Estrategia",
       "audit": "Auditoría"
     },
     "asks": {
@@ -482,7 +486,8 @@
       "audit": "Haz una auditoría de nuestra presencia en línea: el sitio web y cada cuenta social. Dame fortalezas, debilidades y oportunidades.",
       "recommend": "Según nuestros resultados, la auditoría y la estrategia, ¿cuáles son las tres cosas más importantes por hacer ahora?",
       "draft": "Escribe un {format} para {where}.",
-      "draftAbout": "Escribe un {format} para {where} sobre: {idea}"
+      "draftAbout": "Escribe un {format} para {where} sobre: {idea}",
+      "competitor": "Actualiza nuestra estrategia de contenido con el análisis de {name}: qué tomar, qué evitar y cómo podemos destacar."
     },
     "asksButton": {
       "strategy": "Crear una estrategia",
@@ -829,5 +834,128 @@
     "waitingCount": "{count, plural, one {# sugerencia} other {# sugerencias}} del agente por revisar.",
     "waitingNone": "Nada por revisar.",
     "review": "Revisar"
+  },
+  "research": {
+    "eyebrow": "Mercado y público",
+    "title": "Investigación",
+    "askLabel": "¿Qué quieres averiguar?",
+    "placeholder": "Por ejemplo: ¿qué pregunta la gente antes de reservar con un negocio como el nuestro?",
+    "run": "Investigar",
+    "running": "Investigando…",
+    "wait": "Buscando en la web y leyendo fuentes ({seconds} s). Suele tardar uno o dos minutos.",
+    "tryOne": "Prueba:",
+    "starters": {
+      "questions": "¿Qué preguntan nuestros clientes antes de comprar?",
+      "trends": "¿Qué contenido funciona ahora en nuestro nicho?",
+      "formats": "¿Qué formatos usan más los negocios parecidos?",
+      "dates": "¿Qué fechas y eventos vienen para nuestro mercado?"
+    },
+    "resultsTitle": "Resultados",
+    "resultsFor": "Para: {question}",
+    "saveAll": "Guardar todo",
+    "nothingFound": "No salió nada útil. Prueba con una pregunta más concreta.",
+    "kinds": {
+      "trend": "Tendencia",
+      "competitor": "Competidor",
+      "audience": "Público",
+      "idea": "Idea"
+    },
+    "kindsPlural": {
+      "trend": "Tendencias",
+      "competitor": "Competidores",
+      "audience": "Público",
+      "idea": "Ideas"
+    },
+    "whyItMatters": "Por qué importa:",
+    "save": "Guardar",
+    "saved": "Guardado",
+    "remember": "Recordar",
+    "remembered": "Recordado",
+    "limits": "Límites:",
+    "saveHint": "Guardar deja el hallazgo en Investigación, donde el agente lo usa para los planes. Recordar lo suma a lo que el agente sabe del negocio. Los resultados que no guardes no se conservan.",
+    "savedTitle": "Investigación guardada",
+    "savedHint": "Lo que guardaste de investigaciones anteriores. El agente usa lo más reciente al planificar.",
+    "noneSaved": "Todavía no hay nada guardado. Haz una búsqueda arriba y guarda lo útil.",
+    "savedOn": "Guardado el {date}",
+    "errors": {
+      "generic": "Algo salió mal. Inténtalo de nuevo.",
+      "not_configured": "El agente todavía no está configurado.",
+      "no_web": "La búsqueda web no está disponible ahora.",
+      "rate_limited": "Demasiadas búsquedas. Espera unos minutos.",
+      "daily_cap": "Se agotó el uso del agente por hoy. Se renueva mañana.",
+      "no_result": "La investigación no dio resultados. Inténtalo de nuevo o cambia la pregunta.",
+      "refused": "El agente no puede ayudar con esa solicitud.",
+      "search_failed": "Las búsquedas web fallaron esta vez, así que no se encontró nada. Inténtalo de nuevo en un momento.",
+      "model_error": "El agente tuvo un problema. Inténtalo de nuevo.",
+      "forbidden": "No puedes hacer eso ahora.",
+      "not_found": "No encontrado.",
+      "bad_request": "Escribe una pregunta de al menos unas palabras.",
+      "unauthorized": "Vuelve a iniciar sesión.",
+      "saveFailed": "No se pudo guardar. Inténtalo de nuevo."
+    }
+  },
+  "competitors": {
+    "eyebrow": "Las otras opciones del cliente",
+    "title": "Competidores",
+    "intro": "Agrega los negocios con los que tus clientes te comparan. Abre uno para analizarlo y convertirlo en contenido.",
+    "empty": "Todavía no hay competidores.",
+    "add": "Agregar competidor",
+    "edit": "Editar perfil",
+    "editProfile": "Editar o quitar",
+    "name": "Nombre",
+    "website": "Sitio web",
+    "linkPlaceholder": "Enlace del perfil o @usuario",
+    "notes": "Notas",
+    "notesPlaceholder": "Lo que ya sabemos de ellos",
+    "saveProfile": "Guardar",
+    "cancel": "Cancelar",
+    "analyzedOn": "Analizado el {date}",
+    "notAnalyzed": "Sin analizar",
+    "notAnalyzedLong": "Todavía no se ha analizado. Haz el análisis para ver cómo se posicionan, qué les funciona y cómo puedes destacar.",
+    "openAnalysis": "Abrir análisis",
+    "openProfile": "Abrir",
+    "analyze": "Hacer el análisis",
+    "analyzeAgain": "Hacer un nuevo análisis",
+    "analyzing": "Analizando…",
+    "wait": "Buscando y leyendo sus páginas ({seconds} s). Suele tardar de uno a tres minutos.",
+    "remove": "Quitar competidor",
+    "removeConfirm": "¿Quitar este competidor y sus análisis?",
+    "summary": "Resumen",
+    "positioning": "Posicionamiento",
+    "audience": "Público",
+    "postingPattern": "Publicaciones",
+    "pillars": "Pilares de contenido",
+    "formats": "Formatos",
+    "parts": {
+      "what_works": "Lo que les funciona",
+      "weaknesses": "Puntos débiles",
+      "opportunities": "Cómo podemos destacar"
+    },
+    "useTitle": "Usarlo para nuestro contenido",
+    "useHint": "Actualiza la estrategia con el agente (el análisis se guarda en Investigación para que lo use), o agrega al calendario las ideas que te gusten.",
+    "useInStrategy": "Actualizar nuestra estrategia con esto",
+    "saveToResearch": "Guardar en Investigación",
+    "savedToResearch": "Guardado en Investigación",
+    "ideasTitle": "Ideas de contenido para nosotros",
+    "addIdeas": "{count, plural, =0 {Elige ideas para agregar} one {Agregar # idea al calendario} other {Agregar # ideas al calendario}}",
+    "ideasAdded": "{count, plural, one {# idea agregada} other {# ideas agregadas}}: abrir el calendario",
+    "sources": "Fuentes y límites",
+    "errors": {
+      "generic": "Algo salió mal. Inténtalo de nuevo.",
+      "link": "Ese enlace de {network} no parece correcto. Usa el enlace del perfil o el @usuario.",
+      "website": "El sitio web debe empezar con https://",
+      "forbidden": "No puedes hacer eso ahora.",
+      "bad_request": "Revisa los campos e inténtalo de nuevo.",
+      "not_configured": "El agente todavía no está configurado.",
+      "no_web": "La búsqueda web no está disponible ahora.",
+      "rate_limited": "Demasiados análisis. Espera unos minutos.",
+      "daily_cap": "Se agotó el uso del agente por hoy. Se renueva mañana.",
+      "no_result": "El análisis no terminó. Inténtalo de nuevo.",
+      "refused": "El agente no puede ayudar con esa solicitud.",
+      "search_failed": "Las búsquedas web fallaron esta vez. Inténtalo de nuevo en un momento.",
+      "model_error": "El agente tuvo un problema. Inténtalo de nuevo.",
+      "not_found": "No encontrado.",
+      "ideas": "Algunas ideas no se pudieron agregar. Inténtalo de nuevo."
+    }
   }
 }

@@ -7,7 +7,7 @@ import { askText, type AskQuery } from "@/lib/agent/asks";
 import { Tabs } from "@/components/tabs";
 import { AgentChat } from "./agent-chat";
 import type { ProposalView } from "./proposal-card";
-import { AuditView, ContentSuggestions, ProfileNudge, StrategyResearchView } from "./agent-views";
+import { AuditView, ContentSuggestions, ProfileNudge, StrategyView } from "./agent-views";
 
 export const AGENT_VIEWS = ["chat", "strategy", "audit"] as const;
 export type AgentView = (typeof AGENT_VIEWS)[number];
@@ -16,7 +16,7 @@ export const agentViewOf = (v?: string): AgentView => ((AGENT_VIEWS as readonly 
 export const CONTENT_TARGETS = ["plan", "post", "strategy"];
 
 /**
- * The agent for one client: chat, content strategy and research, and the audit of its online presence.
+ * The agent for one client: chat, content strategy, and the audit of its online presence.
  * Used by the agency (Agent section and the client's Agent tab) and the client portal.
  */
 export async function AgentWorkspace({ locale, clientId, view, query, hrefFor, profileHref }: {
@@ -36,7 +36,7 @@ export async function AgentWorkspace({ locale, clientId, view, query, hrefFor, p
 
   const tabs = <Tabs sub label={t("title")} current={view} items={AGENT_VIEWS.map((v) => ({ key: v, label: t(`views.${v}`), href: hrefFor(v) }))} />;
 
-  if (view === "strategy") return <>{tabs}<StrategyResearchView locale={locale} strategy={ctx.strategy} research={ctx.research} clientId={cid} askHref={askHref} /></>;
+  if (view === "strategy") return <>{tabs}<StrategyView locale={locale} strategy={ctx.strategy} askHref={askHref} /></>;
   if (view === "audit") return <>{tabs}<AuditView locale={locale} audit={ctx.audit} sources={ctx.sources} askHref={askHref} profileHref={profileHref} /></>;
 
   const { score, missing } = completenessOf(ctx);

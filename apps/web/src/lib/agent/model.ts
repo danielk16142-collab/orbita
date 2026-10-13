@@ -47,3 +47,15 @@ export async function resolveModelAccess(_actor: AgentActor): Promise<ModelAcces
   if (!agentConfigured()) return null;
   return { client: createModelClient(), chatModel: chatModel(), learnModel: learnModel(), billing: "agency" };
 }
+
+/**
+ * Web tools for the dedicated Research and Competitors runs: a larger search allowance than the chat (a run is one
+ * focused job), plus web fetch for competitor analyses so the model can read the competitor's own site.
+ */
+export function researchTools(model: string, opts: { fetch?: boolean } = {}): Record<string, unknown>[] {
+  if (process.env.AGENT_WEB_SEARCH === "off" || !supportsWebSearch(model)) return [];
+  return [
+    { type: "web_search_20260209", name: "web_search", max_uses: 10 },
+    ...(opts.fetch ? [{ type: "web_fetch_20260209", name: "web_fetch", max_uses: 5, max_content_tokens: 20000 }] : []),
+  ];
+}

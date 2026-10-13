@@ -100,7 +100,9 @@
       "connections": "Connections",
       "agent": "Agent",
       "profile": "Profile",
-      "insights": "Insights"
+      "insights": "Insights",
+      "research": "Research",
+      "competitors": "Competitors"
     },
     "connectionsSoon": "Connect Instagram, TikTok and more here (next phase).",
     "users": "People with access",
@@ -265,7 +267,9 @@
     "eyebrow": "Welcome",
     "title": "Home",
     "insights": "Insights",
-    "profile": "Profile"
+    "profile": "Profile",
+    "research": "Research",
+    "competitors": "Competitors"
   },
   "acceptTerms": {
     "title": "Updated terms",
@@ -472,7 +476,7 @@
     },
     "views": {
       "chat": "Chat",
-      "strategy": "Strategy and research",
+      "strategy": "Strategy",
       "audit": "Audit"
     },
     "asks": {
@@ -482,7 +486,8 @@
       "audit": "Audit our online presence: the website and each social account. Give strengths, weaknesses and opportunities.",
       "recommend": "Based on our results, the audit and the strategy, what are the three most important things to do next?",
       "draft": "Write a {format} for {where}.",
-      "draftAbout": "Write a {format} for {where} about: {idea}"
+      "draftAbout": "Write a {format} for {where} about: {idea}",
+      "competitor": "Update our content strategy using the analysis of {name}: what to borrow, what to avoid and where we can stand out."
     },
     "asksButton": {
       "strategy": "Build a strategy",
@@ -829,5 +834,128 @@
     "waitingCount": "{count, plural, one {# suggestion} other {# suggestions}} from the agent to review.",
     "waitingNone": "Nothing to review.",
     "review": "Review"
+  },
+  "research": {
+    "eyebrow": "Market and audience",
+    "title": "Research",
+    "askLabel": "What do you want to find out?",
+    "placeholder": "For example: what do people ask before booking an appointment with a business like ours?",
+    "run": "Research",
+    "running": "Researching…",
+    "wait": "Searching the web and reading sources ({seconds}s). This usually takes one to two minutes.",
+    "tryOne": "Try:",
+    "starters": {
+      "questions": "What do our customers ask before they buy?",
+      "trends": "What content is working right now in our niche?",
+      "formats": "Which formats do similar businesses use most?",
+      "dates": "Which dates and events are coming up for our market?"
+    },
+    "resultsTitle": "Results",
+    "resultsFor": "For: {question}",
+    "saveAll": "Save all",
+    "nothingFound": "Nothing useful came back. Try a more specific question.",
+    "kinds": {
+      "trend": "Trend",
+      "competitor": "Competitor",
+      "audience": "Audience",
+      "idea": "Idea"
+    },
+    "kindsPlural": {
+      "trend": "Trends",
+      "competitor": "Competitors",
+      "audience": "Audience",
+      "idea": "Ideas"
+    },
+    "whyItMatters": "Why it matters:",
+    "save": "Save",
+    "saved": "Saved",
+    "remember": "Remember",
+    "remembered": "Remembered",
+    "limits": "Limits:",
+    "saveHint": "Save keeps a finding in Research, where the agent uses it for plans. Remember adds it to what the agent knows about the business. Results you do not save are not kept.",
+    "savedTitle": "Saved research",
+    "savedHint": "What you kept from earlier research. The agent uses the most recent findings when it plans.",
+    "noneSaved": "Nothing saved yet. Run a search above and save what is useful.",
+    "savedOn": "Saved {date}",
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "not_configured": "The agent is not set up yet.",
+      "no_web": "Web search is not available right now.",
+      "rate_limited": "Too many searches. Wait a few minutes.",
+      "daily_cap": "Today's agent allowance is used up. It resets tomorrow.",
+      "no_result": "The research did not return results. Try again or rephrase the question.",
+      "refused": "The agent could not help with that request.",
+      "search_failed": "The web searches failed this time, so nothing was found. Try again in a moment.",
+      "model_error": "The agent had a problem. Please try again.",
+      "forbidden": "You can't do that right now.",
+      "not_found": "Not found.",
+      "bad_request": "Write a question of at least a few words.",
+      "unauthorized": "Please sign in again.",
+      "saveFailed": "Could not save that. Please try again."
+    }
+  },
+  "competitors": {
+    "eyebrow": "Who else they choose",
+    "title": "Competitors",
+    "intro": "Add the businesses your customers compare you with. Open one to run an analysis and turn it into content.",
+    "empty": "No competitors yet.",
+    "add": "Add competitor",
+    "edit": "Edit profile",
+    "editProfile": "Edit or remove",
+    "name": "Name",
+    "website": "Website",
+    "linkPlaceholder": "Profile link or @handle",
+    "notes": "Notes",
+    "notesPlaceholder": "Anything we already know about them",
+    "saveProfile": "Save",
+    "cancel": "Cancel",
+    "analyzedOn": "Analyzed {date}",
+    "notAnalyzed": "Not analyzed yet",
+    "notAnalyzedLong": "Not analyzed yet. Run the analysis to see how they position themselves, what works for them and where you can stand out.",
+    "openAnalysis": "Open analysis",
+    "openProfile": "Open",
+    "analyze": "Run analysis",
+    "analyzeAgain": "Run a new analysis",
+    "analyzing": "Analyzing…",
+    "wait": "Searching and reading their pages ({seconds}s). This usually takes one to three minutes.",
+    "remove": "Remove competitor",
+    "removeConfirm": "Remove this competitor and its analyses?",
+    "summary": "Summary",
+    "positioning": "Positioning",
+    "audience": "Audience",
+    "postingPattern": "Posting",
+    "pillars": "Content pillars",
+    "formats": "Formats",
+    "parts": {
+      "what_works": "What works for them",
+      "weaknesses": "Weak spots",
+      "opportunities": "Where we can stand out"
+    },
+    "useTitle": "Use it for our content",
+    "useHint": "Update the strategy with the agent (the analysis is saved to Research so it can use it), or add the ideas you like to the calendar.",
+    "useInStrategy": "Update our strategy with this",
+    "saveToResearch": "Save to Research",
+    "savedToResearch": "Saved to Research",
+    "ideasTitle": "Content ideas for us",
+    "addIdeas": "{count, plural, =0 {Pick ideas to add} one {Add # idea to the calendar} other {Add # ideas to the calendar}}",
+    "ideasAdded": "{count, plural, one {# idea added} other {# ideas added}}: open the calendar",
+    "sources": "Sources and limits",
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "link": "That {network} link does not look right. Use the profile link or the @handle.",
+      "website": "The website must start with https://",
+      "forbidden": "You can't do that right now.",
+      "bad_request": "Check the fields and try again.",
+      "not_configured": "The agent is not set up yet.",
+      "no_web": "Web search is not available right now.",
+      "rate_limited": "Too many analyses. Wait a few minutes.",
+      "daily_cap": "Today's agent allowance is used up. It resets tomorrow.",
+      "no_result": "The analysis did not finish. Try again.",
+      "refused": "The agent could not help with that request.",
+      "search_failed": "The web searches failed this time. Try again in a moment.",
+      "model_error": "The agent had a problem. Please try again.",
+      "not_found": "Not found.",
+      "ideas": "Some ideas could not be added. Please try again."
+    }
   }
 }

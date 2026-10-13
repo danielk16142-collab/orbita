@@ -5,7 +5,9 @@ import { Sidebar } from "@/components/sidebar";
 import { Tabs } from "@/components/tabs";
 import { ProfileView } from "@/components/profile/profile-panel";
 import { MemoriesView } from "@/components/profile/memories";
-import { AuditView, ContentSuggestions, ProfileNudge, StrategyResearchView } from "@/components/agent/agent-views";
+import { AuditView, ContentSuggestions, ProfileNudge, StrategyView } from "@/components/agent/agent-views";
+import { ResearchView } from "@/components/research/research-panel";
+import { CompetitorsView, CompetitorDetailView } from "@/components/competitors/competitors-panel";
 import { AgentChat } from "@/components/agent/agent-chat";
 import { InsightsView } from "@/components/insights/insights-panel";
 import { BrandingPanel } from "@/components/branding-panel";
@@ -33,6 +35,15 @@ export default async function Preview({ params, searchParams }: { params: Promis
   const memories = mem.map(([kind, content], i) => ({ id: `m${i}`, kind: kind as "preference", content, weight: 1, createdAt: day(i + 1) }));
   const proposals = [{ id: "p1", target: "memory" as const, payload: { kind: "avoid", content: "No emojis in captions" }, reason: "You removed emojis from the last three captions." }];
 
+
+  const notes = [{ id: "n1", kind: "trend", title: "Slow pour videos are getting saved", summary: "Close ups of latte art and pour overs are among the most saved café posts this month.", sources: [{ title: "Example source", url: "https://example.com" }], created_at: day(3) },
+    { id: "n2", kind: "audience", title: "Remote workers look for quiet weekday spots", summary: "Searches for cafés with wifi and outlets peak on weekday mornings.", sources: [], created_at: day(5) }];
+  const rival = { id: "e1", name: "Rival Café", url: null, website: "https://rival.example.com", links: [{ network: "instagram", url: "https://www.instagram.com/rival" }, { network: "tiktok", url: "https://www.tiktok.com/@rival" }], notes: null, last_researched_at: day(2) };
+  const other = { id: "e2", name: "Corner Roasters", url: null, website: null, links: [{ network: "instagram", url: "https://www.instagram.com/corner" }], notes: "Opened last spring two blocks away", last_researched_at: null };
+  const rivalAnalysis = { summary: "A polished specialty café that leans on product photography and seasonal drink launches.", positioning: "Premium, design-led, for coffee enthusiasts.", audience: "Young professionals and visitors looking for a photogenic spot.", content_pillars: ["Seasonal drinks", "Latte art", "Interior design"], formats: ["Reels of drink making", "Carousels of the menu"], posting_pattern: "About four posts a week, mostly mornings.",
+    what_works: ["Close up drink videos", "Consistent warm color grading"], weaknesses: ["Little about the people behind the counter", "No clear offers or calls to action"], opportunities: ["Show the baristas and regulars", "Weekly brunch series with a clear call to book"],
+    content_ideas: [{ title: "Meet the barista: 30 seconds behind the counter", format: "reel" as const, network: "instagram" as const, why: "They never show their team; we can." }, { title: "This week's brunch, slide by slide", format: "carousel" as const, network: "instagram" as const, why: "Their menu carousels do well, ours can add booking." }],
+    sources: [{ title: "rival.example.com", url: "https://rival.example.com" }], confidence_note: "Instagram numbers were not visible; based on the website and search results." };
   const data: AnalyticsData = { accounts: [], metrics: [], posts: [] };
   for (const network of ["instagram", "tiktok"] as const) {
     const c = fakeConnector(network), tk = { accessToken: "x" };
@@ -42,8 +53,8 @@ export default async function Preview({ params, searchParams }: { params: Promis
   }
   const client = { id: "00000000-0000-0000-0000-000000000001", name: "Café Luna", languages: ["en", "fr"], markets: ["Canada"], timezone: "America/Toronto", primary_color: "#ff4e1b", accent_color: "#ff8c6b", branding_locked: false,
     palette: [{ name: "Espresso", hex: "#3b2417", role: "primary" }, { name: "Oat", hex: "#efe4d2", role: "background" }, { name: "Moon", hex: "#f2c14e", role: "accent" }], font: "Bricolage Grotesque", body_font: "Inter" };
-  const TABS = ["profile", "agent", "insights", "branding", "connections", "users"];
-  const labels: Record<string, string> = { profile: "Profile", agent: "Agent", insights: "Insights", branding: "Branding", connections: "Connections", users: "Users" };
+  const TABS = ["profile", "agent", "research", "competitors", "insights", "branding", "connections", "users"];
+  const labels: Record<string, string> = { profile: "Profile", agent: "Agent", research: "Research", competitors: "Competitors", insights: "Insights", branding: "Branding", connections: "Connections", users: "Users" };
 
   return (
     <div className="shell">
@@ -59,10 +70,13 @@ export default async function Preview({ params, searchParams }: { params: Promis
         {tab === "learned" && <><p className="page-intro stat-vs">Preview of the full page</p><MemoriesView locale={locale} memories={memories} clientId={client.id} /></>}
         {tab === "agent" && (<>
           <Tabs sub label="Agent" current={view} items={[["chat", "Chat"], ["strategy", "Strategy and research"], ["audit", "Audit"]].map(([k, l]) => ({ key: k, label: l, href: href("agent", k) }))} />
-          {view === "strategy" && <StrategyResearchView locale={locale} strategy={strategy} research={research} askHref={() => "#"} />}
+          {view === "strategy" && <StrategyView locale={locale} strategy={strategy} askHref={() => "#"} />}
           {view === "audit" && <AuditView locale={locale} audit={audit} sources={sources} askHref={() => "#"} profileHref="#" />}
           {view === "chat" && <div className="agent-grid"><AgentChat locale={locale} initialMessages={[]} initialConversationId={null} /><aside className="agent-side"><ContentSuggestions proposals={[]} /><ProfileNudge score={62} missing={["proof", "personas"]} pendingKnowledge={1} profileHref="#" /></aside></div>}
         </>)}
+        {tab === "research" && <ResearchView locale={locale} clientId={client.id} notes={notes} />}
+        {tab === "competitors" && <CompetitorsView locale={locale} clientId={client.id} competitors={[rival, other]} latest={new Map([["e1", rivalAnalysis]])} detailBase="?tab=competitor&id=" />}
+        {tab === "competitor" && <CompetitorDetailView locale={locale} clientId={client.id} staff competitor={rival} analysis={{ id: "a1", createdAt: day(2), data: rivalAnalysis }} listHref="?tab=competitors" chatHref="#" calendarHref="#" />}
         {tab === "insights" && <InsightsView locale={locale} data={data} audit={audit} strategy={strategy} pendingSuggestions={1} links={{ connect: "#", audit: "#", recommend: "#", strategy: "#", review: "#" }} now={now} />}
         {tab === "branding" && <BrandingPanel locale={locale} client={client} canEdit isAdmin logos={{ light: "/brand/orbita-logo.svg", dark: "/brand/orbita-logo-light.svg" }} references={[{ id: "f1", kind: "style", caption: "Warm morning light, wood counter", url: "/brand/orbita-logo.png", width: null, height: null }, { id: "f2", kind: "avoid", caption: "No stock photos with fake smiles", url: "/brand/orbita-mark.svg", width: null, height: null }]} />}
         </>)}

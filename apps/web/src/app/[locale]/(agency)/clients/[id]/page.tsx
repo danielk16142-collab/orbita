@@ -8,11 +8,13 @@ import { loadReferences } from "@/lib/references";
 import { AgentWorkspace, agentViewOf } from "@/components/agent/agent-workspace";
 import { ProfilePanel } from "@/components/profile/profile-panel";
 import { InsightsPanel } from "@/components/insights/insights-panel";
+import { ResearchPanel } from "@/components/research/research-panel";
+import { CompetitorsPanel } from "@/components/competitors/competitors-panel";
 import { ConnectionsPanel } from "@/components/connections/connections-panel";
 import { Tabs } from "@/components/tabs";
 import { deleteClientAction, inviteAction, revokeInvitationAction } from "../actions";
 
-const TABS = ["profile", "agent", "insights", "branding", "connections", "users"] as const;
+const TABS = ["profile", "agent", "research", "competitors", "insights", "branding", "connections", "users"] as const;
 type Tab = (typeof TABS)[number];
 
 export default async function ClientDetail({ params, searchParams }: {
@@ -70,6 +72,9 @@ export default async function ClientDetail({ params, searchParams }: {
         <AgentWorkspace locale={locale as "en" | "fr" | "es"} clientId={id} view={agentViewOf(q.view)} query={q}
           hrefFor={(v, extra) => href("agent", { view: v, ...extra })} profileHref={href("profile")} />
       )}
+
+      {tab === "research" && <ResearchPanel locale={locale} clientId={id} />}
+      {tab === "competitors" && <CompetitorsPanel locale={locale} clientId={id} detailBase={`${base}/competitors`} />}
 
       {tab === "insights" && (
         <InsightsPanel locale={locale} clientId={id} links={{

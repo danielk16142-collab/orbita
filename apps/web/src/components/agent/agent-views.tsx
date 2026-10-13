@@ -2,7 +2,6 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import type { ClientContext } from "@/lib/agent/context";
 import { ProposalCard, type ProposalView } from "./proposal-card";
-import { DeleteResearchButton } from "./small-actions";
 
 type StrategyContent = {
   objectives?: string[]; pillars?: { name: string; share_percent: number }[];
@@ -10,9 +9,9 @@ type StrategyContent = {
 };
 const fmtDate = (iso: string, locale: string) => new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(iso));
 
-/** Content strategy and research notes for one client. */
-export async function StrategyResearchView({ locale, strategy, research, clientId, askHref }: {
-  locale: string; strategy: ClientContext["strategy"]; research: ClientContext["research"]; clientId?: string; askHref: (ask: string) => string;
+/** The active content strategy for one client. Research and competitors have their own sections. */
+export async function StrategyView({ locale, strategy, askHref }: {
+  locale: string; strategy: ClientContext["strategy"]; askHref: (ask: string) => string;
 }) {
   const t = await getTranslations("agent");
   const c = (strategy?.content ?? {}) as StrategyContent;
@@ -38,25 +37,6 @@ export async function StrategyResearchView({ locale, strategy, research, clientI
         ) : <p>{t("noStrategy")}</p>}
       </section>
 
-      <section className="card">
-        <div className="section-head">
-          <h2>{t("research")}</h2>
-          <div className="btn-row">
-            <Link className="btn small ghost" href={askHref("competitors")}>{t("asksButton.competitors")}</Link>
-            <Link className="btn small" href={askHref("research")}>{t("asksButton.research")}</Link>
-          </div>
-        </div>
-        {research.length ? <ul className="plain research-list">{research.map((r) => (
-          <li key={r.id}>
-            <details><summary><span className="badge">{r.kind}</span> <strong>{r.title}</strong> <small className="inline">{fmtDate(r.createdAt, locale)}</small></summary>
-              <p>{r.summary}</p>
-              {r.sources.length > 0 && <ul>{r.sources.map((s, i) => <li key={i}><a href={s.url} target="_blank" rel="noopener noreferrer nofollow">{s.title || s.url}</a></li>)}</ul>}
-            </details>
-            <DeleteResearchButton id={r.id} clientId={clientId} />
-          </li>
-        ))}</ul> : <p>{t("noResearch")}</p>}
-        <small>{t("researchHint")}</small>
-      </section>
     </div>
   );
 }
