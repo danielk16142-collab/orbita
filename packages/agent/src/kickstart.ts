@@ -49,3 +49,40 @@ export function kickstartRequest(network: string, handle: string | null, startDa
     "Write everything in the conversation language. Call present_kickstart once.",
   ].join("\n");
 }
+
+/**
+ * "Fill the week": posts for the open days only. The allowed dates are put in the tool schema itself (strict enum),
+ * so the model cannot pick a day that is already taken or out of range.
+ */
+export function fillWeekTool(openDays: string[]) {
+  return {
+    name: "present_week_posts", strict: true,
+    description: "Return posts for the open days. Call it exactly once.",
+    input_schema: { type: "object", properties: {
+      posts: { type: "array", items: { type: "object", properties: {
+        date: { type: "string", enum: openDays },
+        format: { type: "string", enum: [...KICKSTART_FORMATS] },
+        title: { type: "string", description: "The idea in one line, with the angle" },
+        hook: { type: "string", description: "The opening line or first frame" },
+        why: { type: "string", description: "One line: which pillar, topic, result or research it builds on" },
+      }, required: ["date", "format", "title", "hook", "why"], additionalProperties: false } },
+    }, required: ["posts"], additionalProperties: false },
+  } as const;
+}
+export function weekPostsSchema(openDays: string[], max: number) {
+  const Item = z.object({ date: z.enum(openDays as [string, ...string[]]), format: z.enum(KICKSTART_FORMATS), title: line(200).pipe(z.string().min(1)), hook: line(300).catch(""), why: line(300).catch("") });
+  return z.object({ posts: z.array(z.unknown()).transform((a) => {
+    const seen = new Set<string>();
+    return a.flatMap((x) => { const r = Item.safeParse(x); if (!r.success || seen.has(r.data.date)) return []; seen.add(r.data.date); return [r.data]; })
+      .sort((x, y) => x.date.localeCompare(y.date)).slice(0, max);
+  }).pipe(z.array(z.any()).min(1)) });
+}
+export type WeekPost = { date: string; format: (typeof KICKSTART_FORMATS)[number]; title: string; hook: string; why: string };
+
+export function fillWeekRequest(network: string, count: number, openDays: string[], planned: string[]) {
+  return [
+    `Plan ${count} ${network} post${count === 1 ? "" : "s"} for these open days: ${openDays.join(", ")}. One post per day at most; spread them out and favour the days and times that worked.`,
+    planned.length ? `Already on the calendar (do not repeat these): ${planned.slice(0, 20).join(" | ")}` : "Nothing else is on the calendar this week.",
+    "Follow the active strategy (pillars, series, topics) and the latest research; be specific to this brand. Write in the conversation language. Call present_week_posts once.",
+  ].join("\n");
+}

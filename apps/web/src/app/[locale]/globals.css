@@ -501,3 +501,14 @@ ul.plain.idea-cards li { display: block; }
 .check-line input, .kickstart-item input { width: auto; }
 .kickstart > h3 { margin-top: 1.25rem; }
 @media (max-width: 520px) { .kickstart-item { grid-template-columns: auto minmax(0, 1fr); } .kickstart-when { grid-column: 2; } .kickstart-body { grid-column: 2; } }
+
+/* Under "Your next post": last week's recap, the gap warning with "Fill the week", and missed posts. */
+.next-post-extra { grid-column: 1 / -1; display: grid; gap: 0.75rem; min-width: 0; }
+.next-post-extra:empty { display: none; }
+.recap { margin: 0; overflow-wrap: break-word; }
+.gap-warning { border: 2px dashed var(--brand); border-radius: var(--radius); padding: 0.75rem 1rem; }
+.gap-warning p { margin: 0 0 0.5rem; }
+.missed summary { cursor: pointer; }
+.missed ul.plain li.missed-item { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr) auto; gap: 0.75rem; align-items: center; padding: 0.4rem 0; border-top: 1px solid var(--mist); }
+@media (max-width: 520px) { .missed ul.plain li.missed-item { grid-template-columns: minmax(0, 1fr); gap: 0.25rem; justify-items: start; } }
+.missed-item .btn { white-space: nowrap; }

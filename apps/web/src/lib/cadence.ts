@@ -1,10 +1,13 @@
 import "server-only";
-import { bestPostingWindows, nextPost, weekProgress, type CadencePost, type CadenceRule, type NextPost, type WeekProgress } from "@orbita/agent";
+import { bestPostingWindows, lastWeekRecap, missedPosts, nextPost, weekAhead, weekProgress, type CadencePost, type CadenceRule, type NextPost, type WeekProgress } from "@orbita/agent";
 import type { AnalyticsData } from "@/lib/analytics/load";
 import type { getSession } from "@/lib/session";
 
 type Sb = NonNullable<Awaited<ReturnType<typeof getSession>>>["sb"];
-export type Cadence = { next: NextPost; week: WeekProgress; hasStrategy: boolean; goalSaved: boolean };
+export type Cadence = {
+  next: NextPost; week: WeekProgress; hasStrategy: boolean; goalSaved: boolean;
+  ahead: ReturnType<typeof weekAhead>; missed: CadencePost[]; recap: ReturnType<typeof lastWeekRecap> | null; today: string;
+};
 
 /** Today's date on the client's calendar. */
 export function localDay(timezone: string, at = new Date()): string {
@@ -44,5 +47,9 @@ export async function loadCadence(sb: Sb, clientId: string, analytics: Analytics
     week: weekProgress(publishedDays, today, client?.posting_goal ?? 3),
     hasStrategy: !!strategy.data,
     goalSaved,
+    ahead: weekAhead(rows, today, client?.posting_goal ?? 3),
+    missed: missedPosts(rows, today),
+    recap: analytics.accounts.length ? lastWeekRecap(analytics.posts, today, (iso) => localDay(tz, new Date(iso))) : null,
+    today,
   };
 }

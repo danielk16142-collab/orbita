@@ -24,7 +24,8 @@ export async function ClientDashboard({ sb, clientId, locale, connectHref, links
     <>
       {kickstart && <KickstartPanel key={kickstart.ready?.id ?? kickstart.accountId} clientId={links.actorClientId} locale={locale} network={kickstart.network} handle={kickstart.handle}
         accountId={kickstart.accountId} ready={kickstart.ready} calendarHref={`${links.postsBase}?${new URLSearchParams({ view: "month", ...(links.actorClientId && { client: links.actorClientId }) })}`} />}
-      <NextPostCard cadence={cadence} locale={locale} clientId={links.actorClientId} postsBase={links.postsBase} newPostHref={links.newPostHref} agentHref={links.agentHref} />
+      <NextPostCard cadence={cadence} locale={locale} clientId={links.actorClientId} postsBase={links.postsBase} newPostHref={links.newPostHref} agentHref={links.agentHref}
+        network={data.accounts[0]?.network ?? "instagram"} staff={!!links.actorClientId} />
       <DashboardView data={data} locale={locale} connectHref={connectHref} />
     </>
   );

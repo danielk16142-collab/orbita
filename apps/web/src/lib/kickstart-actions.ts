@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { addDays, Kickstart } from "@orbita/agent";
 import { resolveAgentActor } from "@/lib/agent/access";
 import { audit } from "@/lib/audit";
+import { insertIdeas } from "@/lib/posts/insert-ideas";
 
 type Result = { ok: true; added?: number } | { ok: false; error: string };
 const Base = { clientId: z.string().uuid().optional(), id: z.string().uuid() };
@@ -24,12 +25,8 @@ export async function acceptKickstartAction(input: unknown): Promise<Result> {
   if (!plan.success) return { ok: false, error: "not_found" };
   const chosen = [...new Set(p.data.items)].map((i) => plan.data.plan[i]).filter(Boolean);
   if (chosen.length) {
-    const { error } = await sb.from("posts").insert(chosen.map((it) => ({
-      client_id: clientId, network: row.network, language: p.data.language, type: it.format, status: "idea", source: "manual", created_by: userId,
-      idea: [it.title, it.hook && `Hook: ${it.hook}`, it.why && `Why: ${it.why}`].filter(Boolean).join("\n\n").slice(0, 2000),
-      planned_date: addDays(row.start_date, it.day_offset),
-    })));
-    if (error) { console.error(`kickstart posts failed: code=${error.code}`); return { ok: false, error: "forbidden" }; }
+    const r = await insertIdeas(a.actor, row.network, p.data.language, chosen.map((it) => ({ ...it, date: addDays(row.start_date, it.day_offset) })));
+    if (!r.ok) return r;
   }
   if (p.data.setGoal) await sb.from("clients").update({ posting_goal: plan.data.posts_per_week }).eq("id", clientId);
   await sb.from("kickstarts").update({ status: "accepted", decided_at: new Date().toISOString() }).eq("id", row.id);
