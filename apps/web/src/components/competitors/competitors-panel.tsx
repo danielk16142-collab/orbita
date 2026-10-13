@@ -22,22 +22,26 @@ export async function CompetitorsPanel({ locale, clientId, detailBase }: { local
   const access = await resolveAgentActor(clientId);
   if (!access.ok) notFound();
   const { sb, clientId: id, profile } = access.actor;
-  const [{ data: rows }, { data: analyses }] = await Promise.all([
+  const [{ data: rows, error }, { data: analyses }] = await Promise.all([
     sb.from("competitors").select(COLS).eq("client_id", id).order("created_at"),
     sb.from("competitor_analyses").select("competitor_id, analysis, created_at").eq("client_id", id).order("created_at", { ascending: false }).limit(200),
   ]);
   const latest = new Map<string, Analysis>();
   for (const a of analyses ?? []) if (!latest.has(a.competitor_id)) { const p = CompetitorAnalysis.safeParse(a.analysis); if (p.success) latest.set(a.competitor_id, p.data); }
-  return <CompetitorsView locale={locale} clientId={profile.role === "client" ? undefined : id} competitors={(rows ?? []).map(asRow)} latest={latest} detailBase={detailBase} />;
+  // A missing column means migration 0012 has not been applied to this database: say so instead of "no competitors".
+  const setupNeeded = !!error && ["PGRST204", "PGRST205", "42703", "42P01"].includes(error.code ?? "");
+  if (error) console.error(`competitors read failed: code=${error.code}`);
+  return <CompetitorsView locale={locale} clientId={profile.role === "client" ? undefined : id} competitors={(rows ?? []).map(asRow)} latest={latest} detailBase={detailBase} setupNeeded={setupNeeded} />;
 }
 
-export async function CompetitorsView({ locale, clientId, competitors, latest, detailBase }: { locale: string; clientId?: string; competitors: CompetitorRow[]; latest: Map<string, Analysis>; detailBase: string }) {
+export async function CompetitorsView({ locale, clientId, competitors, latest, detailBase, setupNeeded = false }: { locale: string; clientId?: string; competitors: CompetitorRow[]; latest: Map<string, Analysis>; detailBase: string; setupNeeded?: boolean }) {
   const t = await getTranslations("competitors");
   const date = new Intl.DateTimeFormat(locale, { dateStyle: "medium" });
   return (
     <div className="stack">
       <p className="stat-vs page-intro">{t("intro")}</p>
-      {competitors.length === 0 && <p className="empty-note">{t("empty")}</p>}
+      {setupNeeded && <p className="card callout" role="alert">{t("errors.not_set_up")}</p>}
+      {competitors.length === 0 && !setupNeeded && <p className="empty-note">{t("empty")}</p>}
       <div className="comp-grid">
         {competitors.map((c) => {
           const a = latest.get(c.id);

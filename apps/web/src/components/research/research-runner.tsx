@@ -36,12 +36,12 @@ export function ResearchRunner({ locale, clientId }: { locale: string; clientId?
   const save = (i: number) => start(async () => {
     const f = result!.findings[i];
     const r = await saveFindingAction({ clientId, note: { kind: f.kind, title: f.title, summary: [f.summary, f.why_it_matters].filter(Boolean).join("\n\n").slice(0, 2000), sources: f.sources } });
-    if (r.ok) { mark(i, "saved"); router.refresh(); } else setError(t("errors.saveFailed"));
+    if (r.ok) { mark(i, "saved"); router.refresh(); } else setError(t(r.error === "not_set_up" ? "errors.not_set_up" : "errors.saveFailed"));
   });
   const remember = (i: number) => start(async () => {
     const f = result!.findings[i];
     const r = await rememberFindingAction({ clientId, content: `${f.title}: ${f.summary}`.slice(0, 1000) });
-    if (r.ok) mark(i, "remembered"); else setError(t("errors.saveFailed"));
+    if (r.ok) mark(i, "remembered"); else setError(t(r.error === "not_set_up" ? "errors.not_set_up" : "errors.saveFailed"));
   });
   const saveAll = () => result!.findings.forEach((_, i) => { if (!done[i]?.saved) save(i); });
 
