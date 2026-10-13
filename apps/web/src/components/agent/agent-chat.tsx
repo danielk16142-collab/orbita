@@ -10,8 +10,12 @@ type Ev = { type: string; text?: string; conversationId?: string; code?: string;
 /** A normal chat. Streams the agent's reply and refreshes the page when it adds suggestions, sources or an audit. */
 const GOALS = ["sales", "awareness", "followers", "offer", "trust", "educate", "consistency"] as const;
 
-export function AgentChat({ locale, clientId, initialMessages, initialConversationId, onboarding = false, initialInput = "" }: {
+export function AgentChat({ locale, clientId, initialMessages, initialConversationId, onboarding = false, initialInput = "", closePrevious = null, historyHref, hasEarlier = false }: {
   locale: string; clientId?: string; initialMessages: Msg[]; initialConversationId: string | null; onboarding?: boolean;
+  /** An earlier thread to close in the background (a new day started): last learning pass and its handover. */
+  closePrevious?: string | null;
+  /** Link to the past conversations. */ historyHref?: string;
+  /** Earlier threads left a handover, so a fresh thread still knows what happened. */ hasEarlier?: boolean;
   /** A request prepared by another screen (e.g. "write this carousel"). Shown in the box; the person still sends it. */
   initialInput?: string;
 }) {
@@ -29,6 +33,17 @@ export function AgentChat({ locale, clientId, initialMessages, initialConversati
   useEffect(() => { if (messages.length) end.current?.scrollIntoView({ behavior: "smooth", block: "end" }); }, [messages]);
 
   const refresh = () => startRefresh(() => router.refresh());
+  const close = (id: string) => void fetch("/api/agent/close", { method: "POST", keepalive: true, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, conversationId: id, locale }) }).catch(() => null);
+  const closed = useRef(false);
+  useEffect(() => { if (closePrevious && !closed.current) { closed.current = true; close(closePrevious); } }); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /** Start fresh now: the current thread is closed (learned from and summarised) in the background. */
+  function newConversation() {
+    const id = conv.current;
+    conv.current = null;
+    setMessages([]); setError(null); setNote(t("threads.started"));
+    if (id) close(id);
+  }
 
   async function learn(silent: boolean) {
     if (!conv.current) return;
@@ -90,6 +105,13 @@ export function AgentChat({ locale, clientId, initialMessages, initialConversati
   const starters = [t("starters.plan"), t("starters.strategy"), t("starters.reel"), t("starters.ideas")];
   return (
     <section className="card agent-chat" aria-label={t("title")}>
+      <div className="agent-thread-bar">
+        <span className="eyebrow">{t("threads.today")}</span>
+        <div className="btn-row">
+          <button type="button" className="btn ghost small" onClick={newConversation} disabled={busy || messages.length === 0}>{t("threads.new")}</button>
+          {historyHref && <a className="btn ghost small" href={historyHref}>{t("threads.past")}</a>}
+        </div>
+      </div>
       <div className="agent-log" role="log" aria-live="polite" aria-busy={busy}>
         {welcome && (
           <div className="agent-msg assistant">
@@ -105,6 +127,7 @@ export function AgentChat({ locale, clientId, initialMessages, initialConversati
         {messages.length === 0 && !welcome && (
           <div>
             <p>{t("intro")}</p>
+            {hasEarlier && <p className="stat-vs">{t("threads.remembers")}</p>}
             <div className="agent-starters">{starters.map((s) => <button key={s} type="button" className="btn ghost" onClick={() => send(s)} disabled={busy}>{s}</button>)}</div>
           </div>
         )}

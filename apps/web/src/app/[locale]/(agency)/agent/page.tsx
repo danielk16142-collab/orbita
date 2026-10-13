@@ -4,7 +4,7 @@ import { AgentWorkspace, agentViewOf } from "@/components/agent/agent-workspace"
 import { ClientSwitcher } from "@/components/client-switcher";
 
 /** Agency view: the agent of one client (chat, strategy and research, audit), with a switcher to change client. */
-export default async function AgentIndex({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ client?: string; view?: string; ask?: string; format?: string; network?: string; idea?: string }> }) {
+export default async function AgentIndex({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ client?: string; view?: string; ask?: string; format?: string; network?: string; idea?: string; thread?: string }> }) {
   const { locale } = await params;
   const q = await searchParams;
   const t = await getTranslations("agent");

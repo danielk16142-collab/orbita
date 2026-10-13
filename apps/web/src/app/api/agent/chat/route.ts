@@ -7,6 +7,7 @@ import { resolveModelAccess, webSearchTools } from "@/lib/agent/model";
 import { overDailyCap, recordUsage } from "@/lib/agent/usage";
 import { describeModelError, json, sameOrigin } from "@/lib/agent/http";
 import { limiter } from "@/lib/rate-limit";
+import { recentHandovers } from "@/lib/agent/threads";
 import { audit } from "@/lib/audit";
 
 export const runtime = "nodejs";
@@ -42,9 +43,11 @@ export async function POST(req: Request) {
   // Conversation: reuse one that belongs to THIS client, or start one.
   let conversationId = body.conversationId ?? null;
   if (conversationId) {
-    const { data } = await actor.sb.from("conversations").select("id").eq("id", conversationId).eq("client_id", actor.clientId).maybeSingle();
+    const { data } = await actor.sb.from("conversations").select("id, summary").eq("id", conversationId).eq("client_id", actor.clientId).maybeSingle();
     if (!data) return json({ error: "not_found" }, 404);
-  } else {
+    if (data.summary !== null) conversationId = null; // that thread was closed (new day or "New conversation"): start a fresh one
+  }
+  if (!conversationId) {
     const { data, error } = await actor.sb.from("conversations").insert({
       client_id: actor.clientId, created_by: actor.userId, kind: score < ONBOARDING_THRESHOLD ? "onboarding" : "training",
     }).select("id").single();
@@ -64,7 +67,8 @@ export async function POST(req: Request) {
   const { count: userMsgs } = await actor.sb.from("messages").select("id", { count: "exact", head: true }).eq("conversation_id", conversationId).eq("role", "user");
 
   const serverTools = webSearchTools(ai.chatModel);
-  const input = promptInput(actor, ctx, body.locale, { webSearch: serverTools.length > 0, firstTurn: score < ONBOARDING_THRESHOLD && userMsgs === 1 });
+  const input = { ...promptInput(actor, ctx, body.locale, { webSearch: serverTools.length > 0, firstTurn: score < ONBOARDING_THRESHOLD && userMsgs === 1 }),
+    recentThreads: await recentHandovers(actor, conversationId) };
   const userTexts = [...history.filter((m) => m.role === "user").map((m) => String(m.content)), body.message];
   const ports = makePorts(actor, { conversationId, weekStart: input.weekStart, userTexts });
   const convId = conversationId;

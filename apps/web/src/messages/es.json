@@ -478,7 +478,8 @@
     "views": {
       "chat": "Chat",
       "strategy": "Estrategia",
-      "audit": "Auditoría"
+      "audit": "Auditoría",
+      "history": "Conversaciones anteriores"
     },
     "asks": {
       "strategy": "Crea una estrategia de contenido para este trimestre: objetivos, pilares de contenido, frecuencia por red y un banco de temas.",
@@ -504,7 +505,23 @@
     "readyForReview": "Listo para revisar",
     "noContentSuggestions": "Aquí aparecen los planes y publicaciones que prepara el agente.",
     "pendingKnowledge": "{count, plural, one {# cosa aprendida} other {# cosas aprendidas}} sobre la marca por revisar en el perfil.",
-    "openProfile": "Abrir perfil"
+    "openProfile": "Abrir perfil",
+    "threads": {
+      "today": "Conversación de hoy",
+      "new": "Nueva conversación",
+      "past": "Conversaciones anteriores",
+      "started": "Nueva conversación iniciada. La anterior se guarda con un breve resumen y conservo lo que aprendí.",
+      "remembers": "Nuevo día, nuevo hilo. Sigo conociendo tu marca, tu estrategia y lo que trabajamos antes.",
+      "back": "Todas las conversaciones",
+      "handover": "Resumen",
+      "open": "Pendiente",
+      "pastTitle": "Conversaciones anteriores",
+      "pastIntro": "Cada día empieza un hilo nuevo. Cuando uno se cierra, el agente guarda lo que aprendió y escribe un breve resumen, para que la siguiente conversación siga donde lo dejaste.",
+      "none": "Aún no hay conversaciones.",
+      "openCount": "{count, plural, one {# pendiente} other {# pendientes}}",
+      "inProgress": "En curso",
+      "noHandover": "Sin resumen"
+    }
   },
   "connections": {
     "title": "Cuentas conectadas",

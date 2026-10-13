@@ -512,3 +512,13 @@ ul.plain.idea-cards li { display: block; }
 .missed ul.plain li.missed-item { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr) auto; gap: 0.75rem; align-items: center; padding: 0.4rem 0; border-top: 1px solid var(--mist); }
 @media (max-width: 520px) { .missed ul.plain li.missed-item { grid-template-columns: minmax(0, 1fr); gap: 0.25rem; justify-items: start; } }
 .missed-item .btn { white-space: nowrap; }
+
+/* Daily threads: the bar above the chat, and past conversations. */
+.agent-thread-bar { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+.agent-thread-bar .eyebrow { margin: 0; }
+.agent-history h2 { line-height: 1.3; }
+ul.plain.thread-list li.thread-item { display: grid; grid-template-columns: minmax(10rem, 16rem) minmax(0, 1fr); gap: 0.75rem; align-items: start; padding: 0.6rem 0; border-top: 1px solid var(--mist); }
+.thread-text { min-width: 0; overflow-wrap: break-word; }
+.handover { border: 2px dashed var(--line); border-radius: var(--radius); padding: 0.75rem 1rem; margin-bottom: 1rem; }
+.agent-log.readonly { max-height: none; }
+@media (max-width: 640px) { ul.plain.thread-list li.thread-item { grid-template-columns: minmax(0, 1fr); gap: 0.25rem; } }

@@ -3,7 +3,7 @@ import { NETWORK_LABEL } from "@/components/posts/shared";
 
 /** Requests other screens can prepare for the chat. Only known keys are accepted; the text comes from our translations. */
 export const ASKS = ["strategy", "research", "competitors", "audit", "recommend", "draft", "competitor"] as const;
-export type AskQuery = { ask?: string; format?: string; network?: string; idea?: string };
+export type AskQuery = { ask?: string; format?: string; network?: string; idea?: string; /** "new", or a past thread id to read */ thread?: string };
 type T = (key: string, values?: Record<string, string>) => string;
 
 export function askText(q: AskQuery, t: T, tPosts: T): string {
