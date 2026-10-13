@@ -9,6 +9,9 @@ import { AgentChat } from "./agent-chat";
 import type { ProposalView } from "./proposal-card";
 import { AuditView, ContentSuggestions, ProfileNudge, StrategyView } from "./agent-views";
 import { AgentHistory } from "./agent-history";
+import { StrategyMap } from "@/components/strategy/strategy-map";
+import { loadStrategyMap } from "@/lib/strategy-map";
+import { localDay } from "@/lib/cadence";
 import { isCurrent, latestThread, recentHandovers } from "@/lib/agent/threads";
 
 export const AGENT_VIEWS = ["chat", "strategy", "audit", "history"] as const;
@@ -38,7 +41,19 @@ export async function AgentWorkspace({ locale, clientId, view, query, hrefFor, p
 
   const tabs = <Tabs sub label={t("title")} current={view} items={AGENT_VIEWS.map((v) => ({ key: v, label: t(`views.${v}`), href: hrefFor(v) }))} />;
 
-  if (view === "strategy") return <>{tabs}<StrategyView locale={locale} strategy={ctx.strategy} askHref={askHref} /></>;
+  if (view === "strategy") {
+    const month = /^\d{4}-(0[1-9]|1[0-2])$/.test(query.month ?? "") ? query.month! : localDay(actor.client.timezone ?? "UTC").slice(0, 7);
+    const data = await loadStrategyMap(actor, month);
+    const postsBase = cid ? `/${locale}/posts` : `/${locale}/portal/posts`;
+    return (
+      <>
+        {tabs}
+        <StrategyMap data={data} locale={locale} clientId={cid} postsBase={postsBase} newPostHref={cid ? `${postsBase}/new?client=${cid}` : `${postsBase}/new`}
+          monthHref={(m) => hrefFor("strategy", { month: m })} askStrategyHref={askHref("strategy")} />
+        {ctx.strategy && <details className="card map-details"><summary><strong>{t("strategyDetails")}</strong></summary><StrategyView locale={locale} strategy={ctx.strategy} askHref={askHref} /></details>}
+      </>
+    );
+  }
   if (view === "audit") return <>{tabs}<AuditView locale={locale} audit={ctx.audit} sources={ctx.sources} askHref={askHref} profileHref={profileHref} /></>;
   if (view === "history") return <>{tabs}<AgentHistory actor={actor} locale={locale} thread={query.thread} hrefFor={(thread) => hrefFor("history", thread ? { thread } : {})} /></>;
 
