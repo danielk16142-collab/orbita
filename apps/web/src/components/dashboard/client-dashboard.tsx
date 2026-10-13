@@ -6,6 +6,8 @@ import { StatTile } from "./stat-tile";
 import { TrendChart, type ChartSeries } from "./trend-chart";
 import { loadCadence } from "@/lib/cadence";
 import { NextPostCard } from "@/components/cadence/next-post-card";
+import { KickstartPanel } from "@/components/cadence/kickstart-panel";
+import { loadKickstart } from "@/lib/kickstart";
 
 type Sb = NonNullable<Awaited<ReturnType<typeof getSession>>>["sb"];
 // Fixed per network (color follows the entity). Validated pair; see docs/dataviz.md.
@@ -17,9 +19,11 @@ export type DashboardLinks = { postsBase: string; newPostHref: string; agentHref
 /** "Your next post", then the headline numbers, the follower trend, per-network summary and the best recent posts for ONE client. */
 export async function ClientDashboard({ sb, clientId, locale, connectHref, links }: { sb: Sb; clientId: string; locale: string; connectHref: string; links: DashboardLinks }) {
   const data = await loadAnalyticsData(sb, clientId);
-  const cadence = await loadCadence(sb, clientId, data);
+  const [cadence, kickstart] = await Promise.all([loadCadence(sb, clientId, data), loadKickstart(sb, clientId, data)]);
   return (
     <>
+      {kickstart && <KickstartPanel key={kickstart.ready?.id ?? kickstart.accountId} clientId={links.actorClientId} locale={locale} network={kickstart.network} handle={kickstart.handle}
+        accountId={kickstart.accountId} ready={kickstart.ready} calendarHref={`${links.postsBase}?${new URLSearchParams({ view: "month", ...(links.actorClientId && { client: links.actorClientId }) })}`} />}
       <NextPostCard cadence={cadence} locale={locale} clientId={links.actorClientId} postsBase={links.postsBase} newPostHref={links.newPostHref} agentHref={links.agentHref} />
       <DashboardView data={data} locale={locale} connectHref={connectHref} />
     </>

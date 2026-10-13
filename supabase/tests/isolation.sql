@@ -393,4 +393,24 @@ delete from competitors where id='e1000000-0000-0000-0000-000000000001';
 select pg_temp.reset();
 select pg_temp.expect('deleting a competitor removes its analyses', (select count(*) from competitor_analyses), 0);
 
+-- kickstart plans
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000005'); -- client A1 user
+insert into kickstarts(client_id,account_id,network,plan,start_date) values ('c1000000-0000-0000-0000-000000000001','d1000000-0000-0000-0000-000000000001','instagram','{"summary":"ok"}',current_date);
+select pg_temp.expect('client saves a kickstart for its account', (select count(*) from kickstarts), 1);
+select pg_temp.expect_error('one kickstart per account', $$insert into kickstarts(client_id,account_id,network,plan,start_date) values ('c1000000-0000-0000-0000-000000000001','d1000000-0000-0000-0000-000000000001','instagram','{}',current_date)$$);
+select pg_temp.expect_error('kickstart cannot use another client''s account',
+  $$insert into kickstarts(client_id,account_id,network,plan,start_date) values ('c2000000-0000-0000-0000-000000000002','d1000000-0000-0000-0000-000000000001','instagram','{}',current_date)$$);
+update kickstarts set status='accepted', decided_at=now();
+select pg_temp.expect('client accepts its kickstart', (select count(*) from kickstarts where status='accepted'), 1);
+select pg_temp.expect_error('kickstart status is checked', $$update kickstarts set status='nope'$$);
+select pg_temp.reset();
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000004'); -- other client
+select pg_temp.expect('other client sees no kickstart', (select count(*) from kickstarts), 0);
+update kickstarts set status='dismissed';
+select pg_temp.reset();
+select pg_temp.expect('other client cannot change it', (select count(*) from kickstarts where status='accepted'), 1);
+select pg_temp.as_user('b0000000-0000-0000-0000-000000000001'); -- other agency
+select pg_temp.expect('other agency sees no kickstart', (select count(*) from kickstarts), 0);
+select pg_temp.reset();
+
 \echo ALL TENANT ISOLATION TESTS PASSED

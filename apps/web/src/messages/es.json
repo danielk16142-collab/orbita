@@ -1064,5 +1064,40 @@
       "evening": "noche",
       "night": "madrugada"
     }
+  },
+  "kickstart": {
+    "eyebrow": "Arranque",
+    "buildTitle": "{name} está conectado. Empecemos.",
+    "buildText": "El agente lee tus resultados con lo que sabe de tu marca y tu estrategia, y propone un ritmo de publicación y tus dos primeras semanas de publicaciones. Nada entra al calendario hasta que lo aceptes.",
+    "build": "Crear mi plan de arranque",
+    "building": "Creando…",
+    "wait": "Leyendo tu cuenta y planeando… {seconds} s (cerca de un minuto)",
+    "readyTitle": "Tu plan de arranque para {name}",
+    "working": "Lo que funciona",
+    "gaps": "Lo que hay que mejorar",
+    "rhythm": "Tu ritmo",
+    "perWeek": "{count, plural, one {# publicación por semana} other {# publicaciones por semana}}",
+    "planTitle": "Tus dos primeras semanas",
+    "hook": "Gancho:",
+    "setGoal": "Fijar mi meta semanal en {count}",
+    "accept": "{count, plural, =0 {Aceptar sin publicaciones} one {Agregar # publicación al calendario} other {Agregar # publicaciones al calendario}}",
+    "rebuild": "Crearlo de nuevo",
+    "dismiss": "Ahora no",
+    "acceptHint": "Las publicaciones se agregan como ideas en su fecha. Puedes editarlas, moverlas o borrarlas.",
+    "accepted": "{count, plural, =0 {Plan guardado.} one {# publicación agregada al calendario.} other {# publicaciones agregadas al calendario.}}",
+    "openCalendar": "Abrir el calendario",
+    "seeNext": "Ver mi próxima publicación",
+    "errors": {
+      "generic": "Algo salió mal. Inténtalo de nuevo.",
+      "not_configured": "El agente aún no está configurado.",
+      "rate_limited": "Demasiados intentos. Inténtalo en una hora.",
+      "daily_cap": "Se alcanzó el límite diario del agente. Inténtalo mañana.",
+      "not_set_up": "Ejecuta la migración 0015 en Supabase para guardar los planes.",
+      "no_result": "El agente no pudo crear un plan esta vez. Inténtalo de nuevo.",
+      "refused": "El agente no puede crear un plan para esta cuenta.",
+      "model_error": "El agente no está disponible ahora. Inténtalo en unos minutos.",
+      "forbidden": "No puedes cambiar este plan.",
+      "not_found": "Este plan ya no está disponible."
+    }
   }
 }
