@@ -1,4 +1,5 @@
 "use server";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getSession, localeFrom } from "@/lib/session";
@@ -37,5 +38,6 @@ export async function verifyAction(_prev: VerifyState, form: FormData): Promise<
   const { error: e2 } = await s.sb.auth.mfa.verify({ factorId: parsed.data.factorId, challengeId: ch.id, code: parsed.data.code });
   if (e2) { await audit({ agencyId: s.profile.agency_id, actor: s.user.id, action: "mfa.verify_failed" }); return { error: "invalid" }; }
   await audit({ agencyId: s.profile.agency_id, actor: s.user.id, action: "mfa.verified" });
-  redirect(`/${locale}/dashboard`);
+  // Came from a password reset link: finish setting the new password first.
+  redirect(`/${locale}/${(await cookies()).get("orbita_reset") ? "reset-password" : "dashboard"}`);
 }

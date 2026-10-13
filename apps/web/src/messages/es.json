@@ -9,7 +9,8 @@
     "submit": "Entrar",
     "invalid": "Correo o contraseña no válidos.",
     "captcha": "Completa la verificación de seguridad.",
-    "tooMany": "Demasiados intentos. Inténtalo más tarde."
+    "tooMany": "Demasiados intentos. Inténtalo más tarde.",
+    "forgot": "¿Olvidaste tu contraseña?"
   },
   "dashboard": {
     "eyebrow": "Tu agencia",
@@ -1004,6 +1005,30 @@
       "not_found": "No encontrado.",
       "ideas": "Algunas ideas no se pudieron agregar. Inténtalo de nuevo.",
       "not_set_up": "Competidores necesita una actualización de la base de datos que todavía no se aplicó (migración 0012_competitors.sql). Pide a tu administrador que la ejecute en Supabase y vuelve a intentarlo."
+    }
+  },
+  "reset": {
+    "forgotTitle": "Restablecer la contraseña",
+    "forgotIntro": "Escribe tu correo y te enviaremos un enlace para crear una nueva contraseña.",
+    "email": "Correo",
+    "send": "Enviar el enlace",
+    "sent": "Si una cuenta usa este correo, el enlace va en camino. Funciona durante una hora, en este mismo navegador.",
+    "backToLogin": "Volver a iniciar sesión",
+    "newTitle": "Elige una nueva contraseña",
+    "newPassword": "Nueva contraseña",
+    "rules": "Al menos 10 caracteres.",
+    "confirm": "Repite la nueva contraseña",
+    "save": "Guardar la contraseña",
+    "errors": {
+      "invalid": "Escribe un correo válido.",
+      "captcha": "Completa la verificación de seguridad.",
+      "rate": "Demasiados intentos. Inténtalo más tarde.",
+      "expired": "Este enlace expiró o ya se usó. Pide uno nuevo.",
+      "mismatch": "Las dos contraseñas no coinciden.",
+      "short": "Usa al menos 10 caracteres.",
+      "weak": "Esta contraseña es muy fácil de adivinar. Prueba una más larga.",
+      "same": "Elige una contraseña que no hayas usado aquí antes.",
+      "failed": "No pudimos guardar la contraseña. Pide un nuevo enlace e inténtalo otra vez."
     }
   }
 }

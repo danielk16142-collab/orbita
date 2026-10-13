@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
+import Link from "next/link";
 import Script from "next/script";
 import { loginAction } from "./actions";
 import { LegalLinks } from "@/components/legal-links";
@@ -26,6 +27,7 @@ export default async function LoginPage({ params, searchParams }: { params: Prom
         <button type="submit" className="btn" style={{ width: "100%", marginTop: "1.25rem" }}>{t("submit")}</button>
         {error && <p className="error" role="alert">{t(error === "captcha" ? "captcha" : error === "rate" ? "tooMany" : "invalid")}</p>}
       </form>
+      <p style={{ marginTop: "1rem" }}><Link href={`/${locale}/forgot-password`}>{t("forgot")}</Link></p>
       <LegalLinks locale={locale} />
       <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="afterInteractive" nonce={nonce} async defer />
     </main>
