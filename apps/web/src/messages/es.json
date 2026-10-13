@@ -707,7 +707,7 @@
     "ideaPlaceholder": "¿De qué trata? Un producto, una oferta, un consejo, una historia…",
     "onePerNetwork": "Se crea una publicación por red ({count}).",
     "writeWithAgent": "Escribirla con el agente",
-    "writeWithAgentHint": "Abre el chat con la solicitud lista. La revisas antes de que se guarde algo.",
+    "writeWithAgentHint": "Abre aquí un chat para esta publicación. Revisas el borrador antes de que pase al calendario.",
     "createDraft": "Crear borrador",
     "createIdea": "Guardar idea",
     "createHint": "La agrega al calendario para que la escribas tú.",
@@ -740,6 +740,46 @@
         "title": "Artículo",
         "text": "Un texto más largo para LinkedIn."
       }
+    },
+    "ideas": {
+      "title": "Ideas para esta publicación",
+      "more": "Más ideas",
+      "loading": "Buscando ideas en la estrategia, el plan y la investigación de la semana…",
+      "fromAgent": "Según la estrategia, el último plan y tu investigación. Elige una para empezar, o escribe la tuya.",
+      "fromStrategy": "De los temas de tu estrategia y la investigación guardada.",
+      "failed": "No se pudieron cargar las ideas. Igual puedes escribir la tuya.",
+      "none": "Todavía no hay ideas. Escribe la tuya abajo.",
+      "noStrategy": "Todavía no hay estrategia. Crea una en Agente › Estrategia para ver ideas aquí, o escribe la tuya abajo.",
+      "hookLabel": "Gancho:",
+      "sources": {
+        "strategy": "Estrategia",
+        "plan": "Plan de la semana",
+        "research": "Investigación",
+        "brand": "Marca",
+        "results": "Resultados"
+      }
+    },
+    "chat": {
+      "title": "Escribir con el agente",
+      "hint": "Este chat es solo para esta publicación. Los borradores aparecen aquí para editarlos y agregarlos al calendario.",
+      "backToDetails": "Volver a los detalles",
+      "writing": "Escribiendo…",
+      "placeholder": "Pide cambios, por ejemplo: más corto, más divertido, agrega una oferta",
+      "saveText": "Guardar como borrador",
+      "savedText": "Guardado en el calendario",
+      "accepted": "Guardado en el calendario como borrador.",
+      "openCalendar": "Abrir el calendario",
+      "rejected": "Borrador descartado.",
+      "opening": "Escribe un(a) {format} para {where} en {language}, según nuestra estrategia e investigación de la semana.",
+      "openingAbout": "Escribe un(a) {format} para {where} en {language} sobre: {idea}",
+      "quick": {
+        "shorter": "Más corto",
+        "hook": "Ganchos más fuertes",
+        "cta": "Cambiar el llamado a la acción"
+      }
+    },
+    "chatErrors": {
+      "not_set_up": "El chat de publicaciones necesita una actualización de la base de datos (migración 0013_post_chats.sql). Pide a tu administrador que la ejecute en Supabase."
     }
   },
   "profile": {

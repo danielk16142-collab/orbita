@@ -41,7 +41,7 @@ export async function AgentWorkspace({ locale, clientId, view, query, hrefFor, p
 
   const { score, missing } = completenessOf(ctx);
   const [{ data: conv }, { data: pending }] = await Promise.all([
-    actor.sb.from("conversations").select("id").eq("client_id", actor.clientId).eq("created_by", actor.userId).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+    actor.sb.from("conversations").select("id").eq("client_id", actor.clientId).eq("created_by", actor.userId).neq("kind", "post").order("created_at", { ascending: false }).limit(1).maybeSingle(),
     actor.sb.from("proposals").select("id, target, payload, reason").eq("client_id", actor.clientId).eq("status", "pending").order("created_at", { ascending: false }).limit(30),
   ]);
   const { data: msgs } = conv

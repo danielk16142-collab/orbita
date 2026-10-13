@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createPostAction } from "@/lib/posts-actions";
 import { NETWORK_COLOR, NETWORK_LABEL } from "./shared";
+import { PostIdeas } from "./post-ideas";
+import { PostChat } from "./post-chat";
 
 /** Formats offered when creating a post, and where each one can go. */
 export const FORMAT_NETWORKS: Record<string, string[]> = {
@@ -45,7 +47,7 @@ export function CreatePostFlow({ locale, staff, clients, initialClient, initialD
 }) {
   const t = useTranslations("posts");
   const router = useRouter();
-  const [step, setStep] = useState<(typeof STEPS)[number]>("format");
+  const [step, setStep] = useState<(typeof STEPS)[number] | "write">("format");
   const [format, setFormat] = useState<string | null>(null);
   const [networks, setNetworks] = useState<string[]>([]);
   const [clientId, setClientId] = useState(initialClient || clients[0]?.id || "");
@@ -58,7 +60,7 @@ export function CreatePostFlow({ locale, staff, clients, initialClient, initialD
 
   const chooseFormat = (f: string) => { setFormat(f); setNetworks((n) => n.filter((x) => FORMAT_NETWORKS[f].includes(x))); setStep("where"); };
   const toggle = (n: string) => setNetworks((cur) => (cur.includes(n) ? cur.filter((x) => x !== n) : [...cur, n]));
-  const stepIndex = STEPS.indexOf(step);
+  const stepIndex = step === "write" ? STEPS.length - 1 : STEPS.indexOf(step);
 
   function create() {
     setError(null);
@@ -73,17 +75,22 @@ export function CreatePostFlow({ locale, staff, clients, initialClient, initialD
       router.push(ids.length === 1 ? `${postsBase}/${ids[0]}` : `${postsBase}?${new URLSearchParams({ view: "month", ...(date && { date }) })}`);
     });
   }
+  /** Opens the post chat on this page (a conversation only about this post). */
   function withAgent() {
-    if (!format || !networks.length) return;
-    const q = new URLSearchParams({ ...(staff && { client: clientId }), view: "chat", ask: "draft", format, network: networks.join(","), ...(idea.trim() && { idea: idea.trim().slice(0, 500) }) });
-    router.push(`${agentBase}?${q}`);
+    if (!format || !networks.length || (staff && !clientId)) return;
+    setStep("write");
   }
+  const where = networks.map((n) => NETWORK_LABEL[n] ?? n).join(", ");
+  const languageName = (() => { try { return new Intl.DisplayNames([locale], { type: "language" }).of(language) ?? language; } catch { return language; } })();
+  const opening = format ? (idea.trim()
+    ? t("chat.openingAbout", { format: t(`formatCards.${format}.title`), where, language: languageName, idea: idea.trim().slice(0, 500) })
+    : t("chat.opening", { format: t(`formatCards.${format}.title`), where, language: languageName })) : "";
 
   return (
     <div className="flow">
       <ol className="steps" aria-label={t("steps")}>
         {STEPS.map((s, i) => (
-          <li key={s} aria-current={s === step ? "step" : undefined} className={i < stepIndex ? "done" : undefined}>
+          <li key={s} aria-current={s === step || (step === "write" && s === "details") ? "step" : undefined} className={i < stepIndex ? "done" : undefined}>
             {i < stepIndex ? <button type="button" onClick={() => setStep(s)}><span className="step-num">{i + 1}</span>{t(`stepNames.${s}`)}</button> : <span><span className="step-num">{i + 1}</span>{t(`stepNames.${s}`)}</span>}
           </li>
         ))}
@@ -136,6 +143,7 @@ export function CreatePostFlow({ locale, staff, clients, initialClient, initialD
               <select value={clientId} onChange={(e) => setClientId(e.target.value)} required>{clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
             </label>
           )}
+          {(!staff || clientId) && <PostIdeas clientId={staff ? clientId : undefined} format={format} networks={networks} locale={locale} picked={idea} onPick={setIdea} />}
           <label>{t("ideaLabel")}
             <textarea value={idea} onChange={(e) => setIdea(e.target.value)} rows={4} maxLength={2000} placeholder={t("ideaPlaceholder")} />
           </label>
@@ -158,6 +166,12 @@ export function CreatePostFlow({ locale, staff, clients, initialClient, initialD
           </div>
           <button type="button" className="btn ghost small" onClick={() => setStep("where")}>{t("back")}</button>
         </section>
+      )}
+
+      {step === "write" && format && (
+        <PostChat key={`${clientId}|${format}|${networks.join(",")}`} clientId={staff ? clientId : undefined} locale={locale} format={format} networks={networks}
+          language={language} idea={idea} staff={staff} opening={opening}
+          calendarHref={`${postsBase}?${new URLSearchParams({ view: "month", ...(staff && clientId && { client: clientId }) })}`} onBack={() => setStep("details")} />
       )}
     </div>
   );
