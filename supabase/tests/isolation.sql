@@ -367,4 +367,30 @@ select pg_temp.reset();
 select pg_temp.expect('staff can remove references even when locked', (select count(*) from brand_references), 0);
 update clients set branding_locked=false where id='c1000000-0000-0000-0000-000000000001';
 
+
+-- competitors as profiles, and their analyses
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000005'); -- client A1 user
+insert into competitors(id,client_id,name,website,links) values ('e1000000-0000-0000-0000-000000000001','c1000000-0000-0000-0000-000000000001','Rival Café','https://rival.example.com','[{"network":"instagram","url":"https://www.instagram.com/rival"}]');
+select pg_temp.expect('client adds a competitor profile', (select count(*) from competitors where name='Rival Café'), 1);
+select pg_temp.expect_error('competitor website must be https', $$insert into competitors(client_id,name,website) values ('c1000000-0000-0000-0000-000000000001','X','http://x.example.com')$$);
+select pg_temp.expect_error('competitor needs a name or url', $$insert into competitors(client_id) values ('c1000000-0000-0000-0000-000000000001')$$);
+insert into competitor_analyses(client_id,competitor_id,analysis) values ('c1000000-0000-0000-0000-000000000001','e1000000-0000-0000-0000-000000000001','{"summary":"ok"}');
+select pg_temp.expect('client saves an analysis', (select count(*) from competitor_analyses), 1);
+select pg_temp.expect_error('analysis cannot point at another client',
+  $$insert into competitor_analyses(client_id,competitor_id,analysis) values ('c2000000-0000-0000-0000-000000000002','e1000000-0000-0000-0000-000000000001','{}')$$);
+select pg_temp.expect_error('analysis must be an object', $$insert into competitor_analyses(client_id,competitor_id,analysis) values ('c1000000-0000-0000-0000-000000000001','e1000000-0000-0000-0000-000000000001','[]')$$);
+delete from competitor_analyses;
+select pg_temp.expect('client cannot delete analyses', (select count(*) from competitor_analyses), 1);
+select pg_temp.reset();
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000004'); -- other client
+select pg_temp.expect('other client sees no competitors or analyses', (select count(*) from competitors) + (select count(*) from competitor_analyses), 0);
+select pg_temp.reset();
+select pg_temp.as_user('b0000000-0000-0000-0000-000000000001'); -- other agency
+select pg_temp.expect('other agency sees no competitors or analyses', (select count(*) from competitors) + (select count(*) from competitor_analyses), 0);
+select pg_temp.reset();
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000001'); -- admin A
+delete from competitors where id='e1000000-0000-0000-0000-000000000001';
+select pg_temp.reset();
+select pg_temp.expect('deleting a competitor removes its analyses', (select count(*) from competitor_analyses), 0);
+
 \echo ALL TENANT ISOLATION TESTS PASSED

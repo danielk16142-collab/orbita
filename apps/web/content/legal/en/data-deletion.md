@@ -5,7 +5,7 @@
 You can remove your data from Orbita in these ways.
 
 ## Disconnect a social or ad account
-In Orbita: **Client → Connections → Disconnect**. This revokes our access and **deletes the stored authorization tokens immediately**. You can also remove Orbita's access in the platform's own settings (for example Facebook/Instagram "Business Integrations", TikTok "Manage apps and services"). Metrics already collected remain in the workspace until deleted as below.
+In Orbita: **Client → Connections → Disconnect**. This asks the platform to revoke our access and **immediately deletes the stored authorization tokens and the data synced from that account** (follower counts, reach and post metrics). You can also remove Orbita's access in the platform's own settings (for example Instagram "Apps and websites", TikTok "Manage apps and services"); when Meta notifies us of that, we delete the same data automatically.
 
 ## Delete your account or workspace data
 - **Users:** **Settings → Privacy → Delete my account**, or email [[PRIVACY_EMAIL]] from your account email address.

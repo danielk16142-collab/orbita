@@ -4,7 +4,8 @@ import { BRIEF_SECTIONS, briefFromRow } from "@orbita/agent";
 import { resolveAgentActor } from "@/lib/agent/access";
 import { completenessOf, loadClientContext, type ClientContext } from "@/lib/agent/context";
 import { ProposalCard, type ProposalView } from "@/components/agent/proposal-card";
-import { AddSourceForm, ArchiveMemoryButton, RemoveSourceButton } from "@/components/agent/small-actions";
+import { AddSourceForm, RemoveSourceButton } from "@/components/agent/small-actions";
+import { MemoriesPreview } from "./memories";
 import { CONTENT_TARGETS } from "@/components/agent/agent-workspace";
 import { TimezoneForm } from "@/components/posts/timezone-form";
 import { updateClientAction } from "@/app/[locale]/(agency)/clients/actions";
@@ -12,16 +13,19 @@ import { updateClientAction } from "@/app/[locale]/(agency)/clients/actions";
 export type ProfileClient = { id: string; name: string; languages: string[]; markets: string[]; timezone: string | null };
 
 /** Loads what the profile shows. Same access rules as the agent: staff for any client of the agency, client users for their own. */
-export async function ProfilePanel({ locale, clientId, client, staff, flash, danger }: {
-  locale: string; clientId?: string; client: ProfileClient; staff: boolean; flash?: { saved?: boolean; error?: string }; danger?: React.ReactNode;
+export async function ProfilePanel({ locale, clientId, client, staff, learnedHref, flash, danger }: {
+  locale: string; clientId?: string; client: ProfileClient; staff: boolean; learnedHref: string; flash?: { saved?: boolean; error?: string }; danger?: React.ReactNode;
 }) {
   const access = await resolveAgentActor(clientId);
   if (!access.ok) notFound();
   const { actor } = access;
   const ctx = await loadClientContext(actor.sb, actor.clientId);
-  const { data: pending } = await actor.sb.from("proposals").select("id, target, payload, reason").eq("client_id", actor.clientId).eq("status", "pending").order("created_at", { ascending: false }).limit(30);
+  const [{ data: pending }, { count: memoryTotal }] = await Promise.all([
+    actor.sb.from("proposals").select("id, target, payload, reason").eq("client_id", actor.clientId).eq("status", "pending").order("created_at", { ascending: false }).limit(30),
+    actor.sb.from("brand_memories").select("id", { count: "exact", head: true }).eq("client_id", actor.clientId).eq("status", "active"),
+  ]);
   const knowledge = ((pending ?? []) as unknown as ProposalView[]).filter((p) => !CONTENT_TARGETS.includes(p.target));
-  return <ProfileView locale={locale} client={client} ctx={ctx} proposals={knowledge} staff={staff} clientId={staff ? actor.clientId : undefined} flash={flash} danger={danger} />;
+  return <ProfileView locale={locale} client={client} ctx={ctx} proposals={knowledge} staff={staff} clientId={staff ? actor.clientId : undefined} flash={flash} danger={danger} learnedHref={learnedHref} memoryTotal={memoryTotal ?? ctx.memories.length} />;
 }
 
 const PROFILE_URL: Record<string, (h: string) => string> = {
@@ -31,9 +35,10 @@ const PROFILE_URL: Record<string, (h: string) => string> = {
 const linkFor = (s: ClientContext["sources"][number]) => s.url ?? (s.handle && PROFILE_URL[s.kind] ? PROFILE_URL[s.kind](encodeURIComponent(s.handle)) : null);
 
 /** The client's profile: business details, links, and everything the agent has learned about the brand. */
-export async function ProfileView({ locale, client, ctx, proposals, staff, clientId, flash, danger }: {
+export async function ProfileView({ locale, client, ctx, proposals, staff, clientId, flash, danger, learnedHref, memoryTotal }: {
   locale: string; client: ProfileClient; ctx: Pick<ClientContext, "briefRow" | "memories" | "sources" | "proofItems" | "rules">;
   proposals: ProposalView[]; staff: boolean; clientId?: string; flash?: { saved?: boolean; error?: string }; danger?: React.ReactNode;
+  learnedHref: string; memoryTotal: number;
 }) {
   const t = await getTranslations("profile");
   const ta = await getTranslations("agent");
@@ -128,10 +133,7 @@ export async function ProfileView({ locale, client, ctx, proposals, staff, clien
           <h2>{t("toReview")}</h2>
           {proposals.length ? proposals.map((p) => <ProposalCard key={p.id} clientId={clientId} proposal={p} />) : <p className="stat-vs">{ta("noSuggestions")}</p>}
         </section>
-        <section className="card">
-          <h2>{ta("memories")}</h2>
-          {ctx.memories.length ? <ul className="plain">{ctx.memories.map((m) => <li key={m.id}><span><strong>{ta(`memoryKinds.${m.kind}`)}</strong> {m.content}</span><ArchiveMemoryButton id={m.id} clientId={clientId} /></li>)}</ul> : <p className="stat-vs">{ta("noMemories")}</p>}
-        </section>
+        <MemoriesPreview memories={ctx.memories} total={memoryTotal} clientId={clientId} allHref={learnedHref} />
         {danger}
       </aside>
     </div>

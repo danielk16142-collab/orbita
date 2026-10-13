@@ -389,3 +389,65 @@ ul.plain.recs li { justify-content: flex-start; align-items: flex-start; border-
 .ref-img img { position: absolute; inset: .4rem; width: calc(100% - .8rem); height: calc(100% - .8rem); max-width: none; max-height: none; object-fit: contain; }
 .flow-details .plan-row { grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: .75rem; }
 .flow-details input[type="date"] { min-width: 0; }
+
+/* What I've learned: preview on the profile, full page with collapsible lines */
+.mem-preview li { align-items: flex-start; border-bottom: 1px solid var(--grid); padding-bottom: .5rem; }
+.mem-preview li:last-child { border-bottom: 0; }
+.mem-text { min-width: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.page-intro { max-width: 46rem; margin: -.75rem 0 1.5rem; }
+.mem-group { border-top: 2px solid var(--line); padding-top: .5rem; margin-top: .75rem; }
+.mem-group > summary { padding: .35rem 0; font-family: var(--font-display); font-size: 1.05rem; }
+.mem-list { margin: .25rem 0 .5rem; gap: 0; }
+ul.plain.mem-list li { align-items: flex-start; border-bottom: 1px solid var(--grid); padding: .35rem 0; }
+ul.plain.mem-list li:last-child { border-bottom: 0; }
+.mem-line { flex: 1; min-width: 0; margin: 0; }
+.mem-line > summary { display: flex; gap: .4rem; align-items: baseline; padding: .3rem 0; list-style: none; }
+.mem-line > summary::-webkit-details-marker { display: none; }
+.mem-line > summary::before { content: "▸"; flex: none; color: var(--dim); }
+.mem-line[open] > summary::before { content: "▾"; }
+.mem-one { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mem-line[open] .mem-one { white-space: normal; overflow-wrap: break-word; }
+.mem-line .stat-vs { margin: 0 0 .25rem 1.2rem; }
+.stack > *, .mem-group, .mem-list, .mem-list li { min-width: 0; max-width: 100%; }
+
+/* Research */
+.research-form textarea { margin-bottom: .75rem; }
+.research-form label { margin-top: 0; }
+.starter-chips { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; margin-top: .75rem; }
+ul.plain.findings { gap: .9rem; margin-top: .75rem; }
+ul.plain.findings li.finding { display: grid; gap: .35rem; justify-content: stretch; border: 2px solid var(--line); border-radius: 12px; padding: .8rem .9rem; background: #fff; }
+.finding-head { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.finding p { margin: 0; overflow-wrap: break-word; }
+.finding .why { color: var(--text-secondary); }
+.sources { display: flex; flex-wrap: wrap; gap: .25rem .9rem; font-size: .85rem; margin: .25rem 0; }
+.sources a { overflow-wrap: anywhere; }
+.note-body { margin: .25rem 0 .25rem 1.2rem; }
+.note { margin-top: .75rem; }
+
+/* Competitors */
+.comp-grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
+.comp-card { display: grid; gap: .5rem; align-content: start; justify-items: start; }
+.comp-card h2 { margin: 0; overflow-wrap: break-word; }
+.comp-card h2 a { text-decoration: none; }
+.comp-gist { margin: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.link-chips { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0; }
+.link-chips .badge { text-decoration: none; }
+.competitor-form { display: grid; gap: .75rem; max-width: 52rem; }
+.competitor-form label { display: grid; gap: .3rem; margin: 0; }
+.link-grid { display: grid; gap: .75rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); }
+details.card > summary { cursor: pointer; }
+details.card[open] > summary { margin-bottom: 1rem; }
+details.card .competitor-form { box-shadow: none; border-style: dashed; }
+.analyze { display: grid; gap: .4rem; justify-items: end; }
+ul.plain.idea-list { gap: .5rem; margin: .5rem 0 .75rem; }
+ul.plain.idea-list li { display: block; }
+label.idea { display: flex; gap: .6rem; align-items: flex-start; margin: 0; text-transform: none; letter-spacing: 0; font: inherit; padding: .5rem .6rem; border: 2px solid var(--grid); border-radius: 10px; background: #fff; cursor: pointer; }
+label.idea input { width: auto; margin-top: .25rem; }
+label.idea .badge { margin-left: .25rem; }
+.block { display: block; margin-top: .2rem; }
+.use-card { border-color: var(--brand); box-shadow: 4px 4px 0 var(--brand); }
+@media (max-width: 560px) { .analyze { justify-items: start; } }
+.stack > .btn, .stack > button.btn { justify-self: start; }
+.use-card > .stat-vs { margin: 0 0 .9rem; }
+.btn:disabled { opacity: .55; cursor: not-allowed; transform: none; box-shadow: 2px 2px 0 var(--ink); }
+label textarea, label input, label select { font-family: var(--font-body); font-size: 1rem; letter-spacing: 0; text-transform: none; }

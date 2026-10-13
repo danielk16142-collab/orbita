@@ -24,6 +24,8 @@ export default async function PortalLayout({ children, params }: { children: Rea
           { href: "portal", label: t("home") },
           { href: "portal/posts", label: t("posts") },
           { href: "portal/agent", label: t("agent") },
+          { href: "portal/research", label: t("research") },
+          { href: "portal/competitors", label: t("competitors") },
           { href: "portal/insights", label: t("insights") },
           { href: "portal/profile", label: t("profile") },
           { href: "portal/settings", label: t("settings") },

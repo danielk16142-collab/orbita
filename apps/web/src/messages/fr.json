@@ -100,7 +100,9 @@
       "connections": "Connexions",
       "agent": "Agent",
       "profile": "Profil",
-      "insights": "Analyses"
+      "insights": "Analyses",
+      "research": "Recherche",
+      "competitors": "Concurrents"
     },
     "connectionsSoon": "Connectez Instagram, TikTok et plus ici (prochaine phase).",
     "users": "Personnes ayant accès",
@@ -265,7 +267,9 @@
     "eyebrow": "Bienvenue",
     "title": "Accueil",
     "insights": "Analyses",
-    "profile": "Profil"
+    "profile": "Profil",
+    "research": "Recherche",
+    "competitors": "Concurrents"
   },
   "acceptTerms": {
     "title": "Conditions mises à jour",
@@ -472,7 +476,7 @@
     },
     "views": {
       "chat": "Discussion",
-      "strategy": "Stratégie et recherche",
+      "strategy": "Stratégie",
       "audit": "Audit"
     },
     "asks": {
@@ -482,7 +486,8 @@
       "audit": "Fais l'audit de notre présence en ligne : le site web et chaque compte social. Donne les forces, les faiblesses et les occasions.",
       "recommend": "Selon nos résultats, l'audit et la stratégie, quelles sont les trois choses les plus importantes à faire ensuite?",
       "draft": "Écris un {format} pour {where}.",
-      "draftAbout": "Écris un {format} pour {where} sur : {idea}"
+      "draftAbout": "Écris un {format} pour {where} sur : {idea}",
+      "competitor": "Mets à jour notre stratégie de contenu à partir de l'analyse de {name} : ce qu'on peut reprendre, ce qu'il faut éviter et comment nous démarquer."
     },
     "asksButton": {
       "strategy": "Créer une stratégie",
@@ -757,7 +762,27 @@
     "briefHint": "Ce que l'agent sait de la marque. Il le complète à partir des conversations; chaque changement est une suggestion que vous acceptez.",
     "proof": "Faits approuvés",
     "rules": "Règles permanentes",
-    "toReview": "Suggestions à examiner"
+    "toReview": "Suggestions à examiner",
+    "latest": "Les plus récents",
+    "seeAll": "Tout voir ({count})",
+    "memoryGroups": {
+      "preferences": "Préférences de l'entreprise",
+      "facts": "Faits"
+    },
+    "memoryGroupHints": {
+      "preferences": "Comment l'entreprise aime faire les choses, ce qu'il faut éviter et les règles permanentes.",
+      "facts": "Ce qui est vrai sur l'entreprise, et des exemples dont s'inspirer."
+    },
+    "groupEmpty": "Rien pour l'instant.",
+    "memoryKindsPlural": {
+      "preference": "Préférences",
+      "avoid": "À éviter",
+      "rule": "Règles",
+      "fact": "Faits",
+      "example": "Exemples"
+    },
+    "learnedOn": "Appris le {date}",
+    "learnedIntro": "Tout ce dont l'agent se souvient sur cette marque. Ouvrez une ligne pour la lire en entier; Oublier la retire de ce que l'agent utilise."
   },
   "insights": {
     "eyebrow": "Ce qui fonctionne",
@@ -809,5 +834,128 @@
     "waitingCount": "{count, plural, one {# suggestion} other {# suggestions}} de l'agent à examiner.",
     "waitingNone": "Rien à examiner.",
     "review": "Examiner"
+  },
+  "research": {
+    "eyebrow": "Marché et public",
+    "title": "Recherche",
+    "askLabel": "Que voulez-vous savoir?",
+    "placeholder": "Par exemple : que demandent les gens avant de prendre rendez-vous avec une entreprise comme la nôtre?",
+    "run": "Rechercher",
+    "running": "Recherche en cours…",
+    "wait": "Recherche sur le web et lecture des sources ({seconds} s). Cela prend en général une à deux minutes.",
+    "tryOne": "Essayez :",
+    "starters": {
+      "questions": "Que demandent nos clients avant d'acheter?",
+      "trends": "Quel contenu fonctionne en ce moment dans notre créneau?",
+      "formats": "Quels formats les entreprises semblables utilisent le plus?",
+      "dates": "Quelles dates et quels événements arrivent pour notre marché?"
+    },
+    "resultsTitle": "Résultats",
+    "resultsFor": "Pour : {question}",
+    "saveAll": "Tout enregistrer",
+    "nothingFound": "Rien d'utile n'est ressorti. Essayez une question plus précise.",
+    "kinds": {
+      "trend": "Tendance",
+      "competitor": "Concurrent",
+      "audience": "Public",
+      "idea": "Idée"
+    },
+    "kindsPlural": {
+      "trend": "Tendances",
+      "competitor": "Concurrents",
+      "audience": "Public",
+      "idea": "Idées"
+    },
+    "whyItMatters": "Pourquoi c'est important :",
+    "save": "Enregistrer",
+    "saved": "Enregistré",
+    "remember": "Retenir",
+    "remembered": "Retenu",
+    "limits": "Limites :",
+    "saveHint": "Enregistrer garde la trouvaille dans Recherche, où l'agent s'en sert pour les plans. Retenir l'ajoute à ce que l'agent sait de l'entreprise. Les résultats non enregistrés ne sont pas conservés.",
+    "savedTitle": "Recherche enregistrée",
+    "savedHint": "Ce que vous avez gardé des recherches précédentes. L'agent utilise les plus récentes pour planifier.",
+    "noneSaved": "Rien d'enregistré pour l'instant. Lancez une recherche ci-dessus et gardez ce qui est utile.",
+    "savedOn": "Enregistré le {date}",
+    "errors": {
+      "generic": "Une erreur s'est produite. Veuillez réessayer.",
+      "not_configured": "L'agent n'est pas encore configuré.",
+      "no_web": "La recherche web n'est pas disponible pour le moment.",
+      "rate_limited": "Trop de recherches. Attendez quelques minutes.",
+      "daily_cap": "L'allocation du jour est épuisée. Elle se renouvelle demain.",
+      "no_result": "La recherche n'a rien donné. Réessayez ou reformulez la question.",
+      "refused": "L'agent ne peut pas aider avec cette demande.",
+      "search_failed": "Les recherches web ont échoué cette fois, donc rien n'a été trouvé. Réessayez dans un instant.",
+      "model_error": "L'agent a eu un problème. Veuillez réessayer.",
+      "forbidden": "Vous ne pouvez pas faire cela pour le moment.",
+      "not_found": "Introuvable.",
+      "bad_request": "Écrivez une question de quelques mots au moins.",
+      "unauthorized": "Veuillez vous reconnecter.",
+      "saveFailed": "Impossible d'enregistrer. Veuillez réessayer."
+    }
+  },
+  "competitors": {
+    "eyebrow": "Les autres options du client",
+    "title": "Concurrents",
+    "intro": "Ajoutez les entreprises auxquelles vos clients vous comparent. Ouvrez-en une pour lancer une analyse et la transformer en contenu.",
+    "empty": "Aucun concurrent pour l'instant.",
+    "add": "Ajouter un concurrent",
+    "edit": "Modifier le profil",
+    "editProfile": "Modifier ou retirer",
+    "name": "Nom",
+    "website": "Site web",
+    "linkPlaceholder": "Lien du profil ou @identifiant",
+    "notes": "Notes",
+    "notesPlaceholder": "Ce que l'on sait déjà sur eux",
+    "saveProfile": "Enregistrer",
+    "cancel": "Annuler",
+    "analyzedOn": "Analysé le {date}",
+    "notAnalyzed": "Pas encore analysé",
+    "notAnalyzedLong": "Pas encore analysé. Lancez l'analyse pour voir leur positionnement, ce qui marche pour eux et comment vous démarquer.",
+    "openAnalysis": "Ouvrir l'analyse",
+    "openProfile": "Ouvrir",
+    "analyze": "Lancer l'analyse",
+    "analyzeAgain": "Lancer une nouvelle analyse",
+    "analyzing": "Analyse en cours…",
+    "wait": "Recherche et lecture de leurs pages ({seconds} s). Cela prend en général une à trois minutes.",
+    "remove": "Retirer le concurrent",
+    "removeConfirm": "Retirer ce concurrent et ses analyses?",
+    "summary": "Résumé",
+    "positioning": "Positionnement",
+    "audience": "Public",
+    "postingPattern": "Publications",
+    "pillars": "Piliers de contenu",
+    "formats": "Formats",
+    "parts": {
+      "what_works": "Ce qui marche pour eux",
+      "weaknesses": "Points faibles",
+      "opportunities": "Comment nous démarquer"
+    },
+    "useTitle": "L'utiliser pour notre contenu",
+    "useHint": "Mettez la stratégie à jour avec l'agent (l'analyse est enregistrée dans Recherche pour qu'il s'en serve), ou ajoutez au calendrier les idées qui vous plaisent.",
+    "useInStrategy": "Mettre notre stratégie à jour avec ceci",
+    "saveToResearch": "Enregistrer dans Recherche",
+    "savedToResearch": "Enregistré dans Recherche",
+    "ideasTitle": "Idées de contenu pour nous",
+    "addIdeas": "{count, plural, =0 {Choisissez des idées} one {Ajouter # idée au calendrier} other {Ajouter # idées au calendrier}}",
+    "ideasAdded": "{count, plural, one {# idée ajoutée} other {# idées ajoutées}} : ouvrir le calendrier",
+    "sources": "Sources et limites",
+    "errors": {
+      "generic": "Une erreur s'est produite. Veuillez réessayer.",
+      "link": "Ce lien {network} ne semble pas correct. Utilisez le lien du profil ou le @identifiant.",
+      "website": "Le site web doit commencer par https://",
+      "forbidden": "Vous ne pouvez pas faire cela pour le moment.",
+      "bad_request": "Vérifiez les champs et réessayez.",
+      "not_configured": "L'agent n'est pas encore configuré.",
+      "no_web": "La recherche web n'est pas disponible pour le moment.",
+      "rate_limited": "Trop d'analyses. Attendez quelques minutes.",
+      "daily_cap": "L'allocation du jour est épuisée. Elle se renouvelle demain.",
+      "no_result": "L'analyse n'a pas abouti. Réessayez.",
+      "refused": "L'agent ne peut pas aider avec cette demande.",
+      "search_failed": "Les recherches web ont échoué cette fois. Réessayez dans un instant.",
+      "model_error": "L'agent a eu un problème. Veuillez réessayer.",
+      "not_found": "Introuvable.",
+      "ideas": "Certaines idées n'ont pas pu être ajoutées. Veuillez réessayer."
+    }
   }
 }
