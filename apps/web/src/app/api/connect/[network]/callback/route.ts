@@ -2,7 +2,7 @@ import { after, NextResponse, type NextRequest } from "next/server";
 import { CONNECTOR_NETWORKS, deriveStateKey, verifyState, type ConnectorNetwork } from "@orbita/connectors";
 import { resolveAgentActor } from "@/lib/agent/access";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { appUrl, connectorFor, redirectUriFor, sealTokens } from "@/lib/connectors/accounts";
+import { appUrl, connectionsUrl, connectorFor, redirectUriFor, sealTokens } from "@/lib/connectors/accounts";
 import { runSync } from "@/lib/connectors/run";
 import { limiter } from "@/lib/rate-limit";
 import { audit } from "@/lib/audit";
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ network: st
   const access = await resolveAgentActor(state.c);
   if (!access.ok || access.actor.userId !== state.u) return fail("invalid", locale);
   const { actor } = access;
-  const back = (q: string) => `${appUrl()}${actor.profile.role === "client" ? `/${locale}/portal/settings` : `/${locale}/clients/${actor.clientId}?tab=connections`}?${q}`;
+  const back = (q: string) => connectionsUrl(locale, actor.profile.role, actor.clientId, q);
 
   if (sp.get("error") || !sp.get("code")) return fail("denied", locale, back("connect=denied"));
   if (!(await limiter("connect-callback", 10, 10 * 60_000).hit(actor.userId)).allowed) return fail("rate", locale, back("connect=rate"));
@@ -49,7 +49,9 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ network: st
     const r = NextResponse.redirect(back("connected=1"));
     r.cookies.delete({ name: "orbita_oauth", path: "/api/connect" });
     return r;
-  } catch {
+  } catch (e) {
+    // Connector errors are secret-free by construction (no URLs, codes or tokens); log the kind so a failure can be diagnosed.
+    console.error(`connect ${network} failed: ${e instanceof Error ? `${e.constructor.name}: ${e.message}` : "unknown"}`);
     return fail("failed", locale, back("connect=failed")); // generic: no provider details, no code, no tokens
   }
 }
