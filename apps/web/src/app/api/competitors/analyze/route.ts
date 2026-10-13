@@ -23,7 +23,8 @@ export async function POST(req: Request) {
   if (!access.ok) return json({ error: access.status === 401 ? "unauthorized" : access.status === 403 ? "forbidden" : "not_found" }, access.status);
   const actor = access.actor;
   // RLS plus the explicit client filter: the competitor must belong to the client this person is working on.
-  const { data: c } = await actor.sb.from("competitors").select("id, name, url, website, links, notes").eq("id", body.data.competitorId).eq("client_id", actor.clientId).maybeSingle();
+  const { data: c, error: readError } = await actor.sb.from("competitors").select("id, name, url, website, links, notes").eq("id", body.data.competitorId).eq("client_id", actor.clientId).maybeSingle();
+  if (readError) { console.error(`competitor read failed: code=${readError.code}`); return json({ error: ["PGRST204", "42703", "42P01", "PGRST205"].includes(readError.code ?? "") ? "not_set_up" : "server_error" }, 500); }
   if (!c) return json({ error: "not_found" }, 404);
   const ai = await resolveModelAccess(actor);
   if (!ai) return json({ error: "not_configured" }, 503);
@@ -43,7 +44,7 @@ export async function POST(req: Request) {
     await audit({ agencyId: actor.profile.agency_id, actor: actor.userId, action: "competitor.analyzed", entity: "competitor", entityId: c.id, meta: { ok: r.ok, tokens: r.usage } });
     if (!r.ok) return json({ error: r.searchErrors.length ? "search_failed" : r.error === "refused" ? "refused" : "no_result" }, 502);
     const { data: saved, error } = await actor.sb.from("competitor_analyses").insert({ client_id: actor.clientId, competitor_id: c.id, analysis: { ...r.data, searchErrors: r.searchErrors.length }, created_by: actor.userId }).select("id").single();
-    if (error || !saved) return json({ error: "forbidden" }, 403);
+    if (error || !saved) { console.error(`analysis save failed: code=${error?.code}`); return json({ error: ["PGRST204", "42703", "42P01", "PGRST205"].includes(error?.code ?? "") ? "not_set_up" : "forbidden" }, 403); }
     await actor.sb.from("competitors").update({ last_researched_at: new Date().toISOString() }).eq("id", c.id);
     return json({ id: saved.id });
   } catch (e) {

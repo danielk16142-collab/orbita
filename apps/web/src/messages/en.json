@@ -891,7 +891,8 @@
       "not_found": "Not found.",
       "bad_request": "Write a question of at least a few words.",
       "unauthorized": "Please sign in again.",
-      "saveFailed": "Could not save that. Please try again."
+      "saveFailed": "Could not save that. Please try again.",
+      "not_set_up": "This needs a database update that has not been applied yet. Ask your administrator to run the latest migrations in Supabase."
     }
   },
   "competitors": {
@@ -955,7 +956,8 @@
       "search_failed": "The web searches failed this time. Try again in a moment.",
       "model_error": "The agent had a problem. Please try again.",
       "not_found": "Not found.",
-      "ideas": "Some ideas could not be added. Please try again."
+      "ideas": "Some ideas could not be added. Please try again.",
+      "not_set_up": "Competitors need a database update that has not been applied yet (migration 0012_competitors.sql). Ask your administrator to run it in Supabase, then try again."
     }
   }
 }

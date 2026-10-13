@@ -16,6 +16,17 @@ async function gate(clientId: string | undefined): Promise<{ actor: AgentActor }
   if (!(await limiter("research-action", 60, 10 * 60_000).hit(a.actor.userId)).allowed) return { error: "rate_limited" };
   return { actor: a.actor };
 }
+/**
+ * Why the database refused a write. Missing columns or tables mean a migration has not been applied (Supabase reports
+ * these as PGRST204/PGRST205 or Postgres 42703/42P01); everything else is a permission refusal. The real error is logged.
+ */
+function dbFailure(error: { code?: string; message?: string } | null, where: string): string {
+  if (error) console.error(`${where} failed: code=${error.code ?? "?"} ${String(error.message ?? "").slice(0, 200)}`);
+  return error && ["PGRST204", "PGRST205", "42703", "42P01"].includes(error.code ?? "") ? "not_set_up" : "forbidden";
+}
+/** Drops tracking parameters (utm_*, fbclid...) and fragments from a pasted link. */
+const cleanUrl = (u: string) => { try { const x = new URL(u); x.search = ""; x.hash = ""; return x.toString(); } catch { return u; } };
+
 const https = z.string().trim().max(500).refine((u) => { try { return new URL(u).protocol === "https:"; } catch { return false; } });
 const Note = z.object({
   kind: z.enum(RESEARCH_KINDS), title: z.string().trim().min(1).max(200), summary: z.string().trim().min(1).max(2000),
@@ -29,7 +40,7 @@ export async function saveFindingAction(input: unknown): Promise<ResearchActionR
   const g = await gate(p.data.clientId);
   if ("error" in g) return { ok: false, error: g.error };
   const { data, error } = await g.actor.sb.from("research_notes").insert({ client_id: g.actor.clientId, ...p.data.note, created_by: g.actor.userId }).select("id").single();
-  if (error || !data) return { ok: false, error: "forbidden" };
+  if (error || !data) return { ok: false, error: dbFailure(error, "research save") };
   await audit({ agencyId: g.actor.profile.agency_id, actor: g.actor.userId, action: "research.saved", entity: "client", entityId: g.actor.clientId });
   return { ok: true, id: data.id };
 }
@@ -41,7 +52,7 @@ export async function rememberFindingAction(input: unknown): Promise<ResearchAct
   const g = await gate(p.data.clientId);
   if ("error" in g) return { ok: false, error: g.error };
   const { data, error } = await g.actor.sb.from("brand_memories").insert({ client_id: g.actor.clientId, kind: "fact", content: p.data.content, source: "manual" }).select("id").single();
-  if (error || !data) return { ok: false, error: "forbidden" };
+  if (error || !data) return { ok: false, error: dbFailure(error, "memory save") };
   await audit({ agencyId: g.actor.profile.agency_id, actor: g.actor.userId, action: "research.remembered", entity: "client", entityId: g.actor.clientId });
   return { ok: true, id: data.id };
 }
@@ -56,7 +67,7 @@ const CompetitorInput = z.object({
 export async function saveCompetitorAction(input: unknown): Promise<ResearchActionResult> {
   const p = CompetitorInput.safeParse(input);
   if (!p.success) return { ok: false, error: "bad_request" };
-  const website = p.data.website ? (https.safeParse(p.data.website).success ? p.data.website : null) : null;
+  const website = p.data.website ? (https.safeParse(p.data.website).success ? cleanUrl(p.data.website) : null) : null;
   if (p.data.website && !website) return { ok: false, error: "website" };
   const links: { network: string; url: string }[] = [];
   for (const [network, value] of Object.entries(p.data.links)) {
@@ -72,7 +83,7 @@ export async function saveCompetitorAction(input: unknown): Promise<ResearchActi
     ? g.actor.sb.from("competitors").update(row).eq("id", p.data.id).eq("client_id", g.actor.clientId).select("id").single()
     : g.actor.sb.from("competitors").insert({ ...row, client_id: g.actor.clientId, source: "manual" }).select("id").single();
   const { data, error } = await q;
-  if (error || !data) return { ok: false, error: "forbidden" };
+  if (error || !data) return { ok: false, error: dbFailure(error, "competitor save") };
   await audit({ agencyId: g.actor.profile.agency_id, actor: g.actor.userId, action: p.data.id ? "competitor.updated" : "competitor.added", entity: "competitor", entityId: data.id });
   return { ok: true, id: data.id };
 }
@@ -95,7 +106,8 @@ export async function analysisToResearchAction(input: unknown): Promise<Research
   if (!p.success) return { ok: false, error: "bad_request" };
   const g = await gate(p.data.clientId);
   if ("error" in g) return { ok: false, error: g.error };
-  const { data: row } = await g.actor.sb.from("competitor_analyses").select("analysis, competitors(name, url)").eq("id", p.data.analysisId).eq("client_id", g.actor.clientId).maybeSingle();
+  const { data: row, error: readError } = await g.actor.sb.from("competitor_analyses").select("analysis, competitors(name, url)").eq("id", p.data.analysisId).eq("client_id", g.actor.clientId).maybeSingle();
+  if (readError) return { ok: false, error: dbFailure(readError, "analysis read") };
   const a = row ? CompetitorAnalysis.safeParse(row.analysis) : null;
   if (!row || !a?.success) return { ok: false, error: "not_found" };
   const comp = row.competitors as unknown as { name: string | null; url: string | null } | null;
@@ -105,7 +117,7 @@ export async function analysisToResearchAction(input: unknown): Promise<Research
     client_id: g.actor.clientId, kind: "competitor", title: name.slice(0, 200), summary: parts.filter(Boolean).join("\n").slice(0, 2000),
     sources: a.data.sources.slice(0, 6), created_by: g.actor.userId,
   }).select("id").single();
-  if (error || !data) return { ok: false, error: "forbidden" };
+  if (error || !data) return { ok: false, error: dbFailure(error, "analysis to research") };
   await audit({ agencyId: g.actor.profile.agency_id, actor: g.actor.userId, action: "research.saved", entity: "client", entityId: g.actor.clientId, meta: { from: "competitor" } });
   return { ok: true, id: data.id };
 }
