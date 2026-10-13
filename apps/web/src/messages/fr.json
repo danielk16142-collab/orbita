@@ -95,11 +95,12 @@
     "marketsHint": "Séparés par des virgules, p. ex. Canada, Colombie",
     "open": "Ouvrir",
     "tabs": {
-      "overview": "Aperçu",
       "branding": "Image de marque",
       "users": "Utilisateurs",
       "connections": "Connexions",
-      "agent": "Agent"
+      "agent": "Agent",
+      "profile": "Profil",
+      "insights": "Analyses"
     },
     "connectionsSoon": "Connectez Instagram, TikTok et plus ici (prochaine phase).",
     "users": "Personnes ayant accès",
@@ -120,11 +121,12 @@
     "deleteWarn": "Supprime définitivement le client et toutes ses données.",
     "admin": "Admin",
     "team": "Équipe",
-    "client": "Client"
+    "client": "Client",
+    "typeName": "Tapez {name} pour confirmer"
   },
   "branding": {
     "title": "Image de marque",
-    "intro": "Logo et couleurs affichés dans le tableau de bord de ce client.",
+    "intro": "Logos, couleurs, polices et visuels de référence de la marque. L'agent s'en sert pour le contenu et les images.",
     "primary": "Couleur principale",
     "accent": "Couleur d'accent",
     "logoLight": "Logo (fonds clairs)",
@@ -141,7 +143,49 @@
     "tooLarge": "L'image dépasse 1 Mo.",
     "empty": "Choisissez d'abord un fichier.",
     "preview": "Aperçu",
-    "sample": "Bouton d'exemple"
+    "sample": "Bouton d'exemple",
+    "themeTitle": "Couleurs du tableau de bord",
+    "themeHint": "Servent à personnaliser le tableau de bord du client. Vérifiées pour que le texte reste lisible.",
+    "logos": "Logos",
+    "noLogo": "Pas encore de logo",
+    "paletteTitle": "Palette et polices",
+    "paletteIntro": "Toutes les couleurs de la marque avec leur rôle, et les polices. Une référence pour les designs et la création d'images.",
+    "colorValue": "Couleur",
+    "colorName": "Nom de la couleur",
+    "colorNamePlaceholder": "ex. Sable",
+    "colorRole": "Rôle",
+    "roles": {
+      "primary": "Principale",
+      "secondary": "Secondaire",
+      "accent": "Accent",
+      "background": "Fond",
+      "text": "Texte",
+      "highlight": "Mise en valeur",
+      "other": "Autre"
+    },
+    "removeColor": "Retirer la couleur",
+    "addColor": "Ajouter une couleur",
+    "paletteHint": "Jusqu'à {max} couleurs. Les lignes sans nom ne sont pas enregistrées.",
+    "headingFont": "Police des titres",
+    "bodyFont": "Police du texte",
+    "refsTitle": "Visuels de référence",
+    "refsIntro": "Photos et designs qui montrent le style voulu : style, produits, personnes, lieux, et ce qu'il faut éviter. Utilisés pour créer des images.",
+    "refFile": "Image",
+    "refKind": "Type",
+    "refKinds": {
+      "style": "Style",
+      "product": "Produit",
+      "people": "Personnes",
+      "place": "Lieu",
+      "avoid": "À éviter"
+    },
+    "refCaption": "Note",
+    "refCaptionPlaceholder": "Que retenir de cette image?",
+    "refHint": "PNG, JPEG ou WebP, jusqu'à 5 Mo. Redimensionnée et nettoyée automatiquement. Jusqu'à 40 par marque.",
+    "noRefs": "Aucun visuel de référence pour l'instant.",
+    "unlock": "Déverrouiller",
+    "refTooLarge": "L'image dépasse 5 Mo.",
+    "tooMany": "Cette marque a déjà 40 visuels de référence. Retirez-en un d'abord."
   },
   "invite": {
     "title": "Créez votre compte",
@@ -219,7 +263,9 @@
     "agent": "Agent",
     "settings": "Paramètres",
     "eyebrow": "Bienvenue",
-    "title": "Accueil"
+    "title": "Accueil",
+    "insights": "Analyses",
+    "profile": "Profil"
   },
   "acceptTerms": {
     "title": "Conditions mises à jour",
@@ -268,7 +314,7 @@
     "assistant": "Agent",
     "learnNow": "Suggérer quoi retenir",
     "learning": "Recherche de ce qui mérite d'être retenu…",
-    "learned": "{count, plural, one {# suggestion ajoutée} other {# suggestions ajoutées}}. Vérifiez-les à droite.",
+    "learned": "{count, plural, one {# suggestion ajoutée} other {# suggestions ajoutées}}. Examinez-les dans le profil.",
     "nothingNew": "Rien de nouveau à retenir.",
     "errors": {
       "generic": "Une erreur s'est produite. Réessayez.",
@@ -357,7 +403,8 @@
       "strengths": "Forces",
       "weaknesses": "Faiblesses",
       "opportunities": "Occasions",
-      "social": "Comptes sociaux"
+      "social": "Comptes sociaux",
+      "missing": "Ce qu'il manque encore à l'agent"
     },
     "memories": "Ce que j'ai appris",
     "noMemories": "Rien pour l'instant. Acceptez des suggestions pour m'apprendre.",
@@ -422,7 +469,36 @@
         "educate": "Éduquer l'audience",
         "consistency": "Publier régulièrement, gagner du temps"
       }
-    }
+    },
+    "views": {
+      "chat": "Discussion",
+      "strategy": "Stratégie et recherche",
+      "audit": "Audit"
+    },
+    "asks": {
+      "strategy": "Construis une stratégie de contenu pour ce trimestre : objectifs, piliers de contenu, cadence par réseau et banque de sujets.",
+      "research": "Cherche ce qui fonctionne en ce moment dans notre créneau et notre marché, et garde ce qui vaut la peine.",
+      "competitors": "Regarde nos concurrents et dis-moi ce qu'ils font bien et comment nous démarquer.",
+      "audit": "Fais l'audit de notre présence en ligne : le site web et chaque compte social. Donne les forces, les faiblesses et les occasions.",
+      "recommend": "Selon nos résultats, l'audit et la stratégie, quelles sont les trois choses les plus importantes à faire ensuite?",
+      "draft": "Écris un {format} pour {where}.",
+      "draftAbout": "Écris un {format} pour {where} sur : {idea}"
+    },
+    "asksButton": {
+      "strategy": "Créer une stratégie",
+      "strategyUpdate": "Mettre à jour la stratégie",
+      "research": "Étudier le créneau",
+      "competitors": "Étudier les concurrents",
+      "audit": "Lancer l'audit",
+      "auditAgain": "Lancer un nouvel audit"
+    },
+    "auditDate": "Dernier audit : {date}",
+    "auditCovers": "Couvre :",
+    "addLinksFirst": "ajoutez d'abord le site web et les réseaux dans le profil",
+    "readyForReview": "Prêt à examiner",
+    "noContentSuggestions": "Les plans et publications préparés par l'agent apparaissent ici.",
+    "pendingKnowledge": "{count, plural, one {# élément appris} other {# éléments appris}} sur la marque à examiner dans le profil.",
+    "openProfile": "Ouvrir le profil"
   },
   "connections": {
     "title": "Comptes connectés",
@@ -609,6 +685,129 @@
     "restart": "Recommencer",
     "speed": "Vitesse",
     "fontSize": "Taille du texte",
-    "mirror": "Miroir"
+    "mirror": "Miroir",
+    "createPost": "Créer une publication",
+    "steps": "Étapes",
+    "stepNames": {
+      "format": "Format",
+      "where": "Où",
+      "details": "Détails"
+    },
+    "whatTitle": "Que voulez-vous créer?",
+    "whereTitle": "Où sera-t-elle publiée?",
+    "whereHint": "Choisissez un ou plusieurs réseaux pour ce format : {format}.",
+    "nextStep": "Suivant",
+    "detailsTitle": "Détails",
+    "ideaLabel": "Idée ou sujet",
+    "ideaPlaceholder": "De quoi s'agit-il? Un produit, une offre, un conseil, une histoire…",
+    "onePerNetwork": "Une publication est créée par réseau ({count}).",
+    "writeWithAgent": "La rédiger avec l'agent",
+    "writeWithAgentHint": "Ouvre la discussion avec la demande prête. Vous la relisez avant que quoi que ce soit soit enregistré.",
+    "createDraft": "Créer le brouillon",
+    "createIdea": "Enregistrer l'idée",
+    "createHint": "L'ajoute au calendrier pour la rédiger vous-même.",
+    "formatCards": {
+      "reel": {
+        "title": "Reel ou vidéo courte",
+        "text": "Script avec accroches, scènes et appel à l'action. S'ouvre dans le téléprompteur."
+      },
+      "carousel": {
+        "title": "Carrousel",
+        "text": "Une série de diapositives avec un titre et un court texte."
+      },
+      "static": {
+        "title": "Publication image",
+        "text": "Un visuel avec un titre, un brief visuel et la légende."
+      },
+      "story": {
+        "title": "Story",
+        "text": "Des écrans verticaux courts qui disparaissent après un jour."
+      },
+      "video": {
+        "title": "Script de vidéo longue",
+        "text": "Une vidéo plus longue, scène par scène, pour YouTube ou Facebook."
+      },
+      "text": {
+        "title": "Publication texte",
+        "text": "Du texte seulement, pour LinkedIn ou Facebook."
+      },
+      "article": {
+        "title": "Article",
+        "text": "Un texte plus long pour LinkedIn."
+      }
+    }
+  },
+  "profile": {
+    "eyebrow": "Votre entreprise",
+    "title": "Profil",
+    "business": "Informations de l'entreprise",
+    "detailsError": "Vérifiez le nom, les langues et les marchés, puis enregistrez à nouveau.",
+    "timezone": "Fuseau horaire",
+    "links": "Site web et réseaux sociaux",
+    "linksHint": "L'agent les lit pour auditer la marque et apprendre son ton. Ajoutez d'abord le site web.",
+    "kinds": {
+      "website": "Site web",
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "linkedin": "LinkedIn",
+      "youtube": "YouTube",
+      "facebook": "Facebook",
+      "other": "Autre"
+    },
+    "briefHint": "Ce que l'agent sait de la marque. Il le complète à partir des conversations; chaque changement est une suggestion que vous acceptez.",
+    "proof": "Faits approuvés",
+    "rules": "Règles permanentes",
+    "toReview": "Suggestions à examiner"
+  },
+  "insights": {
+    "eyebrow": "Ce qui fonctionne",
+    "title": "Analyses",
+    "bestNetwork": "Meilleur réseau",
+    "avgRate": "{rate} d'engagement moyen, 30 derniers jours",
+    "needData": "Connectez un compte pour voir ceci.",
+    "bestFormat": "Meilleur format",
+    "avgRateOf": "{rate} d'engagement moyen sur {count} publications",
+    "formats": {
+      "reel": "Reels",
+      "image": "Images",
+      "video": "Vidéos",
+      "carousel_album": "Carrousels",
+      "post": "Publications"
+    },
+    "bestTime": "Meilleur moment pour publier",
+    "buckets": {
+      "morning": "matin",
+      "midday": "midi",
+      "afternoon": "après-midi",
+      "evening": "soir",
+      "night": "nuit"
+    },
+    "utcNote": "Selon {count} publications, heures en UTC",
+    "lowConfidence": "premier signal",
+    "needMorePosts": "Il faut au moins 12 publications avec des résultats.",
+    "connectTitle": "Connectez les comptes",
+    "connectText": "Les analyses viennent de résultats réels. Connectez Instagram ou TikTok pour commencer.",
+    "connect": "Connecter les comptes",
+    "formatTitle": "Engagement par format",
+    "format": "Format",
+    "posts": "Publications",
+    "engagement": "Engagement",
+    "otherWindows": "Autres bons moments",
+    "topPost": "Meilleure publication, 30 derniers jours",
+    "engagementLower": "d'engagement",
+    "recommendations": "Recommandations",
+    "askAgent": "Demander à l'agent",
+    "fromAudit": "Selon l'audit du {date}",
+    "recKinds": {
+      "opportunity": "Occasion",
+      "fix": "À améliorer"
+    },
+    "noAudit": "Aucun audit pour l'instant.",
+    "runAudit": "Lancer un audit de la présence en ligne",
+    "openStrategy": "Ouvrir la stratégie",
+    "waiting": "En attente de vous",
+    "waitingCount": "{count, plural, one {# suggestion} other {# suggestions}} de l'agent à examiner.",
+    "waitingNone": "Rien à examiner.",
+    "review": "Examiner"
   }
 }

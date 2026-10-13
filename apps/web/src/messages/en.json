@@ -95,11 +95,12 @@
     "marketsHint": "Comma-separated, e.g. Canada, Colombia",
     "open": "Open",
     "tabs": {
-      "overview": "Overview",
       "branding": "Branding",
       "users": "Users",
       "connections": "Connections",
-      "agent": "Agent"
+      "agent": "Agent",
+      "profile": "Profile",
+      "insights": "Insights"
     },
     "connectionsSoon": "Connect Instagram, TikTok and more here (next phase).",
     "users": "People with access",
@@ -120,11 +121,12 @@
     "deleteWarn": "Permanently deletes the client and all of its data.",
     "admin": "Admin",
     "team": "Team",
-    "client": "Client"
+    "client": "Client",
+    "typeName": "Type {name} to confirm"
   },
   "branding": {
     "title": "Branding",
-    "intro": "Logo and colors shown in this client's dashboard.",
+    "intro": "Logos, colors, fonts and reference visuals for this brand. The agent uses them for content and images.",
     "primary": "Main color",
     "accent": "Accent color",
     "logoLight": "Logo (for light backgrounds)",
@@ -141,7 +143,49 @@
     "tooLarge": "The image is larger than 1 MB.",
     "empty": "Choose a file first.",
     "preview": "Preview",
-    "sample": "Sample button"
+    "sample": "Sample button",
+    "themeTitle": "Dashboard colors",
+    "themeHint": "Used to theme this client's dashboard. Checked so text stays readable.",
+    "logos": "Logos",
+    "noLogo": "No logo yet",
+    "paletteTitle": "Brand palette and fonts",
+    "paletteIntro": "All the brand colors with their role, plus the fonts. Used as a reference for designs and image creation.",
+    "colorValue": "Color",
+    "colorName": "Color name",
+    "colorNamePlaceholder": "e.g. Sand",
+    "colorRole": "Role",
+    "roles": {
+      "primary": "Primary",
+      "secondary": "Secondary",
+      "accent": "Accent",
+      "background": "Background",
+      "text": "Text",
+      "highlight": "Highlight",
+      "other": "Other"
+    },
+    "removeColor": "Remove color",
+    "addColor": "Add color",
+    "paletteHint": "Up to {max} colors. Rows without a name are not saved.",
+    "headingFont": "Heading font",
+    "bodyFont": "Body font",
+    "refsTitle": "Reference visuals",
+    "refsIntro": "Photos and designs that show the look you want: style, products, people, places, and what to avoid. Used when creating images.",
+    "refFile": "Image",
+    "refKind": "Type",
+    "refKinds": {
+      "style": "Style",
+      "product": "Product",
+      "people": "People",
+      "place": "Place",
+      "avoid": "Avoid"
+    },
+    "refCaption": "Note",
+    "refCaptionPlaceholder": "What should we take from this image?",
+    "refHint": "PNG, JPEG or WebP, up to 5 MB. Resized and cleaned automatically. Up to 40 per brand.",
+    "noRefs": "No reference visuals yet.",
+    "unlock": "Unlock branding",
+    "refTooLarge": "The image is larger than 5 MB.",
+    "tooMany": "This brand already has 40 reference visuals. Remove one first."
   },
   "invite": {
     "title": "Create your account",
@@ -219,7 +263,9 @@
     "agent": "Agent",
     "settings": "Settings",
     "eyebrow": "Welcome",
-    "title": "Home"
+    "title": "Home",
+    "insights": "Insights",
+    "profile": "Profile"
   },
   "acceptTerms": {
     "title": "Updated terms",
@@ -268,7 +314,7 @@
     "assistant": "Agent",
     "learnNow": "Suggest what to remember",
     "learning": "Looking for things worth remembering…",
-    "learned": "{count, plural, one {# suggestion added} other {# suggestions added}}. Review them on the right.",
+    "learned": "{count, plural, one {# suggestion added} other {# suggestions added}}. Review them in the profile.",
     "nothingNew": "Nothing new to remember.",
     "errors": {
       "generic": "Something went wrong. Please try again.",
@@ -357,7 +403,8 @@
       "strengths": "Strengths",
       "weaknesses": "Weaknesses",
       "opportunities": "Opportunities",
-      "social": "Social accounts"
+      "social": "Social accounts",
+      "missing": "What the agent still needs"
     },
     "memories": "What I've learned",
     "noMemories": "Nothing yet. Accept suggestions to teach me.",
@@ -422,7 +469,36 @@
         "educate": "Educate the audience",
         "consistency": "Post consistently, save time"
       }
-    }
+    },
+    "views": {
+      "chat": "Chat",
+      "strategy": "Strategy and research",
+      "audit": "Audit"
+    },
+    "asks": {
+      "strategy": "Build a content strategy for this quarter: objectives, content pillars, cadence per network and a topic bank.",
+      "research": "Research what is working right now in our niche and our market, and save what is worth keeping.",
+      "competitors": "Look at our competitors and tell me what they do well and where we can stand out.",
+      "audit": "Audit our online presence: the website and each social account. Give strengths, weaknesses and opportunities.",
+      "recommend": "Based on our results, the audit and the strategy, what are the three most important things to do next?",
+      "draft": "Write a {format} for {where}.",
+      "draftAbout": "Write a {format} for {where} about: {idea}"
+    },
+    "asksButton": {
+      "strategy": "Build a strategy",
+      "strategyUpdate": "Update the strategy",
+      "research": "Research the niche",
+      "competitors": "Study competitors",
+      "audit": "Run the audit",
+      "auditAgain": "Run a new audit"
+    },
+    "auditDate": "Last audit: {date}",
+    "auditCovers": "Covers:",
+    "addLinksFirst": "add the website and social links in the profile first",
+    "readyForReview": "Ready for review",
+    "noContentSuggestions": "Plans and posts the agent prepares appear here.",
+    "pendingKnowledge": "{count, plural, one {# thing} other {# things}} learned about the brand to review in the profile.",
+    "openProfile": "Open profile"
   },
   "connections": {
     "title": "Connected accounts",
@@ -609,6 +685,129 @@
     "restart": "Restart",
     "speed": "Speed",
     "fontSize": "Text size",
-    "mirror": "Mirror"
+    "mirror": "Mirror",
+    "createPost": "Create post",
+    "steps": "Steps",
+    "stepNames": {
+      "format": "Format",
+      "where": "Where",
+      "details": "Details"
+    },
+    "whatTitle": "What do you want to create?",
+    "whereTitle": "Where will it be posted?",
+    "whereHint": "Choose one or more networks for this {format}.",
+    "nextStep": "Next",
+    "detailsTitle": "Details",
+    "ideaLabel": "Idea or topic",
+    "ideaPlaceholder": "What is it about? A product, an offer, a tip, a story…",
+    "onePerNetwork": "One post is created per network ({count}).",
+    "writeWithAgent": "Write it with the agent",
+    "writeWithAgentHint": "Opens the chat with the request ready. You review it before anything is saved.",
+    "createDraft": "Create draft",
+    "createIdea": "Save idea",
+    "createHint": "Adds it to the calendar so you can write it yourself.",
+    "formatCards": {
+      "reel": {
+        "title": "Reel or short video",
+        "text": "Script with hook options, scenes and a call to action. Opens in the teleprompter."
+      },
+      "carousel": {
+        "title": "Carousel",
+        "text": "A series of slides, each with a headline and short text."
+      },
+      "static": {
+        "title": "Single image post",
+        "text": "One visual with a headline, a visual brief and the caption."
+      },
+      "story": {
+        "title": "Story",
+        "text": "Short vertical frames that disappear after a day."
+      },
+      "video": {
+        "title": "Long video script",
+        "text": "A longer video, scene by scene, for YouTube or Facebook."
+      },
+      "text": {
+        "title": "Text post",
+        "text": "Words only, for LinkedIn or Facebook."
+      },
+      "article": {
+        "title": "Article",
+        "text": "A longer piece for LinkedIn."
+      }
+    }
+  },
+  "profile": {
+    "eyebrow": "Your business",
+    "title": "Profile",
+    "business": "Business details",
+    "detailsError": "Check the name, languages and markets, then save again.",
+    "timezone": "Timezone",
+    "links": "Website and social media",
+    "linksHint": "The agent reads these to audit the brand and learn its voice. Add the website first.",
+    "kinds": {
+      "website": "Website",
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "linkedin": "LinkedIn",
+      "youtube": "YouTube",
+      "facebook": "Facebook",
+      "other": "Other"
+    },
+    "briefHint": "What the agent knows about the brand. It fills this in from conversations; every change is a suggestion you accept.",
+    "proof": "Approved facts",
+    "rules": "Standing rules",
+    "toReview": "Suggestions to review"
+  },
+  "insights": {
+    "eyebrow": "What is working",
+    "title": "Insights",
+    "bestNetwork": "Best network",
+    "avgRate": "{rate} average engagement, last 30 days",
+    "needData": "Connect an account to see this.",
+    "bestFormat": "Best format",
+    "avgRateOf": "{rate} average engagement over {count} posts",
+    "formats": {
+      "reel": "Reels",
+      "image": "Images",
+      "video": "Videos",
+      "carousel_album": "Carousels",
+      "post": "Posts"
+    },
+    "bestTime": "Best time to post",
+    "buckets": {
+      "morning": "morning",
+      "midday": "midday",
+      "afternoon": "afternoon",
+      "evening": "evening",
+      "night": "night"
+    },
+    "utcNote": "Based on {count} posts, times in UTC",
+    "lowConfidence": "early signal",
+    "needMorePosts": "Needs at least 12 published posts with results.",
+    "connectTitle": "Connect the accounts",
+    "connectText": "Insights come from real results. Connect Instagram or TikTok to start.",
+    "connect": "Connect accounts",
+    "formatTitle": "Engagement by format",
+    "format": "Format",
+    "posts": "Posts",
+    "engagement": "Engagement",
+    "otherWindows": "Other good times",
+    "topPost": "Best post, last 30 days",
+    "engagementLower": "engagement",
+    "recommendations": "Recommendations",
+    "askAgent": "Ask the agent",
+    "fromAudit": "From the audit of {date}",
+    "recKinds": {
+      "opportunity": "Opportunity",
+      "fix": "To improve"
+    },
+    "noAudit": "No audit yet.",
+    "runAudit": "Run an audit of the online presence",
+    "openStrategy": "Open strategy",
+    "waiting": "Waiting for you",
+    "waitingCount": "{count, plural, one {# suggestion} other {# suggestions}} from the agent to review.",
+    "waitingNone": "Nothing to review.",
+    "review": "Review"
   }
 }

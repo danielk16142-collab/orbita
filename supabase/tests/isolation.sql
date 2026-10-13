@@ -332,4 +332,39 @@ select pg_temp.as_user('a0000000-0000-0000-0000-000000000004'); -- other client
 select pg_temp.expect('other client sees none of those posts or comments', (select count(*) from posts where client_id='c1000000-0000-0000-0000-000000000001') + (select count(*) from post_comments where client_id='c1000000-0000-0000-0000-000000000001'), 0);
 select pg_temp.reset();
 
+-- brand visuals: palette, fonts, reference images
+insert into storage.buckets(id,name) values ('brand-references','brand-references') on conflict do nothing;
+update clients set branding_locked=false where id='c1000000-0000-0000-0000-000000000001';
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000005'); -- client A1 user
+update clients set palette='[{"name":"Sand","hex":"#e8dcc4","role":"background"}]', body_font='Inter' where id='c1000000-0000-0000-0000-000000000001';
+select pg_temp.expect('client edits own palette and fonts', (select count(*) from clients where body_font='Inter' and jsonb_array_length(palette)=1), 1);
+select pg_temp.expect_error('palette must be an array', $$update clients set palette='{"a":1}' where id='c1000000-0000-0000-0000-000000000001'$$);
+select pg_temp.expect_error('palette size is bounded', $$update clients set palette=(select jsonb_agg(jsonb_build_object('name','x','hex','#000000')) from generate_series(1,13)) where id='c1000000-0000-0000-0000-000000000001'$$);
+insert into storage.objects(bucket_id,name) values ('brand-references','c1000000-0000-0000-0000-000000000001/ref-1.webp');
+insert into brand_references(client_id,path,kind,caption) values ('c1000000-0000-0000-0000-000000000001','c1000000-0000-0000-0000-000000000001/ref-1.webp','style','Warm light');
+select pg_temp.expect('client adds a reference visual', (select count(*) from brand_references), 1);
+select pg_temp.expect_error('reference path must belong to the client',
+  $$insert into brand_references(client_id,path) values ('c1000000-0000-0000-0000-000000000001','c2000000-0000-0000-0000-000000000002/x.webp')$$);
+select pg_temp.expect_error('client cannot add a reference to another client',
+  $$insert into brand_references(client_id,path) values ('c2000000-0000-0000-0000-000000000002','c2000000-0000-0000-0000-000000000002/x.webp')$$);
+select pg_temp.expect_error('client cannot upload a reference file for another client',
+  $$insert into storage.objects(bucket_id,name) values ('brand-references','c2000000-0000-0000-0000-000000000002/x.webp')$$);
+select pg_temp.reset();
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000004'); -- other client
+select pg_temp.expect('other client sees no references', (select count(*) from brand_references) + (select count(*) from storage.objects where bucket_id='brand-references'), 0);
+select pg_temp.reset();
+select pg_temp.as_user('b0000000-0000-0000-0000-000000000001'); -- other agency
+select pg_temp.expect('other agency sees no references', (select count(*) from brand_references) + (select count(*) from storage.objects where bucket_id='brand-references'), 0);
+select pg_temp.reset();
+update clients set branding_locked=true where id='c1000000-0000-0000-0000-000000000001';
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000005');
+delete from brand_references where client_id='c1000000-0000-0000-0000-000000000001';
+select pg_temp.reset();
+select pg_temp.expect('locked branding keeps references from client deletes', (select count(*) from brand_references), 1);
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000001'); -- admin A
+delete from brand_references where client_id='c1000000-0000-0000-0000-000000000001';
+select pg_temp.reset();
+select pg_temp.expect('staff can remove references even when locked', (select count(*) from brand_references), 0);
+update clients set branding_locked=false where id='c1000000-0000-0000-0000-000000000001';
+
 \echo ALL TENANT ISOLATION TESTS PASSED

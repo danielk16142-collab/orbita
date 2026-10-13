@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { requireClientUser } from "@/lib/session";
 import { BrandingPanel } from "@/components/branding-panel";
 import { ConnectionsPanel } from "@/components/connections/connections-panel";
+import { loadReferences } from "@/lib/references";
 
 export default async function PortalSettings({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ saved?: string; error?: string; connected?: string; connect?: string }> }) {
   const { locale } = await params;
@@ -17,7 +18,7 @@ export default async function PortalSettings({ params, searchParams }: { params:
       <h1>{t("title")}</h1>
       <ConnectionsPanel locale={locale} flash={{ connected: q.connected, connect: q.connect }} />
       {client && <BrandingPanel locale={locale} client={client} canEdit={!client.branding_locked}
-        logos={{ light: await sign(client.logo_light_path), dark: await sign(client.logo_dark_path) }} saved={q.saved === "1"} error={q.error} />}
+        logos={{ light: await sign(client.logo_light_path), dark: await sign(client.logo_dark_path) }} references={await loadReferences(sb, client.id)} saved={q.saved === "1"} error={q.error} />}
       <div className="grid">
         <section className="card"><h2>{t("security")}</h2><p>{t("securityText")}</p><Link className="btn" href={`/${locale}/security/mfa`}>{t("manageMfa")}</Link></section>
         <section className="card"><h2>{t("privacy")}</h2><p>{t("privacyText")}</p><Link className="btn" href={`/${locale}/portal/settings/privacy`}>{t("open")}</Link></section>

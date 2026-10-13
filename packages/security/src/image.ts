@@ -2,6 +2,7 @@
 export type ImageKind = "png" | "jpeg" | "webp";
 
 export const MAX_LOGO_BYTES = 1_048_576; // 1 MB
+export const MAX_REFERENCE_BYTES = 5_242_880; // 5 MB: reference photos are larger than logos
 
 export function sniffImage(buf: Uint8Array): ImageKind | null {
   const b = buf;
@@ -11,8 +12,13 @@ export function sniffImage(buf: Uint8Array): ImageKind | null {
   return null; // SVG, GIF, HTML, and anything else are rejected
 }
 
-export function validateLogoUpload(buf: Uint8Array): "empty" | "too-large" | "unsupported" | null {
+export type UploadProblem = "empty" | "too-large" | "unsupported";
+
+function validateImage(buf: Uint8Array, max: number): UploadProblem | null {
   if (buf.length === 0) return "empty";
-  if (buf.length > MAX_LOGO_BYTES) return "too-large";
+  if (buf.length > max) return "too-large";
   return sniffImage(buf) ? null : "unsupported";
 }
+
+export const validateLogoUpload = (buf: Uint8Array) => validateImage(buf, MAX_LOGO_BYTES);
+export const validateReferenceUpload = (buf: Uint8Array) => validateImage(buf, MAX_REFERENCE_BYTES);

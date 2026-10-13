@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { checkBrandColor, contrastRatio, readableOn } from "./color";
 import { constantTimeEqual, generateInviteToken, hashInviteToken, isWellFormedToken } from "./invitation";
-import { sniffImage, validateLogoUpload, MAX_LOGO_BYTES } from "./image";
+import { sniffImage, validateLogoUpload, validateReferenceUpload, MAX_LOGO_BYTES, MAX_REFERENCE_BYTES } from "./image";
 import { upstashRateLimiter } from "./rate-limit";
 
 describe("color", () => {
@@ -49,6 +49,13 @@ describe("image sniffing", () => {
     const big = new Uint8Array(MAX_LOGO_BYTES + 1); big.set(png);
     expect(validateLogoUpload(big)).toBe("too-large");
     expect(validateLogoUpload(png)).toBeNull();
+  });
+  it("allows larger reference visuals, with the same type checks", () => {
+    const mid = new Uint8Array(MAX_LOGO_BYTES + 1); mid.set(png);
+    expect(validateReferenceUpload(mid)).toBeNull();
+    const big = new Uint8Array(MAX_REFERENCE_BYTES + 1); big.set(png);
+    expect(validateReferenceUpload(big)).toBe("too-large");
+    expect(validateReferenceUpload(new TextEncoder().encode("<svg></svg>"))).toBe("unsupported");
   });
 });
 
