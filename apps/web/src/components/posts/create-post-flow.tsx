@@ -40,8 +40,8 @@ function FormatIcon({ format }: { format: string }) {
  * Create a post in three steps: what (format), where (networks), then the details. The person either creates it as an idea
  * or draft and fills it in, or hands it to the agent, which opens the chat with the request prepared (nothing is sent automatically).
  */
-export function CreatePostFlow({ locale, staff, clients, initialClient, initialDate, postsBase, agentBase }: {
-  locale: string; staff: boolean; clients: { id: string; name: string }[]; initialClient: string; initialDate: string;
+export function CreatePostFlow({ locale, staff, clients, initialClient, initialDate, initialIdea = "", postsBase, agentBase }: {
+  locale: string; staff: boolean; clients: { id: string; name: string }[]; initialClient: string; initialDate: string; /** from "Your next post" */ initialIdea?: string;
   /** e.g. /en/posts or /en/portal/posts */ postsBase: string;
   /** e.g. /en/agent (staff, the client id is added) or /en/portal/agent */ agentBase: string;
 }) {
@@ -52,7 +52,7 @@ export function CreatePostFlow({ locale, staff, clients, initialClient, initialD
   const [networks, setNetworks] = useState<string[]>([]);
   const [clientId, setClientId] = useState(initialClient || clients[0]?.id || "");
   const [language, setLanguage] = useState(LANGS.includes(locale) ? locale : "en");
-  const [idea, setIdea] = useState("");
+  const [idea, setIdea] = useState(initialIdea);
   const [date, setDate] = useState(initialDate);
   const [status, setStatus] = useState<"idea" | "draft">(staff ? "draft" : "idea");
   const [error, setError] = useState<string | null>(null);
@@ -99,6 +99,7 @@ export function CreatePostFlow({ locale, staff, clients, initialClient, initialD
       {step === "format" && (
         <section aria-labelledby="h-format">
           <h2 id="h-format">{t("whatTitle")}</h2>
+          {initialIdea && <p className="stat-vs">{t("forIdea", { idea: initialIdea.slice(0, 160) })}</p>}
           <div className="choice-grid">
             {FORMATS.map((f) => (
               <button key={f} type="button" className="choice" aria-pressed={format === f} onClick={() => chooseFormat(f)}>

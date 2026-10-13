@@ -4,15 +4,26 @@ import type { getSession } from "@/lib/session";
 import { dashboardFor, loadAnalyticsData, type AnalyticsData } from "@/lib/analytics/load";
 import { StatTile } from "./stat-tile";
 import { TrendChart, type ChartSeries } from "./trend-chart";
+import { loadCadence } from "@/lib/cadence";
+import { NextPostCard } from "@/components/cadence/next-post-card";
 
 type Sb = NonNullable<Awaited<ReturnType<typeof getSession>>>["sb"];
 // Fixed per network (color follows the entity). Validated pair; see docs/dataviz.md.
 const NETWORK_COLOR: Record<string, string> = { instagram: "var(--series-1)", tiktok: "var(--series-2)", linkedin: "var(--series-3)", youtube: "var(--series-4)", facebook: "var(--series-5)" };
 const NETWORK_LABEL: Record<string, string> = { instagram: "Instagram", tiktok: "TikTok", linkedin: "LinkedIn", youtube: "YouTube", facebook: "Facebook" };
 
-/** Headline numbers, the follower trend, per-network summary and the best recent posts for ONE client. */
-export async function ClientDashboard({ sb, clientId, locale, connectHref }: { sb: Sb; clientId: string; locale: string; connectHref: string }) {
-  return <DashboardView data={await loadAnalyticsData(sb, clientId)} locale={locale} connectHref={connectHref} />;
+export type DashboardLinks = { postsBase: string; newPostHref: string; agentHref: string; /** set for staff (the client being viewed), unset in the portal */ actorClientId?: string };
+
+/** "Your next post", then the headline numbers, the follower trend, per-network summary and the best recent posts for ONE client. */
+export async function ClientDashboard({ sb, clientId, locale, connectHref, links }: { sb: Sb; clientId: string; locale: string; connectHref: string; links: DashboardLinks }) {
+  const data = await loadAnalyticsData(sb, clientId);
+  const cadence = await loadCadence(sb, clientId, data);
+  return (
+    <>
+      <NextPostCard cadence={cadence} locale={locale} clientId={links.actorClientId} postsBase={links.postsBase} newPostHref={links.newPostHref} agentHref={links.agentHref} />
+      <DashboardView data={data} locale={locale} connectHref={connectHref} />
+    </>
+  );
 }
 
 /** Presentational: renders already-loaded analytics. Also used by the development preview. */

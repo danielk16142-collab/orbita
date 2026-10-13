@@ -787,7 +787,8 @@
     },
     "chatErrors": {
       "not_set_up": "El chat de publicaciones necesita una actualización de la base de datos (migración 0013_post_chats.sql). Pide a tu administrador que la ejecute en Supabase."
-    }
+    },
+    "forIdea": "Para la idea: {idea}"
   },
   "profile": {
     "eyebrow": "Tu negocio",
@@ -1029,6 +1030,39 @@
       "weak": "Esta contraseña es muy fácil de adivinar. Prueba una más larga.",
       "same": "Elige una contraseña que no hayas usado aquí antes.",
       "failed": "No pudimos guardar la contraseña. Pide un nuevo enlace e inténtalo otra vez."
+    }
+  },
+  "cadence": {
+    "title": "Tu próxima publicación",
+    "untitled": "Publicación sin título",
+    "plannedFor": "Planeada para {day}",
+    "openIt": "Abrirla",
+    "another": "Planear otra",
+    "fromStrategy": "De tu estrategia",
+    "fromResearch": "De tu investigación",
+    "bestDay": "Mejor día: {day}",
+    "createIt": "Crearla",
+    "emptyTitle": "Planea tu próxima publicación",
+    "emptyWithStrategy": "Todos los temas de tu estrategia ya están en el calendario. Agrega uno nuevo o pide ideas al agente.",
+    "emptyNoStrategy": "Crea una estrategia de contenido con el agente y esta tarjeta te sugerirá qué publicar cada semana.",
+    "createPost": "Crear una publicación",
+    "buildStrategy": "Crear una estrategia",
+    "thisWeek": "Esta semana",
+    "ofGoal": "de {goal} publicaciones",
+    "goalMet": "Meta cumplida. Bien hecho.",
+    "toGo": "Faltan {count, plural, one {# publicación} other {# publicaciones}}, {days, plural, one {queda # día} other {quedan # días}}.",
+    "streak": "{count, plural, one {# semana} other {# semanas}} seguidas cumpliendo la meta",
+    "weekLine": "Esta semana: {done} de {goal} publicaciones",
+    "goalLabel": "Meta semanal",
+    "perWeek": "{count} por semana",
+    "goalFailed": "No se pudo guardar la meta.",
+    "goalNotSetUp": "Ejecuta la migración 0014 en Supabase para guardar la meta.",
+    "buckets": {
+      "morning": "mañana",
+      "midday": "mediodía",
+      "afternoon": "tarde",
+      "evening": "noche",
+      "night": "madrugada"
     }
   }
 }
