@@ -5,7 +5,7 @@ import { BrandingPanel } from "@/components/branding-panel";
 import { ConnectionsPanel } from "@/components/connections/connections-panel";
 import { loadReferences } from "@/lib/references";
 
-export default async function PortalSettings({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ saved?: string; error?: string; connected?: string; connect?: string }> }) {
+export default async function PortalSettings({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ saved?: string; error?: string; connected?: string; connect?: string; step?: string }> }) {
   const { locale } = await params;
   const q = await searchParams;
   const t = await getTranslations("settings");
@@ -16,7 +16,7 @@ export default async function PortalSettings({ params, searchParams }: { params:
     <>
       <p className="eyebrow">{t("eyebrow")}</p>
       <h1>{t("title")}</h1>
-      <ConnectionsPanel locale={locale} flash={{ connected: q.connected, connect: q.connect }} />
+      <ConnectionsPanel locale={locale} flash={{ connected: q.connected, connect: q.connect, step: q.step }} />
       {client && <BrandingPanel locale={locale} client={client} canEdit={!client.branding_locked}
         logos={{ light: await sign(client.logo_light_path), dark: await sign(client.logo_dark_path) }} references={await loadReferences(sb, client.id)} saved={q.saved === "1"} error={q.error} />}
       <div className="grid">

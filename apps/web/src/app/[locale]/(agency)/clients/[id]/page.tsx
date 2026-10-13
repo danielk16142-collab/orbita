@@ -19,7 +19,7 @@ type Tab = (typeof TABS)[number];
 
 export default async function ClientDetail({ params, searchParams }: {
   params: Promise<{ locale: string; id: string }>;
-  searchParams: Promise<{ tab?: string; view?: string; ask?: string; format?: string; network?: string; idea?: string; saved?: string; error?: string; invited?: string; connected?: string; connect?: string }>;
+  searchParams: Promise<{ tab?: string; view?: string; ask?: string; format?: string; network?: string; idea?: string; saved?: string; error?: string; invited?: string; connected?: string; connect?: string; step?: string }>;
 }) {
   const { locale, id } = await params;
   const q = await searchParams;
@@ -125,7 +125,7 @@ export default async function ClientDetail({ params, searchParams }: {
         </>
       )}
 
-      {tab === "connections" && <ConnectionsPanel locale={locale} clientId={id} flash={{ connected: q.connected, connect: q.connect, error: q.error }} />}
+      {tab === "connections" && <ConnectionsPanel locale={locale} clientId={id} flash={{ connected: q.connected, connect: q.connect, step: q.step, error: q.error }} />}
     </>
   );
 }

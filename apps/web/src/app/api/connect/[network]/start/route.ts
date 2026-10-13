@@ -1,13 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { CONNECTOR_NETWORKS, deriveStateKey, newNonce, signState, type ConnectorNetwork } from "@orbita/connectors";
 import { resolveAgentActor } from "@/lib/agent/access";
-import { appUrl, connectorFor, redirectUriFor } from "@/lib/connectors/accounts";
+import { appUrl, connectionsUrl, connectorFor, redirectUriFor } from "@/lib/connectors/accounts";
 import { limiter } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
-const back = (locale: string, role: string, clientId: string, q: string) =>
-  `${appUrl()}${role === "client" ? `/${locale}/portal/settings` : `/${locale}/clients/${clientId}?tab=connections`}${q.includes("?") ? "" : "?"}${q}`;
+const back = (locale: string, role: string, clientId: string, q: string) => connectionsUrl(locale, role, clientId, q);
 
 /** Begin connecting a social account. Needs a signed-in user (staff with MFA, or the client's own user). */
 export async function GET(req: NextRequest, ctx: { params: Promise<{ network: string }> }) {

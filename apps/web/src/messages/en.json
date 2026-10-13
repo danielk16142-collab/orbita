@@ -554,7 +554,13 @@
       "failed": "We couldn't connect the account. Please try again.",
       "not_configured": "This network is not available yet.",
       "rate": "Too many attempts. Try again later.",
-      "invalid": "The connection link expired. Please start again."
+      "invalid": "The connection link expired. Please start again.",
+      "steps": {
+        "token": "(Step: signing in with the network. Check the app ID and secret in Vercel.)",
+        "account": "(Step: reading the account. It must be a Business or Creator account.)",
+        "key": "(Step: encrypting the tokens. ORBITA_MASTER_KEY in Vercel must be 32 bytes, base64.)",
+        "save": "(Step: saving the account. A database migration or the Supabase service key may be missing.)"
+      }
     },
     "errors": {
       "reconnect": "The connection expired. Please reconnect.",
