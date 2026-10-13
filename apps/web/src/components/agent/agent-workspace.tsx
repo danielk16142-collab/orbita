@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ONBOARDING_THRESHOLD } from "@orbita/agent";
@@ -10,9 +11,12 @@ import type { ProposalView } from "./proposal-card";
 import { AuditView, ContentSuggestions, ProfileNudge, StrategyView } from "./agent-views";
 import { AgentHistory } from "./agent-history";
 import { StrategyMap } from "@/components/strategy/strategy-map";
+import { StrategyMindMap } from "@/components/strategy/strategy-mind-map";
 import { loadStrategyMap } from "@/lib/strategy-map";
 import { localDay } from "@/lib/cadence";
 import { isCurrent, latestThread, recentHandovers } from "@/lib/agent/threads";
+
+const shiftMonth = (month: string, n: number) => { const d = new Date(Date.parse(`${month}-01T00:00:00Z`)); d.setUTCMonth(d.getUTCMonth() + n); return d.toISOString().slice(0, 7); };
 
 export const AGENT_VIEWS = ["chat", "strategy", "audit", "history"] as const;
 export type AgentView = (typeof AGENT_VIEWS)[number];
@@ -45,11 +49,21 @@ export async function AgentWorkspace({ locale, clientId, view, query, hrefFor, p
     const month = /^\d{4}-(0[1-9]|1[0-2])$/.test(query.month ?? "") ? query.month! : localDay(actor.client.timezone ?? "UTC").slice(0, 7);
     const data = await loadStrategyMap(actor, month);
     const postsBase = cid ? `/${locale}/posts` : `/${locale}/portal/posts`;
+    const newPostHref = cid ? `${postsBase}/new?client=${cid}` : `${postsBase}/new`;
+    const layout = query.layout === "calendar" ? "calendar" : "mind";
     return (
       <>
         {tabs}
-        <StrategyMap data={data} locale={locale} clientId={cid} postsBase={postsBase} newPostHref={cid ? `${postsBase}/new?client=${cid}` : `${postsBase}/new`}
-          monthHref={(m) => hrefFor("strategy", { month: m })} askStrategyHref={askHref("strategy")} />
+        {data.strategy && (
+          <nav className="map-views" aria-label={t("strategyViews")}>
+            <Link className="btn small ghost" aria-current={layout === "mind" ? "page" : undefined} href={hrefFor("strategy", { layout: "mind", month })}>{t("mindMap")}</Link>
+            <Link className="btn small ghost" aria-current={layout === "calendar" ? "page" : undefined} href={hrefFor("strategy", { layout: "calendar", month })}>{t("calendarMap")}</Link>
+          </nav>
+        )}
+        {layout === "mind" && data.strategy
+          ? <StrategyMindMap data={data} locale={locale} clientId={cid} postsBase={postsBase} newPostHref={newPostHref} />
+          : <StrategyMap data={data} locale={locale} clientId={cid} postsBase={postsBase} newPostHref={newPostHref}
+              prevMonthHref={hrefFor("strategy", { month: shiftMonth(month, -1), layout: "calendar" })} nextMonthHref={hrefFor("strategy", { month: shiftMonth(month, 1), layout: "calendar" })} askStrategyHref={askHref("strategy")} />}
         {ctx.strategy && <details className="card map-details"><summary><strong>{t("strategyDetails")}</strong></summary><StrategyView locale={locale} strategy={ctx.strategy} askHref={askHref} /></details>}
       </>
     );

@@ -24,10 +24,10 @@ type Sel =
  * The Strategy Map: the month as weeks × pillars (or formats, or networks), every post in its cell and every gap visible,
  * with the strategy's goals, mix, rhythm, series and topics around it. Everything is clickable and opens a side panel.
  */
-export function StrategyMap({ data, locale, clientId, postsBase, newPostHref, monthHref, askStrategyHref }: {
+export function StrategyMap({ data, locale, clientId, postsBase, newPostHref, prevMonthHref, nextMonthHref, askStrategyHref }: {
   data: StrategyMapData; locale: string; clientId?: string;
   /** e.g. /en/posts */ postsBase: string; /** Create post with the client chosen */ newPostHref: string;
-  monthHref: (month: string) => string; askStrategyHref: string;
+  /** Links to the previous and next month (built on the server: functions cannot cross to the browser). */ prevMonthHref: string; nextMonthHref: string; askStrategyHref: string;
 }) {
   const t = useTranslations("strategyMap");
   const tp = useTranslations("posts");
@@ -51,7 +51,6 @@ export function StrategyMap({ data, locale, clientId, postsBase, newPostHref, mo
   const nf = new Intl.NumberFormat(locale, { notation: "compact", maximumFractionDigits: 1 });
   const pf = new Intl.NumberFormat(locale, { style: "percent", maximumFractionDigits: 1 });
   const day = (d: string) => dayF.format(new Date(`${d}T00:00:00Z`));
-  const shiftMonth = (n: number) => { const d = new Date(Date.parse(`${data.month}-01T00:00:00Z`)); d.setUTCMonth(d.getUTCMonth() + n); return d.toISOString().slice(0, 7); };
   const createHref = (q: Record<string, string>) => `${newPostHref}${newPostHref.includes("?") ? "&" : "?"}${new URLSearchParams(q)}`;
   const firstOpenDay = (w: { start: string; end: string }) => { for (let d = w.start; d <= w.end; d = addDays(d, 1)) if (d >= data.today) return d; return w.start; };
   const usedText = data.posts.map((p) => p.title.toLowerCase());
@@ -91,9 +90,9 @@ export function StrategyMap({ data, locale, clientId, postsBase, newPostHref, mo
       {/* Header: what, when, how to slice it */}
       <div className="map-toolbar">
         <div className="cal-nav">
-          <Link className="btn ghost small" href={monthHref(shiftMonth(-1))} aria-label={t("prevMonth")}>←</Link>
+          <Link className="btn ghost small" href={prevMonthHref} aria-label={t("prevMonth")}>←</Link>
           <strong className="map-month">{monthF.format(new Date(`${data.month}-01T00:00:00Z`))}</strong>
-          <Link className="btn ghost small" href={monthHref(shiftMonth(1))} aria-label={t("nextMonth")}>→</Link>
+          <Link className="btn ghost small" href={nextMonthHref} aria-label={t("nextMonth")}>→</Link>
         </div>
         <div className="map-toggles" role="group" aria-label={t("rowsBy")}>
           {(["pillar", "format", "network"] as const).map((r) => <button key={r} type="button" className="btn small ghost" aria-pressed={rowsBy === r} onClick={() => setRowsBy(r)}>{t(`by.${r}`)}</button>)}

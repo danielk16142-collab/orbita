@@ -34,6 +34,8 @@ describe("cadence", () => {
   it("falls back to the strategy cadence, then research, then nothing", () => {
     const cadence = [{ network: "instagram", best_days: ["friday"], best_time: "18:30" }];
     expect(nextPost({ ...base, today: "2026-10-13", planned: [], topics: ["A topic"], cadence })).toMatchObject({ day: "2026-10-16", time: "18:30", network: "instagram" });
+    // Strategies store days as "mon".."sun".
+    expect(nextPost({ ...base, today: "2026-10-13", planned: [], topics: ["A topic"], cadence: [{ network: "instagram", best_days: ["thu"], best_time: "09:00" }] })).toMatchObject({ day: "2026-10-15" });
     expect(nextPost({ ...base, today: "2026-10-13", planned: [], research: [{ title: "Trend", summary: "Why" }] })).toMatchObject({ kind: "suggestion", source: "research", day: "2026-10-13" });
     expect(nextPost({ ...base, today: "2026-10-13", planned: [] })).toEqual({ kind: "empty", day: "2026-10-13" });
   });

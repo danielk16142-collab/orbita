@@ -521,7 +521,11 @@
       "openCount": "{count, plural, one {# open item} other {# open items}}",
       "inProgress": "In progress",
       "noHandover": "No summary"
-    }
+    },
+    "strategyDetails": "The strategy in full",
+    "strategyViews": "Strategy views",
+    "mindMap": "Mind map",
+    "calendarMap": "Calendar"
   },
   "connections": {
     "title": "Connected accounts",
@@ -1143,6 +1147,155 @@
       "model_error": "The agent is unavailable right now. Try again in a few minutes.",
       "forbidden": "You can't change this kickstart.",
       "not_found": "This kickstart is no longer available."
+    }
+  },
+  "strategyMap": {
+    "untagged": "No pillar yet",
+    "tagged": "{count, plural, =0 {Nothing new to sort.} one {# post sorted into a pillar.} other {# posts sorted into pillars.}}",
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "not_configured": "The agent is not set up yet.",
+      "rate_limited": "Too many attempts. Try again in an hour.",
+      "daily_cap": "Today's agent limit is reached. Try again tomorrow.",
+      "no_strategy": "Build a strategy with goals and pillars first.",
+      "no_result": "The agent could not do it this time. Try again.",
+      "model_error": "The agent is unavailable right now. Try again in a few minutes.",
+      "not_set_up": "Run migration 0016 in Supabase first.",
+      "forbidden": "You can't change this strategy."
+    },
+    "emptyTitle": "No strategy yet",
+    "emptyText": "Build a content strategy with the agent: goals, who it is for, pillars and rhythm. It will appear here as a map.",
+    "buildStrategy": "Build a strategy",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "rowsBy": "Group rows by",
+    "by": {
+      "pillar": "Pillars",
+      "format": "Formats",
+      "network": "Networks"
+    },
+    "network": "Network",
+    "allNetworks": "All",
+    "goals": "Goals",
+    "goal": "Goal {n}",
+    "kpi": {
+      "followers": "Followers",
+      "reach": "Reach (30 days)",
+      "engagement": "Engagement",
+      "month": "Published this month",
+      "planned": "{count} planned"
+    },
+    "mapTitle": "This month on the map",
+    "tagging": "Sorting…",
+    "tag": "Sort {count, plural, one {# post} other {# posts}} into pillars",
+    "week": "Week {n}",
+    "weekCount": "{count} of {goal} posts",
+    "planHere": "Plan a {pillar} post in week {week}",
+    "gap": "Gap",
+    "legendLive": "published",
+    "legendIdea": "dashed = idea",
+    "mixTitle": "Pillar mix",
+    "mixHint": "What the strategy asks for, what is planned and what went out this month.",
+    "mix": {
+      "target": "Target",
+      "planned": "Planned",
+      "published": "Published"
+    },
+    "rhythmTitle": "Rhythm",
+    "noRhythm": "The strategy has no posting rhythm yet.",
+    "perWeek": "{count} a week",
+    "days": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    },
+    "rhythmWeeks": "Posts per week against the target",
+    "seriesTitle": "Series",
+    "topicsTitle": "Topic bank",
+    "topicsHint": "{used} of {total} topics used. Click one to create it.",
+    "details": "Details",
+    "close": "Close",
+    "livePost": "Published post",
+    "plannedPost": "Planned post",
+    "m": {
+      "views": "Views",
+      "likes": "Likes",
+      "comments": "Comments",
+      "shares": "Shares",
+      "saves": "Saves",
+      "rate": "Engagement"
+    },
+    "openPost": "Open the post",
+    "viewLive": "View on {network}",
+    "pillar": "Pillar",
+    "pillarMix": "Target {target}% · planned {planned}% · published {published}%",
+    "avgEngagement": "Average engagement:",
+    "bestPost": "Best post:",
+    "pillarPosts": "{count, plural, =0 {No posts this month} one {# post this month} other {# posts this month}}",
+    "planForPillar": "Plan a post for this pillar",
+    "goalHint": "The numbers this goal is measured by, from the connected accounts.",
+    "why": "Why this strategy",
+    "planDay": "Plan",
+    "topic": "Topic",
+    "topicUsed": "Already on the calendar.",
+    "topicFree": "Not used yet.",
+    "createFromTopic": "Create a post from it",
+    "series": "Series",
+    "episodes": "{count, plural, =0 {No episodes yet} one {# episode} other {# episodes}}",
+    "nextEpisode": "Plan the next episode",
+    "nothingPlanned": "Nothing planned this month yet. Click a gap to plan a post.",
+    "connected": "Strategy connected.",
+    "mm": {
+      "planned": "{count} planned",
+      "published": "{count} live",
+      "warn": {
+        "no_posts": "No posts this month",
+        "unserved": "No pillar speaks to them",
+        "no_pillar": "No pillar serves it"
+      },
+      "warnLong": {
+        "no_posts": "Nothing is planned or published for this pillar this month.",
+        "unserved": "None of the pillars speaks to this persona. Ask the agent to adjust the strategy, or plan a post for them.",
+        "no_pillar": "No pillar works towards this goal yet."
+      },
+      "intro": "Click anything to see how it connects: the goal it serves, who it is for and the posts behind it.",
+      "introLoose": "Goals and pillars are joined loosely for now. Connect the strategy to see which pillar serves which goal and who each one is for.",
+      "connecting": "Connecting…",
+      "reconnect": "Reconnect",
+      "connect": "Connect my strategy",
+      "col": {
+        "business": "Business",
+        "goal": "Goals",
+        "persona": "Who it's for",
+        "pillar": "Pillars",
+        "series": "Series"
+      },
+      "empty": {
+        "business": "",
+        "goal": "No goals in the strategy.",
+        "persona": "Add personas in the Profile.",
+        "pillar": "No pillars yet.",
+        "series": "No recurring series."
+      },
+      "key": {
+        "serves": "serves a goal",
+        "speaks": "speaks to",
+        "contains": "series in pillar",
+        "loose": "not connected yet"
+      },
+      "servedBy": "Pillars working on it",
+      "notLinked": "Not connected yet.",
+      "solving": "What we solve for them",
+      "talkingToThem": "Pillars that speak to them",
+      "shareLine": "{share}% of the strategy · {planned} planned · {published} published this month",
+      "serves": "Serves",
+      "forWho": "For",
+      "noPostsYet": "Nothing yet this month.",
+      "ideasFromTopics": "Ideas from the topic bank"
     }
   }
 }
