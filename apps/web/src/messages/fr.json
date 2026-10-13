@@ -1064,5 +1064,40 @@
       "evening": "soirée",
       "night": "nuit"
     }
+  },
+  "kickstart": {
+    "eyebrow": "Démarrage",
+    "buildTitle": "{name} est connecté. Lançons-nous.",
+    "buildText": "L’agent lit vos résultats avec ce qu’il sait de votre marque et de votre stratégie, puis propose un rythme de publication et vos deux premières semaines de publications. Rien n’est ajouté au calendrier avant votre accord.",
+    "build": "Créer mon plan de démarrage",
+    "building": "Création…",
+    "wait": "Lecture du compte et planification… {seconds} s (environ une minute)",
+    "readyTitle": "Votre plan de démarrage pour {name}",
+    "working": "Ce qui fonctionne",
+    "gaps": "À améliorer",
+    "rhythm": "Votre rythme",
+    "perWeek": "{count, plural, one {# publication par semaine} other {# publications par semaine}}",
+    "planTitle": "Vos deux premières semaines",
+    "hook": "Accroche :",
+    "setGoal": "Fixer mon objectif hebdomadaire à {count}",
+    "accept": "{count, plural, =0 {Accepter sans publications} one {Ajouter # publication au calendrier} other {Ajouter # publications au calendrier}}",
+    "rebuild": "Le refaire",
+    "dismiss": "Pas maintenant",
+    "acceptHint": "Les publications sont ajoutées comme idées à leur date. Vous pouvez les modifier, les déplacer ou les supprimer.",
+    "accepted": "{count, plural, =0 {Plan enregistré.} one {# publication ajoutée au calendrier.} other {# publications ajoutées au calendrier.}}",
+    "openCalendar": "Ouvrir le calendrier",
+    "seeNext": "Voir ma prochaine publication",
+    "errors": {
+      "generic": "Une erreur est survenue. Réessayez.",
+      "not_configured": "L’agent n’est pas encore configuré.",
+      "rate_limited": "Trop de tentatives. Réessayez dans une heure.",
+      "daily_cap": "La limite quotidienne de l’agent est atteinte. Réessayez demain.",
+      "not_set_up": "Exécutez la migration 0015 dans Supabase pour enregistrer les plans.",
+      "no_result": "L’agent n’a pas pu créer de plan cette fois. Réessayez.",
+      "refused": "L’agent ne peut pas créer de plan pour ce compte.",
+      "model_error": "L’agent est indisponible pour le moment. Réessayez dans quelques minutes.",
+      "forbidden": "Vous ne pouvez pas modifier ce plan.",
+      "not_found": "Ce plan n’est plus disponible."
+    }
   }
 }

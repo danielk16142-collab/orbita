@@ -4,6 +4,7 @@ import { DashboardView } from "@/components/dashboard/client-dashboard";
 import type { AnalyticsData } from "@/lib/analytics/load";
 import { bestPostingWindows, nextPost, weekProgress } from "@orbita/agent";
 import { NextPostCard } from "@/components/cadence/next-post-card";
+import { KickstartPanel } from "@/components/cadence/kickstart-panel";
 
 /** Development only (CONNECTORS_FAKE=1, never in production): the dashboard rendered from generated data, to review the screens. */
 export default async function Preview({ params }: { params: Promise<{ locale: string }> }) {
@@ -26,6 +27,16 @@ export default async function Preview({ params }: { params: Promise<{ locale: st
     week: weekProgress(data.posts.filter((p) => p.publishedAt).map((p) => p.publishedAt!.slice(0, 10)), today, 3), hasStrategy: true, goalSaved: true,
   };
   return (<main className="content"><p className="eyebrow">Preview (generated data)</p><h1>Home</h1>
+    <KickstartPanel locale={locale} network="instagram" handle="dsigns_digitalsolutions" accountId="00000000-0000-0000-0000-000000000000" calendarHref="#"
+      ready={{ id: "00000000-0000-0000-0000-000000000001", startDate: today, plan: {
+        summary: "Your reels reach about three times more people than your static posts, but you posted only twice in the last month. The audience is there; consistency is the gap.",
+        working: ["Before and after reels: 4.8% engagement, your best format", "Thursday evening posts get the most views"],
+        gaps: ["Only 2 posts in the last 30 days", "Captions rarely end with a call to action"],
+        best_formats: ["Reels: before and after redesigns", "Carousels: quick website tips"], best_times: "Thursday and Sunday evenings (early read: 14 posts).", posts_per_week: 3,
+        plan: [{ day_offset: 1, format: "reel", title: "Before and after: a homepage redesign in 60 seconds", hook: "This homepage was losing clients. Watch what changed.", why: "Your best format" },
+          { day_offset: 3, format: "carousel", title: "Three signs your website is costing you clients", hook: "Sign 1 is the one nobody notices.", why: "Strategy pillar: education" },
+          { day_offset: 6, format: "static", title: "Client quote: Recovery House Medellín", hook: "+85% sessions in 30 days.", why: "Proof from your case studies" }],
+      } }} />
     <NextPostCard cadence={cadence} locale={locale} postsBase="#" newPostHref="#" agentHref="#" />
     <DashboardView data={data} locale={locale} connectHref="#" now={now} /></main>);
 }

@@ -1064,5 +1064,40 @@
       "evening": "evening",
       "night": "night"
     }
+  },
+  "kickstart": {
+    "eyebrow": "Kickstart",
+    "buildTitle": "{name} is connected. Let's get you started.",
+    "buildText": "The agent reads your results with what it knows about your brand and strategy, then proposes a posting rhythm and your first two weeks of posts. Nothing goes on the calendar until you accept it.",
+    "build": "Build my kickstart",
+    "building": "Building…",
+    "wait": "Reading your account and planning… {seconds}s (about a minute)",
+    "readyTitle": "Your kickstart for {name}",
+    "working": "What works",
+    "gaps": "What to fix",
+    "rhythm": "Your rhythm",
+    "perWeek": "{count, plural, one {# post a week} other {# posts a week}}",
+    "planTitle": "Your first two weeks",
+    "hook": "Hook:",
+    "setGoal": "Set my weekly goal to {count}",
+    "accept": "{count, plural, =0 {Accept without posts} one {Add # post to the calendar} other {Add # posts to the calendar}}",
+    "rebuild": "Build it again",
+    "dismiss": "Not now",
+    "acceptHint": "Posts are added as ideas on their dates. You can edit, move or delete any of them.",
+    "accepted": "{count, plural, =0 {Kickstart saved.} one {# post added to your calendar.} other {# posts added to your calendar.}}",
+    "openCalendar": "Open the calendar",
+    "seeNext": "See my next post",
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "not_configured": "The agent is not set up yet.",
+      "rate_limited": "Too many attempts. Try again in an hour.",
+      "daily_cap": "Today's agent limit is reached. Try again tomorrow.",
+      "not_set_up": "Run migration 0015 in Supabase to save kickstarts.",
+      "no_result": "The agent could not build a plan this time. Try again.",
+      "refused": "The agent could not build a plan for this account.",
+      "model_error": "The agent is unavailable right now. Try again in a few minutes.",
+      "forbidden": "You can't change this kickstart.",
+      "not_found": "This kickstart is no longer available."
+    }
   }
 }
