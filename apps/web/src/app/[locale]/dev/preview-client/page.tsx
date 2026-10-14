@@ -72,7 +72,16 @@ export default async function Preview({ params, searchParams }: { params: Promis
           <Tabs sub label="Agent" current={view} items={[["chat", "Chat"], ["strategy", "Strategy and research"], ["audit", "Audit"]].map(([k, l]) => ({ key: k, label: l, href: href("agent", k) }))} />
           {view === "strategy" && <StrategyView locale={locale} strategy={strategy} askHref={() => "#"} />}
           {view === "audit" && <AuditView locale={locale} audit={audit} sources={sources} askHref={() => "#"} profileHref="#" />}
-          {view === "chat" && <div className="agent-grid"><AgentChat locale={locale} initialMessages={[]} initialConversationId={null} /><aside className="agent-side"><ContentSuggestions proposals={[]} /><ProfileNudge score={62} missing={["proof", "personas"]} pendingKnowledge={1} profileHref="#" /></aside></div>}
+          {view === "chat" && <>
+            <div className="agent-grid single"><AgentChat locale={locale} initialMessages={[]} initialConversationId={null} /></div>
+            <div className="agent-below">
+              <ContentSuggestions proposals={[
+                { id: "s1", target: "post", reason: "Same pain and value angle, trimmed for TikTok's faster pace. Day and time are assumptions to test.", payload: { format: "reel", network: "tiktok", language: "en", day: "fri", suggested_time: "17:00", pillar: "Value", idea: "The three tasks AI can take off your plate, framed as \"stop doing these by hand\".", caption: "Stop doing these by hand.", hashtags: ["ai", "smallbusiness"], content: { duration_seconds: 22, hook_options: ["Stop doing these three things by hand. Seriously.", "If you reply to leads manually, you're already behind.", "AI won't take your job. But it will take your admin."], scenes: [{ seconds: "0-2s", visual: "Dany to camera, text pops up.", voiceover: "Stop doing these three things by hand.", on_screen_text: "Stop doing this by hand" }], cta: "Follow for part 2" } } },
+                { id: "s2", target: "post", reason: "Proof converts best for this audience.", payload: { format: "carousel", network: "instagram", language: "en", day: "tue", suggested_time: "18:30", pillar: "Proof", idea: "Before and after: Café Luna homepage, slide by slide", caption: "", hashtags: [], content: { slides: [{ title: "Before", body: "", visual: "" }], cta: "Book a call" } } },
+              ]} />
+              <aside className="agent-side"><ProfileNudge score={62} missing={["proof", "personas"]} pendingKnowledge={1} profileHref="#" /></aside>
+            </div>
+          </>}
         </>)}
         {tab === "research" && <ResearchView locale={locale} clientId={client.id} notes={notes} />}
         {tab === "competitors" && <CompetitorsView locale={locale} clientId={client.id} competitors={[rival, other]} latest={new Map([["e1", rivalAnalysis]])} detailBase="?tab=competitor&id=" />}

@@ -60,12 +60,15 @@ export async function AgentWorkspace({ locale, clientId, view, query, hrefFor, p
   return (
     <>
       {tabs}
-      <div className="agent-grid">
+      <div className="agent-grid single">
         <AgentChat key={`${conv?.id ?? "new"}|${query.ask ?? ""}`} locale={locale} clientId={cid} initialMessages={initial} initialConversationId={conv?.id ?? null}
           onboarding={score < ONBOARDING_THRESHOLD} initialInput={askText(query, t, tp)}
           closePrevious={closePrevious} historyHref={hrefFor("history")} hasEarlier={handovers.length > 0 || !!closePrevious} />
+      </div>
+      {/* What the agent prepared sits under the chat as compact cards; the full editor opens per card. */}
+      <div className="agent-below">
+        <ContentSuggestions proposals={content} clientId={cid} />
         <aside className="agent-side">
-          <ContentSuggestions proposals={content} clientId={cid} />
           <ProfileNudge score={score} missing={missing} pendingKnowledge={all.length - content.length} profileHref={profileHref} />
         </aside>
       </div>
