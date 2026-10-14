@@ -18,6 +18,7 @@ export default async function AgencyLayout({ children, params }: { children: Rea
         <Nav locale={locale} items={[
           { href: "dashboard", label: t("home") },
           { href: "posts", label: t("posts") },
+          { href: "strategy", label: t("strategy") },
           { href: "agent", label: t("agent") },
           { href: "clients", label: t("clients") },
           { href: "settings", label: t("settings") },

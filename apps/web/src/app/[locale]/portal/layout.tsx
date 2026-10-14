@@ -23,6 +23,7 @@ export default async function PortalLayout({ children, params }: { children: Rea
         <Nav locale={locale} items={[
           { href: "portal", label: t("home") },
           { href: "portal/posts", label: t("posts") },
+          { href: "portal/strategy", label: t("strategy") },
           { href: "portal/agent", label: t("agent") },
           { href: "portal/research", label: t("research") },
           { href: "portal/competitors", label: t("competitors") },

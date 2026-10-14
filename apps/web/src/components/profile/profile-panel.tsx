@@ -1,6 +1,7 @@
+import { FocusEditor } from "./focus-editor";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { BRIEF_SECTIONS, briefFromRow } from "@orbita/agent";
+import { BRIEF_SECTIONS, briefFromRow, focusFromRow } from "@orbita/agent";
 import { resolveAgentActor } from "@/lib/agent/access";
 import { completenessOf, loadClientContext, type ClientContext } from "@/lib/agent/context";
 import { ProposalCard, type ProposalView } from "@/components/agent/proposal-card";
@@ -13,8 +14,8 @@ import { updateClientAction } from "@/app/[locale]/(agency)/clients/actions";
 export type ProfileClient = { id: string; name: string; languages: string[]; markets: string[]; timezone: string | null };
 
 /** Loads what the profile shows. Same access rules as the agent: staff for any client of the agency, client users for their own. */
-export async function ProfilePanel({ locale, clientId, client, staff, learnedHref, flash, danger }: {
-  locale: string; clientId?: string; client: ProfileClient; staff: boolean; learnedHref: string; flash?: { saved?: boolean; error?: string }; danger?: React.ReactNode;
+export async function ProfilePanel({ locale, clientId, client, staff, learnedHref, strategyHref, flash, danger }: {
+  locale: string; clientId?: string; client: ProfileClient; staff: boolean; learnedHref: string; /** where "apply to the strategy" goes */ strategyHref: string; flash?: { saved?: boolean; error?: string }; danger?: React.ReactNode;
 }) {
   const access = await resolveAgentActor(clientId);
   if (!access.ok) notFound();
@@ -25,7 +26,7 @@ export async function ProfilePanel({ locale, clientId, client, staff, learnedHre
     actor.sb.from("brand_memories").select("id", { count: "exact", head: true }).eq("client_id", actor.clientId).eq("status", "active"),
   ]);
   const knowledge = ((pending ?? []) as unknown as ProposalView[]).filter((p) => !CONTENT_TARGETS.includes(p.target));
-  return <ProfileView locale={locale} client={client} ctx={ctx} proposals={knowledge} staff={staff} clientId={staff ? actor.clientId : undefined} flash={flash} danger={danger} learnedHref={learnedHref} memoryTotal={memoryTotal ?? ctx.memories.length} />;
+  return <ProfileView locale={locale} client={client} ctx={ctx} proposals={knowledge} staff={staff} clientId={staff ? actor.clientId : undefined} flash={flash} danger={danger} learnedHref={learnedHref} memoryTotal={memoryTotal ?? ctx.memories.length} strategyHref={strategyHref} />;
 }
 
 const PROFILE_URL: Record<string, (h: string) => string> = {
@@ -35,10 +36,10 @@ const PROFILE_URL: Record<string, (h: string) => string> = {
 const linkFor = (s: ClientContext["sources"][number]) => s.url ?? (s.handle && PROFILE_URL[s.kind] ? PROFILE_URL[s.kind](encodeURIComponent(s.handle)) : null);
 
 /** The client's profile: business details, links, and everything the agent has learned about the brand. */
-export async function ProfileView({ locale, client, ctx, proposals, staff, clientId, flash, danger, learnedHref, memoryTotal }: {
+export async function ProfileView({ locale, client, ctx, proposals, staff, clientId, flash, danger, learnedHref, memoryTotal, strategyHref = "#" }: {
   locale: string; client: ProfileClient; ctx: Pick<ClientContext, "briefRow" | "memories" | "sources" | "proofItems" | "rules">;
   proposals: ProposalView[]; staff: boolean; clientId?: string; flash?: { saved?: boolean; error?: string }; danger?: React.ReactNode;
-  learnedHref: string; memoryTotal: number;
+  learnedHref: string; memoryTotal: number; strategyHref?: string;
 }) {
   const t = await getTranslations("profile");
   const ta = await getTranslations("agent");
@@ -97,6 +98,8 @@ export async function ProfileView({ locale, client, ctx, proposals, staff, clien
           ) : <p>{ta("noSources")}</p>}
           <AddSourceForm clientId={clientId} />
         </section>
+
+        <FocusEditor clientId={clientId} locale={locale} initial={focusFromRow(ctx.briefRow)} strategyHref={strategyHref} />
 
         <section className="card">
           <h2>{ta("brief")}</h2>

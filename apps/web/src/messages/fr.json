@@ -58,7 +58,8 @@
     "settings": "Paramètres",
     "secure": "Session protégée",
     "privacy": "Confidentialité",
-    "menu": "Menu"
+    "menu": "Menu",
+    "strategy": "Stratégie"
   },
   "legal": {
     "englishPrevails": "Ce document n'est actuellement offert qu'en anglais. La version anglaise prévaut.",
@@ -103,7 +104,8 @@
       "profile": "Profil",
       "insights": "Analyses",
       "research": "Recherche",
-      "competitors": "Concurrents"
+      "competitors": "Concurrents",
+      "strategy": "Stratégie"
     },
     "connectionsSoon": "Connectez Instagram, TikTok et plus ici (prochaine phase).",
     "users": "Personnes ayant accès",
@@ -270,7 +272,8 @@
     "insights": "Analyses",
     "profile": "Profil",
     "research": "Recherche",
-    "competitors": "Concurrents"
+    "competitors": "Concurrents",
+    "strategy": "Stratégie"
   },
   "acceptTerms": {
     "title": "Conditions mises à jour",
@@ -1297,5 +1300,89 @@
       "noPostsYet": "Rien encore ce mois-ci.",
       "ideasFromTopics": "Idées de la banque de sujets"
     }
+  },
+  "focus": {
+    "title": "Ce dont nous parlons",
+    "intro": "Choisissez les sujets de cette marque et ses piliers de contenu. L’agent les suit dans la stratégie, les idées et les publications.",
+    "topicsTitle": "Sujets",
+    "noTopics": "Aucun sujet pour l’instant. Choisissez parmi les idées ou ajoutez les vôtres.",
+    "levelFor": "Combien parler de {topic}",
+    "levels": {
+      "focus": "Priorité",
+      "sometimes": "Parfois",
+      "avoid": "À éviter"
+    },
+    "remove": "Retirer {name}",
+    "ideas": "Idées",
+    "suggestTopics": "Suggérer pour cette entreprise",
+    "thinking": "Réflexion…",
+    "addTopic": "Ajouter",
+    "addPlaceholder": "Ajouter votre propre sujet",
+    "pillarsTitle": "Piliers de contenu",
+    "suggestPillars": "Suggérer des piliers",
+    "pillarsHint": "Les grands thèmes de votre contenu et la part de chacun. La stratégie utilise exactement ceux-ci.",
+    "pillarName": "Pilier",
+    "share": "Part",
+    "angle": "Angle",
+    "anglePlaceholder": "Ce que ce pilier montre, en une ligne",
+    "pillarTopics": "Sujets :",
+    "addPillar": "Ajouter un pilier",
+    "total": "Total : {total} % (visez 100 %)",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saved": "Enregistré. L’agent l’utilise désormais.",
+    "applyToStrategy": "Mettre la stratégie à jour",
+    "replacePillars": "Remplacer vos piliers par ceux suggérés ?",
+    "defaults": {
+      "ai": "IA",
+      "social_media": "Réseaux sociaux",
+      "ads": "Publicité",
+      "web_design": "Design web",
+      "ecommerce": "Commerce en ligne",
+      "seo": "SEO",
+      "branding": "Image de marque",
+      "email": "Courriel marketing",
+      "video": "Vidéo",
+      "automation": "Automatisation",
+      "analytics": "Analytique",
+      "customer_stories": "Histoires de clients",
+      "behind_scenes": "Coulisses",
+      "tips": "Conseils pratiques",
+      "industry_news": "Nouvelles du secteur",
+      "offers": "Offres et promotions"
+    },
+    "errors": {
+      "generic": "Une erreur est survenue. Réessayez.",
+      "duplicate": "Deux sujets ou piliers portent le même nom.",
+      "bad_request": "Vérifiez les piliers : chacun a besoin d’un nom.",
+      "not_set_up": "Exécutez d’abord la migration 0017 dans Supabase.",
+      "forbidden": "Vous ne pouvez pas modifier ce profil.",
+      "rate_limited": "Trop d’enregistrements. Réessayez dans quelques minutes.",
+      "not_configured": "L’agent n’est pas encore configuré.",
+      "daily_cap": "La limite quotidienne de l’agent est atteinte.",
+      "no_result": "Aucune suggestion cette fois. Réessayez.",
+      "model_error": "L’agent est indisponible pour le moment."
+    }
+  },
+  "strategyPage": {
+    "eyebrow": "Plan",
+    "title": "Stratégie",
+    "emptyTitle": "Pas encore de stratégie",
+    "emptyText": "Deux étapes pour une stratégie que l’agent suit chaque semaine :",
+    "step1": "Choisissez vos sujets et piliers",
+    "step1Hint": "dans le Profil, pour bâtir la stratégie sur ce dont vous voulez parler.",
+    "step1Done": "{count} piliers et {topics} sujets choisis.",
+    "choose": "Les choisir",
+    "edit": "Modifier",
+    "step2": "Créez la stratégie avec l’agent",
+    "step2Hint": "il utilise vos piliers, vos sujets, vos objectifs et vos résultats.",
+    "build": "Créer la stratégie",
+    "avoiding": "à éviter : {list}",
+    "change": "Modifier la stratégie",
+    "editFocus": "Modifier sujets et piliers",
+    "archive": "Archiver et recommencer",
+    "archiving": "Archivage…",
+    "archiveConfirm": "Archiver cette stratégie ? Elle est conservée, et vous pouvez en créer une nouvelle tout de suite.",
+    "archiveFailed": "Archivage impossible."
   }
 }

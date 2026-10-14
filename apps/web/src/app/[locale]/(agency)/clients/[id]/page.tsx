@@ -7,6 +7,7 @@ import { BrandingPanel } from "@/components/branding-panel";
 import { loadReferences } from "@/lib/references";
 import { AgentWorkspace, agentViewOf } from "@/components/agent/agent-workspace";
 import { ProfilePanel } from "@/components/profile/profile-panel";
+import { StrategyPanel } from "@/components/strategy/strategy-panel";
 import { InsightsPanel } from "@/components/insights/insights-panel";
 import { ResearchPanel } from "@/components/research/research-panel";
 import { CompetitorsPanel } from "@/components/competitors/competitors-panel";
@@ -14,7 +15,7 @@ import { ConnectionsPanel } from "@/components/connections/connections-panel";
 import { Tabs } from "@/components/tabs";
 import { deleteClientAction, inviteAction, revokeInvitationAction } from "../actions";
 
-const TABS = ["profile", "agent", "research", "competitors", "insights", "branding", "connections", "users"] as const;
+const TABS = ["profile", "strategy", "agent", "research", "competitors", "insights", "branding", "connections", "users"] as const;
 type Tab = (typeof TABS)[number];
 
 export default async function ClientDetail({ params, searchParams }: {
@@ -55,7 +56,7 @@ export default async function ClientDetail({ params, searchParams }: {
       <Tabs label={t("title")} current={tab} items={TABS.map((x) => ({ key: x, label: t(`tabs.${x}`), href: href(x) }))} />
 
       {tab === "profile" && (
-        <ProfilePanel locale={locale} clientId={id} staff client={client} learnedHref={`${base}/learned`} flash={{ saved: q.saved === "1", error: q.error }}
+        <ProfilePanel locale={locale} clientId={id} staff client={client} learnedHref={`${base}/learned`} strategyHref={href("strategy")} flash={{ saved: q.saved === "1", error: q.error }}
           danger={isAdmin && (
             <form action={deleteClientAction} className="card danger">
               <h2>{t("deleteClient")}</h2><p>{t("deleteWarn")}</p>
@@ -66,6 +67,11 @@ export default async function ClientDetail({ params, searchParams }: {
               <button className="btn ghost" style={{ marginTop: "1rem" }}>{tc("delete")}</button>
             </form>
           )} />
+      )}
+
+      {tab === "strategy" && (
+        <StrategyPanel locale={locale} clientId={id} query={q} hrefFor={(extra) => href("strategy", extra)}
+          agentAskHref={href("agent", { view: "chat", ask: "strategy" })} profileHref={href("profile")} />
       )}
 
       {tab === "agent" && (

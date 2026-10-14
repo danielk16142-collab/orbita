@@ -11,7 +11,7 @@ export default async function PortalProfile({ params }: { params: Promise<{ loca
   return (
     <>
       <p className="eyebrow">{t("eyebrow")}</p><h1>{t("title")}</h1>
-      {client && <ProfilePanel locale={locale} client={client} staff={false} learnedHref={`/${locale}/portal/profile/learned`} />}
+      {client && <ProfilePanel locale={locale} client={client} staff={false} learnedHref={`/${locale}/portal/profile/learned`} strategyHref={`/${locale}/portal/strategy`} />}
     </>
   );
 }

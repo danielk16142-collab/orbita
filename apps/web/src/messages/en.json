@@ -58,7 +58,8 @@
     "settings": "Settings",
     "secure": "Protected session",
     "privacy": "Privacy",
-    "menu": "Menu"
+    "menu": "Menu",
+    "strategy": "Strategy"
   },
   "legal": {
     "englishPrevails": "This document is currently available in English only. The English version prevails.",
@@ -103,7 +104,8 @@
       "profile": "Profile",
       "insights": "Insights",
       "research": "Research",
-      "competitors": "Competitors"
+      "competitors": "Competitors",
+      "strategy": "Strategy"
     },
     "connectionsSoon": "Connect Instagram, TikTok and more here (next phase).",
     "users": "People with access",
@@ -270,7 +272,8 @@
     "insights": "Insights",
     "profile": "Profile",
     "research": "Research",
-    "competitors": "Competitors"
+    "competitors": "Competitors",
+    "strategy": "Strategy"
   },
   "acceptTerms": {
     "title": "Updated terms",
@@ -1297,5 +1300,89 @@
       "noPostsYet": "Nothing yet this month.",
       "ideasFromTopics": "Ideas from the topic bank"
     }
+  },
+  "focus": {
+    "title": "What we talk about",
+    "intro": "Choose the topics this brand covers and its content pillars. The agent follows them in the strategy, ideas and posts.",
+    "topicsTitle": "Topics",
+    "noTopics": "No topics yet. Pick from the ideas below or add your own.",
+    "levelFor": "How much to talk about {topic}",
+    "levels": {
+      "focus": "Focus",
+      "sometimes": "Sometimes",
+      "avoid": "Avoid"
+    },
+    "remove": "Remove {name}",
+    "ideas": "Ideas",
+    "suggestTopics": "Suggest for this business",
+    "thinking": "Thinking…",
+    "addTopic": "Add",
+    "addPlaceholder": "Add your own topic",
+    "pillarsTitle": "Content pillars",
+    "suggestPillars": "Suggest pillars",
+    "pillarsHint": "The big themes your content rotates through, and how much of it each one gets. The strategy uses exactly these.",
+    "pillarName": "Pillar",
+    "share": "Share",
+    "angle": "Angle",
+    "anglePlaceholder": "What this pillar shows, in one line",
+    "pillarTopics": "Topics:",
+    "addPillar": "Add a pillar",
+    "total": "Total: {total}% (aim for 100%)",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved. The agent uses this from now on.",
+    "applyToStrategy": "Update the strategy with it",
+    "replacePillars": "Replace your pillars with the suggested ones?",
+    "defaults": {
+      "ai": "AI",
+      "social_media": "Social media",
+      "ads": "Ads",
+      "web_design": "Web design",
+      "ecommerce": "eCommerce",
+      "seo": "SEO",
+      "branding": "Branding",
+      "email": "Email marketing",
+      "video": "Video",
+      "automation": "Automation",
+      "analytics": "Analytics",
+      "customer_stories": "Customer stories",
+      "behind_scenes": "Behind the scenes",
+      "tips": "Tips and how-tos",
+      "industry_news": "Industry news",
+      "offers": "Offers and promotions"
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "duplicate": "Two topics or pillars have the same name.",
+      "bad_request": "Check the pillars: each needs a name.",
+      "not_set_up": "Run migration 0017 in Supabase first.",
+      "forbidden": "You can't change this profile.",
+      "rate_limited": "Too many saves. Try again in a few minutes.",
+      "not_configured": "The agent is not set up yet.",
+      "daily_cap": "Today's agent limit is reached.",
+      "no_result": "No suggestion this time. Try again.",
+      "model_error": "The agent is unavailable right now."
+    }
+  },
+  "strategyPage": {
+    "eyebrow": "Plan",
+    "title": "Strategy",
+    "emptyTitle": "No strategy yet",
+    "emptyText": "Two steps to a strategy the agent follows every week:",
+    "step1": "Choose your topics and pillars",
+    "step1Hint": "in the Profile, so the strategy is built on what you want to talk about.",
+    "step1Done": "{count} pillars and {topics} topics chosen.",
+    "choose": "Choose them",
+    "edit": "Edit",
+    "step2": "Build the strategy with the agent",
+    "step2Hint": "it uses your pillars and topics, your goals and your results.",
+    "build": "Build the strategy",
+    "avoiding": "avoiding {list}",
+    "change": "Change the strategy",
+    "editFocus": "Edit topics and pillars",
+    "archive": "Archive and start over",
+    "archiving": "Archiving…",
+    "archiveConfirm": "Archive this strategy? It is kept for the record, and you can build a new one right after.",
+    "archiveFailed": "Could not archive it."
   }
 }
