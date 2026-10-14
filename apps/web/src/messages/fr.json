@@ -528,7 +528,11 @@
     "strategyDetails": "La stratégie en détail",
     "strategyViews": "Vues de la stratégie",
     "mindMap": "Carte mentale",
-    "calendarMap": "Calendrier"
+    "calendarMap": "Calendrier",
+    "reviewEdit": "Revoir et modifier",
+    "dismiss": "Écarter",
+    "collapse": "Réduire",
+    "planCount": "{count, plural, one {# publication} other {# publications}}"
   },
   "connections": {
     "title": "Comptes connectés",

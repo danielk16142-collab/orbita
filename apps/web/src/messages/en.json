@@ -528,7 +528,11 @@
     "strategyDetails": "The strategy in full",
     "strategyViews": "Strategy views",
     "mindMap": "Mind map",
-    "calendarMap": "Calendar"
+    "calendarMap": "Calendar",
+    "reviewEdit": "Review and edit",
+    "dismiss": "Dismiss",
+    "collapse": "Collapse",
+    "planCount": "{count, plural, one {# post} other {# posts}}"
   },
   "connections": {
     "title": "Connected accounts",

@@ -684,3 +684,16 @@ ul.plain.focus-topics li.focus-topic { display: inline-flex; align-items: center
 .strategy-steps li.done strong::after { content: " ✓"; color: #067647; }
 ul.plain.focus-topics li.focus-topic { max-width: 100%; flex-wrap: wrap; }
 @media (max-width: 560px) { ul.plain.focus-topics li.focus-topic { border-radius: 14px; padding: .35rem .4rem .35rem .75rem; } .focus-topic-name { flex: 1 1 auto; } }
+
+/* Agent: chat on top, "Ready for review" below as compact cards (the editor opens per card). */
+.agent-grid.single { grid-template-columns: minmax(0, 1fr); }
+.agent-below { display: grid; gap: 1.25rem; grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem); align-items: start; margin-top: 1.25rem; }
+.review-grid { display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); align-items: start; }
+.proposal.compact { display: flex; flex-direction: column; gap: .35rem; border: 2px solid var(--line); border-radius: 12px; padding: .75rem; background: var(--card); margin: 0; min-width: 0; }
+.proposal.compact .eyebrow { margin: 0; }
+.proposal-title { margin: 0; font-weight: 700; line-height: 1.3; overflow-wrap: break-word; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.proposal-reason.clamp { margin: 0; font-size: .85rem; color: var(--dim); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.proposal.compact .proposal-actions { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .25rem; }
+.review-grid .proposal.expanded { grid-column: 1 / -1; }
+.proposal-collapse { display: block; width: auto; margin: 0 0 .5rem auto; }
+@media (max-width: 980px) { .agent-below { grid-template-columns: minmax(0, 1fr); } }

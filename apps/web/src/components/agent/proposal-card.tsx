@@ -14,7 +14,10 @@ const MEMORY_KINDS = ["preference", "avoid", "rule", "fact", "example"];
 const field = { width: "100%", padding: ".5rem", border: "2px solid var(--line)", borderRadius: 10, font: "inherit", background: "#fff", color: "var(--ink)" } as const;
 
 /** One suggestion from the agent. Everything is editable before accepting; accepting with edits teaches the agent what you actually wanted. */
-export function ProposalCard({ proposal, clientId, onDecided }: { proposal: ProposalView; clientId?: string; onDecided?: (decision: "accept" | "reject") => void }) {
+export function ProposalCard({ proposal, clientId, onDecided, compact = false }: {
+  proposal: ProposalView; clientId?: string; onDecided?: (decision: "accept" | "reject") => void;
+  /** Start as a one-line summary with Accept / Dismiss; the full editor opens on "Review and edit". */ compact?: boolean;
+}) {
   const t = useTranslations("agent");
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -22,6 +25,7 @@ export function ProposalCard({ proposal, clientId, onDecided }: { proposal: Prop
   const [rejecting, setRejecting] = useState(false);
   const [why, setWhy] = useState("");
   const [p, setP] = useState<Payload>(proposal.payload);
+  const [open, setOpen] = useState(!compact);
   const [included, setIncluded] = useState<boolean[]>(() => ((proposal.payload.items as PlanItem[]) ?? []).map(() => true));
   const set = (k: string, v: unknown) => setP((x) => ({ ...x, [k]: v }));
   const setContent = (fn: (c: Payload) => Payload) => setP((x) => ({ ...x, content: fn(structuredClone(x.content)) }));
@@ -43,8 +47,31 @@ export function ProposalCard({ proposal, clientId, onDecided }: { proposal: Prop
   const lbl = (text: string) => <span className="eyebrow">{text}</span>;
   const acceptLabel = proposal.target === "plan" ? t("acceptPlan") : proposal.target === "post" ? t("acceptPost") : proposal.target === "strategy" ? t("acceptStrategy") : t("accept");
 
+  if (!open) {
+    const cc = p.content as Payload | undefined;
+    const title = proposal.target === "post" ? String(p.idea || cc?.headline || cc?.hook_options?.[0] || "")
+      : proposal.target === "plan" ? `${p.title ?? ""} · ${t("planCount", { count: items.length })}`
+      : proposal.target === "strategy" ? String(p.title ?? "")
+      : String(p.content ?? p.claim ?? p.rule ?? p.value ?? "");
+    const meta = proposal.target === "post" ? `${t(`formats.${p.format}`)} · ${p.network}${p.day ? ` · ${t(`days.${p.day}`)}` : ""}${p.suggested_time ? ` ${p.suggested_time}` : ""}` : t(`kinds.${proposal.target}`);
+    return (
+      <article className="proposal compact">
+        <p className="eyebrow">{meta}</p>
+        <p className="proposal-title">{title}</p>
+        {proposal.reason && <p className="proposal-reason clamp">{proposal.reason}</p>}
+        {error && <p className="error" role="alert">{error}</p>}
+        <div className="proposal-actions">
+          <button type="button" className="btn small" disabled={pending} onClick={() => setOpen(true)}>{t("reviewEdit")}</button>
+          <button type="button" className="btn small ghost" disabled={pending} onClick={() => decide("accept")}>{acceptLabel}</button>
+          <button type="button" className="btn small ghost" disabled={pending} onClick={() => decide("reject")}>{t("dismiss")}</button>
+        </div>
+      </article>
+    );
+  }
+
   return (
-    <article className="proposal">
+    <article className={`proposal${compact ? " expanded" : ""}`}>
+      {compact && <button type="button" className="btn ghost small proposal-collapse" onClick={() => setOpen(false)}>{t("collapse")}</button>}
       <p className="eyebrow">{proposal.target === "post" ? `${t(`formats.${p.format}`)} · ${p.network} · ${String(p.language).toUpperCase()}` : t(`kinds.${proposal.target}`)}</p>
       {proposal.reason && <p className="proposal-reason">{proposal.reason}</p>}
 

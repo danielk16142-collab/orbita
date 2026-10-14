@@ -81,9 +81,11 @@ export async function AuditView({ locale, audit, sources, askHref, profileHref }
 export async function ContentSuggestions({ proposals, clientId }: { proposals: ProposalView[]; clientId?: string }) {
   const t = await getTranslations("agent");
   return (
-    <section className="card">
-      <h2>{t("readyForReview")}</h2>
-      {proposals.length ? proposals.map((p) => <ProposalCard key={p.id} clientId={clientId} proposal={p} />) : <p className="stat-vs">{t("noContentSuggestions")}</p>}
+    <section className="card review-section">
+      <div className="section-head"><h2>{t("readyForReview")}</h2>{proposals.length > 0 && <span className="badge">{proposals.length}</span>}</div>
+      {proposals.length
+        ? <div className="review-grid">{proposals.map((p) => <ProposalCard key={p.id} clientId={clientId} proposal={p} compact />)}</div>
+        : <p className="stat-vs">{t("noContentSuggestions")}</p>}
     </section>
   );
 }
