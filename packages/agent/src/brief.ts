@@ -18,7 +18,10 @@ export function briefFromRow(row: Record<string, unknown> | null | undefined): B
   for (const s of LIST_SECTIONS) {
     const v = row[SECTION_COLUMN[s]];
     if (Array.isArray(v)) {
-      const items = v.map((x) => (typeof x === "string" ? x : JSON.stringify(x))).filter(Boolean);
+      // Pillars may be objects chosen in the Profile ({ name, angle, share, topics }): show them as a readable line.
+      const items = v.map((x) => (typeof x === "string" ? x : x && typeof x === "object" && "name" in x
+        ? `${(x as { name: string }).name}${(x as { share?: number }).share ? ` (${(x as { share: number }).share}%)` : ""}${(x as { angle?: string }).angle ? `: ${(x as { angle: string }).angle}` : ""}`
+        : JSON.stringify(x))).filter(Boolean);
       if (items.length) out[s] = items;
     }
   }

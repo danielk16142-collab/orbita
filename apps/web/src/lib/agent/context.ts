@@ -1,5 +1,5 @@
 import "server-only";
-import { briefFromRow, computeCompleteness, planningWeekStart, type AuditReport, type Memory, type PromptInput, type Source } from "@orbita/agent";
+import { briefFromRow, computeCompleteness, focusFromRow, focusPrompt, planningWeekStart, type AuditReport, type Memory, type PromptInput, type Source } from "@orbita/agent";
 import type { AgentActor } from "./access";
 import { analyticsText, loadAnalyticsData } from "@/lib/analytics/load";
 
@@ -67,6 +67,7 @@ export function promptInput(actor: AgentActor, ctx: ClientContext, locale: "en" 
     brief: briefFromRow(ctx.briefRow), memories: ctx.memories, sources: ctx.sources, proofItems: ctx.proofItems, rules: ctx.rules,
     recentExamples: ctx.examples, audit: ctx.audit, briefUpdatedAt: (ctx.briefRow?.updated_at as string | undefined) ?? null,
     today: now.toISOString().slice(0, 10), weekStart: planningWeekStart(now),
+    focus: focusPrompt(focusFromRow(ctx.briefRow)),
     strategy: ctx.strategy, research: ctx.research, lastPlan: ctx.lastPlan, analytics: ctx.analytics, webSearch: !!opts.webSearch, firstTurn: !!opts.firstTurn,
   };
 }

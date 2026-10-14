@@ -58,7 +58,8 @@
     "settings": "Ajustes",
     "secure": "Sesión protegida",
     "privacy": "Privacidad",
-    "menu": "Menú"
+    "menu": "Menú",
+    "strategy": "Estrategia"
   },
   "legal": {
     "englishPrevails": "Este documento solo está disponible en inglés por ahora. Prevalece la versión en inglés.",
@@ -103,7 +104,8 @@
       "profile": "Perfil",
       "insights": "Análisis",
       "research": "Investigación",
-      "competitors": "Competidores"
+      "competitors": "Competidores",
+      "strategy": "Estrategia"
     },
     "connectionsSoon": "Conecta Instagram, TikTok y más aquí (próxima fase).",
     "users": "Personas con acceso",
@@ -270,7 +272,8 @@
     "insights": "Análisis",
     "profile": "Perfil",
     "research": "Investigación",
-    "competitors": "Competidores"
+    "competitors": "Competidores",
+    "strategy": "Estrategia"
   },
   "acceptTerms": {
     "title": "Términos actualizados",
@@ -1297,5 +1300,89 @@
       "noPostsYet": "Nada aún este mes.",
       "ideasFromTopics": "Ideas del banco de temas"
     }
+  },
+  "focus": {
+    "title": "De qué hablamos",
+    "intro": "Elige los temas de esta marca y sus pilares de contenido. El agente los sigue en la estrategia, las ideas y las publicaciones.",
+    "topicsTitle": "Temas",
+    "noTopics": "Aún no hay temas. Elige de las ideas o agrega los tuyos.",
+    "levelFor": "Cuánto hablar de {topic}",
+    "levels": {
+      "focus": "Prioridad",
+      "sometimes": "A veces",
+      "avoid": "Evitar"
+    },
+    "remove": "Quitar {name}",
+    "ideas": "Ideas",
+    "suggestTopics": "Sugerir para este negocio",
+    "thinking": "Pensando…",
+    "addTopic": "Agregar",
+    "addPlaceholder": "Agrega tu propio tema",
+    "pillarsTitle": "Pilares de contenido",
+    "suggestPillars": "Sugerir pilares",
+    "pillarsHint": "Los grandes temas de tu contenido y cuánto lleva cada uno. La estrategia usa exactamente estos.",
+    "pillarName": "Pilar",
+    "share": "Peso",
+    "angle": "Enfoque",
+    "anglePlaceholder": "Qué muestra este pilar, en una línea",
+    "pillarTopics": "Temas:",
+    "addPillar": "Agregar un pilar",
+    "total": "Total: {total} % (apunta a 100 %)",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "saved": "Guardado. El agente lo usa desde ahora.",
+    "applyToStrategy": "Actualizar la estrategia",
+    "replacePillars": "¿Reemplazar tus pilares por los sugeridos?",
+    "defaults": {
+      "ai": "IA",
+      "social_media": "Redes sociales",
+      "ads": "Publicidad",
+      "web_design": "Diseño web",
+      "ecommerce": "Comercio electrónico",
+      "seo": "SEO",
+      "branding": "Marca",
+      "email": "Email marketing",
+      "video": "Video",
+      "automation": "Automatización",
+      "analytics": "Analítica",
+      "customer_stories": "Historias de clientes",
+      "behind_scenes": "Detrás de cámaras",
+      "tips": "Consejos prácticos",
+      "industry_news": "Noticias del sector",
+      "offers": "Ofertas y promociones"
+    },
+    "errors": {
+      "generic": "Algo salió mal. Inténtalo de nuevo.",
+      "duplicate": "Dos temas o pilares tienen el mismo nombre.",
+      "bad_request": "Revisa los pilares: cada uno necesita un nombre.",
+      "not_set_up": "Primero ejecuta la migración 0017 en Supabase.",
+      "forbidden": "No puedes cambiar este perfil.",
+      "rate_limited": "Demasiados guardados. Inténtalo en unos minutos.",
+      "not_configured": "El agente aún no está configurado.",
+      "daily_cap": "Se alcanzó el límite diario del agente.",
+      "no_result": "Sin sugerencias esta vez. Inténtalo de nuevo.",
+      "model_error": "El agente no está disponible ahora."
+    }
+  },
+  "strategyPage": {
+    "eyebrow": "Plan",
+    "title": "Estrategia",
+    "emptyTitle": "Aún no hay estrategia",
+    "emptyText": "Dos pasos para una estrategia que el agente sigue cada semana:",
+    "step1": "Elige tus temas y pilares",
+    "step1Hint": "en el Perfil, para construir la estrategia sobre lo que quieres comunicar.",
+    "step1Done": "{count} pilares y {topics} temas elegidos.",
+    "choose": "Elegirlos",
+    "edit": "Editar",
+    "step2": "Crea la estrategia con el agente",
+    "step2Hint": "usa tus pilares, tus temas, tus objetivos y tus resultados.",
+    "build": "Crear la estrategia",
+    "avoiding": "evitando: {list}",
+    "change": "Cambiar la estrategia",
+    "editFocus": "Editar temas y pilares",
+    "archive": "Archivar y empezar de nuevo",
+    "archiving": "Archivando…",
+    "archiveConfirm": "¿Archivar esta estrategia? Se conserva y puedes crear una nueva enseguida.",
+    "archiveFailed": "No se pudo archivar."
   }
 }

@@ -27,6 +27,7 @@ export type PromptInput = {
   research?: ResearchView[];           // recent web research notes (untrusted)
   lastPlan?: string | null;            // short summary of the last accepted weekly plan
   recentThreads?: { date: string; summary: string }[]; // handovers of this person's latest earlier conversations, oldest first
+  focus?: string;                      // what the brand chose to talk about (focusPrompt), from the Profile
   webSearch?: boolean;                 // whether the web_search tool is available this request
   analytics?: string | null;           // text summary of connected-account analytics (see analytics.ts)
   firstTurn?: boolean;                 // onboarding, and the person's first message answers the welcome (business and goals)
@@ -68,7 +69,7 @@ Define strategy and plans from evidence, not generic advice: the audit, the bran
 4. Use the account analytics below when they exist: base formats, topics and posting times on what actually performed (best and weakest posts, format averages, best posting windows). Posting windows are in UTC: convert to the client's timezone (given below when set; planned times in proposals are read in it) and say which timezone you used. State the confidence the analytics give, and never claim more than the sample supports. When there is no analytics (or too little history), base times on general platform patterns, label them as assumptions to test, and say what data would improve the plan. Never invent performance numbers: use only the numbers given.
 5. Only plan on networks the client actually uses. Balance education, proof and conversion content; do not repeat last week's angles unless it is a deliberate series.
 
-**Content strategy** (use propose_strategy, monthly or quarterly): objectives, content pillars with their share, recurring series, posting cadence per network (best days and times with reasons), and a bank of topics. Follow the active strategy in weekly plans; if evidence contradicts it, say so and suggest an update.
+**Content strategy** (use propose_strategy, monthly or quarterly): objectives, content pillars with their share, recurring series, posting cadence per network (best days and times with reasons), and a bank of topics. When the brand has chosen its pillars, use exactly those pillars and shares (you may refine the wording of an angle, never add, drop or rename a pillar); take topics only from the Focus and Sometimes topics, mostly Focus. Never use an Avoid topic in any content. Follow the active strategy in weekly plans; if evidence contradicts it, say so and suggest an update.
 
 **Finished pieces** (each becomes a draft post the person reviews):
 - Reel (propose_reel): 3 hook options, strongest first; scene table with timing, visual, voiceover and on-screen text; one call to action; 15-45 seconds unless asked; short sentences written for speech; never open with "Hi, I'm" or the brand name.
@@ -100,6 +101,9 @@ ${BRIEF_SECTIONS.map((s) => {
     const v = i.brief[s];
     return `### ${s}\n${Array.isArray(v) ? bullets(v) : v ? v : "(not known yet)"}`;
   }).join("\n")}
+
+## What the brand chose to talk about (set by people in the Profile: follow it)
+${i.focus ?? "(not chosen yet)"}
 
 ## Sources
 ${bullets(i.sources.map((s) => `${s.kind}: ${s.url ?? "@" + s.handle}`))}
