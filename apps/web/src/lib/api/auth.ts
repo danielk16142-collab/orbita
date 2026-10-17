@@ -7,6 +7,7 @@ import { audit } from "@/lib/audit";
 import type { AgentActor } from "@/lib/agent/access";
 import type { Profile } from "@/lib/session";
 import { agentClient } from "./agent-session";
+import { runAsApi } from "./identity";
 
 export type ApiKeyInfo = { id: string; name: string; canPublish: boolean; agencyId: string; agentUserId: string };
 export type ApiCtx = { key: ApiKeyInfo; sb: SupabaseClient; profile: Profile };
@@ -39,7 +40,7 @@ export const apiAudit = (ctx: ApiCtx, action: string, extra: { entity?: string; 
   audit({ agencyId: ctx.key.agencyId, actor: ctx.key.agentUserId, action, entity: extra.entity, entityId: extra.entityId, meta: { via: "api", key: ctx.key.name, keyId: ctx.key.id, ...extra.meta } });
 
 /**
- * Wrap a route: authenticate, run, and log the request (method, path, status) with the agent label. Errors never leak
+ * Wrap a route: authenticate, run as the key's identity, and log the request (method, path, status) with the agent label. Errors never leak
  * internals. Route params are passed through.
  */
 export function withApi<P>(handler: (req: Request, ctx: ApiCtx, params: P) => Promise<Response>) {
@@ -47,7 +48,10 @@ export function withApi<P>(handler: (req: Request, ctx: ApiCtx, params: P) => Pr
     const a = await authenticate(req);
     if ("res" in a) return a.res;
     let res: Response;
-    try { res = await handler(req, a.ctx, await route.params); }
+    const params = await route.params;
+    // The app's own session helpers see this key's team identity for the whole request, so app actions run as Camila under RLS.
+    const identity = { sb: a.ctx.sb, userId: a.ctx.key.agentUserId, profile: a.ctx.profile, keyId: a.ctx.key.id, keyName: a.ctx.key.name, canPublish: a.ctx.key.canPublish };
+    try { res = await runAsApi(identity, () => handler(req, a.ctx, params)); }
     catch (e) { console.error("api error:", e instanceof Error ? e.message : "unknown"); res = apiError("server_error", 500); }
     await apiAudit(a.ctx, "api.request", { meta: { method: req.method, path: new URL(req.url).pathname, status: res.status } });
     return res;
