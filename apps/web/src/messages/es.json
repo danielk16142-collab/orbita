@@ -1388,5 +1388,41 @@
     "archiving": "Archivando…",
     "archiveConfirm": "¿Archivar esta estrategia? Se conserva y puedes crear una nueva enseguida.",
     "archiveFailed": "No se pudo archivar."
+  },
+  "apiKeys": {
+    "title": "Acceso API",
+    "intro": "Claves para un agente que te ayuda a manejar Orbita, como un asistente. Cada clave actúa como un miembro del equipo: lee todos los clientes y crea o edita publicaciones como ideas o borradores. Todo queda registrado \"vía API\".",
+    "shownTitle": "Clave para {name}:",
+    "shownHint": "Cópiala ahora y guárdala en los secretos de tu agente. No se vuelve a mostrar.",
+    "copy": "Copiar clave",
+    "copied": "Copiada",
+    "done": "Listo, la guardé",
+    "name": "Nombre de la clave",
+    "namePlaceholder": "ej. Camila",
+    "canPublish": "Permitir también programar y publicar (desactivado es más seguro)",
+    "canPublishShort": "Puede programar y publicar",
+    "create": "Crear clave",
+    "createdOn": "Creada el {date}",
+    "lastUsed": "usada el {date}",
+    "neverUsed": "nunca usada",
+    "rotatedOn": "renovada el {date}",
+    "revokedOn": "Revocada el {date}",
+    "rotate": "Renovar",
+    "revoke": "Revocar",
+    "rotateConfirm": "¿Crear una nueva clave para {name}? La actual deja de funcionar enseguida.",
+    "revokeConfirm": "¿Revocar {name}? Deja de funcionar enseguida y para siempre.",
+    "howTo": "Conectar un agente",
+    "step1": "Crea una clave y guárdala en los secretos del agente.",
+    "step2": "Dale al agente la descripción de la API:",
+    "step3": "Cada solicitud envía el encabezado",
+    "step4": "Pruébalo con",
+    "rules": "Solo borradores, salvo que la clave pueda programar y publicar. La aprobación siempre queda en manos del cliente. Límites: 600 solicitudes cada 10 minutos, 30 generaciones por hora.",
+    "errors": {
+      "failed": "No funcionó. Inténtalo de nuevo.",
+      "forbidden": "Solo un admin con verificación en dos pasos puede gestionar claves.",
+      "not_set_up": "Primero ejecuta la migración 0018 en Supabase.",
+      "not_found": "Esa clave ya no existe.",
+      "bad_request": "Ponle un nombre a la clave."
+    }
   }
 }

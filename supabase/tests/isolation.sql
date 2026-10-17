@@ -413,4 +413,20 @@ select pg_temp.as_user('b0000000-0000-0000-0000-000000000001'); -- other agency
 select pg_temp.expect('other agency sees no kickstart', (select count(*) from kickstarts), 0);
 select pg_temp.reset();
 
+-- API keys: admins of the agency see the list, never the hash; nobody writes through the API roles
+insert into auth.users(id) values ('f1000000-0000-0000-0000-000000000001') on conflict do nothing;
+insert into api_keys(agency_id,agent_user_id,name,prefix,key_hash) select agency_id,'f1000000-0000-0000-0000-000000000001','Camila','abcdefghij',repeat('a',64) from clients where id='c1000000-0000-0000-0000-000000000001';
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000001'); -- admin A
+select pg_temp.expect('admin sees the agency keys', (select count(*) from api_keys), 1);
+select pg_temp.expect_error('nobody reads key hashes', $$select key_hash from api_keys$$);
+select pg_temp.expect_error('keys are not created through the API', $$insert into api_keys(agency_id,agent_user_id,name,prefix,key_hash) values (public.current_agency_id(),'f1000000-0000-0000-0000-000000000001','x','zzzzzzzzzz',repeat('b',64))$$);
+select pg_temp.expect_error('keys are not changed through the API', $$update api_keys set can_publish=true$$);
+select pg_temp.reset();
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000005'); -- client A1 user
+select pg_temp.expect('client users see no keys', (select count(*) from api_keys), 0);
+select pg_temp.reset();
+select pg_temp.as_user('b0000000-0000-0000-0000-000000000001'); -- other agency
+select pg_temp.expect('other agency sees no keys', (select count(*) from api_keys), 0);
+select pg_temp.reset();
+
 \echo ALL TENANT ISOLATION TESTS PASSED

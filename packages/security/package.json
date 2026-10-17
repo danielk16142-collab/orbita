@@ -25,6 +25,7 @@
     "./color": "./src/color.ts",
     "./invitation": "./src/invitation.ts",
     "./image": "./src/image.ts",
-    "./bearer": "./src/bearer.ts"
+    "./bearer": "./src/bearer.ts",
+    "./api-key": "./src/api-key.ts"
   }
 }

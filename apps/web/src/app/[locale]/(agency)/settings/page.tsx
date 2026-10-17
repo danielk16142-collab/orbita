@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { requireStaff } from "@/lib/session";
 import { inviteAction } from "../clients/actions";
+import { ApiKeysPanel, type ApiKeyRow } from "@/components/settings/api-keys";
 
 export default async function Settings({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ invited?: string; error?: string }> }) {
   const { locale } = await params;
@@ -9,7 +10,10 @@ export default async function Settings({ params, searchParams }: { params: Promi
   const t = await getTranslations("settings");
   const c = await getTranslations("clients");
   const tc = await getTranslations("common");
-  const { profile } = await requireStaff(locale);
+  const { profile, sb } = await requireStaff(locale);
+  // Admins only (the database policy returns nothing to others); 42P01 until migration 0018 runs.
+  const keys = profile.role === "admin" ? ((await sb.from("api_keys").select("id, name, prefix, can_publish, created_at, rotated_at, last_used_at, revoked_at").order("created_at", { ascending: false })).data ?? []) as ApiKeyRow[] : [];
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "").replace(/\/$/, "");
   return (
     <>
       <p className="eyebrow">{t("eyebrow")}</p>
@@ -18,6 +22,7 @@ export default async function Settings({ params, searchParams }: { params: Promi
         <section className="card"><h2>{t("security")}</h2><p>{t("securityText")}</p><Link className="btn" href={`/${locale}/security/mfa`}>{t("manageMfa")}</Link></section>
         <section className="card"><h2>{t("privacy")}</h2><p>{t("privacyText")}</p><Link className="btn" href={`/${locale}/settings/privacy`}>{t("open")}</Link></section>
       </div>
+      {profile.role === "admin" && <div style={{ marginTop: "2rem" }}><ApiKeysPanel keys={keys} locale={locale} specUrl={`${appUrl}/api/v1/openapi.json`} baseUrl={appUrl} /></div>}
       {profile.role === "admin" && (
         <form action={inviteAction} className="card" style={{ maxWidth: "32rem", marginTop: "2rem" }}>
           <h2>{c("inviteTitle")}</h2>

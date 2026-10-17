@@ -1388,5 +1388,41 @@
     "archiving": "Archiving…",
     "archiveConfirm": "Archive this strategy? It is kept for the record, and you can build a new one right after.",
     "archiveFailed": "Could not archive it."
+  },
+  "apiKeys": {
+    "title": "API access",
+    "intro": "Keys for an agent that helps you run Orbita, such as an assistant. Each key acts as a team member: it can read every client and create or edit posts as ideas or drafts. Everything it does is logged as \"via API\".",
+    "shownTitle": "Key for {name}:",
+    "shownHint": "Copy it now and store it in your agent's secrets. It is not shown again.",
+    "copy": "Copy key",
+    "copied": "Copied",
+    "done": "Done, I saved it",
+    "name": "Key name",
+    "namePlaceholder": "e.g. Camila",
+    "canPublish": "Also allow scheduling and publishing (off is safer)",
+    "canPublishShort": "Can schedule and publish",
+    "create": "Create key",
+    "createdOn": "Created {date}",
+    "lastUsed": "last used {date}",
+    "neverUsed": "never used",
+    "rotatedOn": "rotated {date}",
+    "revokedOn": "Revoked {date}",
+    "rotate": "Rotate",
+    "revoke": "Revoke",
+    "rotateConfirm": "Make a new key for {name}? The current one stops working right away.",
+    "revokeConfirm": "Revoke {name}? It stops working right away and cannot be turned back on.",
+    "howTo": "How to connect an agent",
+    "step1": "Create a key and store it in the agent's secrets.",
+    "step2": "Give the agent the API description:",
+    "step3": "Every request sends the header",
+    "step4": "Test it with",
+    "rules": "Drafts only unless the key may schedule and publish. Approval always stays with the client. Limits: 600 requests per 10 minutes, 30 generations per hour.",
+    "errors": {
+      "failed": "That did not work. Please try again.",
+      "forbidden": "Only an admin who passed two-step verification can manage keys.",
+      "not_set_up": "Run migration 0018 in Supabase first.",
+      "not_found": "That key no longer exists.",
+      "bad_request": "Give the key a name."
+    }
   }
 }
