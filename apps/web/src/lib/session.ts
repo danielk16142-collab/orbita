@@ -3,11 +3,16 @@ import { cache } from "react";
 import { redirect } from "next/navigation";
 import { supabaseServer } from "./supabase/server";
 import { LEGAL_VERSIONS, REQUIRED_ACCEPTANCES } from "./legal";
+import type { User } from "@supabase/supabase-js";
+import { apiIdentity } from "./api/identity";
 
 export type Role = "admin" | "team" | "client";
 export type Profile = { user_id: string; agency_id: string; client_id: string | null; role: Role; full_name: string | null; locale: string };
 
 export const getSession = cache(async () => {
+  // An API call (verified key) acts as its own team member; see lib/api/identity.
+  const api = apiIdentity();
+  if (api) return { sb: api.sb as unknown as Awaited<ReturnType<typeof supabaseServer>>, user: { id: api.userId } as User, profile: api.profile };
   const sb = await supabaseServer();
   const { data: { user } } = await sb.auth.getUser(); // validates the token with Supabase, not just the cookie
   if (!user) return null;
@@ -26,6 +31,7 @@ async function hasAcceptedCurrentTerms(sb: Awaited<ReturnType<typeof supabaseSer
 export async function requireUser(locale: string, opts: { skipTerms?: boolean; skipMfa?: boolean } = {}) {
   const s = await getSession();
   if (!s) redirect(`/${locale}/login`);
+  if (apiIdentity()) return s; // the API key is the credential: no browser MFA or terms screen applies to it
   if (!opts.skipMfa) {
     // Anyone who has enrolled a factor must use it (not just staff).
     const { data } = await s.sb.auth.mfa.getAuthenticatorAssuranceLevel();
@@ -43,6 +49,7 @@ export async function requireUser(locale: string, opts: { skipTerms?: boolean; s
 export async function requireStaff(locale: string) {
   const s = await requireUser(locale);
   if (s.profile.role === "client") redirect(`/${locale}/portal`);
+  if (apiIdentity()) return s;
   const { data } = await s.sb.auth.mfa.getAuthenticatorAssuranceLevel();
   if (data?.currentLevel !== "aal2") redirect(`/${locale}/security/mfa`);
   return s;
@@ -71,6 +78,7 @@ export function localeFrom(form: FormData): "en" | "fr" | "es" {
  * Returns why the caller must be refused, or null if the session is fully cleared.
  */
 export async function sessionProblem(s: NonNullable<Awaited<ReturnType<typeof getSession>>>): Promise<"mfa" | "terms" | null> {
+  if (apiIdentity()) return null;
   const { data } = await s.sb.auth.mfa.getAuthenticatorAssuranceLevel();
   if (s.profile.role !== "client" && data?.currentLevel !== "aal2") return "mfa";
   if (data?.nextLevel === "aal2" && data.currentLevel !== "aal2") return "mfa";

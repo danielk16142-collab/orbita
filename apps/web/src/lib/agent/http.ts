@@ -1,7 +1,9 @@
+import { apiIdentity } from "@/lib/api/identity";
 import "server-only";
 
 /** Browsers always send Origin on cross-site and same-site POSTs. We require it to match our own host. */
 export function sameOrigin(req: Request): boolean {
+  if (apiIdentity()) return true; // an internal call made by the API layer for a verified key (no browser, no cookies)
   const origin = req.headers.get("origin");
   if (!origin) return false;
   try { return new URL(origin).host === (req.headers.get("x-forwarded-host") ?? req.headers.get("host")); } catch { return false; }
