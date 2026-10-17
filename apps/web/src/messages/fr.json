@@ -1388,5 +1388,41 @@
     "archiving": "Archivage…",
     "archiveConfirm": "Archiver cette stratégie ? Elle est conservée, et vous pouvez en créer une nouvelle tout de suite.",
     "archiveFailed": "Archivage impossible."
+  },
+  "apiKeys": {
+    "title": "Accès API",
+    "intro": "Des clés pour un agent qui vous aide à gérer Orbita, comme un assistant. Chaque clé agit comme un membre de l’équipe : elle lit tous les clients et crée ou modifie des publications en idée ou brouillon. Tout est journalisé « via API ».",
+    "shownTitle": "Clé pour {name} :",
+    "shownHint": "Copiez-la maintenant et gardez-la dans les secrets de votre agent. Elle ne sera plus affichée.",
+    "copy": "Copier la clé",
+    "copied": "Copiée",
+    "done": "C’est fait, je l’ai gardée",
+    "name": "Nom de la clé",
+    "namePlaceholder": "ex. Camila",
+    "canPublish": "Permettre aussi de planifier et publier (désactivé est plus sûr)",
+    "canPublishShort": "Peut planifier et publier",
+    "create": "Créer la clé",
+    "createdOn": "Créée le {date}",
+    "lastUsed": "utilisée le {date}",
+    "neverUsed": "jamais utilisée",
+    "rotatedOn": "renouvelée le {date}",
+    "revokedOn": "Révoquée le {date}",
+    "rotate": "Renouveler",
+    "revoke": "Révoquer",
+    "rotateConfirm": "Créer une nouvelle clé pour {name} ? L’actuelle cesse de fonctionner tout de suite.",
+    "revokeConfirm": "Révoquer {name} ? Elle cesse de fonctionner tout de suite, définitivement.",
+    "howTo": "Connecter un agent",
+    "step1": "Créez une clé et gardez-la dans les secrets de l’agent.",
+    "step2": "Donnez à l’agent la description de l’API :",
+    "step3": "Chaque requête envoie l’en-tête",
+    "step4": "Testez avec",
+    "rules": "Brouillons seulement, sauf si la clé peut planifier et publier. L’approbation reste toujours au client. Limites : 600 requêtes par 10 minutes, 30 générations par heure.",
+    "errors": {
+      "failed": "Cela n’a pas fonctionné. Réessayez.",
+      "forbidden": "Seul un admin ayant passé la vérification en deux étapes peut gérer les clés.",
+      "not_set_up": "Exécutez d’abord la migration 0018 dans Supabase.",
+      "not_found": "Cette clé n’existe plus.",
+      "bad_request": "Donnez un nom à la clé."
+    }
   }
 }
