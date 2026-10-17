@@ -23,7 +23,7 @@ Created by an agency admin in **Settings → API access** (admin, signed in with
 | | |
 |---|---|
 | Read | clients, brand brief, chosen topics and pillars, links, proof items, rules, competitors (+ latest analysis), learned memories, the active strategy, posts and statuses, metrics |
-| Write | create posts as `idea` or `draft`; edit posts (editing an approved post sends it back to draft, a database rule) |
+| Write | create client accounts (`POST /clients`, with an empty brand profile; a name already in use is refused; 10 per day per key); create posts as `idea` or `draft`; edit posts (editing an approved post sends it back to draft, a database rule) |
 | Generate | `POST /clients/{id}/generate`: Orbita's own agent writes a reel, carousel, static post or story with the brand's strategy and rules; saved as a draft by default |
 | Schedule or publish | only with the key's **publish permission** (off by default). `approved` is never set by an agent: approval is the client's |
 
@@ -32,13 +32,14 @@ Locked: a key without the publish permission cannot change posts that are schedu
 ## Limits and logging
 - 600 requests per 10 minutes per key; 30 generations per hour per key; the agency's daily agent budget applies.
 - Every request is written to the audit log as `api.request` (method, path, status) with `via: "api"` and the key's
-  name; writes also log `api.post.created`, `api.post.updated`, `api.content.generated`.
+  name; writes also log `api.client.created`, `api.post.created`, `api.post.updated`, `api.content.generated`.
 
 ## Endpoints
 | Method | Path | |
 |---|---|---|
 | GET | `/me` | the key and its permissions |
 | GET | `/clients` | all clients |
+| POST | `/clients` | create a client: `name`, `languages` (en, fr, es), `markets`, `timezone` (IANA) |
 | GET | `/clients/{clientId}` | details, brief, focus, sources, proof items, rules |
 | GET | `/clients/{clientId}/competitors` | competitors and latest analyses |
 | GET | `/clients/{clientId}/memories` | what the agent learned |
