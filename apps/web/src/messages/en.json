@@ -1465,6 +1465,76 @@
       "busy": "A visual is already being created for this post.",
       "unsupported": "Visuals can be created for carousels and static posts only.",
       "no_content": "Add the slides or the visual brief first."
+    },
+    "kit": {
+      "title": "Create outside",
+      "intro": "Copy a prompt, make the image or video in your own tool from your reference, then upload the result under Finished files.",
+      "referencesTitle": "Your reference images",
+      "referencesHint": "Download them and attach them in your tool. Add more under Branding, Reference visuals.",
+      "noReferences": "No reference images for this client yet.",
+      "download": "Download",
+      "notesLabel": "Reference notes for this post (optional)",
+      "notesPlaceholder": "For example: same warm light as the reference, wooden table, shot from above",
+      "notesHint": "Added to every prompt below. Kept in this browser only.",
+      "tabs": {
+        "midjourney": "Midjourney",
+        "gptImage": "ChatGPT image",
+        "video": "Video",
+        "layout": "Canva / Figma"
+      },
+      "hint": {
+        "midjourney": "Short prompts, one per image. Add your reference with --sref.",
+        "gptImage": "Natural-language prompts. Attach your reference image first.",
+        "video": "One prompt per clip, plus a master style to paste into each. Start every clip from your reference image.",
+        "layout": "A layout brief to build by hand: text, hierarchy, sizes and brand colors."
+      },
+      "copy": "Copy",
+      "copyAll": "Copy all",
+      "copied": "Copied",
+      "refine": "Refine with the agent",
+      "refining": "Refining…",
+      "refined": "Refined by the agent",
+      "unsupported": "Prompts are available for carousels, static posts and reels.",
+      "noContent": "Add the slides, the visual brief or the script first.",
+      "errors": {
+        "failed": "Couldn't refine the prompts. Please try again.",
+        "bad_request": "Invalid request.",
+        "forbidden": "You don't have permission to do that.",
+        "unauthorized": "Please sign in again.",
+        "not_found": "Not found.",
+        "rate_limited": "Too many requests. Try again in a moment.",
+        "not_configured": "The agent is not set up yet.",
+        "daily_cap": "Today's agent allowance is used up. It resets tomorrow.",
+        "model_error": "The agent is unavailable. Please try again.",
+        "unsupported": "Prompts are available for carousels, static posts and reels.",
+        "no_content": "Add the slides, the visual brief or the script first."
+      }
+    },
+    "media": {
+      "title": "Finished files",
+      "upload": "Upload files",
+      "uploading": "Uploading {name}…",
+      "limits": "PNG, JPG or WebP images and MP4 or MOV videos, up to 50 MB each, 12 files per post. Compress longer videos first.",
+      "empty": "No files yet. Upload the images and videos you made; the client will see them here.",
+      "emptyClient": "No files yet.",
+      "download": "Download",
+      "remove": "Remove",
+      "confirmDelete": "Remove this file?",
+      "image": "Uploaded image",
+      "video": "Uploaded video",
+      "errors": {
+        "failed": "Something went wrong. Please try again.",
+        "bad_request": "Invalid request.",
+        "bad_type": "Only PNG, JPG, WebP, MP4 and MOV files can be uploaded.",
+        "too_big": "That file is larger than 50 MB.",
+        "too_many": "This post already has 12 files.",
+        "invalid_file": "That file isn't a valid image or video.",
+        "upload_failed": "The upload didn't finish. Please try again.",
+        "forbidden": "You don't have permission to do that.",
+        "unauthorized": "Please sign in again.",
+        "not_found": "Not found.",
+        "rate_limited": "Too many requests. Try again in a moment."
+      }
     }
   }
 }

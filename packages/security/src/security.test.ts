@@ -68,4 +68,10 @@ describe("rate limit and headers", () => {
     expect(h["Content-Security-Policy"]).toContain("frame-ancestors 'none'");
     expect(h["Content-Security-Policy"]).toContain("nonce-abc");
   });
+  it("CSP lets uploaded videos and images load from the project's storage only", () => {
+    const csp = securityHeaders("abc", { supabaseUrl: "https://x.supabase.co" })["Content-Security-Policy"];
+    expect(csp).toContain("media-src 'self' blob: https://x.supabase.co");
+    expect(csp).toContain("img-src 'self' data: blob: https://x.supabase.co");
+    expect(csp).toContain("default-src 'self'");
+  });
 });

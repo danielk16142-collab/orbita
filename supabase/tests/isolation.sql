@@ -496,4 +496,29 @@ select pg_temp.reset();
 delete from posts where id=(select post_id from visual_jobs where idempotency_key='job-1');
 select pg_temp.expect('deleting a post removes its jobs and media rows', (select count(*) from visual_jobs where idempotency_key='job-1') + (select count(*) from post_media where client_id='c1000000-0000-0000-0000-000000000001'), 0);
 
+-- uploaded media (images and short videos made outside Orbita)
+insert into visual_jobs(client_id,post_id,status,idempotency_key,pages) values
+ ('c1000000-0000-0000-0000-000000000001',(select id from posts where client_id='c1000000-0000-0000-0000-000000000001' limit 1),'succeeded','job-up',1);
+insert into post_media(post_id,client_id,path,page,kind,source,uploaded_by,name)
+ select id, client_id, 'c1000000-0000-0000-0000-000000000001/p2/upload-1.mp4', 1, 'video', 'uploaded', 'a0000000-0000-0000-0000-000000000001', 'reel.mp4'
+ from posts where client_id='c1000000-0000-0000-0000-000000000001' limit 1;
+select pg_temp.expect('uploaded video is recorded', (select count(*) from post_media where kind='video' and source='uploaded'), 1);
+select pg_temp.expect('media defaults to a generated image', (select count(*) from post_media where kind='image' and source='generated'), 0 + (select count(*) from post_media where source='generated'));
+select pg_temp.expect_error('media kind is limited to image and video', $$insert into post_media(post_id,client_id,path,page,kind) select id,client_id,'c1000000-0000-0000-0000-000000000001/p2/upload-2.mp3',2,'audio' from posts where client_id='c1000000-0000-0000-0000-000000000001' limit 1$$);
+select pg_temp.expect_error('media source is limited to generated and uploaded', $$insert into post_media(post_id,client_id,path,page,source) select id,client_id,'c1000000-0000-0000-0000-000000000001/p2/upload-3.png',2,'scraped' from posts where client_id='c1000000-0000-0000-0000-000000000001' limit 1$$);
+select pg_temp.expect_error('media names are bounded', $$insert into post_media(post_id,client_id,path,page,name) select id,client_id,'c1000000-0000-0000-0000-000000000001/p2/upload-4.png',2,repeat('x',200) from posts where client_id='c1000000-0000-0000-0000-000000000001' limit 1$$);
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000005'); -- client A1 user
+select pg_temp.expect('the client sees the uploaded video', (select count(*) from post_media where kind='video'), 1);
+select pg_temp.expect_error('clients cannot upload media rows', $$insert into post_media(post_id,client_id,path,page,kind,source) select id,client_id,'c1000000-0000-0000-0000-000000000001/p2/upload-5.mp4',3,'video','uploaded' from posts where client_id='c1000000-0000-0000-0000-000000000001' limit 1$$);
+select pg_temp.expect_error('clients cannot relabel media', $$update post_media set kind='image'$$);
+select pg_temp.reset();
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000004'); -- other client
+select pg_temp.expect('other clients do not see uploaded media', (select count(*) from post_media where kind='video'), 0);
+select pg_temp.reset();
+select pg_temp.as_user('b0000000-0000-0000-0000-000000000001'); -- other agency
+select pg_temp.expect('other agencies do not see uploaded media', (select count(*) from post_media where kind='video'), 0);
+select pg_temp.reset();
+delete from visual_jobs where idempotency_key='job-up';
+delete from post_media where source='uploaded';
+
 \echo ALL TENANT ISOLATION TESTS PASSED

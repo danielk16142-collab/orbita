@@ -1465,6 +1465,76 @@
       "busy": "Ya se está creando un visual para esta publicación.",
       "unsupported": "Solo se pueden crear visuales para carruseles y publicaciones estáticas.",
       "no_content": "Añade primero las diapositivas o el brief visual."
+    },
+    "kit": {
+      "title": "Crear fuera de Orbita",
+      "intro": "Copia un prompt, crea la imagen o el video en tu herramienta a partir de tu referencia y luego sube el resultado en «Archivos terminados».",
+      "referencesTitle": "Tus imágenes de referencia",
+      "referencesHint": "Descárgalas y adjúntalas en tu herramienta. Añade más en Marca, Visuales de referencia.",
+      "noReferences": "Este cliente aún no tiene imágenes de referencia.",
+      "download": "Descargar",
+      "notesLabel": "Notas de referencia para esta publicación (opcional)",
+      "notesPlaceholder": "Por ejemplo: la misma luz cálida de la referencia, mesa de madera, vista desde arriba",
+      "notesHint": "Se añaden a cada prompt de abajo. Se guardan solo en este navegador.",
+      "tabs": {
+        "midjourney": "Midjourney",
+        "gptImage": "ChatGPT imagen",
+        "video": "Video",
+        "layout": "Canva / Figma"
+      },
+      "hint": {
+        "midjourney": "Prompts cortos, uno por imagen. Añade tu referencia con --sref.",
+        "gptImage": "Prompts en lenguaje natural. Adjunta primero tu imagen de referencia.",
+        "video": "Un prompt por clip, más un estilo maestro para pegar en cada uno. Parte de tu imagen de referencia en cada clip.",
+        "layout": "Un brief de diseño para hacer a mano: texto, jerarquía, tamaños y colores de la marca."
+      },
+      "copy": "Copiar",
+      "copyAll": "Copiar todo",
+      "copied": "Copiado",
+      "refine": "Mejorar con el agente",
+      "refining": "Mejorando…",
+      "refined": "Mejorado por el agente",
+      "unsupported": "Los prompts están disponibles para carruseles, publicaciones estáticas y reels.",
+      "noContent": "Añade primero las diapositivas, el brief visual o el guion.",
+      "errors": {
+        "failed": "No se pudieron mejorar los prompts. Inténtalo de nuevo.",
+        "bad_request": "Solicitud no válida.",
+        "forbidden": "No tienes permiso para hacer eso.",
+        "unauthorized": "Inicia sesión de nuevo.",
+        "not_found": "No encontrado.",
+        "rate_limited": "Demasiadas solicitudes. Inténtalo en un momento.",
+        "not_configured": "El agente todavía no está configurado.",
+        "daily_cap": "Se agotó la asignación de hoy del agente. Se renueva mañana.",
+        "model_error": "El agente no está disponible. Inténtalo de nuevo.",
+        "unsupported": "Los prompts están disponibles para carruseles, publicaciones estáticas y reels.",
+        "no_content": "Añade primero las diapositivas, el brief visual o el guion."
+      }
+    },
+    "media": {
+      "title": "Archivos terminados",
+      "upload": "Subir archivos",
+      "uploading": "Subiendo {name}…",
+      "limits": "Imágenes PNG, JPG o WebP y videos MP4 o MOV, hasta 50 MB cada uno, 12 archivos por publicación. Comprime antes los videos más largos.",
+      "empty": "Aún no hay archivos. Sube las imágenes y videos que creaste; el cliente los verá aquí.",
+      "emptyClient": "Aún no hay archivos.",
+      "download": "Descargar",
+      "remove": "Quitar",
+      "confirmDelete": "¿Quitar este archivo?",
+      "image": "Imagen subida",
+      "video": "Video subido",
+      "errors": {
+        "failed": "Algo salió mal. Inténtalo de nuevo.",
+        "bad_request": "Solicitud no válida.",
+        "bad_type": "Solo se pueden subir archivos PNG, JPG, WebP, MP4 y MOV.",
+        "too_big": "Ese archivo supera los 50 MB.",
+        "too_many": "Esta publicación ya tiene 12 archivos.",
+        "invalid_file": "Ese archivo no es una imagen o un video válido.",
+        "upload_failed": "La subida no terminó. Inténtalo de nuevo.",
+        "forbidden": "No tienes permiso para hacer eso.",
+        "unauthorized": "Inicia sesión de nuevo.",
+        "not_found": "No encontrado.",
+        "rate_limited": "Demasiadas solicitudes. Inténtalo en un momento."
+      }
     }
   }
 }

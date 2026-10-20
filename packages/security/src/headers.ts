@@ -8,6 +8,7 @@ export function securityHeaders(nonce: string, opts: { supabaseUrl?: string; dev
     "frame-src https://challenges.cloudflare.com",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: " + supabase,
+    "media-src 'self' blob: " + supabase, // uploaded videos play from signed storage URLs
     `connect-src 'self' ${supabase} ${supabase.replace("https://", "wss://")} https://challenges.cloudflare.com`.trim(),
     "font-src 'self'",
     "object-src 'none'",
