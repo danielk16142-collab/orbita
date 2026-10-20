@@ -429,4 +429,71 @@ select pg_temp.as_user('b0000000-0000-0000-0000-000000000001'); -- other agency
 select pg_temp.expect('other agency sees no keys', (select count(*) from api_keys), 0);
 select pg_temp.reset();
 
+-- visual creation module (Moda): switch, jobs, generated images
+insert into storage.buckets(id,name) values ('post-media','post-media') on conflict do nothing;
+insert into auth.users(id) values ('a0000000-0000-0000-0000-000000000009') on conflict do nothing; -- a team member for these tests
+insert into profiles(user_id,agency_id,client_id,role) values ('a0000000-0000-0000-0000-000000000009',:agA,null,'team') on conflict do nothing;
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000001'); -- admin A
+insert into client_modules(client_id,module,enabled,config) values ('c1000000-0000-0000-0000-000000000001','visuals',true,'{"monthly_cap":5}') returning client_id;
+select pg_temp.expect('admin turns the module on', (select count(*) from client_modules where enabled), 1);
+select pg_temp.expect('admin write stamps who and when', (select count(*) from client_modules where updated_by='a0000000-0000-0000-0000-000000000001'), 1);
+select pg_temp.expect_error('config is bounded', $$update client_modules set config=jsonb_build_object('x',repeat('y',3000))$$);
+select pg_temp.expect_error('config must be an object', $$update client_modules set config='[1]'::jsonb$$);
+select pg_temp.expect_error('unknown modules are rejected', $$insert into client_modules(client_id,module) values ('c1000000-0000-0000-0000-000000000001','nope')$$);
+select pg_temp.expect_error('admin cannot switch a module for another agency', $$insert into client_modules(client_id,module,enabled) values ('c3000000-0000-0000-0000-000000000003','visuals',true)$$);
+select pg_temp.reset();
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000009'); -- team member (not admin)
+select pg_temp.expect('team members can see the switch', (select count(*) from client_modules), 1);
+update client_modules set enabled=false;
+select pg_temp.reset();
+select pg_temp.expect('team members cannot change the switch', (select count(*) from client_modules where enabled), 1);
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000005'); -- client A1 user
+select pg_temp.expect('the client sees its own switch', (select count(*) from client_modules), 1);
+update client_modules set enabled=false;
+select pg_temp.expect_error('clients cannot create switches', $$insert into client_modules(client_id,module,enabled) values ('c2000000-0000-0000-0000-000000000002','visuals',true)$$);
+select pg_temp.reset();
+select pg_temp.expect('clients cannot change the switch', (select count(*) from client_modules where enabled), 1);
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000004'); -- other client
+select pg_temp.expect('other clients see no switches', (select count(*) from client_modules), 0);
+select pg_temp.reset();
+select pg_temp.as_user('b0000000-0000-0000-0000-000000000001'); -- other agency
+select pg_temp.expect('other agencies see no switches', (select count(*) from client_modules), 0);
+select pg_temp.reset();
+
+-- jobs and media are written by the server (service role = this script before as_user)
+insert into visual_jobs(client_id,post_id,status,idempotency_key,pages) values
+ ('c1000000-0000-0000-0000-000000000001',(select id from posts where client_id='c1000000-0000-0000-0000-000000000001' limit 1),'running','job-1',2);
+select pg_temp.expect_error('a post cannot have two active jobs', $$insert into visual_jobs(client_id,post_id,status,idempotency_key) values ('c1000000-0000-0000-0000-000000000001',(select id from posts where client_id='c1000000-0000-0000-0000-000000000001' limit 1),'queued','job-2')$$);
+select pg_temp.expect_error('idempotency keys are unique', $$insert into visual_jobs(client_id,post_id,status,idempotency_key) values ('c1000000-0000-0000-0000-000000000001',(select id from posts where client_id='c1000000-0000-0000-0000-000000000001' limit 1),'failed','job-1')$$);
+select pg_temp.expect_error('a job cannot point at another client''s post', $$insert into visual_jobs(client_id,post_id,status,idempotency_key) values ('c2000000-0000-0000-0000-000000000002',(select id from posts where client_id='c1000000-0000-0000-0000-000000000001' limit 1),'failed','job-3')$$);
+update visual_jobs set status='succeeded', completed_at=now() where idempotency_key='job-1';
+insert into storage.objects(bucket_id,name) values ('post-media','c1000000-0000-0000-0000-000000000001/p/j/page-1.png');
+insert into post_media(post_id,client_id,job_id,path,page,width,height)
+ select p.id, p.client_id, j.id, 'c1000000-0000-0000-0000-000000000001/p/j/page-1.png', 1, 1080, 1350
+ from posts p join visual_jobs j on j.post_id=p.id where j.idempotency_key='job-1';
+select pg_temp.expect_error('media path must start with the client', $$insert into post_media(post_id,client_id,path,page) select id,client_id,'c2000000-0000-0000-0000-000000000002/x/y/page-1.png',1 from posts where client_id='c1000000-0000-0000-0000-000000000001' limit 1$$);
+select pg_temp.expect_error('media page is bounded', $$insert into post_media(post_id,client_id,path,page) select id,client_id,'c1000000-0000-0000-0000-000000000001/x/y/page-99.png',99 from posts where client_id='c1000000-0000-0000-0000-000000000001' limit 1$$);
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000005'); -- client A1 user
+select pg_temp.expect('the client sees its jobs, images and files', (select count(*) from visual_jobs) + (select count(*) from post_media) + (select count(*) from storage.objects where bucket_id='post-media'), 3);
+select pg_temp.expect_error('clients cannot create jobs', $$insert into visual_jobs(client_id,post_id,status,idempotency_key) values ('c1000000-0000-0000-0000-000000000001',(select id from posts where client_id='c1000000-0000-0000-0000-000000000001' limit 1),'queued','x1')$$);
+select pg_temp.expect_error('clients cannot create media rows', $$insert into post_media(post_id,client_id,path,page) select id,client_id,'c1000000-0000-0000-0000-000000000001/a/b/page-1.png',1 from posts where client_id='c1000000-0000-0000-0000-000000000001' limit 1$$);
+select pg_temp.expect_error('clients cannot upload to the media bucket', $$insert into storage.objects(bucket_id,name) values ('post-media','c1000000-0000-0000-0000-000000000001/z/z/page-1.png')$$);
+select pg_temp.expect_error('clients cannot edit jobs', $$update visual_jobs set status='failed'$$);
+select pg_temp.expect_error('clients cannot delete media rows', $$delete from post_media$$);
+delete from storage.objects where bucket_id='post-media';
+select pg_temp.reset();
+select pg_temp.expect('clients cannot edit or delete jobs and images', (select count(*) from visual_jobs where status='succeeded') + (select count(*) from post_media) + (select count(*) from storage.objects where bucket_id='post-media'), 3);
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000001'); -- admin A: staff reads, but cannot write either
+select pg_temp.expect_error('staff cannot write jobs through the API', $$insert into visual_jobs(client_id,post_id,status,idempotency_key) values ('c1000000-0000-0000-0000-000000000001',(select id from posts where client_id='c1000000-0000-0000-0000-000000000001' limit 1),'failed','x2')$$);
+select pg_temp.expect('staff read the client''s jobs and images', (select count(*) from visual_jobs) + (select count(*) from post_media), 2);
+select pg_temp.reset();
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000004'); -- other client
+select pg_temp.expect('other clients see no jobs, images or files', (select count(*) from visual_jobs) + (select count(*) from post_media) + (select count(*) from storage.objects where bucket_id='post-media'), 0);
+select pg_temp.reset();
+select pg_temp.as_user('b0000000-0000-0000-0000-000000000001'); -- other agency
+select pg_temp.expect('other agencies see no jobs, images or files', (select count(*) from visual_jobs) + (select count(*) from post_media) + (select count(*) from storage.objects where bucket_id='post-media'), 0);
+select pg_temp.reset();
+delete from posts where id=(select post_id from visual_jobs where idempotency_key='job-1');
+select pg_temp.expect('deleting a post removes its jobs and media rows', (select count(*) from visual_jobs where idempotency_key='job-1') + (select count(*) from post_media where client_id='c1000000-0000-0000-0000-000000000001'), 0);
+
 \echo ALL TENANT ISOLATION TESTS PASSED

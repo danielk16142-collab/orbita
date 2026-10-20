@@ -8,6 +8,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import { sendEmail } from "@/lib/email";
 import { limiter } from "@/lib/rate-limit";
 import { audit } from "@/lib/audit";
+import { removeMedia } from "@/lib/visuals/service";
 
 const Uuid = z.string().uuid();
 const Locales = z.array(z.enum(["en", "fr", "es"])).min(1);
@@ -65,6 +66,7 @@ export async function deleteClientAction(form: FormData) {
     const { data: files } = await admin.storage.from(bucket).list(id, { limit: 1000 });
     if (files?.length) await admin.storage.from(bucket).remove(files.map((f) => `${id}/${f.name}`));
   }
+  await removeMedia(id).catch((e) => console.error("media cleanup failed:", e instanceof Error ? e.name : "unknown")); // generated post images
   // Client users' accounts are removed with the client (profiles cascade); delete their auth users too.
   const { data: users } = await admin.from("profiles").select("user_id").eq("client_id", id);
   const { error } = await s.sb.from("clients").delete().eq("id", id);

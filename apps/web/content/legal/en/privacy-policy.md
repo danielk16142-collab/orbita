@@ -39,7 +39,7 @@ We do **not** sell personal information and do not share it for cross-context be
 
 ## 4. AI processing
 
-Orbita's agent uses large language models provided by our service providers (see [Subprocessors](/legal/subprocessors)). When you use the agent, the relevant brand profile, content and messages are sent to the provider to generate a response. We do not use your data to train our own models. [[VERIFY: confirm current provider terms regarding API data retention and model training before publishing.]] The agent may produce inaccurate content. You are responsible for reviewing content before it is published. We do not make decisions with legal or similarly significant effects about you using solely automated processing.
+Orbita's agent uses large language models provided by our service providers (see [Subprocessors](/legal/subprocessors)). When you use the agent, the relevant brand profile, content and messages are sent to the provider to generate a response. We do not use your data to train our own models. [[VERIFY: confirm current provider terms regarding API data retention and model training before publishing.]] If visual creation is turned on for your account, the text and visual brief of the post being designed, and your brand's name, colors and fonts, are sent to our design provider to produce the images, which we store in your account. [[VERIFY: confirm the design provider's terms regarding retention, training and the location of processing before publishing.]] The agent may produce inaccurate content. You are responsible for reviewing content before it is published. We do not make decisions with legal or similarly significant effects about you using solely automated processing.
 
 ## 5. Who we share it with
 

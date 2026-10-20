@@ -10,6 +10,7 @@ We use these providers to run Orbita. We give agencies and clients notice of cha
 | Vercel | Application hosting and delivery | Request data, IP addresses, application traffic | [[VERCEL_REGION]] |
 | Cloudflare | Bot verification (Turnstile) and, if enabled, DNS, proxy and web application firewall | IP address, device and browser signals, request metadata | Global network |
 | Anthropic | AI agent (language model processing) | Prompts containing brand information, content and messages | United States [[VERIFY]] |
+| Moda (only when visual creation is turned on for a client) | AI design of post images | The post's text and visual brief, the brand name, colors and fonts; the generated images | [[VERIFY]] |
 | [[COMPETITOR_DATA_PROVIDER]] (planned) | Public competitor account research | Public account links and public posts data | [[VERIFY]] |
 | [[EMAIL_PROVIDER]] (planned) | Invitation and notification emails | Name, email address | [[VERIFY]] |
 | [[ERROR_MONITORING_PROVIDER]] (planned) | Error and uptime monitoring | Technical error data, scrubbed of personal data | [[VERIFY]] |

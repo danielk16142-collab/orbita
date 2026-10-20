@@ -254,6 +254,9 @@ Not yet: Instagram and TikTok numbers for competitors (web pages rarely show the
 ## 7.8 Post studio
 Built: on "Create post", the Details step suggests ideas for the chosen format and networks, grounded in the active strategy, the latest accepted plan, saved research and results (each labelled with its source; without the model it falls back to the strategy's topic bank and research). "Write it with the agent" opens a chat on the same page dedicated to that post: the agent drafts it with the tool for that format (reel, carousel, static; text posts and articles are written in the reply and saved as the draft), each draft appears as an editable card to accept into the calendar, and follow-ups revise it. Post chats are their own conversations (kind `post`, migration `0013_post_chats.sql`) and stay out of the main Agent chat.
 
+## 7.6 Visual creation module (Moda)
+Optional per-client module: "Create visual" on carousel and static posts through Moda's REST API, images stored privately and shown in the post and the client portal. Off by default, admin switch per client, monthly cap, audited. See `docs/visuals.md`. Needs `MODA_API_KEY` and migration 0019; live calls untested until a key exists.
+
 ## 8. Open items
 - Style reference and Orbita visual identity (logo integrated: sidebar, phone bar, sign-in, favicon, emails).
 - Client logos: the upload stays in Branding/Settings, but the portal sidebar now shows the Orbita logo + business name. Reuse the uploaded logo later (reports, emails, portal home header).

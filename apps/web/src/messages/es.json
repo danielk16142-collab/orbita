@@ -1424,5 +1424,47 @@
       "not_found": "Esa clave ya no existe.",
       "bad_request": "Ponle un nombre a la clave."
     }
+  },
+  "visuals": {
+    "title": "Creación de visuales",
+    "switchLabel": "Creación de visuales para este cliente",
+    "on": "Activada",
+    "off": "Desactivada",
+    "intro": "Crea las imágenes de las publicaciones con Moda a partir de los borradores de carruseles y publicaciones estáticas. Desactivada por defecto; actívala para los clientes que la vayan a usar.",
+    "notConfigured": "Moda todavía no está conectado. Añade MODA_API_KEY en el servidor para empezar.",
+    "cap": "Visuales por mes",
+    "brandKit": "ID del kit de marca de Moda (opcional)",
+    "capHint": "Cada visual consume créditos de Moda. Al llegar al límite no se pueden crear más hasta el mes siguiente.",
+    "usage": "{used} de {cap} usados este mes",
+    "dataNote": "Lo que se envía a Moda: el texto y el brief visual de la publicación, el nombre de la marca, sus colores y tipografías. Nada más del cliente.",
+    "adminOnly": "Solo los administradores de la agencia pueden cambiar esto.",
+    "save": "Guardar",
+    "saved": "Guardado.",
+    "panelTitle": "Visuales",
+    "create": "Crear visual",
+    "again": "Crear de nuevo",
+    "queued": "Esperando a Moda…",
+    "working": "Creando tu visual…",
+    "finishing": "Guardando las imágenes…",
+    "download": "Descargar",
+    "page": "Página {n}",
+    "pageAlt": "Visual generado, página {n}",
+    "emptyStaff": "Aún no hay visual. Crea uno a partir de las diapositivas o del brief visual de esta publicación.",
+    "emptyClient": "Aún no hay visual.",
+    "errors": {
+      "failed": "No se pudo crear el visual. Inténtalo de nuevo.",
+      "bad_request": "Solicitud no válida.",
+      "forbidden": "No tienes permiso para hacer eso.",
+      "unauthorized": "Inicia sesión de nuevo.",
+      "not_found": "No encontrado.",
+      "module_off": "La creación de visuales está desactivada para este cliente.",
+      "cap_reached": "Se alcanzó el límite mensual de visuales de este cliente.",
+      "not_configured": "Moda todavía no está conectado.",
+      "insufficient_credits": "Moda se quedó sin créditos.",
+      "rate_limited": "Demasiadas solicitudes. Inténtalo en un momento.",
+      "busy": "Ya se está creando un visual para esta publicación.",
+      "unsupported": "Solo se pueden crear visuales para carruseles y publicaciones estáticas.",
+      "no_content": "Añade primero las diapositivas o el brief visual."
+    }
   }
 }
