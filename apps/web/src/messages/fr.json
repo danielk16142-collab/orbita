@@ -1424,5 +1424,47 @@
       "not_found": "Cette clé n’existe plus.",
       "bad_request": "Donnez un nom à la clé."
     }
+  },
+  "visuals": {
+    "title": "Création de visuels",
+    "switchLabel": "Création de visuels pour ce client",
+    "on": "Activée",
+    "off": "Désactivée",
+    "intro": "Créez les images des publications avec Moda à partir des brouillons de carrousels et de publications statiques. Désactivé par défaut; activez-le pour les clients concernés.",
+    "notConfigured": "Moda n'est pas encore connecté. Ajoutez MODA_API_KEY sur le serveur pour commencer.",
+    "cap": "Visuels par mois",
+    "brandKit": "ID du kit de marque Moda (facultatif)",
+    "capHint": "Chaque visuel consomme des crédits Moda. Une fois la limite atteinte, aucun autre ne peut être créé avant le mois prochain.",
+    "usage": "{used} sur {cap} utilisés ce mois-ci",
+    "dataNote": "Ce qui est envoyé à Moda : le texte et le brief visuel de la publication, le nom de la marque, ses couleurs et ses polices. Rien d'autre sur le client.",
+    "adminOnly": "Seuls les administrateurs de l'agence peuvent modifier ceci.",
+    "save": "Enregistrer",
+    "saved": "Enregistré.",
+    "panelTitle": "Visuels",
+    "create": "Créer le visuel",
+    "again": "Créer à nouveau",
+    "queued": "En attente de Moda…",
+    "working": "Création du visuel…",
+    "finishing": "Enregistrement des images…",
+    "download": "Télécharger",
+    "page": "Page {n}",
+    "pageAlt": "Visuel généré, page {n}",
+    "emptyStaff": "Aucun visuel pour l'instant. Créez-en un à partir des slides ou du brief visuel de cette publication.",
+    "emptyClient": "Aucun visuel pour l'instant.",
+    "errors": {
+      "failed": "Le visuel n'a pas pu être créé. Veuillez réessayer.",
+      "bad_request": "Requête invalide.",
+      "forbidden": "Vous n'avez pas la permission de faire cela.",
+      "unauthorized": "Veuillez vous reconnecter.",
+      "not_found": "Introuvable.",
+      "module_off": "La création de visuels est désactivée pour ce client.",
+      "cap_reached": "La limite mensuelle de visuels de ce client est atteinte.",
+      "not_configured": "Moda n'est pas encore connecté.",
+      "insufficient_credits": "Il ne reste plus de crédits Moda.",
+      "rate_limited": "Trop de requêtes. Réessayez dans un instant.",
+      "busy": "Un visuel est déjà en cours de création pour cette publication.",
+      "unsupported": "Les visuels ne peuvent être créés que pour les carrousels et les publications statiques.",
+      "no_content": "Ajoutez d'abord les slides ou le brief visuel."
+    }
   }
 }

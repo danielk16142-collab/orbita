@@ -13,6 +13,8 @@ import { ResearchPanel } from "@/components/research/research-panel";
 import { CompetitorsPanel } from "@/components/competitors/competitors-panel";
 import { ConnectionsPanel } from "@/components/connections/connections-panel";
 import { Tabs } from "@/components/tabs";
+import { VisualsCard } from "@/components/visuals/visuals-card";
+import { providerConfigured, readModule, usedThisMonth } from "@/lib/visuals/service";
 import { deleteClientAction, inviteAction, revokeInvitationAction } from "../actions";
 
 const TABS = ["profile", "strategy", "agent", "research", "competitors", "insights", "branding", "connections", "users"] as const;
@@ -37,6 +39,7 @@ export default async function ClientDetail({ params, searchParams }: {
   const base = `/${locale}/clients/${id}`;
   const href = (x: string, extra: Record<string, string> = {}) => `${base}?${new URLSearchParams({ tab: x, ...extra })}`;
 
+  const visualsState = async () => { const m = await readModule(s.sb, id); return { enabled: m.enabled, monthlyCap: m.monthlyCap, brandKitId: m.brandKitId }; };
   const sign = async (path: string | null) => path ? (await s.sb.storage.from("client-logos").createSignedUrl(path, 3600)).data?.signedUrl ?? null : null;
   const [{ data: people }, { data: pending }] = tab === "users" ? await Promise.all([
     s.sb.from("profiles").select("user_id, full_name, role").eq("client_id", id),
@@ -131,7 +134,14 @@ export default async function ClientDetail({ params, searchParams }: {
         </>
       )}
 
-      {tab === "connections" && <ConnectionsPanel locale={locale} clientId={id} flash={{ connected: q.connected, connect: q.connect, step: q.step, error: q.error }} />}
+      {tab === "connections" && (
+        <>
+          <ConnectionsPanel locale={locale} clientId={id} flash={{ connected: q.connected, connect: q.connect, step: q.step, error: q.error }} />
+          <div style={{ marginTop: "1.25rem" }}>
+            <VisualsCard clientId={id} {...(await visualsState())} used={await usedThisMonth(id)} configured={providerConfigured()} canEdit={isAdmin} />
+          </div>
+        </>
+      )}
     </>
   );
 }

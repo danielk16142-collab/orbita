@@ -1424,5 +1424,47 @@
       "not_found": "That key no longer exists.",
       "bad_request": "Give the key a name."
     }
+  },
+  "visuals": {
+    "title": "Visual creation",
+    "switchLabel": "Visual creation for this client",
+    "on": "On",
+    "off": "Off",
+    "intro": "Create post images with Moda from carousel and static post drafts. Off by default; turn it on for the clients that should use it.",
+    "notConfigured": "Moda is not connected yet. Add MODA_API_KEY on the server to start creating visuals.",
+    "cap": "Visuals per month",
+    "brandKit": "Moda brand kit ID (optional)",
+    "capHint": "Each visual uses Moda credits. When the limit is reached, no more can be created until next month.",
+    "usage": "{used} of {cap} used this month",
+    "dataNote": "What is sent to Moda: the post's text and visual brief, the brand name, colors and fonts. Nothing else about the client.",
+    "adminOnly": "Only agency admins can change this.",
+    "save": "Save",
+    "saved": "Saved.",
+    "panelTitle": "Visuals",
+    "create": "Create visual",
+    "again": "Create again",
+    "queued": "Waiting for Moda…",
+    "working": "Creating your visual…",
+    "finishing": "Saving the images…",
+    "download": "Download",
+    "page": "Page {n}",
+    "pageAlt": "Generated visual, page {n}",
+    "emptyStaff": "No visual yet. Create one from this post's slides or visual brief.",
+    "emptyClient": "No visual yet.",
+    "errors": {
+      "failed": "The visual could not be created. Please try again.",
+      "bad_request": "Invalid request.",
+      "forbidden": "You don't have permission to do that.",
+      "unauthorized": "Please sign in again.",
+      "not_found": "Not found.",
+      "module_off": "Visual creation is turned off for this client.",
+      "cap_reached": "This client's monthly limit of visuals has been reached.",
+      "not_configured": "Moda is not connected yet.",
+      "insufficient_credits": "Moda has no credits left.",
+      "rate_limited": "Too many requests. Try again in a moment.",
+      "busy": "A visual is already being created for this post.",
+      "unsupported": "Visuals can be created for carousels and static posts only.",
+      "no_content": "Add the slides or the visual brief first."
+    }
   }
 }

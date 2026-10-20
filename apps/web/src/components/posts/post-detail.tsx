@@ -8,6 +8,8 @@ import { CopyButton } from "./copy-button";
 import { PostActions } from "./post-actions";
 import { PostEditor } from "./post-editor";
 import { NETWORK_LABEL } from "./shared";
+import { VisualPanel, type VisualJob } from "@/components/visuals/visual-panel";
+import { readModule, usedThisMonth } from "@/lib/visuals/service";
 
 /** One post in full: idea, script/slides/brief, caption, status actions, comments. Staff also get the editor. */
 export async function PostDetail({ locale, id, portal }: { locale: string; id: string; portal: boolean }) {
@@ -27,6 +29,19 @@ export async function PostDetail({ locale, id, portal }: { locale: string; id: s
   const requireComment = s.profile.role === "client" ? moves.filter(() => post.status === "approved") : [];
   const when = new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" });
   const hashtags = (post.hashtags ?? []).map((h) => (h.startsWith("#") ? h : `#${h}`)).join(" ");
+  // Visual creation (Moda): only for carousels and static posts, only when the module is on for this client.
+  const visualFormat = post.type === "carousel" || post.type === "static";
+  const mod = visualFormat ? await readModule(s.sb, post.client_id) : null;
+  let visualJob: VisualJob | null = null;
+  if (mod?.enabled) {
+    const { data: j } = await s.sb.from("visual_jobs").select("id, status, pages, error_code").eq("post_id", post.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
+    if (j) {
+      const { data: media } = await s.sb.from("post_media").select("path, page, width, height").eq("job_id", j.id).order("page");
+      const images = (await Promise.all((media ?? []).map(async (m) => ({ page: m.page, width: m.width, height: m.height, url: (await s.sb.storage.from("post-media").createSignedUrl(m.path, 3600)).data?.signedUrl ?? "" })))).filter((i) => i.url);
+      visualJob = { id: j.id, status: j.status, pages: j.pages, errorCode: j.error_code, images };
+    }
+  }
+  const visualsUsed = mod?.enabled && !portal ? await usedThisMonth(post.client_id) : 0;
   const arr = (v: unknown) => (Array.isArray(v) ? (v as Record<string, string>[]) : []);
 
   return (
@@ -68,6 +83,10 @@ export async function PostDetail({ locale, id, portal }: { locale: string; id: s
           <h2>{t("staticContent")}</h2>
           <p><strong>{String(content.headline)}</strong></p><p>{String(content.visual_brief)}</p><p><strong>{t("cta")}:</strong> {String(content.cta)}</p>
         </section>
+      )}
+
+      {mod?.enabled && (!portal || (visualJob && visualJob.images.length > 0)) && (
+        <VisualPanel postId={post.id} canCreate={!portal} initial={visualJob} used={visualsUsed} cap={mod.monthlyCap} />
       )}
 
       {(post.caption || hashtags) && (

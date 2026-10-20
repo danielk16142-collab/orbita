@@ -13,8 +13,13 @@
     "bootstrap": "node scripts/bootstrap-agency.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "latest",
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@orbita/agent": "workspace:*",
+    "@orbita/connectors": "workspace:*",
+    "@orbita/content": "workspace:*",
     "@orbita/security": "workspace:*",
+    "@orbita/visuals": "workspace:*",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.45.0",
     "geist": "^1.7.2",
@@ -26,11 +31,7 @@
     "remark-gfm": "^4.0.1",
     "server-only": "^0.0.1",
     "sharp": "^0.35.5",
-    "zod": "^3.23.0",
-    "@orbita/agent": "workspace:*",
-    "@anthropic-ai/sdk": "latest",
-    "@orbita/connectors": "workspace:*",
-    "@orbita/content": "workspace:*"
+    "zod": "^3.23.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

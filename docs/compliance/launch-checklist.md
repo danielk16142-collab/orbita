@@ -7,7 +7,7 @@ Company name, address, privacy contact and person in charge of personal informat
 - [ ] Lawyer reviews Privacy Policy, Terms, DPA, Cookie Policy, AUP
 - [ ] **French versions** (Quebec: consumer/adhesion contracts and public-facing policies are expected in French) and Spanish; translation by a qualified legal translator after the English text is final
 - [ ] Liability cap, governing law, jurisdiction
-- [ ] Verify each subprocessor's current terms (training, retention, location) and sign their DPAs
+- [ ] Verify each subprocessor's current terms (training, retention, location) and sign their DPAs (including Moda, before turning visual creation on for any client other than the agency's own)
 - [ ] Transfer assessment (Quebec) and SCCs (EU/UK)
 - [ ] Privacy impact assessment (PIA) for the platform: AI processing, competitor research, cross-border hosting
 

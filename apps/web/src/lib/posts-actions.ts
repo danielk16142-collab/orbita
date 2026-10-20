@@ -4,6 +4,7 @@ import { allowedStatusChanges, isTimeZone, parseContent, PostEdit, STATUSES, zon
 import { loadPost, postActor } from "@/lib/posts/access";
 import { limiter } from "@/lib/rate-limit";
 import { audit } from "@/lib/audit";
+import { removeMedia } from "@/lib/visuals/service";
 
 export type PostResult = { ok: true; id?: string } | { ok: false; error: string };
 const Uuid = z.string().uuid();
@@ -103,6 +104,7 @@ export async function deletePostAction(input: unknown): Promise<PostResult> {
   const post = await loadPost(g.value, p.data.postId); if (!post.ok) return fail(post.error);
   const { data } = await g.value.sb.from("posts").delete().eq("id", post.value.id).select("id");
   if (!data?.length) return fail("forbidden");
+  await removeMedia(post.value.client_id, post.value.id).catch((e) => console.error("media cleanup failed:", e instanceof Error ? e.name : "unknown")); // stored images go with the post
   await audit({ agencyId: g.value.profile.agency_id, actor: g.value.userId, action: "post.deleted", entity: "post", entityId: post.value.id });
   return { ok: true };
 }

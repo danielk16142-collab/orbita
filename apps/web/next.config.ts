@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 
 const config: NextConfig = {
   poweredByHeader: false,
-  transpilePackages: ["@orbita/security", "@orbita/agent", "@orbita/connectors", "@orbita/content"],
+  transpilePackages: ["@orbita/security", "@orbita/agent", "@orbita/connectors", "@orbita/content", "@orbita/visuals"],
   serverExternalPackages: ["undici", "cheerio", "sharp"],
   // Per-request CSP (with nonce) is set in middleware.
 };

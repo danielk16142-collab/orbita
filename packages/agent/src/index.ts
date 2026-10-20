@@ -8,7 +8,7 @@ export * from "./proposals";
 export * from "./tools";
 export * from "./loop";
 export * from "./quality";
-export { fetchPage } from "./site";
+export { fetchPage, createPinnedFetch } from "./site";
 export type { SiteSnapshot } from "./site";
 
 /** Week that plans are for: this Monday Mon-Thu, next Monday Fri-Sun (people plan ahead at the end of the week). */
