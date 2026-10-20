@@ -1,11 +1,12 @@
 "use server";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
-import { buildVisualPrompt, VisualError } from "@orbita/visuals";
+import { buildVisualPrompt, clean, kindOfExt, MAX_MEDIA_PER_POST, MAX_UPLOAD_BYTES, MEDIA_TYPES, uploadPathPattern, VisualError } from "@orbita/visuals";
 import { loadPost, postActor } from "@/lib/posts/access";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { limiter } from "@/lib/rate-limit";
 import { audit } from "@/lib/audit";
+import { BUCKET, removeObject, sniffStored, storedSize } from "@/lib/visuals/uploads";
 import { DEFAULT_MONTHLY_CAP, describeVisualError, provider, providerConfigured, readModule, usedThisMonth } from "@/lib/visuals/service";
 
 const Uuid = z.string().uuid();
@@ -70,4 +71,72 @@ export async function createVisualAction(input: unknown): Promise<VisualResult> 
   }
   await audit({ agencyId: v.profile.agency_id, actor: v.userId, action: "visual.requested", entity: "post", entityId: post.value.id, meta: { pages: built.pages, job: job.id } });
   return { ok: true, jobId: job.id };
+}
+
+// ---- Files made outside Orbita, uploaded onto a post -------------------------------------------------------------------
+
+export type UploadResult = { ok: true; path?: string; token?: string } | { ok: false; error: string };
+const failU = (error: string): UploadResult => ({ ok: false, error });
+
+/**
+ * Step 1 of an upload: staff ask for permission to send one file to one post. The server checks who, which post, the declared
+ * type and size, and how many files the post already has, then issues a one-time signed upload URL for a path it chose.
+ */
+export async function createUploadUrlAction(input: unknown): Promise<UploadResult> {
+  const p = z.object({ postId: Uuid, name: z.string().trim().min(1).max(200), size: z.number().int().min(1), type: z.string().max(60) }).safeParse(input);
+  if (!p.success) return failU("bad_request");
+  const media = MEDIA_TYPES[p.data.type]; if (!media) return failU("bad_type");
+  if (p.data.size > MAX_UPLOAD_BYTES) return failU("too_big");
+  const a = await postActor(); if (!a.ok) return failU(a.error);
+  if (!a.value.isStaff) return failU("forbidden");
+  if (!(await limiter("media-upload", 40, 10 * 60_000).hit(a.value.userId)).allowed) return failU("rate_limited");
+  const post = await loadPost(a.value, p.data.postId); if (!post.ok) return failU(post.error);
+  const admin = supabaseAdmin();
+  const { count } = await admin.from("post_media").select("id", { count: "exact", head: true }).eq("post_id", post.value.id);
+  if ((count ?? 0) >= MAX_MEDIA_PER_POST) return failU("too_many");
+  const path = `${post.value.client_id}/${post.value.id}/upload-${randomUUID()}.${media.ext}`;
+  const { data, error } = await admin.storage.from(BUCKET).createSignedUploadUrl(path);
+  if (error || !data?.token) return failU("failed");
+  return { ok: true, path, token: data.token };
+}
+
+/**
+ * Step 2: the browser has sent the file. The server checks that the object exists, is not too big, and really is an
+ * allowed image or video (by its first bytes, never by the name or declared type). Anything else is deleted. Then it records the file.
+ */
+export async function finalizeUploadAction(input: unknown): Promise<UploadResult> {
+  const p = z.object({ postId: Uuid, path: z.string().max(300), name: z.string().trim().max(200).optional() }).safeParse(input);
+  if (!p.success) return failU("bad_request");
+  const a = await postActor(); if (!a.ok) return failU(a.error);
+  if (!a.value.isStaff) return failU("forbidden");
+  const post = await loadPost(a.value, p.data.postId); if (!post.ok) return failU(post.error);
+  if (!uploadPathPattern(post.value.client_id, post.value.id).test(p.data.path)) return failU("bad_request"); // only paths this server issued for this post
+  const size = await storedSize(p.data.path);
+  if (size == null) return failU("failed");
+  const ext = size <= MAX_UPLOAD_BYTES ? await sniffStored(p.data.path) : null;
+  if (!ext) { await removeObject(p.data.path); return failU("invalid_file"); }
+  const admin = supabaseAdmin();
+  const { count } = await admin.from("post_media").select("id", { count: "exact", head: true }).eq("post_id", post.value.id);
+  const page = Math.min(MAX_MEDIA_PER_POST, (count ?? 0) + 1);
+  const name = clean(p.data.name ?? "", 120) || null;
+  const { error } = await admin.from("post_media").insert({ post_id: post.value.id, client_id: post.value.client_id, path: p.data.path, page, kind: kindOfExt(ext), source: "uploaded", uploaded_by: a.value.userId, name });
+  if (error && error.code !== "23505") { await removeObject(p.data.path); return failU("failed"); }
+  await audit({ agencyId: a.value.profile.agency_id, actor: a.value.userId, action: "media.uploaded", entity: "post", entityId: post.value.id, meta: { kind: kindOfExt(ext), bytes: size } });
+  return { ok: true };
+}
+
+/** Remove one uploaded or generated file from a post. Staff only; the file and its row go together. */
+export async function deleteMediaAction(input: unknown): Promise<VisualResult> {
+  const p = z.object({ mediaId: Uuid }).safeParse(input);
+  if (!p.success) return fail("bad_request");
+  const a = await postActor(); if (!a.ok) return fail(a.error);
+  if (!a.value.isStaff) return fail("forbidden");
+  if (!(await limiter("media-delete", 60, 10 * 60_000).hit(a.value.userId)).allowed) return fail("rate_limited");
+  const { data: row } = await a.value.sb.from("post_media").select("id, path, post_id, client_id").eq("id", p.data.mediaId).maybeSingle(); // RLS: only media this person can see
+  if (!row) return fail("not_found");
+  await removeObject(row.path);
+  const { error } = await supabaseAdmin().from("post_media").delete().eq("id", row.id);
+  if (error) return fail("failed");
+  await audit({ agencyId: a.value.profile.agency_id, actor: a.value.userId, action: "media.deleted", entity: "post", entityId: row.post_id });
+  return { ok: true };
 }

@@ -1,4 +1,17 @@
-# Visual creation (Moda)
+# Visuals: make them outside, or with Moda
+
+Two ways to get a post's images and videos:
+1. **Create outside (default, free):** Orbita gives ready-to-paste prompts and briefs; you make the files in your own tools from your reference image and upload them back onto the post.
+2. **Moda (optional module):** one-click AI design inside Orbita. See the second half of this page.
+
+## Create outside
+On carousel, static and reel posts, staff see a **Create outside** card:
+- Tabs for **Midjourney**, **ChatGPT image**, **Video** (Higgsfield, Kling, Runway, Veo) and **Canva / Figma**. Each tab has one block per image, slide or clip with a Copy button, plus Copy all.
+- The prompts are built in the browser from the post's slides, brief or script, the brand's colors/fonts/language and the client's reference visuals (captions and kinds; "avoid" becomes a negative line). Text that must appear on the image is given verbatim. The client's reference images are shown as thumbnails to download and attach in your tool. A notes box (kept in the browser only) adds your own direction to every prompt.
+- **Refine with the agent** rewrites the prompts of the current tab more vividly (one model call, no tools; staff only, rate limited, counted against the client's daily agent allowance, nothing is stored).
+- **Finished files:** upload PNG/JPG/WebP images and MP4/MOV videos (50 MB each, 12 per post). The browser sends the file straight to private storage with a one-time signed URL issued by the server; the server then checks the file's first bytes (not its name or declared type), deletes anything that isn't an allowed image/video, and records it. Staff can remove files; clients see them read-only in their portal for approval. Needs migration `0020_post_media_uploads.sql`.
+
+# Moda module
 
 Creates post images from carousel and static post drafts with [Moda](https://moda.app). It is an optional module: **off by default, switched on per client by an agency admin**.
 

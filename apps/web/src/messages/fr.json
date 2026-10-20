@@ -1465,6 +1465,76 @@
       "busy": "Un visuel est déjà en cours de création pour cette publication.",
       "unsupported": "Les visuels ne peuvent être créés que pour les carrousels et les publications statiques.",
       "no_content": "Ajoutez d'abord les slides ou le brief visuel."
+    },
+    "kit": {
+      "title": "Créer en dehors d'Orbita",
+      "intro": "Copiez un prompt, créez l'image ou la vidéo dans votre outil à partir de votre référence, puis téléversez le résultat dans « Fichiers terminés ».",
+      "referencesTitle": "Vos images de référence",
+      "referencesHint": "Téléchargez-les et joignez-les dans votre outil. Ajoutez-en dans Image de marque, Visuels de référence.",
+      "noReferences": "Aucune image de référence pour ce client pour l'instant.",
+      "download": "Télécharger",
+      "notesLabel": "Notes de référence pour cette publication (facultatif)",
+      "notesPlaceholder": "Par exemple : même lumière chaude que la référence, table en bois, vue du dessus",
+      "notesHint": "Ajoutées à chaque prompt ci-dessous. Conservées uniquement dans ce navigateur.",
+      "tabs": {
+        "midjourney": "Midjourney",
+        "gptImage": "ChatGPT image",
+        "video": "Vidéo",
+        "layout": "Canva / Figma"
+      },
+      "hint": {
+        "midjourney": "Prompts courts, un par image. Ajoutez votre référence avec --sref.",
+        "gptImage": "Prompts en langage naturel. Joignez d'abord votre image de référence.",
+        "video": "Un prompt par clip, plus un style maître à coller dans chacun. Partez de votre image de référence pour chaque clip.",
+        "layout": "Un brief de mise en page à réaliser à la main : texte, hiérarchie, tailles et couleurs de la marque."
+      },
+      "copy": "Copier",
+      "copyAll": "Tout copier",
+      "copied": "Copié",
+      "refine": "Affiner avec l'agent",
+      "refining": "Affinage…",
+      "refined": "Affiné par l'agent",
+      "unsupported": "Les prompts sont disponibles pour les carrousels, les publications statiques et les reels.",
+      "noContent": "Ajoutez d'abord les slides, le brief visuel ou le script.",
+      "errors": {
+        "failed": "Impossible d'affiner les prompts. Veuillez réessayer.",
+        "bad_request": "Requête invalide.",
+        "forbidden": "Vous n'avez pas la permission de faire cela.",
+        "unauthorized": "Veuillez vous reconnecter.",
+        "not_found": "Introuvable.",
+        "rate_limited": "Trop de requêtes. Réessayez dans un instant.",
+        "not_configured": "L'agent n'est pas encore configuré.",
+        "daily_cap": "L'allocation d'aujourd'hui de l'agent est épuisée. Elle se renouvelle demain.",
+        "model_error": "L'agent est indisponible. Veuillez réessayer.",
+        "unsupported": "Les prompts sont disponibles pour les carrousels, les publications statiques et les reels.",
+        "no_content": "Ajoutez d'abord les slides, le brief visuel ou le script."
+      }
+    },
+    "media": {
+      "title": "Fichiers terminés",
+      "upload": "Téléverser des fichiers",
+      "uploading": "Téléversement de {name}…",
+      "limits": "Images PNG, JPG ou WebP et vidéos MP4 ou MOV, 50 Mo maximum chacune, 12 fichiers par publication. Compressez d'abord les vidéos plus longues.",
+      "empty": "Aucun fichier pour l'instant. Téléversez les images et vidéos que vous avez créées; le client les verra ici.",
+      "emptyClient": "Aucun fichier pour l'instant.",
+      "download": "Télécharger",
+      "remove": "Retirer",
+      "confirmDelete": "Retirer ce fichier ?",
+      "image": "Image téléversée",
+      "video": "Vidéo téléversée",
+      "errors": {
+        "failed": "Une erreur est survenue. Veuillez réessayer.",
+        "bad_request": "Requête invalide.",
+        "bad_type": "Seuls les fichiers PNG, JPG, WebP, MP4 et MOV peuvent être téléversés.",
+        "too_big": "Ce fichier dépasse 50 Mo.",
+        "too_many": "Cette publication a déjà 12 fichiers.",
+        "invalid_file": "Ce fichier n'est pas une image ou une vidéo valide.",
+        "upload_failed": "Le téléversement n'est pas terminé. Veuillez réessayer.",
+        "forbidden": "Vous n'avez pas la permission de faire cela.",
+        "unauthorized": "Veuillez vous reconnecter.",
+        "not_found": "Introuvable.",
+        "rate_limited": "Trop de requêtes. Réessayez dans un instant."
+      }
     }
   }
 }

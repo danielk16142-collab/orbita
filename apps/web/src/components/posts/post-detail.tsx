@@ -10,6 +10,10 @@ import { PostEditor } from "./post-editor";
 import { NETWORK_LABEL } from "./shared";
 import { VisualPanel, type VisualJob } from "@/components/visuals/visual-panel";
 import { readModule, usedThisMonth } from "@/lib/visuals/service";
+import { PostKit, type KitRef } from "@/components/visuals/post-kit";
+import { MediaPanel, type MediaItem } from "@/components/visuals/media-panel";
+import { loadReferences } from "@/lib/references";
+import type { BrandInfo } from "@orbita/visuals";
 
 /** One post in full: idea, script/slides/brief, caption, status actions, comments. Staff also get the editor. */
 export async function PostDetail({ locale, id, portal }: { locale: string; id: string; portal: boolean }) {
@@ -41,6 +45,17 @@ export async function PostDetail({ locale, id, portal }: { locale: string; id: s
       visualJob = { id: j.id, status: j.status, pages: j.pages, errorCode: j.error_code, images };
     }
   }
+  // "Create outside": prompts for making images and videos in other tools, built in the browser from the post and the brand (staff only).
+  const kitFormat = !portal && ["carousel", "static", "reel"].includes(post.type);
+  let kitBrand: BrandInfo | null = null; let kitRefs: KitRef[] = [];
+  if (kitFormat) {
+    const { data: c } = await s.sb.from("clients").select("name, primary_color, accent_color, palette, font, body_font").eq("id", post.client_id).maybeSingle();
+    if (c) kitBrand = { name: c.name, language: (["en", "fr", "es"].includes(post.language) ? post.language : "en") as "en" | "fr" | "es", primary: c.primary_color, accent: c.accent_color, palette: Array.isArray(c.palette) ? c.palette : [], headingFont: c.font, bodyFont: c.body_font };
+    kitRefs = (await loadReferences(s.sb, post.client_id)).map((r) => ({ kind: r.kind, caption: r.caption, url: r.url }));
+  }
+  // Files uploaded onto the post (made outside Orbita), visible to staff and to the client.
+  const { data: uploaded } = await s.sb.from("post_media").select("id, path, kind, name, width, height").eq("post_id", post.id).eq("source", "uploaded").order("created_at");
+  const mediaItems: MediaItem[] = (await Promise.all((uploaded ?? []).map(async (m) => ({ id: m.id, kind: m.kind as "image" | "video", name: m.name, width: m.width, height: m.height, url: (await s.sb.storage.from("post-media").createSignedUrl(m.path, 3600)).data?.signedUrl ?? "" })))).filter((m) => m.url);
   const visualsUsed = mod?.enabled && !portal ? await usedThisMonth(post.client_id) : 0;
   const arr = (v: unknown) => (Array.isArray(v) ? (v as Record<string, string>[]) : []);
 
@@ -85,9 +100,13 @@ export async function PostDetail({ locale, id, portal }: { locale: string; id: s
         </section>
       )}
 
+      {kitBrand && <PostKit postId={post.id} post={{ type: post.type, content: post.content }} brand={kitBrand} refs={kitRefs} />}
+
       {mod?.enabled && (!portal || (visualJob && visualJob.images.length > 0)) && (
         <VisualPanel postId={post.id} canCreate={!portal} initial={visualJob} used={visualsUsed} cap={mod.monthlyCap} />
       )}
+
+      {(!portal || mediaItems.length > 0) && <MediaPanel postId={post.id} canEdit={!portal} items={mediaItems} />}
 
       {(post.caption || hashtags) && (
         <section className="card" style={{ marginTop: "1.25rem" }}>

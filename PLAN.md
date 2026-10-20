@@ -257,6 +257,9 @@ Built: on "Create post", the Details step suggests ideas for the chosen format a
 ## 7.6 Visual creation module (Moda)
 Optional per-client module: "Create visual" on carousel and static posts through Moda's REST API, images stored privately and shown in the post and the client portal. Off by default, admin switch per client, monthly cap, audited. See `docs/visuals.md`. Needs `MODA_API_KEY` and migration 0019; live calls untested until a key exists.
 
+## 7.7 Visuals outside Orbita
+"Create outside" card (prompts for Midjourney, ChatGPT image, video tools and Canva/Figma, built from the post, brand and reference visuals; optional agent refinement) and uploads of the finished images/videos onto the post for client approval. Migration 0020, CSP `media-src` for video. See `docs/visuals.md`.
+
 ## 8. Open items
 - Style reference and Orbita visual identity (logo integrated: sidebar, phone bar, sign-in, favicon, emails).
 - Client logos: the upload stays in Branding/Settings, but the portal sidebar now shows the Orbita logo + business name. Reuse the uploaded logo later (reports, emails, portal home header).
