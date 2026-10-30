@@ -15,3 +15,10 @@ The Python tools were ported to TypeScript in `packages/content/src/ig/` (hooks,
 - **Agent**: non-strict tools `score_hooks` and `lint_caption`, reel/caption/"write like a person" rules in the system prompt, and agent post drafts are cleaned when accepted (`proposalToOps`).
 - Heuristics are tuned for English; for es/fr only format and typography checks are reliable (the card says so).
 - No database changes in this phase.
+
+## In the app (competitors: what's working)
+Port of `/ig-viral` and `swipe.py` (`packages/content/src/ig/swipe.ts`): each recorded competitor post is ranked by how many times it beat that account's own median (views, else likes+comments+shares; no baseline with fewer than 3 comparable posts), and the hook formula is named from the 26 formulas.
+
+- Table `competitor_posts` (migration `0021_competitor_posts.sql`, RLS like `competitor_analyses`: anyone with access to the client reads/adds, only staff delete).
+- Data is entered by hand (one post with its numbers, or several pasted as `views | likes | opening line`); links are validated but never opened. The `source` column leaves room for Meta Business Discovery or a scraper later (not built).
+- UI: "What's working" on each competitor page and a swipe file on the competitors list; **Make our version** opens the agent chat with a prepared request (same structure, our own words and approved claims, hooks scored with `score_hooks`).

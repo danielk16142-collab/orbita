@@ -137,3 +137,40 @@ describe("post review and cleaning", () => {
   });
   it("leaves unknown content untouched", () => expect(mapContentText("reel", { nope: 1 }, (t) => t + "!")).toEqual({ nope: 1 }));
 });
+
+import { parseWinsText, rankWins, swipeMarkdown, topFormulas } from "../index";
+
+describe("competitor wins (swipe)", () => {
+  const mk = (id: string, comp: string, hook: string, views: number | null, likes: number | null = null) => ({ id, competitorId: comp, hook, views, likes });
+  const posts = [
+    mk("1", "a", "$18,000 is what one missing clause cost me.", 200000), mk("2", "a", "Meh update", 10000), mk("3", "a", "Another post", 12000), mk("4", "a", "Third", 8000),
+    mk("5", "b", "Only post of b", 50000), mk("6", "b", "No numbers at all", null, null),
+  ];
+  const r = rankWins(posts);
+  it("ranks by multiple of the account's own median", () => {
+    expect(r[0].id).toBe("1");
+    expect(r[0].baseline).toBe(11000);
+    expect(r[0].multiple).toBe(18.2);
+    expect(r[0].formula?.name).toBe("Cost Confession");
+  });
+  it("gives no baseline with fewer than three comparable posts, and skips posts without numbers", () => {
+    const b = r.find((x) => x.id === "5")!;
+    expect(b.multiple).toBeNull();
+    expect(r.some((x) => x.id === "6")).toBe(false);
+    expect(r.indexOf(b)).toBeGreaterThan(r.findIndex((x) => x.id === "1"));
+  });
+  it("falls back to engagement when views are missing", () => {
+    const e = rankWins([mk("x", "c", "h", null, 500), mk("y", "c", "h2", null, 100), mk("z", "c", "h3", null, 120)]);
+    expect(e[0].metric).toBe("engagement");
+    expect(e[0].multiple).toBe(4.2);
+  });
+  it("summarises formulas and writes a swipe file", () => {
+    expect(topFormulas(r)[0].name).toBe("Cost Confession");
+    expect(swipeMarkdown(r, { a: "Rival" })).toMatch(/\*\*18.2x\*\* Rival: "\$18,000/);
+  });
+  it("parses pasted lines with K/M numbers, tabs or pipes, and plain hooks", () => {
+    expect(parseWinsText("120K | 4,300 | I lost it all\n1.2M\t30K\tStop doing this\n# skip\nJust a hook")).toEqual([
+      { hook: "I lost it all", views: 120000, likes: 4300 }, { hook: "Stop doing this", views: 1200000, likes: 30000 }, { hook: "Just a hook", views: null, likes: null },
+    ]);
+  });
+});

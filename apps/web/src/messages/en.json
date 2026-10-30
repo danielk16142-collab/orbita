@@ -492,7 +492,9 @@
       "recommend": "Based on our results, the audit and the strategy, what are the three most important things to do next?",
       "draft": "Write a {format} for {where}.",
       "draftAbout": "Write a {format} for {where} about: {idea}",
-      "competitor": "Update our content strategy using the analysis of {name}: what to borrow, what to avoid and where we can stand out."
+      "competitor": "Update our content strategy using the analysis of {name}: what to borrow, what to avoid and where we can stand out.",
+      "winner": "Write a reel for us in the same structure as this competitor hook: \"{hook}\". Do not copy their words, facts or numbers: use our own voice, our offer and only approved claims. First score 3 hook options with score_hooks.",
+      "winnerFormula": "Write a reel for us in the same structure as this competitor hook: \"{hook}\" (formula: {formula}). Do not copy their words, facts or numbers: use our own voice, our offer and only approved claims. First score 3 hook options with score_hooks."
     },
     "asksButton": {
       "strategy": "Build a strategy",
@@ -1596,6 +1598,52 @@
       "forbidden": "You don't have permission to do that.",
       "rate_limited": "Too many attempts. Try again later.",
       "invalid_content": "The cleaned text is not valid. Edit the post by hand."
+    }
+  },
+  "wins": {
+    "title": "What's working",
+    "intro": "Videos and posts of this competitor that did well. Each is ranked by how many times it beat the account's own median.",
+    "swipeTitle": "Swipe file: what is working in your niche",
+    "swipeIntro": "The best recorded posts across all competitors. Use “Make our version” to get a script in your own words and facts.",
+    "empty": "Nothing recorded yet. Add a post that is doing well and Orbita will rank it.",
+    "topFormulas": "Formulas behind the winners",
+    "ofMedian": "of this account's median ({median} {metric})",
+    "noBaseline": "{metric} (add 3 or more posts of this account to compare)",
+    "metric": {
+      "views": "views",
+      "engagement": "interactions"
+    },
+    "views": "views",
+    "likes": "likes",
+    "comments": "comments",
+    "shares": "shares",
+    "open": "Open",
+    "makeOurs": "Make our version",
+    "remove": "Remove",
+    "removeConfirm": "Remove this post from the list?",
+    "addOne": "Add a post",
+    "addBulk": "Paste several",
+    "network": "Network",
+    "hook": "Opening line (what is said or shown first)",
+    "hookPlaceholder": "$18,000 is what one missing clause cost me.",
+    "url": "Link to the post (optional)",
+    "transcript": "Transcript or description (optional)",
+    "transcriptPlaceholder": "What happens in the video, in your own words",
+    "bulkLabel": "One post per line",
+    "bulkPlaceholder": "120K | 4,300 | I lost $18,000 on one missing clause\\n1.2M | 30K | Stop using templates",
+    "hint": "Copy the numbers you can see on the post. Orbita never opens the link and never stores anything else. Format for several: views | likes | opening line.",
+    "save": "Save",
+    "close": "Close",
+    "saved": "{count, plural, one {# post saved} other {# posts saved}}",
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "bad_request": "Please check the fields and try again.",
+      "bad_url": "The link must start with https://.",
+      "nothing_found": "No lines found. Use: views | likes | opening line.",
+      "forbidden": "You don't have permission to do that.",
+      "not_set_up": "This feature needs a database update. Ask your admin to apply migration 0021.",
+      "rate_limited": "Too many attempts. Try again later.",
+      "unauthorized": "Please sign in again."
     }
   }
 }

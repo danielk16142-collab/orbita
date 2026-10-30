@@ -492,7 +492,9 @@
       "recommend": "Según nuestros resultados, la auditoría y la estrategia, ¿cuáles son las tres cosas más importantes por hacer ahora?",
       "draft": "Escribe un {format} para {where}.",
       "draftAbout": "Escribe un {format} para {where} sobre: {idea}",
-      "competitor": "Actualiza nuestra estrategia de contenido con el análisis de {name}: qué tomar, qué evitar y cómo podemos destacar."
+      "competitor": "Actualiza nuestra estrategia de contenido con el análisis de {name}: qué tomar, qué evitar y cómo podemos destacar.",
+      "winner": "Escribe un reel para nosotros con la misma estructura de este gancho de un competidor: \"{hook}\". No copies sus palabras, datos ni cifras: usa nuestra voz, nuestra oferta y solo afirmaciones aprobadas. Primero puntúa 3 opciones de gancho con score_hooks.",
+      "winnerFormula": "Escribe un reel para nosotros con la misma estructura de este gancho de un competidor: \"{hook}\" (fórmula: {formula}). No copies sus palabras, datos ni cifras: usa nuestra voz, nuestra oferta y solo afirmaciones aprobadas. Primero puntúa 3 opciones de gancho con score_hooks."
     },
     "asksButton": {
       "strategy": "Crear una estrategia",
@@ -1596,6 +1598,52 @@
       "forbidden": "No tienes permiso para hacer eso.",
       "rate_limited": "Demasiados intentos. Inténtalo más tarde.",
       "invalid_content": "El texto limpio no es válido. Edita el post a mano."
+    }
+  },
+  "wins": {
+    "title": "Lo que funciona",
+    "intro": "Videos y posts de este competidor que fueron bien. Cada uno se ordena por cuántas veces superó la mediana de la propia cuenta.",
+    "swipeTitle": "Swipe file: lo que funciona en tu nicho",
+    "swipeIntro": "Los mejores posts registrados de todos los competidores. Usa “Hacer nuestra versión” para obtener un guion con tus palabras y tus datos.",
+    "empty": "Todavía no hay nada registrado. Agrega un post que le esté yendo bien y Orbita lo ordenará.",
+    "topFormulas": "Fórmulas detrás de los ganadores",
+    "ofMedian": "de la mediana de esta cuenta ({median} {metric})",
+    "noBaseline": "{metric} (agrega 3 o más posts de esta cuenta para comparar)",
+    "metric": {
+      "views": "vistas",
+      "engagement": "interacciones"
+    },
+    "views": "vistas",
+    "likes": "me gusta",
+    "comments": "comentarios",
+    "shares": "compartidos",
+    "open": "Abrir",
+    "makeOurs": "Hacer nuestra versión",
+    "remove": "Quitar",
+    "removeConfirm": "¿Quitar este post de la lista?",
+    "addOne": "Agregar un post",
+    "addBulk": "Pegar varios",
+    "network": "Red",
+    "hook": "Primera línea (lo que se dice o se ve primero)",
+    "hookPlaceholder": "$18,000 es lo que me costó una cláusula que faltaba.",
+    "url": "Enlace al post (opcional)",
+    "transcript": "Transcripción o descripción (opcional)",
+    "transcriptPlaceholder": "Qué pasa en el video, con tus palabras",
+    "bulkLabel": "Un post por línea",
+    "bulkPlaceholder": "120K | 4,300 | Perdí $18,000 por una cláusula que faltaba\\n1.2M | 30K | Deja de usar plantillas",
+    "hint": "Copia las cifras que ves en el post. Orbita nunca abre el enlace ni guarda nada más. Formato para varios: vistas | me gusta | primera línea.",
+    "save": "Guardar",
+    "close": "Cerrar",
+    "saved": "{count, plural, one {# post guardado} other {# posts guardados}}",
+    "errors": {
+      "generic": "Algo salió mal. Inténtalo de nuevo.",
+      "bad_request": "Revisa los campos e inténtalo de nuevo.",
+      "bad_url": "El enlace debe empezar con https://.",
+      "nothing_found": "No se encontraron líneas. Usa: vistas | me gusta | primera línea.",
+      "forbidden": "No tienes permiso para hacer eso.",
+      "not_set_up": "Esta función necesita una actualización de la base de datos. Pide a tu administrador que aplique la migración 0021.",
+      "rate_limited": "Demasiados intentos. Inténtalo más tarde.",
+      "unauthorized": "Vuelve a iniciar sesión."
     }
   }
 }

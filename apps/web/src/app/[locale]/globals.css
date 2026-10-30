@@ -749,3 +749,10 @@ ul.plain.api-key-list li { display: flex; flex-wrap: wrap; justify-content: spac
 .review-beats code, .review-beats small { display: inline; font-size: .8em; } .review-flag { color: #8a1c1c; font-style: normal; font-size: .85em; }
 .feed-box { border: 2px dashed var(--line); border-radius: var(--radius); padding: .6rem .8rem; margin: .25rem 0 .5rem; overflow-wrap: anywhere; }
 .review-clean { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin: .5rem 0; }
+
+/* Competitor wins */
+.wins { display: grid; gap: .75rem; padding: 0; margin: .5rem 0; list-style: none; }
+.win-head { display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; }
+.win-multiple { font-size: 1.6rem; line-height: 1; }
+.win-hook { font-weight: 600; margin: .4rem 0; overflow-wrap: anywhere; }
+.win-form { margin-top: 1rem; display: grid; gap: .75rem; }
