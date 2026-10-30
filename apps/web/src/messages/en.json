@@ -1649,6 +1649,22 @@
       "forbidden": "You don't have permission to do that.",
       "rate_limited": "Too many attempts. Try again later.",
       "invalid_content": "The cleaned text is not valid. Edit the post by hand."
+    },
+    "rewrite": {
+      "button": "Rewrite the caption to sound more human",
+      "working": "Rewriting…",
+      "suggestion": "Suggested caption",
+      "scores": "score {before} → {after}",
+      "accept": "Use this caption",
+      "discard": "Discard",
+      "again": "Try again",
+      "errors": {
+        "no_caption": "This post has no caption yet.",
+        "not_configured": "The agent is not set up yet.",
+        "daily_cap": "The daily limit for this client was reached.",
+        "model_error": "The agent could not rewrite it. Try again.",
+        "not_allowed": "This post cannot be edited now."
+      }
     }
   },
   "wins": {

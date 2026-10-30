@@ -174,3 +174,16 @@ describe("competitor wins (swipe)", () => {
     ]);
   });
 });
+
+import { weakSignals } from "../index";
+describe("humanizer calibration", () => {
+  it("plain text with no stock words or machine characters is never 'flagged', only 'review'", () => {
+    const t = "A website is the start. Not the finish.\n\nWebsite > capture the lead > AI replies instantly > automation follows up > booking > growth.\n\nMost businesses stop at step one. Then wonder why a nice site doesn't bring clients.\n\nWhich link in this chain is weakest in your business? Comment AUDIT and I'll look at yours.";
+    const r = detectAi(t);
+    expect(r.verdict).not.toBe("FLAGGED");
+    expect(weakSignals(r).length).toBeGreaterThan(0);
+  });
+  it("text full of stock words stays flagged", () => {
+    expect(detectAi("In today's fast-paced world, it's not just a tool — it's a game-changer. We delve into the tapestry of marketing, and leverage seamless solutions.").verdict).toBe("FLAGGED");
+  });
+});

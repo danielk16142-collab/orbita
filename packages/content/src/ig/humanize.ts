@@ -174,5 +174,20 @@ export function detectAi(text: string): AiReport {
   const checks = { BURSTINESS: burst, SPECIFICITY: spec, "SLOP DENSITY": slop, FINGERPRINT: finger, VOICE: voice };
   const scores = AI_CHECKS.map((c) => checks[c].score);
   const overall = mean(scores) * 0.6 + Math.min(...scores) * 0.4;
-  return { checks, humanScore: Math.round(overall * 10) / 10, verdict: overall >= 70 && Math.min(...scores) >= 55 ? "PASS" : overall >= 50 ? "REVIEW" : "FLAGGED" };
+  let verdict: AiReport["verdict"] = overall >= 70 && Math.min(...scores) >= 55 ? "PASS" : overall >= 50 ? "REVIEW" : "FLAGGED";
+  // Rhythm and specifics are style signals, not proof. With no stock words and no machine characters the text is not "AI-sounding", just improvable.
+  if (verdict === "FLAGGED" && checks["SLOP DENSITY"].score >= 90 && checks.FINGERPRINT.score >= 90) verdict = "REVIEW";
+  return { checks, humanScore: Math.round(overall * 10) / 10, verdict };
+}
+
+/** What to improve, in plain words, for the weakest signals (used to guide a rewrite). */
+export function weakSignals(r: AiReport): string[] {
+  const out: string[] = [];
+  const c = r.checks;
+  if (c.BURSTINESS.score < 55) out.push("sentences are all about the same length: mix very short ones with longer ones");
+  if (c.SPECIFICITY.score < 55) out.push("little that is concrete: use specific wording already present in the draft or in the approved facts, never invent numbers or names");
+  if (c["SLOP DENSITY"].score < 70) out.push("stock vocabulary: replace with plain words");
+  if (c.FINGERPRINT.score < 70) out.push("machine typography: no long dashes or curly quotes");
+  if (c.VOICE.score < 60) out.push("flat voice: use contractions and speak in first person where it fits");
+  return out;
 }

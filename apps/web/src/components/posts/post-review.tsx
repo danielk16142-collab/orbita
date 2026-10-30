@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { reviewPost, timecode, FEED_CUT, type ReviewInput } from "@orbita/content";
 import { CleanTextButton } from "./clean-text-button";
+import { HumanizeRewrite } from "./humanize-rewrite";
 
 const bar = (score: number) => <span className="review-bar" aria-hidden="true"><span style={{ width: `${Math.max(0, Math.min(100, score))}%` }} /></span>;
 const tone = (v: string) => (["STRONG", "PASS", "READY", "OK"].includes(v) ? "ok" : ["WEAK", "FLAGGED", "FIX"].includes(v) ? "bad" : "warn");
@@ -58,6 +59,7 @@ export async function PostReview({ postId, post }: { postId: string; post: Revie
           <div className="review-checks">{(Object.keys(r.ai.checks) as (keyof typeof r.ai.checks)[]).map((k) => <span key={k} title={r.ai!.checks[k].detail}><small>{t(`aiChecks.${k}`)}</small>{bar(r.ai!.checks[k].score)}</span>)}</div>
           <p className="stat-vs">{r.artefacts > 0 ? t("artefacts", { count: r.artefacts }) : t("nothingToClean")}</p>
           <CleanTextButton postId={postId} disabled={r.artefacts === 0} />
+          {post.caption && r.ai.verdict !== "PASS" && <HumanizeRewrite postId={postId} caption={post.caption} />}
           <p className="stat-vs">{t("cleanNote")}</p>
         </div>
       )}
