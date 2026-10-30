@@ -6,6 +6,7 @@ import type { Connector, ConnectorNetwork } from "./types";
 export * from "./types";
 export * from "./state";
 export { readJson } from "./http";
+export * from "./apify";
 export { instagramConnector, tiktokConnector, fakeConnector };
 
 type Env = Record<string, string | undefined>;

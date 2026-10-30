@@ -3,7 +3,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { COMPETITOR_NETWORKS } from "@/lib/competitors";
-import { addCompetitorPostAction, addCompetitorPostsBulkAction, removeCompetitorPostAction } from "@/lib/competitor-posts-actions";
+import { addCompetitorPostAction, addCompetitorPostsBulkAction, fetchCompetitorPostsAction, removeCompetitorPostAction } from "@/lib/competitor-posts-actions";
 
 const LABEL: Record<string, string> = { instagram: "Instagram", tiktok: "TikTok", linkedin: "LinkedIn", youtube: "YouTube", facebook: "Facebook" };
 
@@ -56,4 +56,34 @@ export function RemoveWinButton({ clientId, id }: { clientId?: string; id: strin
   const router = useRouter();
   const [pending, start] = useTransition();
   return <button type="button" className="btn ghost small" disabled={pending} onClick={() => { if (confirm(t("removeConfirm"))) start(async () => { const r = await removeCompetitorPostAction({ clientId, id }); if (r.ok) router.refresh(); }); }}>{t("remove")}</button>;
+}
+
+/** Fetch the competitor's latest public reels/videos (Apify). Takes up to two minutes and costs a few cents per run. */
+export function FetchPostsButtons({ clientId, competitorId, networks }: { clientId?: string; competitorId: string; networks: ("instagram" | "tiktok")[] }) {
+  const t = useTranslations("wins");
+  const router = useRouter();
+  const [busy, setBusy] = useState<string | null>(null);
+  const [note, setNote] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  if (!networks.length) return null;
+  async function run(network: "instagram" | "tiktok") {
+    if (!window.confirm(t("fetchConfirm", { network: LABEL[network] }))) return;
+    setBusy(network); setError(null); setNote(null);
+    try {
+      const r = await fetchCompetitorPostsAction({ clientId, competitorId, network });
+      if (!r.ok) setError(t.has(`errors.${r.error}`) ? t(`errors.${r.error}`) : t("errors.generic"));
+      else { setNote(t("fetched", { added: r.added ?? 0, found: r.count ?? 0 })); router.refresh(); }
+    } catch { setError(t("errors.generic")); }
+    finally { setBusy(null); }
+  }
+  return (
+    <div className="fetch-posts">
+      <div className="btn-row">
+        {networks.map((n) => <button key={n} type="button" className="btn ghost" disabled={!!busy} onClick={() => run(n)}>{busy === n ? t("fetching") : t("fetchButton", { network: LABEL[n] })}</button>)}
+      </div>
+      <p className="stat-vs">{t("fetchNote")}</p>
+      {note && <p className="stat-vs" role="status">✓ {note}</p>}
+      {error && <p className="error" role="alert">{error}</p>}
+    </div>
+  );
 }

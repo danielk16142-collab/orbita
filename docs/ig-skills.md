@@ -25,3 +25,6 @@ Port of `/ig-viral` and `swipe.py` (`packages/content/src/ig/swipe.ts`): each re
 
 ## Where the humanizer runs
 Automatically (server-side, on save): agent post drafts when accepted, week-plan captions and ideas when accepted, text saved from the post chat (new post or into a planned post). On demand: the **Clean text** button on the Quality check card. Not touched: text typed by hand in the post editor (only scored by the card) and chat replies that are not saved. Typography and hidden characters are cleaned in every language; the stock-word list is English only.
+
+## Fetching competitor posts (Apify)
+Optional. With `APIFY_TOKEN` set (Vercel env var, never in chat), staff see "Fetch latest Instagram/TikTok posts" on a competitor that has that profile link saved. It runs `apify/instagram-reel-scraper` or `clockworks/tiktok-scraper` for up to 30 public posts (about $0.08 per run; transcripts and downloads are off) and records them with `source = provider`. Only the saved profile link is used; posts already recorded are skipped. The opening line comes from the caption, not the spoken words. Instagram and TikTok terms restrict scraping, so use it for public competitor accounts only, never for client or private data; Apify is a subprocessor (see `docs/compliance/data-map.md`).

@@ -785,3 +785,5 @@ a.idea-card { text-decoration: none; color: inherit; }
 .win-form { margin-top: 1rem; display: grid; gap: .75rem; }
 
 .humanize-rewrite { margin: .5rem 0; } .rewrite-box { margin-top: .6rem; }
+
+.fetch-posts { margin: .75rem 0; }

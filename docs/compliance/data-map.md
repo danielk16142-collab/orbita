@@ -23,6 +23,9 @@
 | Rights requests | `data_requests` | Handle and prove handling of requests | Legal obligation | Requester; agency admins | 3 years after closure | 30-day `due_at` |
 | IP, device data | Vercel/Cloudflare logs | Delivery, security | Legitimate interest | Providers; ops | Per provider (target ≤ 30 days) | Confirm provider log retention |
 
+## Competitor posts fetched through Apify (optional)
+When `APIFY_TOKEN` is set, staff can fetch the latest public posts of a competitor's Instagram/TikTok account. Only the public account name goes to Apify (a subprocessor; processes outside Quebec/EU); public captions, links and counts come back and are stored in `competitor_posts` (`source = provider`), visible to the client's team, deleted with the client or competitor. No client or private data is sent. Add Apify to the subprocessor list before enabling it for a client.
+
 ## Data not collected
 Private messages, passwords for social networks, payment card data (use a payment processor if billing is added), health or other sensitive categories, children's data.
 

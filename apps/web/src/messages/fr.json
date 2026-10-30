@@ -1710,7 +1710,18 @@
       "forbidden": "Vous n'avez pas la permission de faire cela.",
       "not_set_up": "Cette fonction nécessite une mise à jour de la base de données. Demandez à votre administrateur d'appliquer la migration 0021.",
       "rate_limited": "Trop de tentatives. Réessayez plus tard.",
-      "unauthorized": "Veuillez vous reconnecter."
-    }
+      "unauthorized": "Le jeton Apify a été refusé.",
+      "no_token": "La récupération n'est pas configurée (APIFY_TOKEN manquant).",
+      "no_link": "Enregistrez d'abord le lien du profil de ce concurrent pour ce réseau.",
+      "timeout": "Trop long. Réessayez.",
+      "provider_error": "Le fournisseur de données a échoué. Réessayez plus tard.",
+      "bad_response": "Le fournisseur de données a renvoyé quelque chose d'inattendu.",
+      "no_credit": "Votre compte Apify n'a plus de crédit."
+    },
+    "fetchButton": "Récupérer les derniers posts {network}",
+    "fetching": "Récupération… (jusqu'à 2 min)",
+    "fetchConfirm": "Récupérer les derniers posts publics {network} de ce compte ? Cela prend jusqu'à deux minutes et coûte quelques centimes sur votre compte Apify.",
+    "fetched": "{added} nouveaux posts ajoutés ({found} trouvés).",
+    "fetchNote": "Comptes publics uniquement. Environ 0,08 $ pour 30 posts. La première ligne vient de la légende, pas des paroles."
   }
 }

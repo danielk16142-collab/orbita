@@ -5,7 +5,8 @@ import { CompetitorAnalysis, type CompetitorAnalysis as Analysis } from "@orbita
 import { resolveAgentActor } from "@/lib/agent/access";
 import { competitorName, type CompetitorRow } from "@/lib/competitors";
 import { WinsList, WIN_COLS, type WinRow } from "./wins-list";
-import { AddWinForm } from "./wins";
+import { AddWinForm, FetchPostsButtons } from "./wins";
+import { scrapeTargets } from "@/lib/scrape-targets";
 import { AnalyzeButton, CompetitorForm, IdeasPicker, RemoveCompetitorButton, UseInStrategyButton } from "./competitor-actions";
 
 const LABEL: Record<string, string> = { instagram: "Instagram", tiktok: "TikTok", linkedin: "LinkedIn", youtube: "YouTube", facebook: "Facebook", profile: "Profile" };
@@ -112,6 +113,7 @@ export async function CompetitorDetailView({ locale, clientId, staff, competitor
         <h2>{tw("title")}</h2>
         <p className="stat-vs">{tw("intro")}</p>
         <WinsList rows={wins} names={{}} clientId={clientId} staff={staff} winChat={winChat} />
+        {staff && !!process.env.APIFY_TOKEN && <FetchPostsButtons clientId={clientId} competitorId={c.id} networks={Object.keys(scrapeTargets(c.links, c.url)) as ("instagram" | "tiktok")[]} />}
         <AddWinForm clientId={clientId} competitorId={c.id} />
       </section>
 

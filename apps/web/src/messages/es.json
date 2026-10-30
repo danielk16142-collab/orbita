@@ -1710,7 +1710,18 @@
       "forbidden": "No tienes permiso para hacer eso.",
       "not_set_up": "Esta función necesita una actualización de la base de datos. Pide a tu administrador que aplique la migración 0021.",
       "rate_limited": "Demasiados intentos. Inténtalo más tarde.",
-      "unauthorized": "Vuelve a iniciar sesión."
-    }
+      "unauthorized": "Se rechazó el token de Apify.",
+      "no_token": "La descarga no está configurada (falta APIFY_TOKEN).",
+      "no_link": "Guarda primero el enlace del perfil de este competidor en esa red.",
+      "timeout": "Tardó demasiado. Inténtalo de nuevo.",
+      "provider_error": "El proveedor de datos falló. Inténtalo más tarde.",
+      "bad_response": "El proveedor de datos envió algo inesperado.",
+      "no_credit": "Tu cuenta de Apify se quedó sin crédito."
+    },
+    "fetchButton": "Traer últimos posts de {network}",
+    "fetching": "Trayendo… (hasta 2 min)",
+    "fetchConfirm": "¿Traer los últimos posts públicos de {network} de esta cuenta? Tarda hasta dos minutos y cuesta unos centavos en tu cuenta de Apify.",
+    "fetched": "{added} posts nuevos añadidos ({found} encontrados).",
+    "fetchNote": "Solo cuentas públicas. Unos $0.08 por 30 posts. La primera línea sale del caption, no de lo que se dice."
   }
 }
