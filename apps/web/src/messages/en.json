@@ -1536,5 +1536,66 @@
         "rate_limited": "Too many requests. Try again in a moment."
       }
     }
+  },
+  "postReview": {
+    "title": "Quality check",
+    "intro": "Checks before the client sees it. Suggestions only: nothing here blocks you.",
+    "englishOnly": "Word-based scores are tuned for English. For this language only format and typography checks are reliable.",
+    "hooks": "Opening line",
+    "hookScore": "{score}/100",
+    "formula": "Formula: {name}",
+    "weakest": "Weakest: {name}",
+    "noFormula": "No formula matched",
+    "verdict": {
+      "STRONG": "Strong",
+      "OK": "OK",
+      "WEAK": "Weak"
+    },
+    "checks": {
+      "LENGTH": "Length",
+      "SPECIFICITY": "Specific",
+      "STAKES": "Stakes",
+      "FRONTLOAD": "Front-loaded",
+      "ADDRESS": "Aimed at viewer"
+    },
+    "beats": "Reel timing",
+    "beatsSummary": "{words} words · about {seconds}s at {wpm} words/min",
+    "beatsTarget": "target {target}s",
+    "caption": "Caption",
+    "captionVisible": "What the feed shows before “… more”",
+    "captionMore": "… more",
+    "captionFits": "(whole caption fits)",
+    "captionVerdict": {
+      "READY": "Ready",
+      "REVIEW": "Review",
+      "FIX": "Fix"
+    },
+    "ai": "Sounds human?",
+    "aiScore": "{score}/100",
+    "aiVerdict": {
+      "PASS": "Sounds human",
+      "REVIEW": "Review",
+      "FLAGGED": "Sounds like AI"
+    },
+    "aiChecks": {
+      "BURSTINESS": "Rhythm",
+      "SPECIFICITY": "Specifics",
+      "SLOP DENSITY": "Stock words",
+      "FINGERPRINT": "Hidden characters",
+      "VOICE": "Voice"
+    },
+    "artefacts": "{count, plural, one {# machine artefact found (long dashes, curly quotes, hidden characters, stock words).} other {# machine artefacts found (long dashes, curly quotes, hidden characters, stock words).}}",
+    "clean": "Clean text",
+    "cleaning": "Cleaning…",
+    "cleaned": "{count, plural, one {# artefact removed} other {# artefacts removed}}",
+    "nothingToClean": "Nothing to clean",
+    "cleanNote": "Editing an approved post sends it back to draft.",
+    "nothing": "Nothing to check yet.",
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "forbidden": "You don't have permission to do that.",
+      "rate_limited": "Too many attempts. Try again later.",
+      "invalid_content": "The cleaned text is not valid. Edit the post by hand."
+    }
   }
 }

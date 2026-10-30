@@ -5,7 +5,7 @@ import { BRIEF_SECTIONS, CONTENT_FORMATS, DAYS, LOCALES, MEMORY_KINDS, NETWORKS,
 
 const s = (max: number) => z.string().trim().min(1).max(max);
 
-import { hhmm } from "@orbita/content";
+import { cleanPost, hhmm } from "@orbita/content";
 
 export const PlanItemSchema = z.object({
   day: z.enum(DAYS), network: z.enum(NETWORKS), format: s(60), pillar: z.string().trim().max(80),
@@ -94,7 +94,10 @@ export function proposalToOps(target: ProposalTarget, payload: unknown): Op[] {
       }));
     }
     case "post": {
-      const p = PAYLOADS.post.parse(payload);
+      const parsed = PAYLOADS.post.parse(payload);
+      // Agent drafts leave without the machine fingerprint (long dashes, curly quotes, hidden characters, stock words).
+      const cleaned = cleanPost({ type: parsed.format, language: parsed.language, caption: parsed.caption || null, content: parsed.content });
+      const p = { ...parsed, caption: cleaned.caption ?? "", content: (cleaned.content ?? parsed.content) as typeof parsed.content };
       return [{
         op: "insert", table: "posts",
         row: {

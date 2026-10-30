@@ -7,6 +7,7 @@ import { loadPost } from "@/lib/posts/access";
 import { CopyButton } from "./copy-button";
 import { PostActions } from "./post-actions";
 import { PostEditor } from "./post-editor";
+import { PostReview } from "./post-review";
 import { NETWORK_LABEL } from "./shared";
 import { VisualPanel, type VisualJob } from "@/components/visuals/visual-panel";
 import { readModule, usedThisMonth } from "@/lib/visuals/service";
@@ -115,6 +116,8 @@ export async function PostDetail({ locale, id, portal }: { locale: string; id: s
           {hashtags && <p className="stat-vs">{hashtags}</p>}
         </section>
       )}
+
+      {!portal && <PostReview postId={post.id} post={{ type: post.type, language: post.language, caption: post.caption, hashtags: post.hashtags, content: post.content }} />}
 
       <section className="card" style={{ marginTop: "1.25rem" }}>
         <h2>{t("review")}</h2>

@@ -1536,5 +1536,66 @@
         "rate_limited": "Trop de requêtes. Réessayez dans un instant."
       }
     }
+  },
+  "postReview": {
+    "title": "Contrôle qualité",
+    "intro": "Vérifications avant que le client ne voie le post. Ce ne sont que des suggestions : rien ne vous bloque.",
+    "englishOnly": "Les scores basés sur les mots sont réglés pour l'anglais. Dans cette langue, seuls les contrôles de format et de typographie sont fiables.",
+    "hooks": "Première ligne",
+    "hookScore": "{score}/100",
+    "formula": "Formule : {name}",
+    "weakest": "Point faible : {name}",
+    "noFormula": "Aucune formule ne correspond",
+    "verdict": {
+      "STRONG": "Fort",
+      "OK": "Correct",
+      "WEAK": "Faible"
+    },
+    "checks": {
+      "LENGTH": "Longueur",
+      "SPECIFICITY": "Concret",
+      "STAKES": "Enjeu",
+      "FRONTLOAD": "L'essentiel d'abord",
+      "ADDRESS": "Parle au spectateur"
+    },
+    "beats": "Durées du reel",
+    "beatsSummary": "{words} mots · environ {seconds}s à {wpm} mots/min",
+    "beatsTarget": "objectif {target}s",
+    "caption": "Légende",
+    "captionVisible": "Ce que le fil affiche avant « … plus »",
+    "captionMore": "… plus",
+    "captionFits": "(la légende tient en entier)",
+    "captionVerdict": {
+      "READY": "Prêt",
+      "REVIEW": "À revoir",
+      "FIX": "À corriger"
+    },
+    "ai": "Ça sonne humain ?",
+    "aiScore": "{score}/100",
+    "aiVerdict": {
+      "PASS": "Sonne humain",
+      "REVIEW": "À revoir",
+      "FLAGGED": "Sonne comme une IA"
+    },
+    "aiChecks": {
+      "BURSTINESS": "Rythme",
+      "SPECIFICITY": "Précisions",
+      "SLOP DENSITY": "Mots passe-partout",
+      "FINGERPRINT": "Caractères cachés",
+      "VOICE": "Voix"
+    },
+    "artefacts": "{count, plural, one {# trace de machine trouvée (tirets longs, guillemets courbes, caractères cachés, mots passe-partout).} other {# traces de machine trouvées (tirets longs, guillemets courbes, caractères cachés, mots passe-partout).}}",
+    "clean": "Nettoyer le texte",
+    "cleaning": "Nettoyage…",
+    "cleaned": "{count, plural, one {# trace supprimée} other {# traces supprimées}}",
+    "nothingToClean": "Rien à nettoyer",
+    "cleanNote": "Modifier un post approuvé le remet en brouillon.",
+    "nothing": "Rien à vérifier pour l'instant.",
+    "errors": {
+      "generic": "Une erreur est survenue. Réessayez.",
+      "forbidden": "Vous n'avez pas la permission de faire cela.",
+      "rate_limited": "Trop de tentatives. Réessayez plus tard.",
+      "invalid_content": "Le texte nettoyé n'est pas valide. Modifiez le post à la main."
+    }
   }
 }

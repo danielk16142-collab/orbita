@@ -454,3 +454,26 @@ describe("analytics in the agent", () => {
     expect(buildSystemPrompt(base)).toContain("(no connected accounts yet)");
   });
 });
+
+describe("instagram review tools", () => {
+  it("score_hooks ranks hooks and flags a greeting; lint_caption shows the visible window", async () => {
+    const { p } = ports();
+    const r = await runTool("score_hooks", { hooks: ["Hey guys, today I want to talk about proposals.", "$18,000 is what one missing clause cost me."] }, p, fresh());
+    expect(r.isError).toBe(false);
+    const out = JSON.parse(r.content);
+    expect(out.ranked[0].score).toBe(81.4);
+    expect(out.ranked[1].dealbreakers.join(" ")).toMatch(/Greeting/);
+    const l = JSON.parse((await runTool("lint_caption", { caption: "Hello there. #viral #fyp", hashtags: [] }, p, fresh())).content);
+    expect(l.issues.join("\n")).toMatch(/HASHTAGS/);
+    expect((await runTool("score_hooks", { hooks: [] }, p, fresh())).isError).toBe(true);
+  });
+  it("agent post drafts are cleaned of long dashes and stock words when accepted", () => {
+    const ops = proposalToOps("post", {
+      format: "static", week_start: "2026-10-05", day: "mon", network: "instagram", language: "en", pillar: "", idea: "x", caption: "It’s a game-changer — truly seamless.", hashtags: [], suggested_time: "",
+      content: { headline: "A seamless start — now", visual_brief: "Desk", cta: "Save this" },
+    });
+    const row = (ops[0] as unknown as { row: { caption: string; content: { headline: string } } }).row;
+    expect(row.caption).not.toMatch(/—|game-changer|seamless|’/);
+    expect(row.content.headline).not.toMatch(/—|seamless/);
+  });
+});

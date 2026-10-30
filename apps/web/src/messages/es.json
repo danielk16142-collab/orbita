@@ -1536,5 +1536,66 @@
         "rate_limited": "Demasiadas solicitudes. Inténtalo en un momento."
       }
     }
+  },
+  "postReview": {
+    "title": "Revisión de calidad",
+    "intro": "Controles antes de que lo vea el cliente. Solo sugerencias: nada de esto te bloquea.",
+    "englishOnly": "Las puntuaciones basadas en palabras están afinadas para inglés. En este idioma solo son fiables los controles de formato y tipografía.",
+    "hooks": "Primera línea",
+    "hookScore": "{score}/100",
+    "formula": "Fórmula: {name}",
+    "weakest": "Más débil: {name}",
+    "noFormula": "Ninguna fórmula coincide",
+    "verdict": {
+      "STRONG": "Fuerte",
+      "OK": "Aceptable",
+      "WEAK": "Débil"
+    },
+    "checks": {
+      "LENGTH": "Largo",
+      "SPECIFICITY": "Concreto",
+      "STAKES": "Tensión",
+      "FRONTLOAD": "Lo importante primero",
+      "ADDRESS": "Habla al espectador"
+    },
+    "beats": "Tiempos del reel",
+    "beatsSummary": "{words} palabras · unos {seconds}s a {wpm} palabras/min",
+    "beatsTarget": "objetivo {target}s",
+    "caption": "Caption",
+    "captionVisible": "Lo que muestra el feed antes de “… más”",
+    "captionMore": "… más",
+    "captionFits": "(el caption cabe entero)",
+    "captionVerdict": {
+      "READY": "Listo",
+      "REVIEW": "Revisar",
+      "FIX": "Corregir"
+    },
+    "ai": "¿Suena humano?",
+    "aiScore": "{score}/100",
+    "aiVerdict": {
+      "PASS": "Suena humano",
+      "REVIEW": "Revisar",
+      "FLAGGED": "Suena a IA"
+    },
+    "aiChecks": {
+      "BURSTINESS": "Ritmo",
+      "SPECIFICITY": "Datos concretos",
+      "SLOP DENSITY": "Palabras de relleno",
+      "FINGERPRINT": "Caracteres ocultos",
+      "VOICE": "Voz"
+    },
+    "artefacts": "{count, plural, one {# huella de máquina encontrada (rayas largas, comillas curvas, caracteres ocultos, palabras de relleno).} other {# huellas de máquina encontradas (rayas largas, comillas curvas, caracteres ocultos, palabras de relleno).}}",
+    "clean": "Limpiar texto",
+    "cleaning": "Limpiando…",
+    "cleaned": "{count, plural, one {# huella eliminada} other {# huellas eliminadas}}",
+    "nothingToClean": "Nada que limpiar",
+    "cleanNote": "Editar un post aprobado lo devuelve a borrador.",
+    "nothing": "Todavía no hay nada que revisar.",
+    "errors": {
+      "generic": "Algo salió mal. Inténtalo de nuevo.",
+      "forbidden": "No tienes permiso para hacer eso.",
+      "rate_limited": "Demasiados intentos. Inténtalo más tarde.",
+      "invalid_content": "El texto limpio no es válido. Edita el post a mano."
+    }
   }
 }
