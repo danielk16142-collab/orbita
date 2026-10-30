@@ -20,6 +20,7 @@ export default async function PortalCompetitor({ params }: { params: Promise<{ l
       <h1 className="h1-client">{competitorName(comp)}</h1>
       <CompetitorDetailPanel locale={locale} competitorId={cid} listHref={list}
         chatHref={(name) => `/${locale}/portal/agent?${new URLSearchParams({ view: "chat", ask: "competitor", idea: name })}`}
+        winChat={(idea) => `/${locale}/portal/agent?${new URLSearchParams({ view: "chat", ask: "winner", idea })}`}
         calendarHref={`/${locale}/portal/posts`} />
     </>
   );

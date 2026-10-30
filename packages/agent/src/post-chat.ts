@@ -19,14 +19,23 @@ const FORMAT_WORDS: Record<IdeaFormat, string> = {
   story: "a story (short vertical frames; draft it as a single image post with the frame text in the visual brief)", text: "a text post", article: "an article",
 };
 
-export function postChatFocus(o: { format: IdeaFormat; networks: string[]; idea: string }) {
+export type ExistingPost = { day: string | null; time: string | null; pillar: string | null; why: string | null; hasContent: boolean };
+
+export function postChatFocus(o: { format: IdeaFormat; networks: string[]; idea: string; existing?: ExistingPost }) {
   const tool = POST_DRAFT_TOOL[o.format];
   return `\n\n## This conversation: one post
 You are in the post studio, helping write ONE piece of content: ${FORMAT_WORDS[o.format]} for ${o.networks.join(", ")}.${o.idea ? ` The starting idea from the person: "${o.idea.replace(/"/g, "'").slice(0, 500)}".` : ""}
 Stay on this post. Base the angle on the active strategy, the latest plan and the research above when they exist, and say which one you used. ${tool
     ? `When you have a good angle, write the finished draft with ${tool}, once per network (adapt length and tone to each network). The person reviews and edits it before it goes to the calendar. Ask at most one short question first, only if something essential is missing.`
     : `Write the finished text in your reply (a hook, the body, one call to action, and hashtags if they fit the network), ready to copy. The person can save your reply as the draft.`}
-If the person asks for changes, revise and present the new version the same way. Do not plan other posts or change the strategy here.`;
+If the person asks for changes, revise and present the new version the same way. Do not plan other posts or change the strategy here.${o.existing ? existingBlock(o.existing, !!tool) : ""}`;
+}
+
+/** This post is already in the calendar (usually from the strategy or the weekly plan): the draft fills it, it does not add another one. */
+function existingBlock(e: ExistingPost, structured: boolean) {
+  const clean = (v: string | null) => (v ?? "").replace(/\s+/g, " ").replace(/"/g, "'").trim().slice(0, 400);
+  return `\n\n## This post is already planned
+It is in the calendar${e.day ? ` for ${e.day}${e.time ? ` at ${e.time}` : ""}` : ""}${e.pillar ? `, content pillar "${clean(e.pillar)}"` : ""}.${e.why ? ` Why it was recommended: "${clean(e.why)}".` : ""} Write the finished content for THIS post and keep its angle unless the person asks otherwise. ${e.hasContent ? "It already has a draft: write a better version, do not repeat it. " : ""}${structured ? "Write it once with the drafting tool for the network named above; the person reviews it and it fills this post (it does not create a new one)." : "Write the text in your reply; the person saves it into this post."} Do not ask for information that is already above.`;
 }
 
 export const IDEAS_TOOL = {

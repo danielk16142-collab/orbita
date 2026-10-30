@@ -83,7 +83,7 @@ export default async function ClientDetail({ params, searchParams }: {
       )}
 
       {tab === "research" && <ResearchPanel locale={locale} clientId={id} />}
-      {tab === "competitors" && <CompetitorsPanel locale={locale} clientId={id} detailBase={`${base}/competitors`} />}
+      {tab === "competitors" && <CompetitorsPanel locale={locale} clientId={id} detailBase={`${base}/competitors`} winChat={(idea) => `/${locale}/agent?${new URLSearchParams({ client: id, view: "chat", ask: "winner", idea })}`} />}
 
       {tab === "insights" && (
         <InsightsPanel locale={locale} clientId={id} links={{

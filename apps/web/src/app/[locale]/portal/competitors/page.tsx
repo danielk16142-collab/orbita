@@ -6,5 +6,5 @@ export default async function PortalCompetitors({ params }: { params: Promise<{ 
   const { locale } = await params;
   const t = await getTranslations("competitors");
   await requireClientUser(locale);
-  return (<><p className="eyebrow">{t("eyebrow")}</p><h1>{t("title")}</h1><CompetitorsPanel locale={locale} detailBase={`/${locale}/portal/competitors`} /></>);
+  return (<><p className="eyebrow">{t("eyebrow")}</p><h1>{t("title")}</h1><CompetitorsPanel locale={locale} detailBase={`/${locale}/portal/competitors`} winChat={(idea) => `/${locale}/portal/agent?${new URLSearchParams({ view: "chat", ask: "winner", idea })}`} /></>);
 }

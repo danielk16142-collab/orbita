@@ -454,3 +454,61 @@ describe("analytics in the agent", () => {
     expect(buildSystemPrompt(base)).toContain("(no connected accounts yet)");
   });
 });
+
+describe("filling an existing planned post", () => {
+  const POST = { id: "11111111-1111-4111-8111-111111111111" };
+  const reel = { network: "instagram", language: "en", pillar: "proof", idea: "Behind the machine", caption: "Five hours to twenty minutes.", hashtags: ["cafe"], suggested_time: "09:30", reason: "r",
+    day: "wed", content: { duration_seconds: 20, hook_options: ["$18,000 is what one clause cost me."], scenes: [{ seconds: "0-3", visual: "v", voiceover: "Stop.", on_screen_text: "x" }], cta: "Follow", audio_note: "" } };
+  it("the server sets post_id from the verified port, and the model cannot", async () => {
+    const created: unknown[] = [];
+    const { p } = ports({ fillPostId: POST.id, createProposal: async (x) => { created.push(x); return { id: "p1" }; } });
+    const r = await runTool("propose_reel", { ...reel, post_id: "22222222-2222-4222-8222-222222222222" }, p, fresh());
+    expect(r.isError).toBe(false);
+    expect((created[0] as { payload: { post_id: string } }).payload.post_id).toBe(POST.id);
+    const { p: p2 } = ports({ createProposal: async (x) => { created.push(x); return { id: "p2" }; } });
+    await runTool("propose_reel", { ...reel, post_id: POST.id }, p2, fresh());
+    expect((created[1] as { payload: Record<string, unknown> }).payload.post_id).toBeUndefined();
+  });
+  it("an accepted draft with post_id updates that post; without it, it inserts a new one", () => {
+    const payload = { ...reel, format: "reel", week_start: "2026-10-05" };
+    const upd = proposalToOps("post", { ...payload, post_id: POST.id })[0];
+    expect(upd).toMatchObject({ op: "update_post", id: POST.id, setSuggestedTime: "09:30" });
+    const row = (upd as { row: Record<string, unknown> }).row;
+    expect(Object.keys(row).sort()).toEqual(["caption", "content", "hashtags", "idea", "language", "type"]); // date, network, status stay as planned
+    expect(proposalToOps("post", payload)[0]).toMatchObject({ op: "insert", table: "posts" });
+  });
+});
+
+describe("strategy chat", () => {
+  it("only offers tools that exist and tells the agent to send the complete strategy", async () => {
+    const { STRATEGY_CHAT_TOOLS, strategyChatFocus, TOOL_DEFS } = await import("./index");
+    for (const n of STRATEGY_CHAT_TOOLS) expect(TOOL_DEFS.some((t) => t.name === n)).toBe(true);
+    expect(STRATEGY_CHAT_TOOLS).toContain("propose_strategy");
+    expect(STRATEGY_CHAT_TOOLS).not.toContain("propose_reel");
+    expect(strategyChatFocus(true)).toMatch(/COMPLETE updated strategy/);
+    expect(strategyChatFocus(false)).toMatch(/no active strategy/);
+  });
+});
+
+describe("instagram review tools", () => {
+  it("score_hooks ranks hooks and flags a greeting; lint_caption shows the visible window", async () => {
+    const { p } = ports();
+    const r = await runTool("score_hooks", { hooks: ["Hey guys, today I want to talk about proposals.", "$18,000 is what one missing clause cost me."] }, p, fresh());
+    expect(r.isError).toBe(false);
+    const out = JSON.parse(r.content);
+    expect(out.ranked[0].score).toBe(81.4);
+    expect(out.ranked[1].dealbreakers.join(" ")).toMatch(/Greeting/);
+    const l = JSON.parse((await runTool("lint_caption", { caption: "Hello there. #viral #fyp", hashtags: [] }, p, fresh())).content);
+    expect(l.issues.join("\n")).toMatch(/HASHTAGS/);
+    expect((await runTool("score_hooks", { hooks: [] }, p, fresh())).isError).toBe(true);
+  });
+  it("agent post drafts are cleaned of long dashes and stock words when accepted", () => {
+    const ops = proposalToOps("post", {
+      format: "static", week_start: "2026-10-05", day: "mon", network: "instagram", language: "en", pillar: "", idea: "x", caption: "It’s a game-changer — truly seamless.", hashtags: [], suggested_time: "",
+      content: { headline: "A seamless start — now", visual_brief: "Desk", cta: "Save this" },
+    });
+    const row = (ops[0] as unknown as { row: { caption: string; content: { headline: string } } }).row;
+    expect(row.caption).not.toMatch(/—|game-changer|seamless|’/);
+    expect(row.content.headline).not.toMatch(/—|seamless/);
+  });
+});

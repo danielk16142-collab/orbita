@@ -4,6 +4,8 @@ import { getTranslations } from "next-intl/server";
 import { CompetitorAnalysis, type CompetitorAnalysis as Analysis } from "@orbita/agent";
 import { resolveAgentActor } from "@/lib/agent/access";
 import { competitorName, type CompetitorRow } from "@/lib/competitors";
+import { WinsList, WIN_COLS, type WinRow } from "./wins-list";
+import { AddWinForm } from "./wins";
 import { AnalyzeButton, CompetitorForm, IdeasPicker, RemoveCompetitorButton, UseInStrategyButton } from "./competitor-actions";
 
 const LABEL: Record<string, string> = { instagram: "Instagram", tiktok: "TikTok", linkedin: "LinkedIn", youtube: "YouTube", facebook: "Facebook", profile: "Profile" };
@@ -18,24 +20,26 @@ function Links({ c }: { c: CompetitorRow }) {
 }
 
 /** Competitors section: one card per competitor with the gist of its latest analysis; a click opens the full analysis. */
-export async function CompetitorsPanel({ locale, clientId, detailBase }: { locale: string; clientId?: string; detailBase: string }) {
+export async function CompetitorsPanel({ locale, clientId, detailBase, winChat }: { locale: string; clientId?: string; detailBase: string; winChat?: (idea: string) => string }) {
   const access = await resolveAgentActor(clientId);
   if (!access.ok) notFound();
   const { sb, clientId: id, profile } = access.actor;
-  const [{ data: rows, error }, { data: analyses }] = await Promise.all([
+  const [{ data: rows, error }, { data: analyses }, { data: wins }] = await Promise.all([
     sb.from("competitors").select(COLS).eq("client_id", id).order("created_at"),
     sb.from("competitor_analyses").select("competitor_id, analysis, created_at").eq("client_id", id).order("created_at", { ascending: false }).limit(200),
+    sb.from("competitor_posts").select(WIN_COLS).eq("client_id", id).order("created_at", { ascending: false }).limit(500), // errors (migration not applied yet) just mean no wins
   ]);
   const latest = new Map<string, Analysis>();
   for (const a of analyses ?? []) if (!latest.has(a.competitor_id)) { const p = CompetitorAnalysis.safeParse(a.analysis); if (p.success) latest.set(a.competitor_id, p.data); }
   // A missing column means migration 0012 has not been applied to this database: say so instead of "no competitors".
   const setupNeeded = !!error && ["PGRST204", "PGRST205", "42703", "42P01"].includes(error.code ?? "");
   if (error) console.error(`competitors read failed: code=${error.code}`);
-  return <CompetitorsView locale={locale} clientId={profile.role === "client" ? undefined : id} competitors={(rows ?? []).map(asRow)} latest={latest} detailBase={detailBase} setupNeeded={setupNeeded} />;
+  return <CompetitorsView locale={locale} clientId={profile.role === "client" ? undefined : id} competitors={(rows ?? []).map(asRow)} latest={latest} detailBase={detailBase} setupNeeded={setupNeeded} wins={(wins ?? []) as WinRow[]} staff={profile.role !== "client"} winChat={winChat} />;
 }
 
-export async function CompetitorsView({ locale, clientId, competitors, latest, detailBase, setupNeeded = false }: { locale: string; clientId?: string; competitors: CompetitorRow[]; latest: Map<string, Analysis>; detailBase: string; setupNeeded?: boolean }) {
+export async function CompetitorsView({ locale, clientId, competitors, latest, detailBase, setupNeeded = false, wins = [], staff = false, winChat }: { locale: string; clientId?: string; competitors: CompetitorRow[]; latest: Map<string, Analysis>; detailBase: string; setupNeeded?: boolean; wins?: WinRow[]; staff?: boolean; winChat?: (idea: string) => string }) {
   const t = await getTranslations("competitors");
+  const tw = await getTranslations("wins");
   const date = new Intl.DateTimeFormat(locale, { dateStyle: "medium" });
   return (
     <div className="stack">
@@ -57,13 +61,20 @@ export async function CompetitorsView({ locale, clientId, competitors, latest, d
         })}
       </div>
       <CompetitorForm clientId={clientId} detailBase={detailBase} />
+      {wins.length > 0 && (
+        <section className="stack">
+          <h2>{tw("swipeTitle")}</h2>
+          <p className="stat-vs">{tw("swipeIntro")}</p>
+          <WinsList rows={wins} names={Object.fromEntries(competitors.map((c) => [c.id, competitorName(c)]))} clientId={clientId} staff={staff} winChat={winChat} limit={12} />
+        </section>
+      )}
     </div>
   );
 }
 
 /** One competitor: profile, the latest analysis, and ways to use it for our content. */
-export async function CompetitorDetailPanel({ locale, clientId, competitorId, listHref, chatHref, calendarHref }: {
-  locale: string; clientId?: string; competitorId: string; listHref: string; chatHref: (name: string) => string; calendarHref: string;
+export async function CompetitorDetailPanel({ locale, clientId, competitorId, listHref, chatHref, calendarHref, winChat }: {
+  locale: string; clientId?: string; competitorId: string; listHref: string; chatHref: (name: string) => string; calendarHref: string; winChat?: (idea: string) => string;
 }) {
   const access = await resolveAgentActor(clientId);
   if (!access.ok) notFound();
@@ -72,16 +83,18 @@ export async function CompetitorDetailPanel({ locale, clientId, competitorId, li
   if (!row) notFound();
   const { data: a } = await sb.from("competitor_analyses").select("id, analysis, created_at").eq("competitor_id", competitorId).order("created_at", { ascending: false }).limit(1).maybeSingle();
   const parsed = a ? CompetitorAnalysis.safeParse(a.analysis) : null;
+  const { data: wins } = await sb.from("competitor_posts").select(WIN_COLS).eq("competitor_id", competitorId).eq("client_id", id).order("created_at", { ascending: false }).limit(200);
   const c = asRow(row);
   return <CompetitorDetailView locale={locale} clientId={profile.role === "client" ? undefined : id} staff={profile.role !== "client"} competitor={c}
-    analysis={parsed?.success ? { id: a!.id, createdAt: a!.created_at, data: parsed.data } : null} listHref={listHref} chatHref={chatHref(competitorName(c))} calendarHref={calendarHref} />;
+    analysis={parsed?.success ? { id: a!.id, createdAt: a!.created_at, data: parsed.data } : null} listHref={listHref} chatHref={chatHref(competitorName(c))} calendarHref={calendarHref} wins={(wins ?? []) as WinRow[]} winChat={winChat} />;
 }
 
-export async function CompetitorDetailView({ locale, clientId, staff, competitor: c, analysis, listHref, chatHref, calendarHref }: {
+export async function CompetitorDetailView({ locale, clientId, staff, competitor: c, analysis, listHref, chatHref, calendarHref, wins = [], winChat }: {
   locale: string; clientId?: string; staff: boolean; competitor: CompetitorRow; analysis: { id: string; createdAt: string; data: Analysis } | null;
-  listHref: string; chatHref: string; calendarHref: string;
+  listHref: string; chatHref: string; calendarHref: string; wins?: WinRow[]; winChat?: (idea: string) => string;
 }) {
   const t = await getTranslations("competitors");
+  const tw = await getTranslations("wins");
   const date = new Intl.DateTimeFormat(locale, { dateStyle: "medium" });
   const a = analysis?.data;
   const linkMap = Object.fromEntries(c.links.map((l) => [l.network, l.url]));
@@ -93,6 +106,13 @@ export async function CompetitorDetailView({ locale, clientId, staff, competitor
           <AnalyzeButton clientId={clientId} competitorId={c.id} locale={locale} again={!!a} />
         </div>
         <p className="stat-vs">{analysis ? t("analyzedOn", { date: date.format(new Date(analysis.createdAt)) }) : t("notAnalyzedLong")}</p>
+      </section>
+
+      <section className="card">
+        <h2>{tw("title")}</h2>
+        <p className="stat-vs">{tw("intro")}</p>
+        <WinsList rows={wins} names={{}} clientId={clientId} staff={staff} winChat={winChat} />
+        <AddWinForm clientId={clientId} competitorId={c.id} />
       </section>
 
       {a && (

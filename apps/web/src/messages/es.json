@@ -492,7 +492,9 @@
       "recommend": "Según nuestros resultados, la auditoría y la estrategia, ¿cuáles son las tres cosas más importantes por hacer ahora?",
       "draft": "Escribe un {format} para {where}.",
       "draftAbout": "Escribe un {format} para {where} sobre: {idea}",
-      "competitor": "Actualiza nuestra estrategia de contenido con el análisis de {name}: qué tomar, qué evitar y cómo podemos destacar."
+      "competitor": "Actualiza nuestra estrategia de contenido con el análisis de {name}: qué tomar, qué evitar y cómo podemos destacar.",
+      "winner": "Escribe un reel para nosotros con la misma estructura de este gancho de un competidor: \"{hook}\". No copies sus palabras, datos ni cifras: usa nuestra voz, nuestra oferta y solo afirmaciones aprobadas. Primero puntúa 3 opciones de gancho con score_hooks.",
+      "winnerFormula": "Escribe un reel para nosotros con la misma estructura de este gancho de un competidor: \"{hook}\" (fórmula: {formula}). No copies sus palabras, datos ni cifras: usa nuestra voz, nuestra oferta y solo afirmaciones aprobadas. Primero puntúa 3 opciones de gancho con score_hooks."
     },
     "asksButton": {
       "strategy": "Crear una estrategia",
@@ -613,7 +615,8 @@
     "views": {
       "month": "Mes",
       "week": "Semana",
-      "day": "Día"
+      "day": "Día",
+      "list": "Lista"
     },
     "client": "Cliente",
     "network": "Red",
@@ -777,7 +780,7 @@
       }
     },
     "ideas": {
-      "title": "Ideas para esta publicación",
+      "title": "Más ideas para este post",
       "more": "Más ideas",
       "loading": "Buscando ideas en la estrategia, el plan y la investigación de la semana…",
       "fromAgent": "Según la estrategia, el último plan y tu investigación. Elige una para empezar, o escribe la tuya.",
@@ -814,9 +817,41 @@
       }
     },
     "chatErrors": {
-      "not_set_up": "El chat de publicaciones necesita una actualización de la base de datos (migración 0013_post_chats.sql). Pide a tu administrador que la ejecute en Supabase."
+      "not_set_up": "El chat de publicaciones necesita una actualización de la base de datos (migración 0013_post_chats.sql). Pide a tu administrador que la ejecute en Supabase.",
+      "not_editable": "Solo las ideas y los borradores pueden ser escritos por el agente."
     },
-    "forIdea": "Para la idea: {idea}"
+    "forIdea": "Para la idea: {idea}",
+    "fill": {
+      "title": "Crear con el agente",
+      "hint": "Este post viene de tu plan. El agente lo escribe con la idea, la estrategia y tu marca, y rellena este post cuando aceptas.",
+      "button": "Crear con el agente",
+      "titleAgain": "Reescribir con el agente",
+      "hintAgain": "Este post ya tiene un borrador. El agente escribe una versión nueva; nada cambia hasta que la aceptes.",
+      "buttonAgain": "Reescribir con el agente",
+      "uses": "El agente usará",
+      "accepted": "Guardado en este post.",
+      "opening": "Escribe el {format} para este post planificado ({where}, en {language}), a partir de la idea y del motivo por el que se recomendó: {idea}",
+      "approvedNote": "Aceptar una versión nueva devuelve este post aprobado a borrador."
+    },
+    "strategyIdeas": {
+      "title": "Desde tu estrategia",
+      "hint": "Directo de la estrategia activa ({title}). Elige una para empezar.",
+      "planned": "Ya planificados: ábrelo y escríbelo",
+      "openToWrite": "Ábrelo para escribirlo con el agente",
+      "series": "Series recurrentes",
+      "seriesBadge": "Serie",
+      "topics": "Banco de temas"
+    },
+    "list": {
+      "empty": "No hay nada planificado este mes.",
+      "count": "{n, plural, one {# post} other {# posts}}",
+      "video": "Video",
+      "slides": "{n, plural, one {# diapositiva} other {# diapositivas}}",
+      "scenes": "{n, plural, one {# escena} other {# escenas}}",
+      "seconds": "{n}s",
+      "hashtags": "{n, plural, one {# hashtag} other {# hashtags}}",
+      "noCaption": "Aún sin caption"
+    }
   },
   "profile": {
     "eyebrow": "Tu negocio",
@@ -1535,6 +1570,131 @@
         "not_found": "No encontrado.",
         "rate_limited": "Demasiadas solicitudes. Inténtalo en un momento."
       }
+    }
+  },
+  "strategyChat": {
+    "title": "Cambiar la estrategia",
+    "hint": "Dile al agente qué cambiar o pega una estrategia nueva. Actualiza la estrategia de abajo al instante y puedes deshacerlo.",
+    "hintNew": "Describe la estrategia que quieres o pega una. El agente la construye aquí al instante.",
+    "placeholder": "Por ejemplo: más reels, menos carruseles, quitar LinkedIn, añadir una serie de historias de clientes…",
+    "send": "Actualizar la estrategia",
+    "working": "Trabajando…",
+    "applied": "Estrategia actualizada.",
+    "undo": "Deshacer",
+    "ex1": "Más reels y menos posts estáticos",
+    "ex2": "Añade una serie semanal de historias de clientes",
+    "ex3": "Publicar 3 veces por semana en Instagram",
+    "errors": {
+      "apply_failed": "No se pudo guardar la estrategia. Inténtalo de nuevo.",
+      "model_error": "El agente no pudo responder. Inténtalo de nuevo.",
+      "undo": "No se pudo restaurar la estrategia anterior."
+    }
+  },
+  "postReview": {
+    "title": "Revisión de calidad",
+    "intro": "Controles antes de que lo vea el cliente. Solo sugerencias: nada de esto te bloquea.",
+    "englishOnly": "Las puntuaciones basadas en palabras están afinadas para inglés. En este idioma solo son fiables los controles de formato y tipografía.",
+    "hooks": "Primera línea",
+    "hookScore": "{score}/100",
+    "formula": "Fórmula: {name}",
+    "weakest": "Más débil: {name}",
+    "noFormula": "Ninguna fórmula coincide",
+    "verdict": {
+      "STRONG": "Fuerte",
+      "OK": "Aceptable",
+      "WEAK": "Débil"
+    },
+    "checks": {
+      "LENGTH": "Largo",
+      "SPECIFICITY": "Concreto",
+      "STAKES": "Tensión",
+      "FRONTLOAD": "Lo importante primero",
+      "ADDRESS": "Habla al espectador"
+    },
+    "beats": "Tiempos del reel",
+    "beatsSummary": "{words} palabras · unos {seconds}s a {wpm} palabras/min",
+    "beatsTarget": "objetivo {target}s",
+    "caption": "Caption",
+    "captionVisible": "Lo que muestra el feed antes de “… más”",
+    "captionMore": "… más",
+    "captionFits": "(el caption cabe entero)",
+    "captionVerdict": {
+      "READY": "Listo",
+      "REVIEW": "Revisar",
+      "FIX": "Corregir"
+    },
+    "ai": "¿Suena humano?",
+    "aiScore": "{score}/100",
+    "aiVerdict": {
+      "PASS": "Suena humano",
+      "REVIEW": "Revisar",
+      "FLAGGED": "Suena a IA"
+    },
+    "aiChecks": {
+      "BURSTINESS": "Ritmo",
+      "SPECIFICITY": "Datos concretos",
+      "SLOP DENSITY": "Palabras de relleno",
+      "FINGERPRINT": "Caracteres ocultos",
+      "VOICE": "Voz"
+    },
+    "artefacts": "{count, plural, one {# huella de máquina encontrada (rayas largas, comillas curvas, caracteres ocultos, palabras de relleno).} other {# huellas de máquina encontradas (rayas largas, comillas curvas, caracteres ocultos, palabras de relleno).}}",
+    "clean": "Limpiar texto",
+    "cleaning": "Limpiando…",
+    "cleaned": "{count, plural, one {# huella eliminada} other {# huellas eliminadas}}",
+    "nothingToClean": "Nada que limpiar",
+    "cleanNote": "Editar un post aprobado lo devuelve a borrador.",
+    "nothing": "Todavía no hay nada que revisar.",
+    "errors": {
+      "generic": "Algo salió mal. Inténtalo de nuevo.",
+      "forbidden": "No tienes permiso para hacer eso.",
+      "rate_limited": "Demasiados intentos. Inténtalo más tarde.",
+      "invalid_content": "El texto limpio no es válido. Edita el post a mano."
+    }
+  },
+  "wins": {
+    "title": "Lo que funciona",
+    "intro": "Videos y posts de este competidor que fueron bien. Cada uno se ordena por cuántas veces superó la mediana de la propia cuenta.",
+    "swipeTitle": "Swipe file: lo que funciona en tu nicho",
+    "swipeIntro": "Los mejores posts registrados de todos los competidores. Usa “Hacer nuestra versión” para obtener un guion con tus palabras y tus datos.",
+    "empty": "Todavía no hay nada registrado. Agrega un post que le esté yendo bien y Orbita lo ordenará.",
+    "topFormulas": "Fórmulas detrás de los ganadores",
+    "ofMedian": "de la mediana de esta cuenta ({median} {metric})",
+    "noBaseline": "{metric} (agrega 3 o más posts de esta cuenta para comparar)",
+    "metric": {
+      "views": "vistas",
+      "engagement": "interacciones"
+    },
+    "views": "vistas",
+    "likes": "me gusta",
+    "comments": "comentarios",
+    "shares": "compartidos",
+    "open": "Abrir",
+    "makeOurs": "Hacer nuestra versión",
+    "remove": "Quitar",
+    "removeConfirm": "¿Quitar este post de la lista?",
+    "addOne": "Agregar un post",
+    "addBulk": "Pegar varios",
+    "network": "Red",
+    "hook": "Primera línea (lo que se dice o se ve primero)",
+    "hookPlaceholder": "$18,000 es lo que me costó una cláusula que faltaba.",
+    "url": "Enlace al post (opcional)",
+    "transcript": "Transcripción o descripción (opcional)",
+    "transcriptPlaceholder": "Qué pasa en el video, con tus palabras",
+    "bulkLabel": "Un post por línea",
+    "bulkPlaceholder": "120K | 4,300 | Perdí $18,000 por una cláusula que faltaba\\n1.2M | 30K | Deja de usar plantillas",
+    "hint": "Copia las cifras que ves en el post. Orbita nunca abre el enlace ni guarda nada más. Formato para varios: vistas | me gusta | primera línea.",
+    "save": "Guardar",
+    "close": "Cerrar",
+    "saved": "{count, plural, one {# post guardado} other {# posts guardados}}",
+    "errors": {
+      "generic": "Algo salió mal. Inténtalo de nuevo.",
+      "bad_request": "Revisa los campos e inténtalo de nuevo.",
+      "bad_url": "El enlace debe empezar con https://.",
+      "nothing_found": "No se encontraron líneas. Usa: vistas | me gusta | primera línea.",
+      "forbidden": "No tienes permiso para hacer eso.",
+      "not_set_up": "Esta función necesita una actualización de la base de datos. Pide a tu administrador que aplique la migración 0021.",
+      "rate_limited": "Demasiados intentos. Inténtalo más tarde.",
+      "unauthorized": "Vuelve a iniciar sesión."
     }
   }
 }

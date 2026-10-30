@@ -1,17 +1,17 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { groupByDate, iso, monthGrid, startOfWeek, addDays, type View } from "@orbita/content";
+import { formatKey, groupByDate, iso, monthGrid, startOfWeek, addDays, type View } from "@orbita/content";
 import { NETWORK_COLOR, NETWORK_LABEL, postTitle, type CalPost } from "./shared";
 
 function Chip({ p, href, t, showClient, long }: { p: CalPost; href: string; t: Awaited<ReturnType<typeof getTranslations>>; showClient: boolean; long?: boolean }) {
   return (
-    <Link href={href} className={`chip status-${p.status}`} title={`${NETWORK_LABEL[p.network] ?? p.network} · ${t(`formats.${p.type}` as never, { default: p.type } as never)} · ${t(`statuses.${p.status}`)}`}>
+    <Link href={href} className={`chip status-${p.status}`} title={`${NETWORK_LABEL[p.network] ?? p.network} · ${t(`formats.${formatKey(p.type)}` as never)} · ${t(`statuses.${p.status}`)}`}>
       <span className="swatch" style={{ background: NETWORK_COLOR[p.network] }} aria-hidden="true" />
       <span className="chip-text">
         {p.suggested_time && <span className="chip-time">{p.suggested_time}</span>} {postTitle(p, long ? 90 : 38)}
         {showClient && p.clients?.name && <span className="chip-client"> · {p.clients.name}</span>}
       </span>
-      <span className="chip-status">{t(`formats.${p.type}` as never, { default: p.type } as never)} · {t(`statuses.${p.status}`)}</span>
+      <span className="chip-status">{t(`formats.${formatKey(p.type)}` as never)} · {t(`statuses.${p.status}`)}</span>
     </Link>
   );
 }

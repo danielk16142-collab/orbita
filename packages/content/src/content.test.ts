@@ -91,3 +91,25 @@ describe("post edits and content validation", () => {
   });
 });
 function reelOK() { return { duration_seconds: 20, hook_options: ["h"], scenes: [{ seconds: "0-3s", visual: "v", voiceover: "x", on_screen_text: "" }], cta: "c", audio_note: "" }; }
+
+describe("formatKey", () => {
+  it("normalises the formats the agent writes in plans", async () => {
+    const { formatKey } = await import("./index");
+    expect(formatKey("text post")).toBe("text");
+    expect(formatKey("Text Post")).toBe("text");
+    expect(formatKey("reel")).toBe("reel");
+    expect(formatKey("Short video")).toBe("reel");
+    expect(formatKey("image post")).toBe("static");
+    expect(formatKey("LinkedIn article")).toBe("article");
+    expect(formatKey("something else")).toBe("post");
+    expect(formatKey(null)).toBe("post");
+  });
+});
+
+describe("list view range", () => {
+  it("covers exactly the calendar month and moves by months", () => {
+    expect(rangeFor("list", "2026-02-14")).toEqual({ from: "2026-02-01", to: "2026-02-28" });
+    expect(rangeFor("list", "2026-12-31")).toEqual({ from: "2026-12-01", to: "2026-12-31" });
+    expect(navigate("list", "2026-01-31", 1)).toBe(navigate("month", "2026-01-31", 1));
+  });
+});

@@ -735,3 +735,51 @@ ul.plain.api-key-list li { display: flex; flex-wrap: wrap; justify-content: spac
 .kit-block pre { white-space: pre-wrap; overflow-wrap: anywhere; margin: .4rem 0 0; font: inherit; font-size: .92rem; line-height: 1.45; }
 .kit-block.refined { border-style: dashed; background: var(--card); }
 .visual-item video { width: 100%; max-height: 420px; border: 2px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); background: #000; }
+
+/* Create with the agent, on a planned post */
+.fill-card { border-style: dashed; }
+.fill-why { margin: .35rem 0 0; font-style: italic; overflow-wrap: anywhere; }
+
+.strategy-ideas { margin-bottom: 1.25rem; }
+.strategy-ideas h4 { margin: .9rem 0 .3rem; font-size: .95rem; }
+a.idea-card { text-decoration: none; color: inherit; }
+/* Strategy chat */
+.strategy-chat-log { display: grid; gap: .5rem; max-height: 18rem; overflow-y: auto; margin: .5rem 0; }
+.strategy-chat .agent-msg { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+/* Posts list view */
+.post-list { display: grid; gap: 1.5rem; }
+.post-day-title { font-size: 1.05rem; margin: 0 0 .6rem; display: flex; gap: .6rem; align-items: baseline; flex-wrap: wrap; text-transform: capitalize; }
+.post-day-title.today { color: var(--brand-ink, inherit); }
+.post-cards { display: grid; gap: .75rem; }
+.post-card { display: grid; grid-template-columns: 7.5rem 1fr; gap: 1rem; border: 2px solid var(--line); border-radius: var(--radius); background: var(--card); color: var(--ink); text-decoration: none; padding: .6rem; box-shadow: var(--shadow); }
+.post-card:hover { background: var(--brand-soft); }
+.post-cover { position: relative; display: block; aspect-ratio: 4 / 5; border-radius: 10px; overflow: hidden; background: var(--net, var(--line)); border: 2px solid var(--ink); }
+.post-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.post-cover-text { position: absolute; inset: 0; padding: .5rem; color: #fff; font-weight: 800; font-size: .8rem; line-height: 1.15; overflow: hidden; overflow-wrap: anywhere; display: flex; align-items: flex-end; background: linear-gradient(to top, rgba(0,0,0,.35), transparent 70%); }
+.post-cover-badge { position: absolute; left: .3rem; top: .3rem; background: var(--ink); color: #fff; border-radius: 99px; padding: .05rem .45rem; font-size: .7rem; font-weight: 700; }
+.post-body { display: flex; flex-direction: column; gap: .35rem; min-width: 0; }
+.post-top { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+.post-top .swatch { display: inline-block; width: .55rem; height: .55rem; border-radius: 50%; border: 2px solid var(--ink); }
+.post-title { font-size: 1.05rem; line-height: 1.25; overflow-wrap: anywhere; }
+.post-caption { color: var(--dim); font-size: .9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+@media (max-width: 520px) { .post-card { grid-template-columns: 5.5rem 1fr; gap: .7rem; } .post-title { font-size: .98rem; } }
+/* Post quality check */
+.post-review h3 { margin: .25rem 0; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.review-block { margin-top: 1.1rem; padding-top: .9rem; border-top: 1px solid rgba(0,0,0,.12); }
+.review-checks { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); gap: .5rem .9rem; margin: .5rem 0; }
+.review-checks > span { display: flex; flex-direction: column; gap: .2rem; }
+.review-bar { display: block; height: .5rem; border-radius: 99px; background: rgba(0,0,0,.1); overflow: hidden; }
+.review-bar > span { display: block; height: 100%; background: var(--accent, #ff4e1b); border-radius: 99px; }
+.post-review ul.plain > li, .review-beats > li { display: block; }
+.badge.review-ok { background: #e6f4ea; color: #14532d; } .badge.review-warn { background: #fff4d6; color: #7a4b00; } .badge.review-bad { background: #fde8e8; color: #8a1c1c; }
+.review-beats { list-style: none; padding: 0; margin: .5rem 0; display: grid; gap: .3rem; }
+.review-beats code, .review-beats small { display: inline; font-size: .8em; } .review-flag { color: #8a1c1c; font-style: normal; font-size: .85em; }
+.feed-box { border: 2px dashed var(--line); border-radius: var(--radius); padding: .6rem .8rem; margin: .25rem 0 .5rem; overflow-wrap: anywhere; }
+.review-clean { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin: .5rem 0; }
+
+/* Competitor wins */
+.wins { display: grid; gap: .75rem; padding: 0; margin: .5rem 0; list-style: none; }
+.win-head { display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; }
+.win-multiple { font-size: 1.6rem; line-height: 1; }
+.win-hook { font-weight: 600; margin: .4rem 0; overflow-wrap: anywhere; }
+.win-form { margin-top: 1rem; display: grid; gap: .75rem; }

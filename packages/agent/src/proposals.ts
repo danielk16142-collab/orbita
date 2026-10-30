@@ -5,7 +5,7 @@ import { BRIEF_SECTIONS, CONTENT_FORMATS, DAYS, LOCALES, MEMORY_KINDS, NETWORKS,
 
 const s = (max: number) => z.string().trim().min(1).max(max);
 
-import { hhmm } from "@orbita/content";
+import { cleanPost, hhmm } from "@orbita/content";
 
 export const PlanItemSchema = z.object({
   day: z.enum(DAYS), network: z.enum(NETWORKS), format: s(60), pillar: z.string().trim().max(80),
@@ -19,10 +19,12 @@ const PostBase = {
   pillar: z.string().trim().max(80), idea: s(500), caption: z.string().trim().max(2200),
   hashtags: z.array(s(60)).max(30), suggested_time: hhmm,
 };
+// post_id is set by the server (never the model) when the draft is meant to fill an existing, already planned post.
+const PostTarget = { ...PostBase, post_id: z.string().uuid().optional() };
 export const PostPayload = z.discriminatedUnion("format", [
-  z.object({ format: z.literal("reel"), content: ReelContent, ...PostBase }),
-  z.object({ format: z.literal("carousel"), content: CarouselContent, ...PostBase }),
-  z.object({ format: z.literal("static"), content: StaticContent, ...PostBase }),
+  z.object({ format: z.literal("reel"), content: ReelContent, ...PostTarget }),
+  z.object({ format: z.literal("carousel"), content: CarouselContent, ...PostTarget }),
+  z.object({ format: z.literal("static"), content: StaticContent, ...PostTarget }),
 ]);
 export { CarouselContent, ReelContent, StaticContent };
 export const PostInputBase = PostBase; // the model never sets week_start; see tools.ts
@@ -53,6 +55,8 @@ export type ProposalTarget = keyof typeof PAYLOADS;
 export type Op =
   | { op: "brief_set"; section: BriefSection; column: string; value: unknown }
   | { op: "insert"; table: "brand_memories" | "proof_items" | "client_rules" | "posts"; row: Record<string, unknown> }
+  /** Fill an existing post (caption, hashtags, content). Only for the client's own posts; `ifStatus` rows move to draft. */
+  | { op: "update_post"; id: string; row: Record<string, unknown>; setSuggestedTime: string | null }
   /** Make this the client's one active strategy (the previous one is kept but deactivated). */
   | { op: "activate_strategy"; row: Record<string, unknown> };
 
@@ -94,7 +98,12 @@ export function proposalToOps(target: ProposalTarget, payload: unknown): Op[] {
       }));
     }
     case "post": {
-      const p = PAYLOADS.post.parse(payload);
+      const parsed = PAYLOADS.post.parse(payload);
+      // Agent drafts leave without the machine fingerprint (long dashes, curly quotes, hidden characters, stock words).
+      const cleaned = cleanPost({ type: parsed.format, language: parsed.language, caption: parsed.caption || null, content: parsed.content });
+      const p = { ...parsed, caption: cleaned.caption ?? "", content: (cleaned.content ?? parsed.content) as typeof parsed.content };
+      // A draft written for an existing planned post fills that post: date, network and client stay as planned.
+      if (p.post_id) return [{ op: "update_post", id: p.post_id, row: { caption: p.caption || null, hashtags: p.hashtags, content: p.content, language: p.language, type: p.format, ...(p.idea ? { idea: p.idea } : {}) }, setSuggestedTime: p.suggested_time || null }];
       return [{
         op: "insert", table: "posts",
         row: {

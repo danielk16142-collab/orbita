@@ -7,10 +7,11 @@ import { analyticsText, loadAnalyticsData } from "@/lib/analytics/load";
  * Tool ports for ONE client. The client id is fixed here, on the server: no tool argument can change it.
  * All reads and writes use the signed-in user's own session, so database policies still apply to the agent.
  */
-export function makePorts(actor: AgentActor, o: { conversationId: string | null; weekStart: string; userTexts?: string[] }): ToolPorts {
+export function makePorts(actor: AgentActor, o: { conversationId: string | null; weekStart: string; userTexts?: string[]; fillPostId?: string }): ToolPorts {
   const { sb, clientId, userId } = actor;
   return {
     weekStart: o.weekStart,
+    fillPostId: o.fillPostId,
     userTexts: o.userTexts,
     async listSources() {
       const { data } = await sb.from("client_sources").select("kind, url, handle").eq("client_id", clientId);
