@@ -763,3 +763,23 @@ a.idea-card { text-decoration: none; color: inherit; }
 .post-title { font-size: 1.05rem; line-height: 1.25; overflow-wrap: anywhere; }
 .post-caption { color: var(--dim); font-size: .9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
 @media (max-width: 520px) { .post-card { grid-template-columns: 5.5rem 1fr; gap: .7rem; } .post-title { font-size: .98rem; } }
+/* Post quality check */
+.post-review h3 { margin: .25rem 0; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.review-block { margin-top: 1.1rem; padding-top: .9rem; border-top: 1px solid rgba(0,0,0,.12); }
+.review-checks { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); gap: .5rem .9rem; margin: .5rem 0; }
+.review-checks > span { display: flex; flex-direction: column; gap: .2rem; }
+.review-bar { display: block; height: .5rem; border-radius: 99px; background: rgba(0,0,0,.1); overflow: hidden; }
+.review-bar > span { display: block; height: 100%; background: var(--accent, #ff4e1b); border-radius: 99px; }
+.post-review ul.plain > li, .review-beats > li { display: block; }
+.badge.review-ok { background: #e6f4ea; color: #14532d; } .badge.review-warn { background: #fff4d6; color: #7a4b00; } .badge.review-bad { background: #fde8e8; color: #8a1c1c; }
+.review-beats { list-style: none; padding: 0; margin: .5rem 0; display: grid; gap: .3rem; }
+.review-beats code, .review-beats small { display: inline; font-size: .8em; } .review-flag { color: #8a1c1c; font-style: normal; font-size: .85em; }
+.feed-box { border: 2px dashed var(--line); border-radius: var(--radius); padding: .6rem .8rem; margin: .25rem 0 .5rem; overflow-wrap: anywhere; }
+.review-clean { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin: .5rem 0; }
+
+/* Competitor wins */
+.wins { display: grid; gap: .75rem; padding: 0; margin: .5rem 0; list-style: none; }
+.win-head { display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; }
+.win-multiple { font-size: 1.6rem; line-height: 1; }
+.win-hook { font-weight: 600; margin: .4rem 0; overflow-wrap: anywhere; }
+.win-form { margin-top: 1rem; display: grid; gap: .75rem; }

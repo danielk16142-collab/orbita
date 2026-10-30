@@ -23,6 +23,7 @@ export default async function CompetitorPage({ params }: { params: Promise<{ loc
       <h1 className="h1-client">{competitorName(comp)}</h1>
       <CompetitorDetailPanel locale={locale} clientId={id} competitorId={cid} listHref={list}
         chatHref={(name) => `/${locale}/agent?${new URLSearchParams({ client: id, view: "chat", ask: "competitor", idea: name })}`}
+        winChat={(idea) => `/${locale}/agent?${new URLSearchParams({ client: id, view: "chat", ask: "winner", idea })}`}
         calendarHref={`/${locale}/posts?client=${id}`} />
     </>
   );

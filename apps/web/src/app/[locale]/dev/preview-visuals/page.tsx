@@ -5,6 +5,9 @@ import { VisualPanel, type VisualJob } from "@/components/visuals/visual-panel";
 import { PostKit } from "@/components/visuals/post-kit";
 import { MediaPanel } from "@/components/visuals/media-panel";
 import { StrategyChat } from "@/components/strategy/strategy-chat";
+import { PostReview } from "@/components/posts/post-review";
+import { WinsList, type WinRow } from "@/components/competitors/wins-list";
+import { AddWinForm } from "@/components/competitors/wins";
 
 const svg = (n: number) => `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350"><rect width="1080" height="1350" fill="${["#ff4e1b", "#0a0a0a", "#e8dcc4"][n % 3]}"/><text x="90" y="640" font-family="Arial" font-weight="800" font-size="120" fill="${n % 3 === 2 ? "#0a0a0a" : "#fff"}">Slide ${n}</text></svg>`)}`;
 const img = (n: number) => ({ page: n, width: 1080, height: 1350, url: svg(n) });
@@ -19,6 +22,25 @@ export default async function Preview({ searchParams }: { searchParams: Promise<
   if (!fakeVisualsEnabled()) notFound();
   const q = await searchParams;
   if (q.view === "strategy-chat") return (<main className="content"><p className="eyebrow">Preview (fake data)</p><h1>Strategy</h1><StrategyChat locale="en" hasStrategy={q.type !== "new"} /></main>);
+  if (q.view === "wins") {
+    const w = (id: string, hook: string, views: number | null, likes: number | null, comp = "a"): WinRow => ({ id, competitor_id: comp, hook, url: "https://www.instagram.com/reel/abc/", network: "instagram", views, likes, comments: 120, shares: null, followers: null, posted_at: "2026-09-14", formula_id: null });
+    const rows = [w("1", "$18,000 is what one missing clause cost me.", 200000, 9000), w("2", "Meh update from the team", 10000, 300), w("3", "Another post about coffee", 12000, 400), w("4", "Third post", 8000, 200), w("5", "Nobody tells you cold brew takes 20 hours", 95000, 4000, "b")];
+    return (
+      <main className="content"><p className="eyebrow">Preview (fake data)</p><h1>What's working</h1>
+        <WinsList rows={rows} names={{ a: "Rival Café", b: "Bean There" }} staff winChat={(idea) => `/en/agent?ask=winner&idea=${encodeURIComponent(idea)}`} />
+        <AddWinForm competitorId="00000000-0000-0000-0000-000000000000" />
+      </main>
+    );
+  }
+  if (q.view === "review") {
+    const lang = q.type === "es" ? "es" : "en";
+    const rc = { duration_seconds: 20, hook_options: ["Proposals used to take me five hours. Twenty minutes now.", "Hey guys, today I want to talk about proposals."], scenes: [{ seconds: "0-3", visual: "Desk", voiceover: "I built one template — it changed everything.", on_screen_text: "5 HOURS TO 20 MIN" }, { seconds: "3-20", visual: "Screen", voiceover: "Steal it. Comment TEMPLATE and I will send it. Five hours, twenty minutes.", on_screen_text: "" }], cta: "Comment TEMPLATE", audio_note: "" };
+    return (
+      <main className="content"><p className="eyebrow">Preview (fake data)</p><h1>Quality check</h1>
+        <PostReview postId="00000000-0000-0000-0000-000000000000" post={{ type: "reel", language: lang, caption: "It’s a game-changer — five hours down to twenty minutes. We leverage a seamless template.\n\nComment TEMPLATE. Save this for later. #viral #fyp #proposals", hashtags: ["proposals"], content: rc }} />
+      </main>
+    );
+  }
   if (q.view === "kit") {
     const type = q.type === "carousel" ? "carousel" : "reel";
     return (

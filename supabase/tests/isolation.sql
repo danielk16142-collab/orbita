@@ -380,18 +380,27 @@ select pg_temp.expect_error('analysis cannot point at another client',
   $$insert into competitor_analyses(client_id,competitor_id,analysis) values ('c2000000-0000-0000-0000-000000000002','e1000000-0000-0000-0000-000000000001','{}')$$);
 select pg_temp.expect_error('analysis must be an object', $$insert into competitor_analyses(client_id,competitor_id,analysis) values ('c1000000-0000-0000-0000-000000000001','e1000000-0000-0000-0000-000000000001','[]')$$);
 delete from competitor_analyses;
+insert into competitor_posts(client_id,competitor_id,hook,views,likes) values ('c1000000-0000-0000-0000-000000000001','e1000000-0000-0000-0000-000000000001','$18,000 is what one clause cost me',120000,4300);
+select pg_temp.expect('client records a competitor post', (select count(*) from competitor_posts), 1);
+select pg_temp.expect_error('competitor post cannot point at another client''s competitor',
+  $$insert into competitor_posts(client_id,competitor_id,hook) values ('c2000000-0000-0000-0000-000000000002','e1000000-0000-0000-0000-000000000001','x')$$);
+select pg_temp.expect_error('competitor post url must be https', $$insert into competitor_posts(client_id,competitor_id,hook,url) values ('c1000000-0000-0000-0000-000000000001','e1000000-0000-0000-0000-000000000001','x','http://x.example.com/p')$$);
+select pg_temp.expect_error('competitor post counts cannot be negative', $$insert into competitor_posts(client_id,competitor_id,hook,views) values ('c1000000-0000-0000-0000-000000000001','e1000000-0000-0000-0000-000000000001','x',-1)$$);
+select pg_temp.expect_error('competitor post needs a hook', $$insert into competitor_posts(client_id,competitor_id,hook) values ('c1000000-0000-0000-0000-000000000001','e1000000-0000-0000-0000-000000000001','')$$);
+delete from competitor_posts;
+select pg_temp.expect('client cannot delete competitor posts', (select count(*) from competitor_posts), 1);
 select pg_temp.expect('client cannot delete analyses', (select count(*) from competitor_analyses), 1);
 select pg_temp.reset();
 select pg_temp.as_user('a0000000-0000-0000-0000-000000000004'); -- other client
-select pg_temp.expect('other client sees no competitors or analyses', (select count(*) from competitors) + (select count(*) from competitor_analyses), 0);
+select pg_temp.expect('other client sees no competitors or analyses', (select count(*) from competitors) + (select count(*) from competitor_analyses) + (select count(*) from competitor_posts), 0);
 select pg_temp.reset();
 select pg_temp.as_user('b0000000-0000-0000-0000-000000000001'); -- other agency
-select pg_temp.expect('other agency sees no competitors or analyses', (select count(*) from competitors) + (select count(*) from competitor_analyses), 0);
+select pg_temp.expect('other agency sees no competitors or analyses', (select count(*) from competitors) + (select count(*) from competitor_analyses) + (select count(*) from competitor_posts), 0);
 select pg_temp.reset();
 select pg_temp.as_user('a0000000-0000-0000-0000-000000000001'); -- admin A
 delete from competitors where id='e1000000-0000-0000-0000-000000000001';
 select pg_temp.reset();
-select pg_temp.expect('deleting a competitor removes its analyses', (select count(*) from competitor_analyses), 0);
+select pg_temp.expect('deleting a competitor removes its analyses and posts', (select count(*) from competitor_analyses) + (select count(*) from competitor_posts), 0);
 
 -- kickstart plans
 select pg_temp.as_user('a0000000-0000-0000-0000-000000000005'); -- client A1 user

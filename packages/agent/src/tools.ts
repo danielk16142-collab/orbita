@@ -4,6 +4,7 @@ import { CarouselContent, PAYLOADS, PostInputBase, ReelContent, StaticContent, S
 import { DAYS, LOCALES, MEMORY_KINDS, NETWORKS, SOURCE_KINDS, BRIEF_SECTIONS, CONTENT_FORMATS, RESEARCH_KINDS, type AuditReport, type ResearchKind, type Source, type SourceKind } from "./types";
 import type { SiteSnapshot } from "./site";
 import { wrapUntrusted } from "./untrusted";
+import { lintCaption, rankHooks } from "@orbita/content";
 
 /** What a tool may do. Implemented by the web app with the signed-in user's own session, already bound to ONE client. */
 export interface ToolPorts {
@@ -82,6 +83,10 @@ export const TOOL_DEFS = [
       series: { type: "array", items: { type: "object", properties: { name: str, subject: str, networks: { type: "array", items: { type: "string", enum: [...NETWORKS] } }, formats: { type: "array", items: { type: "string", enum: [...CONTENT_FORMATS] } } }, required: ["name", "subject", "networks", "formats"], additionalProperties: false } },
       cadence: { type: "array", items: { type: "object", properties: { network: { type: "string", enum: [...NETWORKS] }, posts_per_week: { type: "integer" }, best_days: { type: "array", items: { type: "string", enum: [...DAYS] } }, best_time: { ...str, description: "HH:MM or empty string" }, why: str }, required: ["network", "posts_per_week", "best_days", "best_time", "why"], additionalProperties: false } },
       topics: strList, rationale: str }, required: ["objectives", "pillars", "series", "cadence", "topics", "rationale"], additionalProperties: false } }, required: ["title", "period", "reason", "content"], additionalProperties: false } },
+  { name: "score_hooks", description: "Score 1 to 6 candidate opening lines for a reel (spoken or on-screen) on five properties: length, specificity, stakes, front-loading and address. Returns a score out of 100, the weakest property, dealbreakers (greetings, preambles) and the hook formula it matches. English heuristics: for other languages treat the numbers as a rough guide. Use it on your hook options before propose_reel; rewrite the weakest until the best is at least 70.",
+    input_schema: { type: "object", properties: { hooks: { type: "array", items: str, description: "the opening lines, one per item" } }, required: ["hooks"], additionalProperties: false } },
+  { name: "lint_caption", description: "Check a caption (with its hashtags) before you propose it: what the feed shows before the \"... more\" cut, first line, concreteness, hashtag count and filler, links, number of calls to action, emoji density.",
+    input_schema: { type: "object", properties: { caption: str, hashtags: { ...strList, description: "hashtags without the # sign; empty list if none" } }, required: ["caption", "hashtags"], additionalProperties: false } },
   { name: "save_research", strict: true, description: "Save a useful finding from your web research (a trend, what competitors or similar accounts do, audience insight, or a content idea) so future plans can use it. Summarize in your own words, name the sources. Do not save anything you could not support.",
     input_schema: { type: "object", properties: { kind: { type: "string", enum: [...RESEARCH_KINDS] }, title: str, summary: str, sources: { type: "array", items: { type: "object", properties: { title: str, url: str }, required: ["title", "url"], additionalProperties: false } } }, required: ["kind", "title", "summary", "sources"], additionalProperties: false } },
 ] as const;
@@ -99,6 +104,8 @@ const Inputs = {
   }),
   get_brief: z.object({}),
   get_account_analytics: z.object({ network: z.enum(["all", ...NETWORKS]) }),
+  score_hooks: z.object({ hooks: z.array(z.string().trim().min(1).max(300)).min(1).max(6) }),
+  lint_caption: z.object({ caption: z.string().max(2500), hashtags: z.array(z.string().trim().max(60)).max(30) }),
   propose_brief_update: PAYLOADS.brief.extend({ reason: z.string().max(1000) }),
   propose_memory: PAYLOADS.memory.extend({ reason: z.string().max(1000) }),
   propose_proof_item: PAYLOADS.proof_item,
@@ -176,6 +183,15 @@ export async function runTool(name: string, input: unknown, ports: ToolPorts, st
       }
       case "get_brief": return ok(await ports.getBrief());
       case "get_account_analytics": return { content: wrapUntrusted("account analytics", await ports.getAnalytics((a as { network: string }).network), 8000), isError: false };
+      case "score_hooks": {
+        const r = rankHooks((a as { hooks: string[] }).hooks).map((h) => ({ hook: h.hook, score: h.score, verdict: h.verdict, weakest: h.weakest, dealbreakers: h.flags, formula: h.formula?.name ?? null, checks: Object.fromEntries(Object.entries(h.checks).map(([k, v]) => [k, v.detail])) }));
+        return ok({ ranked: r, note: "Heuristic on the text alone, not a view predictor. Aim for 70+; under 50 means this is not the hook yet." });
+      }
+      case "lint_caption": {
+        const { caption, hashtags } = a as { caption: string; hashtags: string[] };
+        const l = lintCaption(caption, { hashtags });
+        return ok({ verdict: l.verdict, visibleBeforeMore: l.visible, truncated: l.truncated, issues: l.checks.filter((c) => c.status !== "PASS").map((c) => `${c.status} ${c.check}: ${c.detail}`) });
+      }
       case "save_research": {
         const n = a as unknown as z.infer<typeof Inputs.save_research>;
         if (state.research >= MAX_RESEARCH_PER_TURN) return err("Research note limit for this reply reached.");

@@ -5,7 +5,7 @@ import { BRIEF_SECTIONS, CONTENT_FORMATS, DAYS, LOCALES, MEMORY_KINDS, NETWORKS,
 
 const s = (max: number) => z.string().trim().min(1).max(max);
 
-import { hhmm } from "@orbita/content";
+import { cleanPost, hhmm } from "@orbita/content";
 
 export const PlanItemSchema = z.object({
   day: z.enum(DAYS), network: z.enum(NETWORKS), format: s(60), pillar: z.string().trim().max(80),
@@ -98,7 +98,10 @@ export function proposalToOps(target: ProposalTarget, payload: unknown): Op[] {
       }));
     }
     case "post": {
-      const p = PAYLOADS.post.parse(payload);
+      const parsed = PAYLOADS.post.parse(payload);
+      // Agent drafts leave without the machine fingerprint (long dashes, curly quotes, hidden characters, stock words).
+      const cleaned = cleanPost({ type: parsed.format, language: parsed.language, caption: parsed.caption || null, content: parsed.content });
+      const p = { ...parsed, caption: cleaned.caption ?? "", content: (cleaned.content ?? parsed.content) as typeof parsed.content };
       // A draft written for an existing planned post fills that post: date, network and client stay as planned.
       if (p.post_id) return [{ op: "update_post", id: p.post_id, row: { caption: p.caption || null, hashtags: p.hashtags, content: p.content, language: p.language, type: p.format, ...(p.idea ? { idea: p.idea } : {}) }, setSuggestedTime: p.suggested_time || null }];
       return [{

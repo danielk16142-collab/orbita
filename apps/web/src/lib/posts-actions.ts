@@ -1,6 +1,6 @@
 "use server";
 import { z } from "zod";
-import { allowedStatusChanges, formatKey, isTimeZone, parseContent, PostEdit, STATUSES, zonedToUtc, type Status } from "@orbita/content";
+import { allowedStatusChanges, cleanPost, formatKey, isTimeZone, parseContent, PostEdit, STATUSES, zonedToUtc, type Status } from "@orbita/content";
 import { loadPost, postActor } from "@/lib/posts/access";
 import { limiter } from "@/lib/rate-limit";
 import { audit } from "@/lib/audit";
@@ -132,4 +132,25 @@ export async function fillPostCaptionAction(input: unknown): Promise<PostResult>
   if (error || !data?.length) return fail("forbidden");
   await audit({ agencyId: a.profile.agency_id, actor: a.userId, action: "post.filled", entity: "post", entityId: post.value.id });
   return { ok: true };
+}
+
+/**
+ * Clean the machine fingerprint (invisible characters, em dashes, curly quotes, stock words) out of a post's caption and content text (staff).
+ * Hashtags are untouched. Like any edit, it sends an approved post back to draft (database rule).
+ */
+export async function cleanPostTextAction(input: unknown): Promise<PostResult & { removed?: number }> {
+  const p = z.object({ postId: Uuid }).safeParse(input);
+  if (!p.success) return fail("bad_request");
+  const g = await gate(); if (!g.ok) return fail(g.error);
+  const a = g.value; if (!a.isStaff) return fail("forbidden");
+  const post = await loadPost(a, p.data.postId); if (!post.ok) return fail(post.error);
+  const v = post.value;
+  const r = cleanPost({ type: v.type, language: v.language, caption: v.caption, content: v.content });
+  if (r.removed === 0) return { ok: true, removed: 0 };
+  const parsed = parseContent(v.type, r.content);
+  if (!parsed.ok) return fail("invalid_content");
+  const { data, error } = await a.sb.from("posts").update({ caption: r.caption, ...(v.content != null ? { content: parsed.value } : {}) }).eq("id", v.id).select("id");
+  if (error || !data?.length) return fail("forbidden");
+  await audit({ agencyId: a.profile.agency_id, actor: a.userId, action: "post.cleaned", entity: "post", entityId: v.id, meta: { removed: r.removed } });
+  return { ok: true, removed: r.removed };
 }

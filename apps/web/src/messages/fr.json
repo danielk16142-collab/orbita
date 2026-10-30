@@ -492,7 +492,9 @@
       "recommend": "Selon nos résultats, l'audit et la stratégie, quelles sont les trois choses les plus importantes à faire ensuite?",
       "draft": "Écris un {format} pour {where}.",
       "draftAbout": "Écris un {format} pour {where} sur : {idea}",
-      "competitor": "Mets à jour notre stratégie de contenu à partir de l'analyse de {name} : ce qu'on peut reprendre, ce qu'il faut éviter et comment nous démarquer."
+      "competitor": "Mets à jour notre stratégie de contenu à partir de l'analyse de {name} : ce qu'on peut reprendre, ce qu'il faut éviter et comment nous démarquer.",
+      "winner": "Écris un reel pour nous avec la même structure que ce hook d'un concurrent : « {hook} ». Ne copie ni ses mots, ni ses faits, ni ses chiffres : utilise notre voix, notre offre et uniquement des affirmations approuvées. Note d'abord 3 options de hook avec score_hooks.",
+      "winnerFormula": "Écris un reel pour nous avec la même structure que ce hook d'un concurrent : « {hook} » (formule : {formula}). Ne copie ni ses mots, ni ses faits, ni ses chiffres : utilise notre voix, notre offre et uniquement des affirmations approuvées. Note d'abord 3 options de hook avec score_hooks."
     },
     "asksButton": {
       "strategy": "Créer une stratégie",
@@ -1586,6 +1588,113 @@
       "apply_failed": "La stratégie n'a pas pu être enregistrée. Réessayez.",
       "model_error": "L'agent n'a pas pu répondre. Réessayez.",
       "undo": "Impossible de restaurer la stratégie précédente."
+    }
+  },
+  "postReview": {
+    "title": "Contrôle qualité",
+    "intro": "Vérifications avant que le client ne voie le post. Ce ne sont que des suggestions : rien ne vous bloque.",
+    "englishOnly": "Les scores basés sur les mots sont réglés pour l'anglais. Dans cette langue, seuls les contrôles de format et de typographie sont fiables.",
+    "hooks": "Première ligne",
+    "hookScore": "{score}/100",
+    "formula": "Formule : {name}",
+    "weakest": "Point faible : {name}",
+    "noFormula": "Aucune formule ne correspond",
+    "verdict": {
+      "STRONG": "Fort",
+      "OK": "Correct",
+      "WEAK": "Faible"
+    },
+    "checks": {
+      "LENGTH": "Longueur",
+      "SPECIFICITY": "Concret",
+      "STAKES": "Enjeu",
+      "FRONTLOAD": "L'essentiel d'abord",
+      "ADDRESS": "Parle au spectateur"
+    },
+    "beats": "Durées du reel",
+    "beatsSummary": "{words} mots · environ {seconds}s à {wpm} mots/min",
+    "beatsTarget": "objectif {target}s",
+    "caption": "Légende",
+    "captionVisible": "Ce que le fil affiche avant « … plus »",
+    "captionMore": "… plus",
+    "captionFits": "(la légende tient en entier)",
+    "captionVerdict": {
+      "READY": "Prêt",
+      "REVIEW": "À revoir",
+      "FIX": "À corriger"
+    },
+    "ai": "Ça sonne humain ?",
+    "aiScore": "{score}/100",
+    "aiVerdict": {
+      "PASS": "Sonne humain",
+      "REVIEW": "À revoir",
+      "FLAGGED": "Sonne comme une IA"
+    },
+    "aiChecks": {
+      "BURSTINESS": "Rythme",
+      "SPECIFICITY": "Précisions",
+      "SLOP DENSITY": "Mots passe-partout",
+      "FINGERPRINT": "Caractères cachés",
+      "VOICE": "Voix"
+    },
+    "artefacts": "{count, plural, one {# trace de machine trouvée (tirets longs, guillemets courbes, caractères cachés, mots passe-partout).} other {# traces de machine trouvées (tirets longs, guillemets courbes, caractères cachés, mots passe-partout).}}",
+    "clean": "Nettoyer le texte",
+    "cleaning": "Nettoyage…",
+    "cleaned": "{count, plural, one {# trace supprimée} other {# traces supprimées}}",
+    "nothingToClean": "Rien à nettoyer",
+    "cleanNote": "Modifier un post approuvé le remet en brouillon.",
+    "nothing": "Rien à vérifier pour l'instant.",
+    "errors": {
+      "generic": "Une erreur est survenue. Réessayez.",
+      "forbidden": "Vous n'avez pas la permission de faire cela.",
+      "rate_limited": "Trop de tentatives. Réessayez plus tard.",
+      "invalid_content": "Le texte nettoyé n'est pas valide. Modifiez le post à la main."
+    }
+  },
+  "wins": {
+    "title": "Ce qui fonctionne",
+    "intro": "Vidéos et posts de ce concurrent qui ont bien marché. Chacun est classé selon le nombre de fois où il a dépassé la médiane du compte.",
+    "swipeTitle": "Swipe file : ce qui fonctionne dans votre créneau",
+    "swipeIntro": "Les meilleurs posts enregistrés de tous les concurrents. Utilisez « Faire notre version » pour obtenir un script avec vos mots et vos faits.",
+    "empty": "Rien d'enregistré pour l'instant. Ajoutez un post qui marche bien et Orbita le classera.",
+    "topFormulas": "Formules derrière les gagnants",
+    "ofMedian": "de la médiane de ce compte ({median} {metric})",
+    "noBaseline": "{metric} (ajoutez 3 posts ou plus de ce compte pour comparer)",
+    "metric": {
+      "views": "vues",
+      "engagement": "interactions"
+    },
+    "views": "vues",
+    "likes": "j'aime",
+    "comments": "commentaires",
+    "shares": "partages",
+    "open": "Ouvrir",
+    "makeOurs": "Faire notre version",
+    "remove": "Retirer",
+    "removeConfirm": "Retirer ce post de la liste ?",
+    "addOne": "Ajouter un post",
+    "addBulk": "Coller plusieurs",
+    "network": "Réseau",
+    "hook": "Première ligne (ce qui est dit ou montré d'abord)",
+    "hookPlaceholder": "18 000 $ : c'est ce qu'une clause manquante m'a coûté.",
+    "url": "Lien du post (facultatif)",
+    "transcript": "Transcription ou description (facultatif)",
+    "transcriptPlaceholder": "Ce qui se passe dans la vidéo, avec vos mots",
+    "bulkLabel": "Un post par ligne",
+    "bulkPlaceholder": "120K | 4,300 | J'ai perdu 18 000 $ à cause d'une clause manquante\\n1.2M | 30K | Arrêtez d'utiliser des modèles",
+    "hint": "Copiez les chiffres visibles sur le post. Orbita n'ouvre jamais le lien et ne garde rien d'autre. Format pour plusieurs : vues | j'aime | première ligne.",
+    "save": "Enregistrer",
+    "close": "Fermer",
+    "saved": "{count, plural, one {# post enregistré} other {# posts enregistrés}}",
+    "errors": {
+      "generic": "Une erreur est survenue. Réessayez.",
+      "bad_request": "Vérifiez les champs et réessayez.",
+      "bad_url": "Le lien doit commencer par https://.",
+      "nothing_found": "Aucune ligne trouvée. Utilisez : vues | j'aime | première ligne.",
+      "forbidden": "Vous n'avez pas la permission de faire cela.",
+      "not_set_up": "Cette fonction nécessite une mise à jour de la base de données. Demandez à votre administrateur d'appliquer la migration 0021.",
+      "rate_limited": "Trop de tentatives. Réessayez plus tard.",
+      "unauthorized": "Veuillez vous reconnecter."
     }
   }
 }
