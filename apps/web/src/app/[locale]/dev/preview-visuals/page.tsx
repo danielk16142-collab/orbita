@@ -4,6 +4,7 @@ import { VisualsCard } from "@/components/visuals/visuals-card";
 import { VisualPanel, type VisualJob } from "@/components/visuals/visual-panel";
 import { PostKit } from "@/components/visuals/post-kit";
 import { MediaPanel } from "@/components/visuals/media-panel";
+import { StrategyChat } from "@/components/strategy/strategy-chat";
 
 const svg = (n: number) => `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350"><rect width="1080" height="1350" fill="${["#ff4e1b", "#0a0a0a", "#e8dcc4"][n % 3]}"/><text x="90" y="640" font-family="Arial" font-weight="800" font-size="120" fill="${n % 3 === 2 ? "#0a0a0a" : "#fff"}">Slide ${n}</text></svg>`)}`;
 const img = (n: number) => ({ page: n, width: 1080, height: 1350, url: svg(n) });
@@ -17,6 +18,7 @@ const refs = [{ kind: "style", caption: "warm morning light, wood and ceramic", 
 export default async function Preview({ searchParams }: { searchParams: Promise<{ state?: string; view?: string; type?: string }> }) {
   if (!fakeVisualsEnabled()) notFound();
   const q = await searchParams;
+  if (q.view === "strategy-chat") return (<main className="content"><p className="eyebrow">Preview (fake data)</p><h1>Strategy</h1><StrategyChat locale="en" hasStrategy={q.type !== "new"} /></main>);
   if (q.view === "kit") {
     const type = q.type === "carousel" ? "carousel" : "reel";
     return (

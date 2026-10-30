@@ -10,6 +10,7 @@ import type { ClientContext } from "@/lib/agent/context";
 import { StrategyMap } from "./strategy-map";
 import { StrategyMindMap } from "./strategy-mind-map";
 import { ArchiveStrategyButton } from "./archive-strategy";
+import { StrategyChat } from "./strategy-chat";
 
 const shiftMonth = (month: string, n: number) => { const d = new Date(Date.parse(`${month}-01T00:00:00Z`)); d.setUTCMonth(d.getUTCMonth() + n); return d.toISOString().slice(0, 7); };
 
@@ -43,6 +44,7 @@ export async function StrategyPanel({ locale, clientId, query, hrefFor, agentAsk
   if (!data.strategy) {
     const chosen = focus.pillars.length > 0;
     return (
+      <div className="strategy-section">
       <section className="card strategy-empty">
         <h2>{t("emptyTitle")}</h2>
         <p>{t("emptyText")}</p>
@@ -52,6 +54,8 @@ export async function StrategyPanel({ locale, clientId, query, hrefFor, agentAsk
         </ol>
         <Link className="btn" href={agentAskHref}>{t("build")}</Link>
       </section>
+      <StrategyChat clientId={cid} locale={locale} hasStrategy={false} />
+      </div>
     );
   }
 
@@ -74,6 +78,8 @@ export async function StrategyPanel({ locale, clientId, query, hrefFor, agentAsk
           <ArchiveStrategyButton clientId={cid} />
         </div>
       </section>
+
+      <StrategyChat clientId={cid} locale={locale} hasStrategy />
 
       <nav className="map-views" aria-label={ta("strategyViews")}>
         <Link className="btn small ghost" aria-current={layout === "mind" ? "page" : undefined} href={hrefFor({ layout: "mind", month })}>{ta("mindMap")}</Link>

@@ -1536,5 +1536,23 @@
         "rate_limited": "Too many requests. Try again in a moment."
       }
     }
+  },
+  "strategyChat": {
+    "title": "Change the strategy",
+    "hint": "Tell the agent what to change, or paste a new strategy. It updates the strategy below right away, and you can undo it.",
+    "hintNew": "Describe the strategy you want, or paste one. The agent builds it here right away.",
+    "placeholder": "For example: more reels, fewer carousels, drop LinkedIn, add a series on customer stories…",
+    "send": "Update the strategy",
+    "working": "Working…",
+    "applied": "Strategy updated.",
+    "undo": "Undo",
+    "ex1": "More reels, fewer static posts",
+    "ex2": "Add a weekly series on customer stories",
+    "ex3": "Post 3 times a week on Instagram",
+    "errors": {
+      "apply_failed": "The strategy could not be saved. Try again.",
+      "model_error": "The agent could not answer. Try again.",
+      "undo": "Could not restore the previous strategy."
+    }
   }
 }
