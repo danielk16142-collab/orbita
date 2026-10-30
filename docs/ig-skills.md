@@ -22,3 +22,6 @@ Port of `/ig-viral` and `swipe.py` (`packages/content/src/ig/swipe.ts`): each re
 - Table `competitor_posts` (migration `0021_competitor_posts.sql`, RLS like `competitor_analyses`: anyone with access to the client reads/adds, only staff delete).
 - Data is entered by hand (one post with its numbers, or several pasted as `views | likes | opening line`); links are validated but never opened. The `source` column leaves room for Meta Business Discovery or a scraper later (not built).
 - UI: "What's working" on each competitor page and a swipe file on the competitors list; **Make our version** opens the agent chat with a prepared request (same structure, our own words and approved claims, hooks scored with `score_hooks`).
+
+## Where the humanizer runs
+Automatically (server-side, on save): agent post drafts when accepted, week-plan captions and ideas when accepted, text saved from the post chat (new post or into a planned post). On demand: the **Clean text** button on the Quality check card. Not touched: text typed by hand in the post editor (only scored by the card) and chat replies that are not saved. Typography and hidden characters are cleaned in every language; the stock-word list is English only.

@@ -512,3 +512,13 @@ describe("instagram review tools", () => {
     expect(row.content.headline).not.toMatch(/—|seamless/);
   });
 });
+
+describe("plan text is cleaned", () => {
+  it("accepted week-plan items lose long dashes and stock words", () => {
+    const ops = proposalToOps("plan", { title: "W", week_start: "2026-10-05", strategy_note: "", items: [
+      { day: "wed", network: "linkedin", format: "text post", pillar: "p", idea: "A seamless start — now", caption: "It’s a game-changer, truly.", language: "en", time: "09:00", why: "" }] });
+    const row = (ops[0] as unknown as { row: { caption: string; idea: string } }).row;
+    expect(row.caption).not.toMatch(/’|game-changer/);
+    expect(row.idea).not.toMatch(/—|seamless/);
+  });
+});
