@@ -5,7 +5,7 @@ import { BRIEF_SECTIONS, CONTENT_FORMATS, DAYS, LOCALES, MEMORY_KINDS, NETWORKS,
 
 const s = (max: number) => z.string().trim().min(1).max(max);
 
-import { cleanPost, hhmm } from "@orbita/content";
+import { cleanPost, cleanText, hhmm } from "@orbita/content";
 
 export const PlanItemSchema = z.object({
   day: z.enum(DAYS), network: z.enum(NETWORKS), format: s(60), pillar: z.string().trim().max(80),
@@ -87,11 +87,13 @@ export function proposalToOps(target: ProposalTarget, payload: unknown): Op[] {
     }
     case "plan": {
       const p = PAYLOADS.plan.parse(payload);
+      // Plan text leaves without the machine fingerprint too (long dashes, curly quotes, hidden characters, stock words).
+      const clean = (text: string, language: string) => (text ? cleanText(text, { lang: language }).text || text : text);
       return p.items.map((it) => ({
         op: "insert" as const, table: "posts" as const,
         row: {
           network: it.network, language: it.language, type: it.format.toLowerCase().slice(0, 60), pillar: it.pillar || null,
-          status: "draft", caption: it.caption || null, idea: it.idea, source: "agent",
+          status: "draft", caption: clean(it.caption, it.language) || null, idea: clean(it.idea, it.language), source: "agent",
           planned_date: dayToDate(p.week_start, it.day), suggested_time: it.time || null,
           content: it.why ? { rationale: it.why } : null,
         },

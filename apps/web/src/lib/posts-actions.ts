@@ -1,6 +1,6 @@
 "use server";
 import { z } from "zod";
-import { allowedStatusChanges, cleanPost, formatKey, isTimeZone, parseContent, PostEdit, STATUSES, zonedToUtc, type Status } from "@orbita/content";
+import { allowedStatusChanges, cleanPost, cleanText, formatKey, isTimeZone, parseContent, PostEdit, STATUSES, zonedToUtc, type Status } from "@orbita/content";
 import { loadPost, postActor } from "@/lib/posts/access";
 import { limiter } from "@/lib/rate-limit";
 import { audit } from "@/lib/audit";
@@ -32,7 +32,7 @@ export async function createPostAction(input: unknown): Promise<PostResult> {
   const status = a.isStaff ? p.data.status : "idea"; // the database enforces this too
   const { data, error } = await a.sb.from("posts").insert({
     client_id: clientId, network: p.data.network, language: p.data.language, type: p.data.type, idea: p.data.idea, status, source: "manual",
-    ...(p.data.caption ? { caption: p.data.caption } : {}),
+    ...(p.data.caption ? { caption: cleanText(p.data.caption, { lang: p.data.language }).text || p.data.caption } : {}), // text written by the agent is saved without the machine fingerprint
     planned_date: p.data.planned_date ?? null, created_by: a.userId,
   }).select("id").single();
   if (error || !data) return fail("forbidden");
@@ -128,7 +128,7 @@ export async function fillPostCaptionAction(input: unknown): Promise<PostResult>
   const a = g.value; if (!a.isStaff) return fail("forbidden");
   const post = await loadPost(a, p.data.postId); if (!post.ok) return fail(post.error);
   if (!["idea", "draft", "approved"].includes(post.value.status)) return fail("not_allowed");
-  const { data, error } = await a.sb.from("posts").update({ caption: p.data.caption, type: formatKey(post.value.type), ...(post.value.status !== "draft" ? { status: "draft" } : {}) }).eq("id", post.value.id).eq("client_id", post.value.client_id).select("id");
+  const { data, error } = await a.sb.from("posts").update({ caption: cleanText(p.data.caption, { lang: post.value.language }).text || p.data.caption, type: formatKey(post.value.type), ...(post.value.status !== "draft" ? { status: "draft" } : {}) }).eq("id", post.value.id).eq("client_id", post.value.client_id).select("id");
   if (error || !data?.length) return fail("forbidden");
   await audit({ agencyId: a.profile.agency_id, actor: a.userId, action: "post.filled", entity: "post", entityId: post.value.id });
   return { ok: true };
