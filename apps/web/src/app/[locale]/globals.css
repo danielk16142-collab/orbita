@@ -746,3 +746,20 @@ a.idea-card { text-decoration: none; color: inherit; }
 /* Strategy chat */
 .strategy-chat-log { display: grid; gap: .5rem; max-height: 18rem; overflow-y: auto; margin: .5rem 0; }
 .strategy-chat .agent-msg { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+/* Posts list view */
+.post-list { display: grid; gap: 1.5rem; }
+.post-day-title { font-size: 1.05rem; margin: 0 0 .6rem; display: flex; gap: .6rem; align-items: baseline; flex-wrap: wrap; text-transform: capitalize; }
+.post-day-title.today { color: var(--brand-ink, inherit); }
+.post-cards { display: grid; gap: .75rem; }
+.post-card { display: grid; grid-template-columns: 7.5rem 1fr; gap: 1rem; border: 2px solid var(--line); border-radius: var(--radius); background: var(--card); color: var(--ink); text-decoration: none; padding: .6rem; box-shadow: var(--shadow); }
+.post-card:hover { background: var(--brand-soft); }
+.post-cover { position: relative; display: block; aspect-ratio: 4 / 5; border-radius: 10px; overflow: hidden; background: var(--net, var(--line)); border: 2px solid var(--ink); }
+.post-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.post-cover-text { position: absolute; inset: 0; padding: .5rem; color: #fff; font-weight: 800; font-size: .8rem; line-height: 1.15; overflow: hidden; overflow-wrap: anywhere; display: flex; align-items: flex-end; background: linear-gradient(to top, rgba(0,0,0,.35), transparent 70%); }
+.post-cover-badge { position: absolute; left: .3rem; top: .3rem; background: var(--ink); color: #fff; border-radius: 99px; padding: .05rem .45rem; font-size: .7rem; font-weight: 700; }
+.post-body { display: flex; flex-direction: column; gap: .35rem; min-width: 0; }
+.post-top { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+.post-top .swatch { display: inline-block; width: .55rem; height: .55rem; border-radius: 50%; border: 2px solid var(--ink); }
+.post-title { font-size: 1.05rem; line-height: 1.25; overflow-wrap: anywhere; }
+.post-caption { color: var(--dim); font-size: .9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+@media (max-width: 520px) { .post-card { grid-template-columns: 5.5rem 1fr; gap: .7rem; } .post-title { font-size: .98rem; } }

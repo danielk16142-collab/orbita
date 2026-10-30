@@ -613,7 +613,8 @@
     "views": {
       "month": "Mes",
       "week": "Semana",
-      "day": "Día"
+      "day": "Día",
+      "list": "Lista"
     },
     "client": "Cliente",
     "network": "Red",
@@ -838,6 +839,16 @@
       "series": "Series recurrentes",
       "seriesBadge": "Serie",
       "topics": "Banco de temas"
+    },
+    "list": {
+      "empty": "No hay nada planificado este mes.",
+      "count": "{n, plural, one {# post} other {# posts}}",
+      "video": "Video",
+      "slides": "{n, plural, one {# diapositiva} other {# diapositivas}}",
+      "scenes": "{n, plural, one {# escena} other {# escenas}}",
+      "seconds": "{n}s",
+      "hashtags": "{n, plural, one {# hashtag} other {# hashtags}}",
+      "noCaption": "Aún sin caption"
     }
   },
   "profile": {

@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { addDays, iso, navigate, rangeFor, validDate, VIEWS, type View } from "@orbita/content";
 import { requireStaff, requireUser } from "@/lib/session";
 import { CalendarView } from "./calendar-view";
+import { PostList, type ListPost } from "./post-list";
 import { NETWORK_LABEL, type CalPost } from "./shared";
 
 type SP = { view?: string; date?: string; client?: string; network?: string; status?: string };
@@ -21,9 +22,21 @@ export async function PostsPage({ locale, searchParams, portal }: { locale: stri
   const status = STATUS_FILTERS.includes(searchParams.status ?? "") ? searchParams.status! : "";
   const clientFilter = !portal && /^[0-9a-f-]{36}$/i.test(searchParams.client ?? "") ? searchParams.client! : "";
 
-  let q = s.sb.from("posts").select("id, client_id, network, type, status, planned_date, suggested_time, idea, caption, clients(name)").gte("planned_date", from).lte("planned_date", to).order("planned_date").limit(1000);
+  const cols = "id, client_id, network, type, status, planned_date, suggested_time, idea, caption, clients(name)";
+  let q = s.sb.from("posts").select(view === "list" ? `${cols}, content, hashtags` : cols).gte("planned_date", from).lte("planned_date", to).order("planned_date").limit(1000);
   if (network) q = q.eq("network", network); if (status) q = q.eq("status", status); if (clientFilter) q = q.eq("client_id", clientFilter);
   const { data: posts } = await q;
+  // List view shows a cover for each post: the first image attached to it (generated or uploaded), signed for an hour.
+  let listPosts: ListPost[] = [];
+  if (view === "list") {
+    const rows = (posts ?? []) as unknown as ListPost[];
+    const { data: media } = rows.length ? await s.sb.from("post_media").select("post_id, path, kind, page, created_at").in("post_id", rows.map((r) => r.id)).order("page").order("created_at") : { data: [] };
+    const first = new Map<string, string>(); const video = new Set<string>();
+    for (const m of media ?? []) { if (m.kind === "video") video.add(m.post_id); else if (!first.has(m.post_id)) first.set(m.post_id, m.path); }
+    const signed = first.size ? await s.sb.storage.from("post-media").createSignedUrls([...first.values()], 3600) : { data: [] };
+    const urlByPath = new Map((signed.data ?? []).filter((x) => x.signedUrl).map((x) => [x.path, x.signedUrl]));
+    listPosts = rows.map((r) => ({ ...r, thumb: urlByPath.get(first.get(r.id) ?? "") ?? null, hasVideo: video.has(r.id) }));
+  }
   let u = s.sb.from("posts").select("id, client_id, network, type, status, planned_date, suggested_time, idea, caption, clients(name)").is("planned_date", null).order("created_at", { ascending: false }).limit(20);
   if (network) u = u.eq("network", network); if (status) u = u.eq("status", status); if (clientFilter) u = u.eq("client_id", clientFilter);
   const { data: unscheduled } = await u;
@@ -60,8 +73,10 @@ export async function PostsPage({ locale, searchParams, portal }: { locale: stri
         <a className="btn ghost small" href={`/api/posts/export?${exportQs}`} download>{t("exportCsv")}</a>
       </form>
 
-      <CalendarView locale={locale} view={view} anchor={anchor} posts={(posts ?? []) as unknown as CalPost[]} today={today} showClient={!portal}
-        postHref={(id) => `${base}/${id}`} dayHref={(d) => qs({ view: "day", date: d })} />
+      {view === "list"
+        ? <PostList locale={locale} posts={listPosts} today={today} showClient={!portal} postHref={(id) => `${base}/${id}`} />
+        : <CalendarView locale={locale} view={view} anchor={anchor} posts={(posts ?? []) as unknown as CalPost[]} today={today} showClient={!portal}
+            postHref={(id) => `${base}/${id}`} dayHref={(d) => qs({ view: "day", date: d })} />}
 
       {(unscheduled?.length ?? 0) > 0 && (
         <section className="card" style={{ marginTop: "1.25rem" }}>

@@ -105,3 +105,11 @@ describe("formatKey", () => {
     expect(formatKey(null)).toBe("post");
   });
 });
+
+describe("list view range", () => {
+  it("covers exactly the calendar month and moves by months", () => {
+    expect(rangeFor("list", "2026-02-14")).toEqual({ from: "2026-02-01", to: "2026-02-28" });
+    expect(rangeFor("list", "2026-12-31")).toEqual({ from: "2026-12-01", to: "2026-12-31" });
+    expect(navigate("list", "2026-01-31", 1)).toBe(navigate("month", "2026-01-31", 1));
+  });
+});
