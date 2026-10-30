@@ -6,6 +6,9 @@ import { requireClientUser } from "@/lib/session";
 import { competitorName } from "@/lib/competitors";
 import { CompetitorDetailPanel } from "@/components/competitors/competitors-panel";
 
+/** Fetching a competitor's latest posts (a server action on this page) can take up to two minutes. */
+export const maxDuration = 300;
+
 export default async function PortalCompetitor({ params }: { params: Promise<{ locale: string; cid: string }> }) {
   const { locale, cid } = await params;
   if (!z.string().uuid().safeParse(cid).success) notFound();

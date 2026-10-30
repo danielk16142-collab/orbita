@@ -1,6 +1,8 @@
 "use server";
 import { z } from "zod";
 import { classifyHook, parseWinsText } from "@orbita/content";
+import { ApifyError, fetchLatestPosts } from "@orbita/connectors";
+import { scrapeTargets } from "@/lib/scrape-targets";
 import { resolveAgentActor, type AgentActor } from "@/lib/agent/access";
 import { limiter } from "@/lib/rate-limit";
 import { audit } from "@/lib/audit";
@@ -74,4 +76,39 @@ export async function removeCompetitorPostAction(input: unknown): Promise<WinRes
   if (!data?.length) return { ok: false, error: "forbidden" };
   await audit({ agencyId: g.actor.profile.agency_id, actor: g.actor.userId, action: "competitor.post_removed", entity: "competitor_post", entityId: p.data.id });
   return { ok: true };
+}
+
+/**
+ * Fetch the latest public reels/videos of a competitor (Apify) and record them. Staff only (it costs money), rate limited, at most 30 per run.
+ * The account comes from the competitor's saved profile link, never from the request. Posts already recorded (same link) are skipped.
+ */
+export async function fetchCompetitorPostsAction(input: unknown): Promise<WinResult & { added?: number }> {
+  const p = z.object({ clientId: Uuid.optional(), competitorId: Uuid, network: z.enum(["instagram", "tiktok"]) }).safeParse(input);
+  if (!p.success) return { ok: false, error: "bad_request" };
+  if (!process.env.APIFY_TOKEN) return { ok: false, error: "no_token" };
+  const g = await gate(p.data.clientId);
+  if ("error" in g) return { ok: false, error: g.error };
+  if (g.actor.profile.role === "client") return { ok: false, error: "forbidden" };
+  if (!(await limiter("competitor-fetch", 5, 60 * 60_000).hit(g.actor.userId)).allowed) return { ok: false, error: "rate_limited" };
+  const { data: c, error } = await g.actor.sb.from("competitors").select("id, url, links").eq("id", p.data.competitorId).eq("client_id", g.actor.clientId).maybeSingle();
+  if (error) return { ok: false, error: dbFailure(error, "competitor read") };
+  if (!c) return { ok: false, error: "not_found" };
+  const username = (scrapeTargets(Array.isArray(c.links) ? (c.links as { network: string; url: string }[]) : [], c.url))[p.data.network];
+  if (!username) return { ok: false, error: "no_link" };
+  let posts;
+  try { posts = await fetchLatestPosts(p.data.network, username); }
+  catch (e) { return { ok: false, error: e instanceof ApifyError ? e.code : "provider_error" }; }
+  const urls = posts.map((x) => x.url).filter((u): u is string => !!u);
+  const { data: have } = urls.length ? await g.actor.sb.from("competitor_posts").select("url").eq("competitor_id", c.id).in("url", urls) : { data: [] as { url: string | null }[] };
+  const known = new Set((have ?? []).map((r) => r.url));
+  const fresh = posts.filter((x) => !x.url || !known.has(x.url));
+  if (fresh.length) {
+    const { error: insertError } = await g.actor.sb.from("competitor_posts").insert(fresh.map((x) => ({
+      client_id: g.actor.clientId, competitor_id: c.id, network: p.data.network, hook: x.hook, url: x.url, caption: x.caption, views: x.views, likes: x.likes, comments: x.comments, shares: x.shares,
+      followers: x.followers, posted_at: x.postedAt, formula_id: classifyHook(x.hook)?.id ?? null, source: "provider", created_by: g.actor.userId,
+    })));
+    if (insertError) return { ok: false, error: dbFailure(insertError, "competitor posts fetch save") };
+  }
+  await audit({ agencyId: g.actor.profile.agency_id, actor: g.actor.userId, action: "competitor.posts_fetched", entity: "competitor", entityId: c.id, meta: { network: p.data.network, found: posts.length, added: fresh.length } });
+  return { ok: true, added: fresh.length, count: posts.length };
 }

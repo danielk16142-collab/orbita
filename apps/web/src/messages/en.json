@@ -1710,7 +1710,18 @@
       "forbidden": "You don't have permission to do that.",
       "not_set_up": "This feature needs a database update. Ask your admin to apply migration 0021.",
       "rate_limited": "Too many attempts. Try again later.",
-      "unauthorized": "Please sign in again."
-    }
+      "unauthorized": "The Apify token was rejected.",
+      "no_token": "Fetching is not set up (APIFY_TOKEN is missing).",
+      "no_link": "Save this competitor's profile link for that network first.",
+      "timeout": "It took too long. Try again.",
+      "provider_error": "The data provider failed. Try again later.",
+      "bad_response": "The data provider sent something unexpected.",
+      "no_credit": "Your Apify account is out of credit."
+    },
+    "fetchButton": "Fetch latest {network} posts",
+    "fetching": "Fetching… (up to 2 min)",
+    "fetchConfirm": "Fetch the latest public {network} posts of this account? It takes up to two minutes and costs a few cents on your Apify account.",
+    "fetched": "{added} new posts added ({found} found).",
+    "fetchNote": "Public accounts only. About $0.08 per 30 posts. The opening line comes from the caption, not the spoken words."
   }
 }
