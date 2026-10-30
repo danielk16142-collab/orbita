@@ -613,7 +613,8 @@
     "views": {
       "month": "Month",
       "week": "Week",
-      "day": "Day"
+      "day": "Day",
+      "list": "List"
     },
     "client": "Client",
     "network": "Network",
@@ -816,7 +817,17 @@
     "chatErrors": {
       "not_set_up": "The post chat needs a database update (migration 0013_post_chats.sql). Ask your administrator to run it in Supabase."
     },
-    "forIdea": "For the idea: {idea}"
+    "forIdea": "For the idea: {idea}",
+    "list": {
+      "empty": "Nothing planned this month.",
+      "count": "{n, plural, one {# post} other {# posts}}",
+      "video": "Video",
+      "slides": "{n, plural, one {# slide} other {# slides}}",
+      "scenes": "{n, plural, one {# scene} other {# scenes}}",
+      "seconds": "{n}s",
+      "hashtags": "{n, plural, one {# hashtag} other {# hashtags}}",
+      "noCaption": "No caption yet"
+    }
   },
   "profile": {
     "eyebrow": "Your business",

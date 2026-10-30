@@ -1,5 +1,5 @@
 /** Calendar math on ISO dates (YYYY-MM-DD). Planned dates are client-local calendar days, so no timezone arithmetic is needed. */
-export const VIEWS = ["month", "week", "day"] as const;
+export const VIEWS = ["month", "week", "day", "list"] as const;
 export type View = (typeof VIEWS)[number];
 
 const parse = (s: string) => new Date(`${s}T12:00:00Z`);
@@ -36,6 +36,7 @@ export function monthGrid(anchor: string, weekStartsOn: 0 | 1 = 1): { weeks: str
 export function rangeFor(view: View, anchor: string, weekStartsOn: 0 | 1 = 1): { from: string; to: string } {
   if (view === "day") return { from: anchor, to: anchor };
   if (view === "week") { const f = startOfWeek(anchor, weekStartsOn); return { from: f, to: addDays(f, 6) }; }
+  if (view === "list") { const a = parse(anchor); return { from: iso(new Date(Date.UTC(a.getUTCFullYear(), a.getUTCMonth(), 1, 12))), to: iso(new Date(Date.UTC(a.getUTCFullYear(), a.getUTCMonth() + 1, 0, 12))) }; } // the calendar month only
   const g = monthGrid(anchor, weekStartsOn); return { from: g.weeks[0][0], to: g.weeks[g.weeks.length - 1][6] };
 }
 export function navigate(view: View, anchor: string, dir: -1 | 1): string {

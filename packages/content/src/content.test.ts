@@ -91,3 +91,11 @@ describe("post edits and content validation", () => {
   });
 });
 function reelOK() { return { duration_seconds: 20, hook_options: ["h"], scenes: [{ seconds: "0-3s", visual: "v", voiceover: "x", on_screen_text: "" }], cta: "c", audio_note: "" }; }
+
+describe("list view range", () => {
+  it("covers exactly the calendar month and moves by months", () => {
+    expect(rangeFor("list", "2026-02-14")).toEqual({ from: "2026-02-01", to: "2026-02-28" });
+    expect(rangeFor("list", "2026-12-31")).toEqual({ from: "2026-12-01", to: "2026-12-31" });
+    expect(navigate("list", "2026-01-31", 1)).toBe(navigate("month", "2026-01-31", 1));
+  });
+});
