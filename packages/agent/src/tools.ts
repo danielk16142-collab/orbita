@@ -17,6 +17,8 @@ export interface ToolPorts {
   getAnalytics(network: string): Promise<string>;
   saveResearch(n: { kind: ResearchKind; title: string; summary: string; sources: { title: string; url: string }[] }): Promise<{ id: string }>;
   weekStart: string;
+  /** Set by the web layer (verified) when the conversation is about one existing post: drafts then fill that post instead of adding a new one. */
+  fillPostId?: string;
   /** Everything the PERSON typed in this conversation. When set, the agent may only register URLs the person actually wrote. */
   userTexts?: string[];
   resolver?: (host: string) => Promise<string[]>; // tests only
@@ -196,7 +198,7 @@ export async function runTool(name: string, input: unknown, ports: ToolPorts, st
         // The week is set by the server, never by the model.
         const format = ({ propose_reel: "reel", propose_carousel: "carousel", propose_static_post: "static" } as Record<string, string>)[name];
         const full = target === "plan" ? { ...payload, week_start: ports.weekStart }
-          : target === "post" ? { ...payload, format, week_start: ports.weekStart } : payload;
+          : target === "post" ? { ...payload, post_id: ports.fillPostId, format, week_start: ports.weekStart } : payload; // post_id: only the server decides
         PAYLOADS[target].parse(full);
         const r = await ports.createProposal({ target, payload: full, reason: reason || undefined });
         if (isDraft) state.drafts++; else state.proposals++;

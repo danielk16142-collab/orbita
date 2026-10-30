@@ -814,9 +814,21 @@
       }
     },
     "chatErrors": {
-      "not_set_up": "La discussion de publication nécessite une mise à jour de la base de données (migration 0013_post_chats.sql). Demandez à votre administrateur de l'exécuter dans Supabase."
+      "not_set_up": "La discussion de publication nécessite une mise à jour de la base de données (migration 0013_post_chats.sql). Demandez à votre administrateur de l'exécuter dans Supabase.",
+      "not_editable": "Seuls les idées et les brouillons peuvent être écrits par l'agent."
     },
-    "forIdea": "Pour l’idée : {idea}"
+    "forIdea": "Pour l’idée : {idea}",
+    "fill": {
+      "title": "Créer avec l'agent",
+      "hint": "Ce post vient de votre plan. L'agent l'écrit avec l'idée, la stratégie et votre marque, et remplit ce post quand vous acceptez.",
+      "button": "Créer avec l'agent",
+      "titleAgain": "Réécrire avec l'agent",
+      "hintAgain": "Ce post a déjà un brouillon. L'agent écrit une nouvelle version ; rien ne change tant que vous ne l'acceptez pas.",
+      "buttonAgain": "Réécrire avec l'agent",
+      "uses": "L'agent utilisera",
+      "accepted": "Enregistré dans ce post.",
+      "opening": "Écris le {format} pour ce post planifié ({where}, en {language}), à partir de l'idée et de la raison pour laquelle il a été recommandé : {idea}"
+    }
   },
   "profile": {
     "eyebrow": "Votre entreprise",

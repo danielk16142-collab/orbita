@@ -1,9 +1,10 @@
 "use client";
 import { useEffect, useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import ReactMarkdown from "react-markdown";
 import { getProposalAction } from "@/lib/agent-actions";
-import { createPostAction } from "@/lib/posts-actions";
+import { createPostAction, fillPostCaptionAction } from "@/lib/posts-actions";
 import { ProposalCard, type ProposalView } from "@/components/agent/proposal-card";
 
 type Msg = { role: "user" | "assistant"; text: string };
@@ -15,10 +16,13 @@ const STRUCTURED = ["reel", "video", "carousel", "static", "story"];
  * The post chat: on the "Create post" page, a conversation only about this post. It opens by asking for the draft,
  * shows each draft as an editable card to accept into the calendar, and takes follow-up requests ("shorter", "add a CTA").
  */
-export function PostChat({ clientId, locale, format, networks, language, idea, staff, calendarHref, opening, onBack }: {
+export function PostChat({ clientId, locale, format, networks, language, idea, staff, calendarHref, opening, onBack, postId }: {
   clientId?: string; locale: string; format: string; networks: string[]; language: string; idea: string; staff: boolean;
   calendarHref: string; opening: string; onBack: () => void;
+  /** Set when writing for an existing planned post: accepted drafts fill that post (the server decides, this only asks for it). */
+  postId?: string;
 }) {
+  const router = useRouter();
   const t = useTranslations("posts");
   const ta = useTranslations("agent");
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -42,7 +46,7 @@ export function PostChat({ clientId, locale, format, networks, language, idea, s
     setMessages((m) => { replyIndex.current = m.length + 1; return [...m, { role: "user", text: message }, { role: "assistant", text: "" }]; });
     try {
       const res = await fetch("/api/posts/chat", { method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ clientId, conversationId: conv.current ?? undefined, message, locale, format, networks, idea: idea.slice(0, 500) }) });
+        body: JSON.stringify({ clientId, conversationId: conv.current ?? undefined, message, locale, format, networks, idea: idea.slice(0, 500), postId }) });
       if (!res.ok || !res.body) {
         const code = ((await res.json().catch(() => ({}))) as { error?: string }).error ?? "generic";
         setError(t.has(`chatErrors.${code}`) ? t(`chatErrors.${code}`) : ta.has(`errors.${code}`) ? ta(`errors.${code}`) : ta("errors.generic"));
@@ -77,6 +81,12 @@ export function PostChat({ clientId, locale, format, networks, language, idea, s
   /** Text posts and articles: save the agent's reply as the caption of a draft (one per network). */
   const saveText = (i: number) => startSave(async () => {
     setError(null);
+    if (postId) {
+      const r = await fillPostCaptionAction({ postId, caption: messages[i].text.slice(0, 2200) });
+      if (!r.ok) { setError(t.has(`errors.${r.error}`) ? t(`errors.${r.error}`) : t("errors.generic")); return; }
+      setSaved((s) => ({ ...s, [i]: true })); router.refresh();
+      return;
+    }
     for (const network of networks) {
       const r = await createPostAction({ clientId, network, language, type: format, idea: idea.trim() || messages[i].text.split("\n")[0].slice(0, 200) || format, caption: messages[i].text.slice(0, 2200), status: staff ? "draft" : "idea" });
       if (!r.ok) { setError(t("errors.generic")); return; }
@@ -86,9 +96,9 @@ export function PostChat({ clientId, locale, format, networks, language, idea, s
 
   const draft = (d: (typeof drafts)[number]) => (
     <div key={d.proposal.id} className="draft-card">
-      {d.decided === "accept" ? <p className="ok">✓ {t("chat.accepted")} <a href={calendarHref}>{t("chat.openCalendar")}</a></p>
+      {d.decided === "accept" ? <p className="ok">✓ {postId ? t("fill.accepted") : <>{t("chat.accepted")} <a href={calendarHref}>{t("chat.openCalendar")}</a></>}</p>
         : d.decided === "reject" ? <p className="stat-vs">{t("chat.rejected")}</p>
-        : <ProposalCard proposal={d.proposal} clientId={clientId} onDecided={(decision) => setDrafts((all) => all.map((x) => (x.proposal.id === d.proposal.id ? { ...x, decided: decision } : x)))} />}
+        : <ProposalCard proposal={d.proposal} clientId={clientId} onDecided={(decision) => { setDrafts((all) => all.map((x) => (x.proposal.id === d.proposal.id ? { ...x, decided: decision } : x))); if (decision === "accept" && postId) router.refresh(); }} />}
     </div>
   );
 

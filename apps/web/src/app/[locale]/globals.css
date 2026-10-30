@@ -735,3 +735,7 @@ ul.plain.api-key-list li { display: flex; flex-wrap: wrap; justify-content: spac
 .kit-block pre { white-space: pre-wrap; overflow-wrap: anywhere; margin: .4rem 0 0; font: inherit; font-size: .92rem; line-height: 1.45; }
 .kit-block.refined { border-style: dashed; background: var(--card); }
 .visual-item video { width: 100%; max-height: 420px; border: 2px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); background: #000; }
+
+/* Create with the agent, on a planned post */
+.fill-card { border-style: dashed; }
+.fill-why { margin: .35rem 0 0; font-style: italic; overflow-wrap: anywhere; }

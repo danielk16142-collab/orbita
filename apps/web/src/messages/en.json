@@ -814,9 +814,21 @@
       }
     },
     "chatErrors": {
-      "not_set_up": "The post chat needs a database update (migration 0013_post_chats.sql). Ask your administrator to run it in Supabase."
+      "not_set_up": "The post chat needs a database update (migration 0013_post_chats.sql). Ask your administrator to run it in Supabase.",
+      "not_editable": "Only ideas and drafts can be written by the agent."
     },
-    "forIdea": "For the idea: {idea}"
+    "forIdea": "For the idea: {idea}",
+    "fill": {
+      "title": "Create with the agent",
+      "hint": "This post comes from your plan. The agent writes it using the idea, the strategy and your brand, and fills this post when you accept.",
+      "button": "Create with the agent",
+      "titleAgain": "Rewrite with the agent",
+      "hintAgain": "This post already has a draft. The agent writes a new version; nothing changes until you accept it.",
+      "buttonAgain": "Rewrite with the agent",
+      "uses": "The agent will use",
+      "accepted": "Saved into this post.",
+      "opening": "Write the {format} for this planned post ({where}, in {language}), based on the idea and the reason it was recommended: {idea}"
+    }
   },
   "profile": {
     "eyebrow": "Your business",

@@ -814,9 +814,21 @@
       }
     },
     "chatErrors": {
-      "not_set_up": "El chat de publicaciones necesita una actualización de la base de datos (migración 0013_post_chats.sql). Pide a tu administrador que la ejecute en Supabase."
+      "not_set_up": "El chat de publicaciones necesita una actualización de la base de datos (migración 0013_post_chats.sql). Pide a tu administrador que la ejecute en Supabase.",
+      "not_editable": "Solo las ideas y los borradores pueden ser escritos por el agente."
     },
-    "forIdea": "Para la idea: {idea}"
+    "forIdea": "Para la idea: {idea}",
+    "fill": {
+      "title": "Crear con el agente",
+      "hint": "Este post viene de tu plan. El agente lo escribe con la idea, la estrategia y tu marca, y rellena este post cuando aceptas.",
+      "button": "Crear con el agente",
+      "titleAgain": "Reescribir con el agente",
+      "hintAgain": "Este post ya tiene un borrador. El agente escribe una versión nueva; nada cambia hasta que la aceptes.",
+      "buttonAgain": "Reescribir con el agente",
+      "uses": "El agente usará",
+      "accepted": "Guardado en este post.",
+      "opening": "Escribe el {format} para este post planificado ({where}, en {language}), a partir de la idea y del motivo por el que se recomendó: {idea}"
+    }
   },
   "profile": {
     "eyebrow": "Tu negocio",

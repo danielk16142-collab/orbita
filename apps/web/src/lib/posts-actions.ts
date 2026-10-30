@@ -119,3 +119,17 @@ export async function setClientTimezoneAction(input: unknown): Promise<PostResul
   await audit({ agencyId: g.value.profile.agency_id, actor: g.value.userId, action: "client.timezone", entity: "client", entityId: p.data.clientId });
   return { ok: true };
 }
+
+/** Text formats (text post, article): the agent's reply becomes the caption of THIS planned post (staff; idea or draft only). */
+export async function fillPostCaptionAction(input: unknown): Promise<PostResult> {
+  const p = z.object({ postId: Uuid, caption: z.string().trim().min(1).max(2200) }).safeParse(input);
+  if (!p.success) return fail("bad_request");
+  const g = await gate(); if (!g.ok) return fail(g.error);
+  const a = g.value; if (!a.isStaff) return fail("forbidden");
+  const post = await loadPost(a, p.data.postId); if (!post.ok) return fail(post.error);
+  if (!["idea", "draft"].includes(post.value.status)) return fail("not_allowed");
+  const { data, error } = await a.sb.from("posts").update({ caption: p.data.caption, ...(post.value.status === "idea" ? { status: "draft" } : {}) }).eq("id", post.value.id).eq("client_id", post.value.client_id).select("id");
+  if (error || !data?.length) return fail("forbidden");
+  await audit({ agencyId: a.profile.agency_id, actor: a.userId, action: "post.filled", entity: "post", entityId: post.value.id });
+  return { ok: true };
+}

@@ -7,6 +7,7 @@ import { loadPost } from "@/lib/posts/access";
 import { CopyButton } from "./copy-button";
 import { PostActions } from "./post-actions";
 import { PostEditor } from "./post-editor";
+import { FillWithAgent } from "./fill-with-agent";
 import { NETWORK_LABEL } from "./shared";
 import { VisualPanel, type VisualJob } from "@/components/visuals/visual-panel";
 import { readModule, usedThisMonth } from "@/lib/visuals/service";
@@ -71,6 +72,13 @@ export async function PostDetail({ locale, id, portal }: { locale: string; id: s
       </p>
 
       {post.idea && <section className="card"><h2>{t("idea")}</h2><p>{post.idea}</p></section>}
+
+      {!portal && ["idea", "draft"].includes(post.status) && ["reel", "video", "carousel", "static", "story", "text", "article"].includes(post.type) && (
+        <FillWithAgent postId={post.id} clientId={post.client_id} locale={locale} format={post.type} network={post.network} language={post.language} idea={post.idea || post.caption || ""}
+          day={post.planned_date} time={post.suggested_time} pillar={post.pillar} hasContent={!!content}
+          why={post.content && typeof post.content === "object" && "rationale" in post.content ? String((post.content as { rationale?: unknown }).rationale ?? "") || null : null}
+          calendarHref={`/${locale}/posts?client=${post.client_id}`} />
+      )}
 
       {post.type === "reel" && content && (
         <section className="card" style={{ marginTop: "1.25rem" }}>
