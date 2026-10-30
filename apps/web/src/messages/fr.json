@@ -1649,6 +1649,22 @@
       "forbidden": "Vous n'avez pas la permission de faire cela.",
       "rate_limited": "Trop de tentatives. Réessayez plus tard.",
       "invalid_content": "Le texte nettoyé n'est pas valide. Modifiez le post à la main."
+    },
+    "rewrite": {
+      "button": "Réécrire la légende pour qu'elle sonne plus humaine",
+      "working": "Réécriture…",
+      "suggestion": "Légende suggérée",
+      "scores": "score {before} → {after}",
+      "accept": "Utiliser cette légende",
+      "discard": "Ignorer",
+      "again": "Réessayer",
+      "errors": {
+        "no_caption": "Ce post n'a pas encore de légende.",
+        "not_configured": "L'agent n'est pas encore configuré.",
+        "daily_cap": "La limite quotidienne de ce client est atteinte.",
+        "model_error": "L'agent n'a pas pu la réécrire. Réessayez.",
+        "not_allowed": "Ce post ne peut pas être modifié maintenant."
+      }
     }
   },
   "wins": {
