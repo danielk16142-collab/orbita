@@ -41,8 +41,9 @@ export function supabaseProposalRepo(actor: AgentActor): ProposalRepo {
         } else if (op.op === "update_post") {
           // Fill an existing planned post: only this client's own idea/draft posts, with the user's own session.
           const { data: cur } = await sb.from("posts").select("id, status, suggested_time").eq("id", op.id).eq("client_id", clientId).maybeSingle();
-          if (!cur || !["idea", "draft"].includes(cur.status)) throw new Error("post cannot be filled");
-          const patch = { ...op.row, ...(cur.status === "idea" ? { status: "draft" } : {}), ...(!cur.suggested_time && op.setSuggestedTime ? { suggested_time: op.setSuggestedTime } : {}) };
+          if (!cur || !["idea", "draft", "approved"].includes(cur.status)) throw new Error("post cannot be filled");
+          // A new text needs a new approval: ideas and approved posts become drafts.
+          const patch = { ...op.row, ...(cur.status !== "draft" ? { status: "draft" } : {}), ...(!cur.suggested_time && op.setSuggestedTime ? { suggested_time: op.setSuggestedTime } : {}) };
           const { data, error } = await sb.from("posts").update(patch).eq("id", op.id).eq("client_id", clientId).select("id");
           if (error || !data?.length) throw new Error("post update failed");
         } else {

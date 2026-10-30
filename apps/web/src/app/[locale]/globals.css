@@ -739,3 +739,7 @@ ul.plain.api-key-list li { display: flex; flex-wrap: wrap; justify-content: spac
 /* Create with the agent, on a planned post */
 .fill-card { border-style: dashed; }
 .fill-why { margin: .35rem 0 0; font-style: italic; overflow-wrap: anywhere; }
+
+.strategy-ideas { margin-bottom: 1.25rem; }
+.strategy-ideas h4 { margin: .9rem 0 .3rem; font-size: .95rem; }
+a.idea-card { text-decoration: none; color: inherit; }

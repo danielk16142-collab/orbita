@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { allowedStatusChanges, parseContent, type Status } from "@orbita/content";
+import { allowedStatusChanges, formatKey, parseContent, type Status } from "@orbita/content";
 import { requireStaff, requireUser } from "@/lib/session";
 import { loadPost } from "@/lib/posts/access";
 import { CopyButton } from "./copy-button";
@@ -66,15 +66,15 @@ export async function PostDetail({ locale, id, portal }: { locale: string; id: s
       <h1>{(post.idea || post.caption || t("untitled")).slice(0, 90)}</h1>
       <p className="post-meta">
         <span className={`badge status-${post.status}`}>{t(`statuses.${post.status}`)}</span>{" "}
-        {NETWORK_LABEL[post.network] ?? post.network} · {t(`formats.${post.type}` as never, { default: post.type } as never)} · {post.language.toUpperCase()}
+        {NETWORK_LABEL[post.network] ?? post.network} · {t(`formats.${formatKey(post.type)}` as never)} · {post.language.toUpperCase()}
         {!portal && client?.name ? ` · ${client.name}` : ""}
         {post.planned_date ? ` · ${post.planned_date}${post.suggested_time ? ` ${post.suggested_time}` : ""}${client?.timezone ? ` (${client.timezone})` : ""}` : ` · ${t("unscheduledShort")}`}
       </p>
 
       {post.idea && <section className="card"><h2>{t("idea")}</h2><p>{post.idea}</p></section>}
 
-      {!portal && ["idea", "draft"].includes(post.status) && ["reel", "video", "carousel", "static", "story", "text", "article"].includes(post.type) && (
-        <FillWithAgent postId={post.id} clientId={post.client_id} locale={locale} format={post.type} network={post.network} language={post.language} idea={post.idea || post.caption || ""}
+      {!portal && ["idea", "draft", "approved"].includes(post.status) && ["reel", "video", "carousel", "static", "story", "text", "article"].includes(formatKey(post.type)) && (
+        <FillWithAgent postId={post.id} clientId={post.client_id} locale={locale} format={formatKey(post.type)} approved={post.status === "approved"} network={post.network} language={post.language} idea={post.idea || post.caption || ""}
           day={post.planned_date} time={post.suggested_time} pillar={post.pillar} hasContent={!!content}
           why={post.content && typeof post.content === "object" && "rationale" in post.content ? String((post.content as { rationale?: unknown }).rationale ?? "") || null : null}
           calendarHref={`/${locale}/posts?client=${post.client_id}`} />

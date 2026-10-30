@@ -777,7 +777,7 @@
       }
     },
     "ideas": {
-      "title": "Ideas para esta publicación",
+      "title": "Más ideas para este post",
       "more": "Más ideas",
       "loading": "Buscando ideas en la estrategia, el plan y la investigación de la semana…",
       "fromAgent": "Según la estrategia, el último plan y tu investigación. Elige una para empezar, o escribe la tuya.",
@@ -827,7 +827,17 @@
       "buttonAgain": "Reescribir con el agente",
       "uses": "El agente usará",
       "accepted": "Guardado en este post.",
-      "opening": "Escribe el {format} para este post planificado ({where}, en {language}), a partir de la idea y del motivo por el que se recomendó: {idea}"
+      "opening": "Escribe el {format} para este post planificado ({where}, en {language}), a partir de la idea y del motivo por el que se recomendó: {idea}",
+      "approvedNote": "Aceptar una versión nueva devuelve este post aprobado a borrador."
+    },
+    "strategyIdeas": {
+      "title": "Desde tu estrategia",
+      "hint": "Directo de la estrategia activa ({title}). Elige una para empezar.",
+      "planned": "Ya planificados: ábrelo y escríbelo",
+      "openToWrite": "Ábrelo para escribirlo con el agente",
+      "series": "Series recurrentes",
+      "seriesBadge": "Serie",
+      "topics": "Banco de temas"
     }
   },
   "profile": {

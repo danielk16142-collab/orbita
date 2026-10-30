@@ -91,3 +91,17 @@ describe("post edits and content validation", () => {
   });
 });
 function reelOK() { return { duration_seconds: 20, hook_options: ["h"], scenes: [{ seconds: "0-3s", visual: "v", voiceover: "x", on_screen_text: "" }], cta: "c", audio_note: "" }; }
+
+describe("formatKey", () => {
+  it("normalises the formats the agent writes in plans", async () => {
+    const { formatKey } = await import("./index");
+    expect(formatKey("text post")).toBe("text");
+    expect(formatKey("Text Post")).toBe("text");
+    expect(formatKey("reel")).toBe("reel");
+    expect(formatKey("Short video")).toBe("reel");
+    expect(formatKey("image post")).toBe("static");
+    expect(formatKey("LinkedIn article")).toBe("article");
+    expect(formatKey("something else")).toBe("post");
+    expect(formatKey(null)).toBe("post");
+  });
+});

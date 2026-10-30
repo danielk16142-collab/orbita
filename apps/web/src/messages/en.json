@@ -777,7 +777,7 @@
       }
     },
     "ideas": {
-      "title": "Ideas for this post",
+      "title": "More ideas for this post",
       "more": "More ideas",
       "loading": "Finding ideas from this week's strategy, plan and research…",
       "fromAgent": "Based on the strategy, the latest plan and your research. Pick one to start from, or write your own.",
@@ -827,7 +827,17 @@
       "buttonAgain": "Rewrite with the agent",
       "uses": "The agent will use",
       "accepted": "Saved into this post.",
-      "opening": "Write the {format} for this planned post ({where}, in {language}), based on the idea and the reason it was recommended: {idea}"
+      "opening": "Write the {format} for this planned post ({where}, in {language}), based on the idea and the reason it was recommended: {idea}",
+      "approvedNote": "Accepting a new version sends this approved post back to draft."
+    },
+    "strategyIdeas": {
+      "title": "From your strategy",
+      "hint": "Straight from the active strategy ({title}). Pick one to start from.",
+      "planned": "Already planned: open it and write it",
+      "openToWrite": "Open it to write it with the agent",
+      "series": "Recurring series",
+      "seriesBadge": "Series",
+      "topics": "Topic bank"
     }
   },
   "profile": {

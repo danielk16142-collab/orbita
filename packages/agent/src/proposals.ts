@@ -100,7 +100,7 @@ export function proposalToOps(target: ProposalTarget, payload: unknown): Op[] {
     case "post": {
       const p = PAYLOADS.post.parse(payload);
       // A draft written for an existing planned post fills that post: date, network and client stay as planned.
-      if (p.post_id) return [{ op: "update_post", id: p.post_id, row: { caption: p.caption || null, hashtags: p.hashtags, content: p.content, language: p.language, ...(p.idea ? { idea: p.idea } : {}) }, setSuggestedTime: p.suggested_time || null }];
+      if (p.post_id) return [{ op: "update_post", id: p.post_id, row: { caption: p.caption || null, hashtags: p.hashtags, content: p.content, language: p.language, type: p.format, ...(p.idea ? { idea: p.idea } : {}) }, setSuggestedTime: p.suggested_time || null }];
       return [{
         op: "insert", table: "posts",
         row: {

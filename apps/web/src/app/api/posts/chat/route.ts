@@ -8,7 +8,7 @@ import { overDailyCap, recordUsage } from "@/lib/agent/usage";
 import { describeModelError, json, sameOrigin } from "@/lib/agent/http";
 import { limiter } from "@/lib/rate-limit";
 import { audit } from "@/lib/audit";
-import { parseContent } from "@orbita/content";
+import { formatKey, parseContent } from "@orbita/content";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -41,10 +41,9 @@ export async function POST(req: Request) {
     if (actor.profile.role === "client") return json({ error: "forbidden" }, 403);
     const { data: post } = await actor.sb.from("posts").select("id, network, language, type, status, pillar, planned_date, suggested_time, idea, caption, content").eq("id", body.postId).eq("client_id", actor.clientId).maybeSingle();
     if (!post) return json({ error: "not_found" }, 404);
-    if (!["idea", "draft"].includes(post.status)) return json({ error: "not_editable" }, 409);
-    const fmt = (IDEA_FORMATS as readonly string[]).includes(post.type) ? (post.type as (typeof IDEA_FORMATS)[number]) : null;
-    if (!fmt) return json({ error: "bad_request" }, 400);
-    const content = parseContent(post.type, post.content);
+    if (!["idea", "draft", "approved"].includes(post.status)) return json({ error: "not_editable" }, 409);
+    const fmt = formatKey(post.type) as (typeof IDEA_FORMATS)[number];
+    const content = parseContent(fmt, post.content);
     const why = post.content && typeof post.content === "object" && "rationale" in post.content ? String((post.content as { rationale?: unknown }).rationale ?? "") : null;
     existing = { day: post.planned_date, time: post.suggested_time, pillar: post.pillar, why, hasContent: content.ok && !!content.value };
     body = { ...body, format: fmt, networks: [post.network as (typeof NETWORKS)[number]], idea: (post.idea || post.caption || "").slice(0, 500) };

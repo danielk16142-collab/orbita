@@ -1,4 +1,5 @@
 "use client";
+import { formatKey } from "@orbita/content";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -18,7 +19,7 @@ export function PostEditor({ post }: { post: PostRow }) {
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
-  const [type, setType] = useState(post.type);
+  const [type, setType] = useState<string>(formatKey(post.type)); // plans keep the agent's wording ("text post")
   const [content, setContent] = useState<Obj | null>((post.content as Obj | null) ?? null);
   const set = (k: string, v: unknown) => setContent((c) => ({ ...(c ?? {}), [k]: v }));
   const setItem = (key: string, i: number, k: string, v: string) => set(key, arr(content?.[key]).map((x, j) => (j === i ? { ...x, [k]: v } : x)));

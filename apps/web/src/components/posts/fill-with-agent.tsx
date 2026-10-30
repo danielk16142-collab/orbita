@@ -7,8 +7,8 @@ import { NETWORK_LABEL } from "./shared";
 const LANG_NAME: Record<string, string> = { en: "English", fr: "French", es: "Spanish" };
 
 /** On a planned post (from the strategy or the weekly plan): have the agent write it. The draft fills THIS post when accepted. */
-export function FillWithAgent({ postId, clientId, locale, format, network, language, idea, day, time, pillar, why, hasContent, calendarHref }: {
-  postId: string; clientId: string; locale: string; format: string; network: string; language: string; idea: string; day: string | null; time: string | null;
+export function FillWithAgent({ postId, clientId, locale, format, network, language, idea, day, time, pillar, why, hasContent, calendarHref, approved = false }: {
+  approved?: boolean; postId: string; clientId: string; locale: string; format: string; network: string; language: string; idea: string; day: string | null; time: string | null;
   pillar: string | null; why: string | null; hasContent: boolean; calendarHref: string;
 }) {
   const t = useTranslations("posts");
@@ -27,6 +27,7 @@ export function FillWithAgent({ postId, clientId, locale, format, network, langu
       </div>
       <p className="stat-vs fill-uses">{t("fill.uses")}: {[where, t(`formats.${format}` as never, { default: format } as never), day && `${day}${time ? ` ${time}` : ""}`, pillar && `${t("pillar")}: ${pillar}`].filter(Boolean).join(" · ")}</p>
       {why && <p className="fill-why">“{why}”</p>}
+      {approved && <p className="stat-vs">{t("fill.approvedNote")}</p>}
     </section>
   );
 }

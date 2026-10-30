@@ -1,6 +1,6 @@
 "use server";
 import { z } from "zod";
-import { allowedStatusChanges, isTimeZone, parseContent, PostEdit, STATUSES, zonedToUtc, type Status } from "@orbita/content";
+import { allowedStatusChanges, formatKey, isTimeZone, parseContent, PostEdit, STATUSES, zonedToUtc, type Status } from "@orbita/content";
 import { loadPost, postActor } from "@/lib/posts/access";
 import { limiter } from "@/lib/rate-limit";
 import { audit } from "@/lib/audit";
@@ -127,8 +127,8 @@ export async function fillPostCaptionAction(input: unknown): Promise<PostResult>
   const g = await gate(); if (!g.ok) return fail(g.error);
   const a = g.value; if (!a.isStaff) return fail("forbidden");
   const post = await loadPost(a, p.data.postId); if (!post.ok) return fail(post.error);
-  if (!["idea", "draft"].includes(post.value.status)) return fail("not_allowed");
-  const { data, error } = await a.sb.from("posts").update({ caption: p.data.caption, ...(post.value.status === "idea" ? { status: "draft" } : {}) }).eq("id", post.value.id).eq("client_id", post.value.client_id).select("id");
+  if (!["idea", "draft", "approved"].includes(post.value.status)) return fail("not_allowed");
+  const { data, error } = await a.sb.from("posts").update({ caption: p.data.caption, type: formatKey(post.value.type), ...(post.value.status !== "draft" ? { status: "draft" } : {}) }).eq("id", post.value.id).eq("client_id", post.value.client_id).select("id");
   if (error || !data?.length) return fail("forbidden");
   await audit({ agencyId: a.profile.agency_id, actor: a.userId, action: "post.filled", entity: "post", entityId: post.value.id });
   return { ok: true };

@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { createPostAction } from "@/lib/posts-actions";
 import { NETWORK_COLOR, NETWORK_LABEL } from "./shared";
 import { PostIdeas } from "./post-ideas";
+import { StrategyIdeas } from "./strategy-ideas";
 import { PostChat } from "./post-chat";
 
 /** Formats offered when creating a post, and where each one can go. */
@@ -144,6 +145,7 @@ export function CreatePostFlow({ locale, staff, clients, initialClient, initialD
               <select value={clientId} onChange={(e) => setClientId(e.target.value)} required>{clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
             </label>
           )}
+          {(!staff || clientId) && <StrategyIdeas clientId={staff ? clientId : undefined} format={format} networks={networks} postsBase={postsBase} picked={idea} onPick={setIdea} />}
           {(!staff || clientId) && <PostIdeas clientId={staff ? clientId : undefined} format={format} networks={networks} locale={locale} picked={idea} onPick={setIdea} />}
           <label>{t("ideaLabel")}
             <textarea value={idea} onChange={(e) => setIdea(e.target.value)} rows={4} maxLength={2000} placeholder={t("ideaPlaceholder")} />
