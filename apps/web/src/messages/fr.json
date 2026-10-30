@@ -1558,5 +1558,23 @@
         "rate_limited": "Trop de requêtes. Réessayez dans un instant."
       }
     }
+  },
+  "strategyChat": {
+    "title": "Modifier la stratégie",
+    "hint": "Dites à l'agent quoi changer ou collez une nouvelle stratégie. Il met à jour la stratégie ci-dessous immédiatement, et vous pouvez annuler.",
+    "hintNew": "Décrivez la stratégie souhaitée ou collez-en une. L'agent la construit ici immédiatement.",
+    "placeholder": "Par exemple : plus de reels, moins de carrousels, retirer LinkedIn, ajouter une série de témoignages clients…",
+    "send": "Mettre à jour la stratégie",
+    "working": "En cours…",
+    "applied": "Stratégie mise à jour.",
+    "undo": "Annuler",
+    "ex1": "Plus de reels, moins de posts statiques",
+    "ex2": "Ajouter une série hebdomadaire de témoignages clients",
+    "ex3": "Publier 3 fois par semaine sur Instagram",
+    "errors": {
+      "apply_failed": "La stratégie n'a pas pu être enregistrée. Réessayez.",
+      "model_error": "L'agent n'a pas pu répondre. Réessayez.",
+      "undo": "Impossible de restaurer la stratégie précédente."
+    }
   }
 }

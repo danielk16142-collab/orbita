@@ -476,5 +476,13 @@ describe("filling an existing planned post", () => {
     const row = (upd as { row: Record<string, unknown> }).row;
     expect(Object.keys(row).sort()).toEqual(["caption", "content", "hashtags", "idea", "language", "type"]); // date, network, status stay as planned
     expect(proposalToOps("post", payload)[0]).toMatchObject({ op: "insert", table: "posts" });
+describe("strategy chat", () => {
+  it("only offers tools that exist and tells the agent to send the complete strategy", async () => {
+    const { STRATEGY_CHAT_TOOLS, strategyChatFocus, TOOL_DEFS } = await import("./index");
+    for (const n of STRATEGY_CHAT_TOOLS) expect(TOOL_DEFS.some((t) => t.name === n)).toBe(true);
+    expect(STRATEGY_CHAT_TOOLS).toContain("propose_strategy");
+    expect(STRATEGY_CHAT_TOOLS).not.toContain("propose_reel");
+    expect(strategyChatFocus(true)).toMatch(/COMPLETE updated strategy/);
+    expect(strategyChatFocus(false)).toMatch(/no active strategy/);
   });
 });

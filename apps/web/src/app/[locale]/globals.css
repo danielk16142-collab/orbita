@@ -743,3 +743,6 @@ ul.plain.api-key-list li { display: flex; flex-wrap: wrap; justify-content: spac
 .strategy-ideas { margin-bottom: 1.25rem; }
 .strategy-ideas h4 { margin: .9rem 0 .3rem; font-size: .95rem; }
 a.idea-card { text-decoration: none; color: inherit; }
+/* Strategy chat */
+.strategy-chat-log { display: grid; gap: .5rem; max-height: 18rem; overflow-y: auto; margin: .5rem 0; }
+.strategy-chat .agent-msg { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
