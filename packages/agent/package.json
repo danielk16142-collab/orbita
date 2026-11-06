@@ -8,7 +8,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./site": "./src/site.ts",
-    "./strategy-map": "./src/strategy-map.ts"
+    "./strategy-map": "./src/strategy-map.ts",
+    "./focus": "./src/focus.ts"
   },
   "scripts": {
     "test": "vitest run",

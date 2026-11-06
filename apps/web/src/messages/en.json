@@ -893,7 +893,10 @@
       "example": "Examples"
     },
     "learnedOn": "Learned {date}",
-    "learnedIntro": "Everything the agent remembers about this brand. Open a line to read it in full; Forget removes it from what the agent uses."
+    "learnedIntro": "Everything the agent remembers about this brand. Open a line to read it in full; Forget removes it from what the agent uses.",
+    "focusTitle": "What we talk about",
+    "focusMoved": "Content pillars and topics now live in the Strategy section, where you update them with the strategy every week.",
+    "focusOpen": "Open in Strategy"
   },
   "insights": {
     "eyebrow": "What is working",
@@ -1342,7 +1345,7 @@
   },
   "focus": {
     "title": "What we talk about",
-    "intro": "Choose the topics this brand covers and its content pillars. The agent follows them in the strategy, ideas and posts.",
+    "intro": "Your content pillars and the topics each one covers. Update them with the strategy, week after week: the topics follow the pillars, and the agent follows both.",
     "topicsTitle": "Topics",
     "noTopics": "No topics yet. Pick from the ideas below or add your own.",
     "levelFor": "How much to talk about {topic}",
@@ -1359,7 +1362,7 @@
     "addPlaceholder": "Add your own topic",
     "pillarsTitle": "Content pillars",
     "suggestPillars": "Suggest pillars",
-    "pillarsHint": "The big themes your content rotates through, and how much of it each one gets. The strategy uses exactly these.",
+    "pillarsHint": "The big themes your content rotates through, how much of it each one gets, and the topics it covers. The strategy uses exactly these.",
     "pillarName": "Pillar",
     "share": "Share",
     "angle": "Angle",
@@ -1401,7 +1404,17 @@
       "daily_cap": "Today's agent limit is reached.",
       "no_result": "No suggestion this time. Try again.",
       "model_error": "The agent is unavailable right now."
-    }
+    },
+    "weekTitle": "This week",
+    "weekPosts": "{count, plural, one {# post} other {# posts}}",
+    "weekFromPlan": "The pillars this week's posts use. Tag posts with a pillar on the map to change it.",
+    "weekByShare": "No post this week has a pillar yet, so these are your pillars by share.",
+    "weekTopics": "Topics this week:",
+    "topicsHint": "A topic in a pillar is a focus topic. Topics outside every pillar are used sometimes. Avoided topics are never used.",
+    "inPillars": "Focus · {list}",
+    "allow": "Allow",
+    "addToPillar": "Add a topic to {name}",
+    "addToPillarPlaceholder": "New topic for this pillar"
   },
   "strategyPage": {
     "eyebrow": "Plan",
@@ -1409,7 +1422,7 @@
     "emptyTitle": "No strategy yet",
     "emptyText": "Two steps to a strategy the agent follows every week:",
     "step1": "Choose your topics and pillars",
-    "step1Hint": "in the Profile, so the strategy is built on what you want to talk about.",
+    "step1Hint": "below, so the strategy is built on what you want to talk about.",
     "step1Done": "{count} pillars and {topics} topics chosen.",
     "choose": "Choose them",
     "edit": "Edit",

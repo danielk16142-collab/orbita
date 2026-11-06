@@ -3,10 +3,11 @@ import { fakeEnabled } from "@orbita/connectors";
 import { StrategyMap } from "@/components/strategy/strategy-map";
 import { StrategyMindMap } from "@/components/strategy/strategy-mind-map";
 import type { StrategyMapData } from "@/lib/strategy-map";
-import type { MapPost } from "@orbita/agent";
+import { weekFocus, weekStartOf, type MapPost } from "@orbita/agent";
+import { FocusEditor } from "@/components/strategy/focus-editor";
 
-/** Development only (CONNECTORS_FAKE=1): the Strategy views with sample data. ?layout=calendar for the grid; ?loose=1 before connecting. */
-export default async function Preview({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ layout?: string; loose?: string }> }) {
+/** Development only (CONNECTORS_FAKE=1): the Strategy views with sample data. ?layout=calendar for the grid; ?loose=1 before connecting; ?focus=1 for pillars and topics. */
+export default async function Preview({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ layout?: string; loose?: string; focus?: string }> }) {
   if (!fakeEnabled()) notFound();
   const { locale } = await params; const q = await searchParams;
   const month = new Date().toISOString().slice(0, 7);
@@ -38,6 +39,13 @@ export default async function Preview({ params, searchParams }: { params: Promis
       },
     } },
   };
+  if (q.focus) {
+    const focus = { topics: [{ name: "Web design", level: "focus" as const }, { name: "SEO", level: "sometimes" as const }, { name: "AI", level: "sometimes" as const }, { name: "Politics", level: "avoid" as const }],
+      pillars: [{ name: "Proof", angle: "Real results and before/after work", share: 40, topics: ["Web design", "Case studies"] }, { name: "Education", angle: "Teach what makes a website sell", share: 30, topics: ["SEO", "Web design"] },
+        { name: "Behind the scenes", angle: "The studio and the process", share: 20, topics: [] }, { name: "Offers", angle: "", share: 10, topics: ["Website audit"] }] };
+    return <main className="content"><p className="eyebrow">Preview (sample data)</p><h1>Strategy</h1>
+      <FocusEditor locale={locale} initial={focus} week={weekFocus(focus, q.focus === "empty" ? [] : posts.map((p) => ({ ...p, date: d(13) })), weekStartOf(d(13)))} applyHref="#" /></main>;
+  }
   return (
     <main className="content"><p className="eyebrow">Preview (sample data)</p><h1>Strategy</h1>
       {q.layout === "calendar"

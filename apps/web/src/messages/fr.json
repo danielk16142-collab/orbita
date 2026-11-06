@@ -893,7 +893,10 @@
       "example": "Exemples"
     },
     "learnedOn": "Appris le {date}",
-    "learnedIntro": "Tout ce dont l'agent se souvient sur cette marque. Ouvrez une ligne pour la lire en entier; Oublier la retire de ce que l'agent utilise."
+    "learnedIntro": "Tout ce dont l'agent se souvient sur cette marque. Ouvrez une ligne pour la lire en entier; Oublier la retire de ce que l'agent utilise.",
+    "focusTitle": "Nos sujets",
+    "focusMoved": "Les piliers de contenu et les sujets sont maintenant dans la section Stratégie, où vous les mettez à jour avec la stratégie chaque semaine.",
+    "focusOpen": "Ouvrir dans Stratégie"
   },
   "insights": {
     "eyebrow": "Ce qui fonctionne",
@@ -1342,7 +1345,7 @@
   },
   "focus": {
     "title": "Ce dont nous parlons",
-    "intro": "Choisissez les sujets de cette marque et ses piliers de contenu. L’agent les suit dans la stratégie, les idées et les publications.",
+    "intro": "Vos piliers de contenu et les sujets de chacun. Mettez-les à jour avec la stratégie, semaine après semaine : les sujets suivent les piliers et l'agent suit les deux.",
     "topicsTitle": "Sujets",
     "noTopics": "Aucun sujet pour l’instant. Choisissez parmi les idées ou ajoutez les vôtres.",
     "levelFor": "Combien parler de {topic}",
@@ -1359,7 +1362,7 @@
     "addPlaceholder": "Ajouter votre propre sujet",
     "pillarsTitle": "Piliers de contenu",
     "suggestPillars": "Suggérer des piliers",
-    "pillarsHint": "Les grands thèmes de votre contenu et la part de chacun. La stratégie utilise exactement ceux-ci.",
+    "pillarsHint": "Les grands thèmes de votre contenu, la part de chacun et les sujets qu'il couvre. La stratégie utilise exactement ceux-ci.",
     "pillarName": "Pilier",
     "share": "Part",
     "angle": "Angle",
@@ -1369,7 +1372,7 @@
     "total": "Total : {total} % (visez 100 %)",
     "save": "Enregistrer",
     "saving": "Enregistrement…",
-    "saved": "Enregistré. L’agent l’utilise désormais.",
+    "saved": "Enregistré. L'agent l'utilise dès maintenant.",
     "applyToStrategy": "Mettre la stratégie à jour",
     "replacePillars": "Remplacer vos piliers par ceux suggérés ?",
     "defaults": {
@@ -1401,7 +1404,17 @@
       "daily_cap": "La limite quotidienne de l’agent est atteinte.",
       "no_result": "Aucune suggestion cette fois. Réessayez.",
       "model_error": "L’agent est indisponible pour le moment."
-    }
+    },
+    "weekTitle": "Cette semaine",
+    "weekPosts": "{count, plural, one {# publication} other {# publications}}",
+    "weekFromPlan": "Les piliers utilisés par les publications de cette semaine. Associez un pilier aux publications sur la carte pour le changer.",
+    "weekByShare": "Aucune publication de cette semaine n'a encore de pilier : voici vos piliers par part.",
+    "weekTopics": "Sujets cette semaine :",
+    "topicsHint": "Un sujet dans un pilier est un sujet principal. Les sujets hors de tout pilier sont utilisés parfois. Les sujets à éviter ne sont jamais utilisés.",
+    "inPillars": "Principal · {list}",
+    "allow": "Autoriser",
+    "addToPillar": "Ajouter un sujet à {name}",
+    "addToPillarPlaceholder": "Nouveau sujet pour ce pilier"
   },
   "strategyPage": {
     "eyebrow": "Plan",
@@ -1409,7 +1422,7 @@
     "emptyTitle": "Pas encore de stratégie",
     "emptyText": "Deux étapes pour une stratégie que l’agent suit chaque semaine :",
     "step1": "Choisissez vos sujets et piliers",
-    "step1Hint": "dans le Profil, pour bâtir la stratégie sur ce dont vous voulez parler.",
+    "step1Hint": "ci-dessous, pour que la stratégie repose sur ce dont vous voulez parler.",
     "step1Done": "{count} piliers et {topics} sujets choisis.",
     "choose": "Les choisir",
     "edit": "Modifier",

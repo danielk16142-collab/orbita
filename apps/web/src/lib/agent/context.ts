@@ -1,5 +1,5 @@
 import "server-only";
-import { briefFromRow, computeCompleteness, focusFromRow, focusPrompt, planningWeekStart, type AuditReport, type Memory, type PromptInput, type Source } from "@orbita/agent";
+import { briefFromRow, computeCompleteness, focusFromRow, focusPrompt, planningWeekStart, weekFocus, type AuditReport, type Memory, type PromptInput, type Source } from "@orbita/agent";
 import type { AgentActor } from "./access";
 import { analyticsText, loadAnalyticsData } from "@/lib/analytics/load";
 
@@ -17,12 +17,15 @@ export type ClientContext = {
   research: { id: string; kind: string; title: string; summary: string; sources: { title: string; url: string }[]; createdAt: string }[];
   lastPlan: string | null;
   analytics: string | null;
+  /** Posts tagged with a pillar in the coming weeks: which pillars (and so which topics) this week uses. */
+  pillarPosts: { pillar: string | null; date: string }[];
 };
 
 /** Everything the agent should know about one client, read through the user's own RLS-bound session. */
 export async function loadClientContext(sb: Sb, clientId: string): Promise<ClientContext> {
   const since = new Date(Date.now() - 30 * 86_400_000).toISOString();
-  const [brief, mem, src, aud, proof, rules, posts, fb, strat, res, plan] = await Promise.all([
+  const weekAgo = new Date(Date.now() - 7 * 86_400_000).toISOString().slice(0, 10), soon = new Date(Date.now() + 21 * 86_400_000).toISOString().slice(0, 10);
+  const [brief, mem, src, aud, proof, rules, posts, fb, strat, res, plan, tagged] = await Promise.all([
     sb.from("brand_briefs").select("*").eq("client_id", clientId).maybeSingle(),
     sb.from("brand_memories").select("id, kind, content, weight, created_at").eq("client_id", clientId).eq("status", "active").order("created_at", { ascending: false }).limit(200),
     sb.from("client_sources").select("id, kind, url, handle").eq("client_id", clientId).order("created_at"),
@@ -34,6 +37,7 @@ export async function loadClientContext(sb: Sb, clientId: string): Promise<Clien
     sb.from("strategies").select("title, period, content, created_at").eq("client_id", clientId).eq("active", true).maybeSingle(),
     sb.from("research_notes").select("id, kind, title, summary, sources, created_at").eq("client_id", clientId).gte("created_at", since).order("created_at", { ascending: false }).limit(8),
     sb.from("proposals").select("payload").eq("client_id", clientId).eq("target", "plan").eq("status", "accepted").order("decided_at", { ascending: false }).limit(1),
+    sb.from("posts").select("pillar, planned_date").eq("client_id", clientId).not("pillar", "is", null).gte("planned_date", weekAgo).lte("planned_date", soon).limit(200),
   ]);
   const analytics = analyticsText(await loadAnalyticsData(sb, clientId));
   const lp = plan.data?.[0]?.payload as { title?: string; strategy_note?: string; items?: { day: string; network: string; format: string; idea: string }[] } | undefined;
@@ -51,6 +55,7 @@ export async function loadClientContext(sb: Sb, clientId: string): Promise<Clien
     strategy: strat.data ? { title: strat.data.title, period: strat.data.period, createdAt: strat.data.created_at, content: strat.data.content as Record<string, unknown> } : null,
     research: (res.data ?? []).map((r) => ({ id: r.id, kind: r.kind, title: r.title, summary: r.summary, sources: (r.sources as { title: string; url: string }[]) ?? [], createdAt: r.created_at })),
     analytics,
+    pillarPosts: (tagged.data ?? []).map((p) => ({ pillar: p.pillar as string | null, date: p.planned_date as string })),
     lastPlan: lp ? `${lp.title ?? "Plan"}: ${lp.strategy_note ?? ""} | ${(lp.items ?? []).map((i) => `${i.day} ${i.network} ${i.format}: ${i.idea}`).join("; ")}`.slice(0, 1500) : null,
     examples: [...(posts.data ?? []).map((p) => `${p.network} (${p.language}): ${[p.idea, p.caption].filter(Boolean).join(" / ")}`.slice(0, 300)), ...fromFeedback],
   };
@@ -67,7 +72,7 @@ export function promptInput(actor: AgentActor, ctx: ClientContext, locale: "en" 
     brief: briefFromRow(ctx.briefRow), memories: ctx.memories, sources: ctx.sources, proofItems: ctx.proofItems, rules: ctx.rules,
     recentExamples: ctx.examples, audit: ctx.audit, briefUpdatedAt: (ctx.briefRow?.updated_at as string | undefined) ?? null,
     today: now.toISOString().slice(0, 10), weekStart: planningWeekStart(now),
-    focus: focusPrompt(focusFromRow(ctx.briefRow)),
+    focus: (() => { const f = focusFromRow(ctx.briefRow); return focusPrompt(f, weekFocus(f, ctx.pillarPosts ?? [], planningWeekStart(now))); })(),
     strategy: ctx.strategy, research: ctx.research, lastPlan: ctx.lastPlan, analytics: ctx.analytics, webSearch: !!opts.webSearch, firstTurn: !!opts.firstTurn,
   };
 }

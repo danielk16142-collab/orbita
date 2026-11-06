@@ -893,7 +893,10 @@
       "example": "Ejemplos"
     },
     "learnedOn": "Aprendido el {date}",
-    "learnedIntro": "Todo lo que el agente recuerda de esta marca. Abre una línea para leerla completa; Olvidar la quita de lo que usa el agente."
+    "learnedIntro": "Todo lo que el agente recuerda de esta marca. Abre una línea para leerla completa; Olvidar la quita de lo que usa el agente.",
+    "focusTitle": "De qué hablamos",
+    "focusMoved": "Los pilares de contenido y los temas ahora están en la sección Estrategia, donde los actualizas con la estrategia cada semana.",
+    "focusOpen": "Abrir en Estrategia"
   },
   "insights": {
     "eyebrow": "Lo que funciona",
@@ -1342,7 +1345,7 @@
   },
   "focus": {
     "title": "De qué hablamos",
-    "intro": "Elige los temas de esta marca y sus pilares de contenido. El agente los sigue en la estrategia, las ideas y las publicaciones.",
+    "intro": "Tus pilares de contenido y los temas de cada uno. Actualízalos con la estrategia, semana a semana: los temas siguen a los pilares y el agente sigue ambos.",
     "topicsTitle": "Temas",
     "noTopics": "Aún no hay temas. Elige de las ideas o agrega los tuyos.",
     "levelFor": "Cuánto hablar de {topic}",
@@ -1359,7 +1362,7 @@
     "addPlaceholder": "Agrega tu propio tema",
     "pillarsTitle": "Pilares de contenido",
     "suggestPillars": "Sugerir pilares",
-    "pillarsHint": "Los grandes temas de tu contenido y cuánto lleva cada uno. La estrategia usa exactamente estos.",
+    "pillarsHint": "Los grandes temas de tu contenido, cuánto recibe cada uno y los temas que cubre. La estrategia usa exactamente estos.",
     "pillarName": "Pilar",
     "share": "Peso",
     "angle": "Enfoque",
@@ -1401,7 +1404,17 @@
       "daily_cap": "Se alcanzó el límite diario del agente.",
       "no_result": "Sin sugerencias esta vez. Inténtalo de nuevo.",
       "model_error": "El agente no está disponible ahora."
-    }
+    },
+    "weekTitle": "Esta semana",
+    "weekPosts": "{count, plural, one {# publicación} other {# publicaciones}}",
+    "weekFromPlan": "Los pilares que usan las publicaciones de esta semana. Asigna un pilar a las publicaciones en el mapa para cambiarlo.",
+    "weekByShare": "Ninguna publicación de esta semana tiene pilar todavía, así que estos son tus pilares por porcentaje.",
+    "weekTopics": "Temas esta semana:",
+    "topicsHint": "Un tema dentro de un pilar es un tema principal. Los temas fuera de todo pilar se usan a veces. Los temas a evitar nunca se usan.",
+    "inPillars": "Principal · {list}",
+    "allow": "Permitir",
+    "addToPillar": "Añadir un tema a {name}",
+    "addToPillarPlaceholder": "Nuevo tema para este pilar"
   },
   "strategyPage": {
     "eyebrow": "Plan",
@@ -1409,7 +1422,7 @@
     "emptyTitle": "Aún no hay estrategia",
     "emptyText": "Dos pasos para una estrategia que el agente sigue cada semana:",
     "step1": "Elige tus temas y pilares",
-    "step1Hint": "en el Perfil, para construir la estrategia sobre lo que quieres comunicar.",
+    "step1Hint": "abajo, para que la estrategia se base en lo que quieres contar.",
     "step1Done": "{count} pilares y {topics} temas elegidos.",
     "choose": "Elegirlos",
     "edit": "Editar",

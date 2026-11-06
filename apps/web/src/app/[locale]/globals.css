@@ -787,3 +787,13 @@ a.idea-card { text-decoration: none; color: inherit; }
 .humanize-rewrite { margin: .5rem 0; } .rewrite-box { margin-top: .6rem; }
 
 .fetch-posts { margin: .75rem 0; }
+/* What we talk about, in the Strategy section: this week's pillars and topics, topics that follow the pillars */
+.focus-week { border: 2px solid var(--brand); border-radius: 12px; padding: .75rem .9rem; margin: .75rem 0 .25rem; display: grid; gap: .35rem; }
+.focus-week p { margin: 0; }
+.focus-week-pillars { display: flex; flex-wrap: wrap; gap: .35rem; }
+.focus-week-topics { overflow-wrap: anywhere; }
+.focus-topic-level { font-size: .72rem; color: var(--dim); overflow-wrap: anywhere; }
+.focus-topic.level-focus .focus-topic-level { color: var(--ink); }
+.focus-avoid { font: inherit; font-size: .72rem; border: 1px solid var(--mist); border-radius: 99px; background: none; padding: .15rem .5rem; cursor: pointer; color: var(--dim); }
+.focus-avoid[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.focus-add.inline { margin-top: 0; }
