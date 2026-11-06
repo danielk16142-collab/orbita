@@ -4,11 +4,12 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type { ReelContentT } from "@orbita/content";
 import { createPostAction } from "@/lib/posts-actions";
+import { addStrategyTopicAction } from "@/lib/focus-actions";
 import { NETWORK_LABEL } from "@/components/posts/shared";
 
 export type TheirPostView = { id: string; hook: string; caption: string | null; transcript: string | null; network: string; url: string | null; competitor: string | null };
-type Ours = { title: string; kept: string; changed: string; reel: ReelContentT; caption: string; hashtags: string[] };
-const LANGS = ["en", "fr", "es"];
+type Ours = { title: string; language: string; kept: string; changed: string; reel: ReelContentT; caption: string; hashtags: string[] };
+const LANGS = ["same", "en", "fr", "es"];
 const NETS = ["instagram", "tiktok", "facebook", "youtube", "linkedin"];
 
 /**
@@ -21,7 +22,7 @@ export function OurVersion({ post, clientId, locale, staff, postsBase, chatHref 
   const t = useTranslations("wins.remake");
   const ta = useTranslations("agent");
   const [open, setOpen] = useState(false);
-  const [language, setLanguage] = useState(LANGS.includes(locale) ? locale : "en");
+  const [language, setLanguage] = useState("same");
   const [transcript, setTranscript] = useState("");
   const [notes, setNotes] = useState("");
   const [busy, setBusy] = useState(false);
@@ -32,6 +33,7 @@ export function OurVersion({ post, clientId, locale, staff, postsBase, chatHref 
   const [saving, setSaving] = useState(false);
   const [savedId, setSavedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [inStrategy, setInStrategy] = useState(false);
   const errorText = (c: string) => (t.has(`errors.${c}`) ? t(`errors.${c}`) : ta.has(`errors.${c}`) ? ta(`errors.${c}`) : ta("errors.generic"));
 
   async function write() {
@@ -40,7 +42,7 @@ export function OurVersion({ post, clientId, locale, staff, postsBase, chatHref 
       const res = await fetch("/api/competitors/remake", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, postId: post.id, locale, language, transcript, notes }) });
       const data = (await res.json().catch(() => ({}))) as { ours?: Ours; error?: string };
       if (!res.ok || !data.ours) { setError(errorText(data.error ?? "generic")); return; }
-      setOurs(data.ours); setHook(0);
+      setOurs(data.ours); setHook(0); setInStrategy(false);
     } catch { setError(ta("errors.generic")); }
     finally { setBusy(false); }
   }
@@ -52,11 +54,18 @@ export function OurVersion({ post, clientId, locale, staff, postsBase, chatHref 
     setSaving(true); setError(null);
     const hooks = [ours.reel.hook_options[hook], ...ours.reel.hook_options.filter((_, i) => i !== hook)].filter((h) => h?.trim());
     const r = await createPostAction({
-      clientId, network, language, type: "reel", idea: ours.title || hooks[0] || post.hook.slice(0, 200), planned_date: date || null, status: "draft", from: "competitor",
+      clientId, network, language: ["en", "fr", "es"].includes(ours.language) ? ours.language : locale, type: "reel", idea: ours.title || hooks[0] || post.hook.slice(0, 200), planned_date: date || null, status: "draft", from: "competitor",
       caption: ours.caption.trim() || undefined, hashtags: ours.hashtags, content: { ...ours.reel, hook_options: hooks },
     }).catch(() => ({ ok: false as const, error: "generic" }));
     setSaving(false);
     if (r.ok && r.id) setSavedId(r.id); else setError(errorText(r.ok ? "generic" : r.error));
+  }
+
+  async function toStrategy() {
+    if (!ours) return;
+    setError(null);
+    const r = await addStrategyTopicAction({ clientId, topic: (ours.title || ours.reel.hook_options[hook] || post.hook).slice(0, 200) }).catch(() => ({ ok: false as const, error: "generic" }));
+    if (r.ok) setInStrategy(true); else setError(errorText(r.error));
   }
 
   if (!open) return <button type="button" className="btn small" onClick={() => setOpen(true)}>{t("open")}</button>;
@@ -77,7 +86,7 @@ export function OurVersion({ post, clientId, locale, staff, postsBase, chatHref 
           <p className="eyebrow">{t("ours")}</p>
           {!ours && <p className="stat-vs">{t("intro")}</p>}
           <div className="plan-row">
-            <label>{t("language")}<select value={language} onChange={(e) => setLanguage(e.target.value)}>{LANGS.map((l) => <option key={l} value={l}>{l.toUpperCase()}</option>)}</select></label>
+            <label>{t("language")}<select value={language} onChange={(e) => setLanguage(e.target.value)}>{LANGS.map((l) => <option key={l} value={l}>{l === "same" ? t("sameLanguage") : l.toUpperCase()}</option>)}</select></label>
           </div>
           <label>{t("notes")}<input value={notes} maxLength={500} onChange={(e) => setNotes(e.target.value)} placeholder={t("notesHint")} /></label>
           <div className="btn-row">
@@ -112,7 +121,10 @@ export function OurVersion({ post, clientId, locale, staff, postsBase, chatHref 
                   <label>{t("network")}<select value={network} onChange={(e) => setNetwork(e.target.value)}>{NETS.map((n) => <option key={n} value={n}>{NETWORK_LABEL[n] ?? n}</option>)}</select></label>
                   <label>{t("date")}<input type="date" value={date} onChange={(e) => setDate(e.target.value)} /></label>
                 </div>
-                <button type="button" className="btn" onClick={save} disabled={saving || !!savedId}>{saving ? t("saving") : date ? t("addOn", { date }) : t("add")}</button>
+                <div className="btn-row">
+                  <button type="button" className="btn" onClick={save} disabled={saving || !!savedId}>{saving ? t("saving") : date ? t("addOn", { date }) : t("addNoDate")}</button>
+                  {staff && <button type="button" className="btn ghost small" onClick={toStrategy} disabled={inStrategy}>{inStrategy ? `✓ ${t("inStrategy")}` : t("toStrategy")}</button>}
+                </div>
                 {savedId && <p className="ok" role="status">✓ {staff ? t("saved") : t("savedIdea")} <Link href={`${postsBase}/${savedId}`}>{t("openPost")}</Link> · <Link href={`${postsBase}?${new URLSearchParams({ view: "month", ...(date && { date }) })}`}>{t("openCalendar")}</Link></p>}
               </div>
             </div>

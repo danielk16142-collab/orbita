@@ -495,7 +495,7 @@
       "competitor": "Mets à jour notre stratégie de contenu à partir de l'analyse de {name} : ce qu'on peut reprendre, ce qu'il faut éviter et comment nous démarquer.",
       "winner": "Écris un reel pour nous avec la même structure que ce hook d'un concurrent : « {hook} ». Ne copie ni ses mots, ni ses faits, ni ses chiffres : utilise notre voix, notre offre et uniquement des affirmations approuvées. Note d'abord 3 options de hook avec score_hooks.",
       "winnerFormula": "Écris un reel pour nous avec la même structure que ce hook d'un concurrent : « {hook} » (formule : {formula}). Ne copie ni ses mots, ni ses faits, ni ses chiffres : utilise notre voix, notre offre et uniquement des affirmations approuvées. Note d'abord 3 options de hook avec score_hooks.",
-      "winnerPost": "Fais notre version de cette publication {network} de {competitor}. Ce doit être clairement la même publication adaptée à nous, pas une autre idée : même sujet, mêmes points dans le même ordre, même structure, même longueur, même type d'accroche. Réécris chaque ligne avec nos mots et notre ton, notre offre et seulement nos faits approuvés ; jamais leur marque, leurs noms, leurs chiffres ou leurs affirmations. Écris-la comme un reel avec propose_reel.",
+      "winnerPost": "Fais notre version de cette publication {network} de {competitor}. Ce doit être la MÊME publication dite par nous, indépendamment de notre stratégie : même sujet (ne le remplace pas par un de nos services), mêmes points et exemples dans le même ordre, même structure, longueur, accroche et appel à l'action. Les faits sur le sujet restent tels quels. Change seulement la formulation (nos mots, jamais copiés), le ton (le nôtre) et ce qui leur appartient (leur nom, leur histoire, leurs résultats, leur offre). Écris-la comme un reel avec propose_reel.",
       "theirHook": "Leur accroche",
       "theirCaption": "Leur légende",
       "theirTranscript": "Ce qu'ils disent dans la vidéo",
@@ -1773,7 +1773,7 @@
       "title": "Notre version de cette publication",
       "theirs": "Leur publication",
       "ours": "Notre version",
-      "intro": "L'agent réécrit CETTE publication pour nous : même sujet, mêmes points dans le même ordre, même structure et même accroche, avec nos mots, notre offre et seulement nos faits approuvés.",
+      "intro": "L'agent réécrit CETTE publication pour nous : même sujet, mêmes points dans le même ordre, même structure et même accroche, dits avec nos mots et notre ton. Indépendamment de notre stratégie.",
       "caption": "Légende",
       "transcript": "Ce qu'ils disent dans la vidéo",
       "pasteTranscript": "Ce qu'ils disent dans la vidéo (facultatif)",
@@ -1809,8 +1809,13 @@
       "errors": {
         "no_result": "Pas de version cette fois. Réessayez.",
         "not_found": "Cette publication n'est plus enregistrée.",
-        "invalid_content": "Le script est incomplet : chaque scène a besoin d'un visuel et le reel d'un appel à l'action."
-      }
+        "invalid_content": "Le script est incomplet : chaque scène a besoin d'un visuel et le reel d'un appel à l'action.",
+        "no_strategy": "Il n'y a pas encore de stratégie : enregistrez-la plutôt dans les publications."
+      },
+      "sameLanguage": "Comme leur publication",
+      "addNoDate": "Enregistrer dans les publications (sans date)",
+      "toStrategy": "Ajouter aux idées de la stratégie",
+      "inStrategy": "Dans les idées de la stratégie"
     }
   },
   "buildStrategy": {

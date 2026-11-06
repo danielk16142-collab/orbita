@@ -495,7 +495,7 @@
       "competitor": "Update our content strategy using the analysis of {name}: what to borrow, what to avoid and where we can stand out.",
       "winner": "Write a reel for us in the same structure as this competitor hook: \"{hook}\". Do not copy their words, facts or numbers: use our own voice, our offer and only approved claims. First score 3 hook options with score_hooks.",
       "winnerFormula": "Write a reel for us in the same structure as this competitor hook: \"{hook}\" (formula: {formula}). Do not copy their words, facts or numbers: use our own voice, our offer and only approved claims. First score 3 hook options with score_hooks.",
-      "winnerPost": "Make our version of this {network} post by {competitor}. It must be clearly the same post adapted to us, not a different idea: same topic, same points in the same order, same structure, length and kind of hook. Rewrite every line in our words and voice, with our offer and only our approved facts; never their brand, names, numbers or claims. Write it as a reel with propose_reel.",
+      "winnerPost": "Make our version of this {network} post by {competitor}. It must be the SAME post said by us, apart from our strategy: same subject (do not swap it for one of our services), same points and examples in the same order, same structure, length, hook and call to action. Facts about the subject stay as they are. Change only the wording (our words, never copied), the voice (ours) and what belongs to them (their name, story, results, offer). Write it as a reel with propose_reel.",
       "theirHook": "Their hook",
       "theirCaption": "Their caption",
       "theirTranscript": "What they say in the video",
@@ -1773,7 +1773,7 @@
       "title": "Our version of this post",
       "theirs": "Their post",
       "ours": "Our version",
-      "intro": "The agent rewrites THIS post for us: same topic, same points in the same order, same structure and hook, in our words, with our offer and only our approved facts.",
+      "intro": "The agent rewrites THIS post for us: same subject, same points in the same order, same structure and hook, said in our words and voice. It works apart from our strategy.",
       "caption": "Caption",
       "transcript": "What they say in the video",
       "pasteTranscript": "What they say in the video (optional)",
@@ -1809,8 +1809,13 @@
       "errors": {
         "no_result": "No version this time. Try again.",
         "not_found": "This post is no longer recorded.",
-        "invalid_content": "The script is incomplete: every scene needs a visual and the reel needs a call to action."
-      }
+        "invalid_content": "The script is incomplete: every scene needs a visual and the reel needs a call to action.",
+        "no_strategy": "There is no strategy yet: save it to posts instead."
+      },
+      "sameLanguage": "Same as their post",
+      "addNoDate": "Save to posts (no date yet)",
+      "toStrategy": "Add to the strategy's ideas",
+      "inStrategy": "In the strategy's ideas"
     }
   },
   "buildStrategy": {
