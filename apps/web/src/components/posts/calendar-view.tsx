@@ -1,9 +1,18 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { formatKey, groupByDate, iso, monthGrid, startOfWeek, addDays, type View } from "@orbita/content";
+import { canDeletePost, formatKey, groupByDate, iso, monthGrid, startOfWeek, addDays, type View } from "@orbita/content";
 import { NETWORK_COLOR, NETWORK_LABEL, postTitle, type CalPost } from "./shared";
+import { DeletePostButton } from "./delete-post-button";
 
-function Chip({ p, href, t, showClient, long }: { p: CalPost; href: string; t: Awaited<ReturnType<typeof getTranslations>>; showClient: boolean; long?: boolean }) {
+type ChipProps = { p: CalPost; href: string; t: Awaited<ReturnType<typeof getTranslations>>; showClient: boolean; long?: boolean; deletable?: boolean };
+
+/** A post on the calendar, with a delete button when it may still go (staff; not published, not in a past week). */
+function Chip({ deletable, ...props }: ChipProps) {
+  if (!deletable) return <ChipLink {...props} />;
+  return <div className="chip-wrap"><ChipLink {...props} /><DeletePostButton postId={props.p.id} title={postTitle(props.p, 60)} /></div>;
+}
+
+function ChipLink({ p, href, t, showClient, long }: Omit<ChipProps, "deletable">) {
   return (
     <Link href={href} className={`chip status-${p.status}`} title={`${NETWORK_LABEL[p.network] ?? p.network} · ${t(`formats.${formatKey(p.type)}` as never)} · ${t(`statuses.${p.status}`)}`}>
       <span className="swatch" style={{ background: NETWORK_COLOR[p.network] }} aria-hidden="true" />
@@ -17,9 +26,11 @@ function Chip({ p, href, t, showClient, long }: { p: CalPost; href: string; t: A
 }
 
 /** Month, week or day. Chips link to the post. On narrow screens the month becomes an agenda of the days that have posts. */
-export async function CalendarView({ locale, view, anchor, posts, postHref, dayHref, showClient, today }: {
+export async function CalendarView({ locale, view, anchor, posts, postHref, dayHref, showClient, today, canDelete = false }: {
   locale: string; view: View; anchor: string; posts: CalPost[]; postHref: (id: string) => string; dayHref: (date: string) => string; showClient: boolean; today: string;
+  /** Staff: show a delete button on posts that may still be deleted. */ canDelete?: boolean;
 }) {
+  const deletable = (p: CalPost) => canDelete && canDeletePost(p, today);
   const t = await getTranslations("posts");
   const by = groupByDate(posts);
   const wd = new Intl.DateTimeFormat(locale, { weekday: "short", timeZone: "UTC" });
@@ -34,7 +45,7 @@ export async function CalendarView({ locale, view, anchor, posts, postHref, dayH
         <h2>{label(anchor)}</h2>
         {items.length === 0 ? <p>{t("nothingPlanned")}</p> : <div className="day-list">{items.map((p) => (
           <article key={p.id} className="day-item">
-            <Chip p={p} href={postHref(p.id)} t={t} showClient={showClient} long />
+            <Chip p={p} href={postHref(p.id)} t={t} showClient={showClient} long deletable={deletable(p)} />
             {p.caption && <p className="day-caption">{p.caption.slice(0, 220)}{p.caption.length > 220 ? "…" : ""}</p>}
           </article>))}</div>}
       </section>
@@ -56,7 +67,7 @@ export async function CalendarView({ locale, view, anchor, posts, postHref, dayH
             return (
               <div key={d} className={`cal-day${items.length ? "" : " empty"}${d === today ? " today" : ""}${outside ? " outside" : ""}`}>
                 <Link href={dayHref(d)} className="cal-date" aria-label={label(d)}><span className="cal-num">{dayNum(d)}</span><span className="cal-long">{label(d)}</span></Link>
-                {items.slice(0, max).map((p) => <Chip key={p.id} p={p} href={postHref(p.id)} t={t} showClient={showClient} />)}
+                {items.slice(0, max).map((p) => <Chip key={p.id} p={p} href={postHref(p.id)} t={t} showClient={showClient} deletable={deletable(p)} />)}
                 {items.length > max && <Link href={dayHref(d)} className="cal-more">{t("more", { n: items.length - max })}</Link>}
               </div>
             );

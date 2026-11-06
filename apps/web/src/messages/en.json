@@ -665,7 +665,8 @@
       "invalid_content": "The script or slides are not valid. Check the fields.",
       "conflict": "Someone else changed this post. Reload and try again.",
       "rate_limited": "Too many attempts. Try again later.",
-      "unauthorized": "Please sign in again."
+      "unauthorized": "Please sign in again.",
+      "locked": "Published posts and posts from past weeks can't be deleted."
     },
     "untitled": "Untitled post",
     "unscheduledShort": "not scheduled",
@@ -851,7 +852,9 @@
       "seconds": "{n}s",
       "hashtags": "{n, plural, one {# hashtag} other {# hashtags}}",
       "noCaption": "No caption yet"
-    }
+    },
+    "deleteNamed": "Delete “{title}”",
+    "confirmDeleteNamed": "Delete “{title}” for good?"
   },
   "profile": {
     "eyebrow": "Your business",

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { allowedStatusChanges, formatKey, parseContent, type Status } from "@orbita/content";
+import { allowedStatusChanges, canDeletePost, formatKey, iso, parseContent, type Status } from "@orbita/content";
 import { requireStaff, requireUser } from "@/lib/session";
 import { loadPost } from "@/lib/posts/access";
 import { CopyButton } from "./copy-button";
@@ -129,7 +129,7 @@ export async function PostDetail({ locale, id, portal }: { locale: string; id: s
 
       <section className="card" style={{ marginTop: "1.25rem" }}>
         <h2>{t("review")}</h2>
-        <PostActions postId={post.id} moves={moves} requireComment={requireComment} staff={!portal} listHref={base} />
+        <PostActions postId={post.id} moves={moves} requireComment={requireComment} staff={!portal} canDelete={canDeletePost(post, iso(new Date()))} listHref={base} />
         <h3>{t("comments")}</h3>
         {(comments ?? []).length === 0 ? <p className="stat-vs">{t("noComments")}</p> : (
           <ul className="plain comments">{comments!.map((c) => <li key={c.id}><span><strong>{c.author === s.user.id ? t("you") : t("other")}</strong> <span className="stat-vs">{when.format(new Date(c.created_at))}</span><br />{c.body}</span></li>)}</ul>

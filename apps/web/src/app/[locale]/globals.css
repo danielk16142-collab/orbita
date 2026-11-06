@@ -803,3 +803,11 @@ a.idea-card { text-decoration: none; color: inherit; }
 .build-strategy { display: grid; gap: .4rem; justify-items: start; }
 .build-strategy .btn { white-space: normal; text-align: left; }
 .build-strategy-reply { margin: 0; overflow-wrap: anywhere; }
+/* Delete a post from the calendar (always visible: no hover needed on touch screens) */
+.chip-wrap { position: relative; display: grid; }
+.chip-wrap > .chip { padding-right: 1.6rem; }
+.chip-delete { position: absolute; top: .15rem; right: .15rem; width: 1.35rem; height: 1.35rem; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: var(--card); color: var(--dim); font: inherit; font-size: .7rem; line-height: 1; cursor: pointer; padding: 0; }
+.chip-delete:focus-visible { color: var(--ink); }
+@media (hover: hover) { .chip-delete:hover { background: #fff1f0; color: #b42318; border-color: #b42318; } }
+.card-wrap > .post-card { padding-right: 2rem; }
+.card-wrap > .chip-delete { top: .5rem; right: .5rem; width: 1.75rem; height: 1.75rem; font-size: .85rem; }

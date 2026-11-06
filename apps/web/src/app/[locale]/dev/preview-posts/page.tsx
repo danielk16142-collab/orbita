@@ -22,7 +22,7 @@ export default async function Preview({ params, searchParams }: { params: Promis
       { ...posts[0], caption: "Behind the machine: how we pull a shot.", content: null, hashtags: ["barista"] },
       { ...posts[6], caption: "Weekend brunch is back with a new menu.", content: { headline: "Brunch is back", visual_brief: "x", cta: "Book" }, hashtags: [] },
     ];
-    return (<main className="content"><h1>Posts</h1><PostList locale={locale} posts={lp} today={today} showClient postHref={() => "#"} /></main>);
+    return (<main className="content"><h1>Posts</h1><PostList locale={locale} posts={lp} today={today} showClient canDelete postHref={() => "#"} /></main>);
   }
-  return (<main className="content"><h1>Posts</h1><CalendarView locale={locale} view={view} anchor={`${ym}05`} posts={posts} today={today} showClient postHref={() => "#"} dayHref={(d) => `#${d}`} /></main>);
+  return (<main className="content"><h1>Posts</h1><CalendarView locale={locale} view={view} anchor={`${ym}05`} posts={posts} today={today} showClient canDelete postHref={() => "#"} dayHref={(d) => `#${d}`} /></main>);
 }
