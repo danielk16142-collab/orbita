@@ -113,3 +113,17 @@ describe("list view range", () => {
     expect(navigate("list", "2026-01-31", 1)).toBe(navigate("month", "2026-01-31", 1));
   });
 });
+
+import { canDeletePost } from "./index";
+describe("deleting posts", () => {
+  const today = "2026-11-06"; // a Friday; the week starts on Monday 2026-11-02
+  it("allows this week, future weeks and undated posts that are not published", () => {
+    for (const d of ["2026-11-02", "2026-11-06", "2026-11-10", null]) expect(canDeletePost({ status: "draft", planned_date: d }, today)).toBe(true);
+    expect(canDeletePost({ status: "scheduled", planned_date: "2026-11-12" }, today)).toBe(true);
+  });
+  it("keeps published posts and past weeks", () => {
+    expect(canDeletePost({ status: "published", planned_date: "2026-11-10" }, today)).toBe(false);
+    expect(canDeletePost({ status: "publishing", planned_date: null }, today)).toBe(false);
+    expect(canDeletePost({ status: "idea", planned_date: "2026-11-01" }, today)).toBe(false);
+  });
+});

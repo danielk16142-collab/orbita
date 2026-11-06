@@ -665,7 +665,8 @@
       "invalid_content": "El guion o las diapositivas no son válidos. Revisa los campos.",
       "conflict": "Alguien más cambió esta publicación. Recarga e inténtalo de nuevo.",
       "rate_limited": "Demasiados intentos. Inténtalo más tarde.",
-      "unauthorized": "Inicia sesión de nuevo."
+      "unauthorized": "Inicia sesión de nuevo.",
+      "locked": "Las publicaciones ya publicadas y las de semanas pasadas no se pueden eliminar."
     },
     "untitled": "Publicación sin título",
     "unscheduledShort": "sin programar",
@@ -851,7 +852,9 @@
       "seconds": "{n}s",
       "hashtags": "{n, plural, one {# hashtag} other {# hashtags}}",
       "noCaption": "Aún sin caption"
-    }
+    },
+    "deleteNamed": "Eliminar «{title}»",
+    "confirmDeleteNamed": "¿Eliminar «{title}» definitivamente?"
   },
   "profile": {
     "eyebrow": "Tu negocio",

@@ -1,9 +1,10 @@
 "use server";
 import { z } from "zod";
-import { allowedStatusChanges, cleanPost, cleanText, formatKey, isTimeZone, parseContent, PostEdit, STATUSES, zonedToUtc, type Status } from "@orbita/content";
+import { allowedStatusChanges, canDeletePost, cleanPost, cleanText, formatKey, isTimeZone, parseContent, PostEdit, STATUSES, zonedToUtc, type Status } from "@orbita/content";
 import { loadPost, postActor } from "@/lib/posts/access";
 import { limiter } from "@/lib/rate-limit";
 import { audit } from "@/lib/audit";
+import { localDay } from "@/lib/cadence";
 import { removeMedia } from "@/lib/visuals/service";
 
 export type PostResult = { ok: true; id?: string } | { ok: false; error: string };
@@ -102,6 +103,9 @@ export async function deletePostAction(input: unknown): Promise<PostResult> {
   const g = await gate(); if (!g.ok) return fail(g.error);
   if (!g.value.isStaff) return fail("forbidden");
   const post = await loadPost(g.value, p.data.postId); if (!post.ok) return fail(post.error);
+  // Published posts and past weeks stay as the record.
+  const { data: c } = await g.value.sb.from("clients").select("timezone").eq("id", post.value.client_id).maybeSingle();
+  if (!canDeletePost(post.value, localDay(c?.timezone && isTimeZone(c.timezone) ? c.timezone : "UTC"))) return fail("locked");
   const { data } = await g.value.sb.from("posts").delete().eq("id", post.value.id).select("id");
   if (!data?.length) return fail("forbidden");
   await removeMedia(post.value.client_id, post.value.id).catch((e) => console.error("media cleanup failed:", e instanceof Error ? e.name : "unknown")); // stored images go with the post

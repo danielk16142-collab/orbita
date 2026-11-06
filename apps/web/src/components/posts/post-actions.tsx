@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { addCommentAction, deletePostAction, setStatusAction } from "@/lib/posts-actions";
 
-/** Status buttons (only the moves this role may make), comment box, and delete for staff. */
-export function PostActions({ postId, moves, requireComment, staff, listHref }: { postId: string; moves: string[]; requireComment: string[]; staff: boolean; listHref: string }) {
+/** Status buttons (only the moves this role may make), comment box, and delete for staff (not for published posts or past weeks). */
+export function PostActions({ postId, moves, requireComment, staff, canDelete = staff, listHref }: { postId: string; moves: string[]; requireComment: string[]; staff: boolean; canDelete?: boolean; listHref: string }) {
   const t = useTranslations("posts");
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -33,7 +33,7 @@ export function PostActions({ postId, moves, requireComment, staff, listHref }: 
         <label>{t("addComment")}<textarea name="body" required rows={2} maxLength={2000} /></label>
         <button className="btn small" disabled={pending}>{t("send")}</button>
       </form>
-      {staff && <button type="button" className="btn ghost small" disabled={pending} onClick={() => { if (confirm(t("confirmDelete"))) run(() => deletePostAction({ postId }), () => router.push(listHref)); }}>{t("deletePost")}</button>}
+      {staff && canDelete && <button type="button" className="btn ghost small" disabled={pending} onClick={() => { if (confirm(t("confirmDelete"))) run(() => deletePostAction({ postId }), () => router.push(listHref)); }}>{t("deletePost")}</button>}
       {error && <p className="error" role="alert">{error}</p>}
     </div>
   );

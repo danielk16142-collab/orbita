@@ -74,8 +74,8 @@ export async function PostsPage({ locale, searchParams, portal }: { locale: stri
       </form>
 
       {view === "list"
-        ? <PostList locale={locale} posts={listPosts} today={today} showClient={!portal} postHref={(id) => `${base}/${id}`} />
-        : <CalendarView locale={locale} view={view} anchor={anchor} posts={(posts ?? []) as unknown as CalPost[]} today={today} showClient={!portal}
+        ? <PostList locale={locale} posts={listPosts} today={today} showClient={!portal} canDelete={!portal} postHref={(id) => `${base}/${id}`} />
+        : <CalendarView locale={locale} view={view} anchor={anchor} posts={(posts ?? []) as unknown as CalPost[]} today={today} showClient={!portal} canDelete={!portal}
             postHref={(id) => `${base}/${id}`} dayHref={(d) => qs({ view: "day", date: d })} />}
 
       {(unscheduled?.length ?? 0) > 0 && (

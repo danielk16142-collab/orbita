@@ -665,7 +665,8 @@
       "invalid_content": "Le script ou les slides ne sont pas valides. Vérifiez les champs.",
       "conflict": "Quelqu'un d'autre a modifié cette publication. Rechargez et réessayez.",
       "rate_limited": "Trop de tentatives. Réessayez plus tard.",
-      "unauthorized": "Veuillez vous reconnecter."
+      "unauthorized": "Veuillez vous reconnecter.",
+      "locked": "Les publications publiées et celles des semaines passées ne peuvent pas être supprimées."
     },
     "untitled": "Publication sans titre",
     "unscheduledShort": "non planifiée",
@@ -851,7 +852,9 @@
       "seconds": "{n} s",
       "hashtags": "{n, plural, one {# hashtag} other {# hashtags}}",
       "noCaption": "Pas encore de légende"
-    }
+    },
+    "deleteNamed": "Supprimer « {title} »",
+    "confirmDeleteNamed": "Supprimer « {title} » définitivement ?"
   },
   "profile": {
     "eyebrow": "Votre entreprise",

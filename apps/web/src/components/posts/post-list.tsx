@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { groupByDate, parseContent } from "@orbita/content";
+import { canDeletePost, groupByDate, parseContent } from "@orbita/content";
 import { NETWORK_COLOR, NETWORK_LABEL, postTitle, type CalPost } from "./shared";
+import { DeletePostButton } from "./delete-post-button";
 
 export type ListPost = CalPost & { content?: unknown; hashtags?: string[] | null; thumb?: string | null; hasVideo?: boolean };
 type Content = Record<string, unknown>;
@@ -47,7 +48,7 @@ async function Card({ p, href, showClient, t }: { p: ListPost; href: string; sho
 }
 
 /** List view: the month's posts day by day, as cards with a cover. */
-export async function PostList({ locale, posts, postHref, showClient, today }: { locale: string; posts: ListPost[]; postHref: (id: string) => string; showClient: boolean; today: string }) {
+export async function PostList({ locale, posts, postHref, showClient, today, canDelete = false }: { locale: string; posts: ListPost[]; postHref: (id: string) => string; showClient: boolean; today: string; canDelete?: boolean }) {
   const t = await getTranslations("posts");
   const by = groupByDate(posts);
   const days = [...by.keys()].sort();
@@ -58,7 +59,9 @@ export async function PostList({ locale, posts, postHref, showClient, today }: {
       {days.map((d) => (
         <div key={d} className="post-day">
           <h2 className={`post-day-title${d === today ? " today" : ""}`}>{fmt.format(new Date(`${d}T12:00:00Z`))}{d === today ? ` · ${t("today")}` : ""} <span className="stat-vs">{t("list.count", { n: by.get(d)!.length })}</span></h2>
-          <div className="post-cards">{by.get(d)!.map((p) => <Card key={p.id} p={p as ListPost} href={postHref(p.id)} showClient={showClient} t={t} />)}</div>
+          <div className="post-cards">{by.get(d)!.map((p) => canDelete && canDeletePost(p, today)
+            ? <div key={p.id} className="chip-wrap card-wrap"><Card p={p as ListPost} href={postHref(p.id)} showClient={showClient} t={t} /><DeletePostButton postId={p.id} title={postTitle(p, 60)} /></div>
+            : <Card key={p.id} p={p as ListPost} href={postHref(p.id)} showClient={showClient} t={t} />)}</div>
         </div>
       ))}
     </section>
