@@ -1414,7 +1414,9 @@
     "inPillars": "Focus · {list}",
     "allow": "Allow",
     "addToPillar": "Add a topic to {name}",
-    "addToPillarPlaceholder": "New topic for this pillar"
+    "addToPillarPlaceholder": "New topic for this pillar",
+    "buildHint": "Happy with your pillars and topics? The agent builds the strategy around them: these pillars and shares exactly, series and a topic bank that cover each pillar's topics, and never an avoided topic.",
+    "rebuildHint": "Changed your pillars or topics? Rebuild the strategy around them. Unsaved changes are saved first."
   },
   "strategyPage": {
     "eyebrow": "Plan",
@@ -1427,7 +1429,7 @@
     "choose": "Choose them",
     "edit": "Edit",
     "step2": "Build the strategy with the agent",
-    "step2Hint": "it uses your pillars and topics, your goals and your results.",
+    "step2Hint": "around your pillars and topics, with your goals and results.",
     "build": "Build the strategy",
     "avoiding": "avoiding {list}",
     "change": "Change the strategy",
@@ -1435,7 +1437,8 @@
     "archive": "Archive and start over",
     "archiving": "Archiving…",
     "archiveConfirm": "Archive this strategy? It is kept for the record, and you can build a new one right after.",
-    "archiveFailed": "Could not archive it."
+    "archiveFailed": "Could not archive it.",
+    "buildInChat": "Or describe the strategy you want to the agent"
   },
   "apiKeys": {
     "title": "API access",
@@ -1736,5 +1739,21 @@
     "fetchConfirm": "Fetch the latest public {network} posts of this account? It takes up to two minutes and costs a few cents on your Apify account.",
     "fetched": "{added} new posts added ({found} found).",
     "fetchNote": "Public accounts only. About $0.08 per 30 posts. The opening line comes from the caption, not the spoken words."
+  },
+  "buildStrategy": {
+    "build": "Build the strategy from these pillars and topics",
+    "rebuild": "Rebuild the strategy around these pillars",
+    "building": "Building the strategy…",
+    "buildingHint": "The agent is building it around your pillars and topics. This takes about a minute.",
+    "built": "Strategy built from your pillars and topics.",
+    "rebuilt": "Strategy rebuilt around your pillars and topics.",
+    "undo": "Undo",
+    "confirmRebuild": "Rebuild the strategy around the pillars and topics you chose? The current one is kept and you can undo.",
+    "errors": {
+      "no_pillars": "Choose at least one pillar first.",
+      "apply_failed": "The strategy could not be saved. Try again.",
+      "model_error": "The agent could not answer. Try again.",
+      "undo": "Could not restore the previous strategy."
+    }
   }
 }

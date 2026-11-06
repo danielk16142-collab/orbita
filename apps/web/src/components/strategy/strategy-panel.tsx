@@ -12,6 +12,7 @@ import { StrategyMindMap } from "./strategy-mind-map";
 import { ArchiveStrategyButton } from "./archive-strategy";
 import { StrategyChat } from "./strategy-chat";
 import { FocusEditor } from "./focus-editor";
+import { BuildStrategyButton } from "./build-strategy";
 
 const shiftMonth = (month: string, n: number) => { const d = new Date(Date.parse(`${month}-01T00:00:00Z`)); d.setUTCMonth(d.getUTCMonth() + n); return d.toISOString().slice(0, 7); };
 
@@ -44,7 +45,7 @@ export async function StrategyPanel({ locale, clientId, query, hrefFor, agentAsk
   // This week's pillars come from the posts planned this week (the map loads the month; outside it, only the share fallback).
   const thisWeek = weekStartOf(data.today);
   const week = weekFocus(focus, data.posts.filter((p) => p.kind === "plan"), thisWeek);
-  const editor = <FocusEditor clientId={cid} locale={locale} initial={focus} week={week} applyHref={agentAskHref} />;
+  const editor = <FocusEditor clientId={cid} locale={locale} initial={focus} week={week} hasStrategy={!!data.strategy} />;
 
   if (!data.strategy) {
     const chosen = focus.pillars.length > 0;
@@ -57,7 +58,10 @@ export async function StrategyPanel({ locale, clientId, query, hrefFor, agentAsk
           <li className={chosen ? "done" : ""}><strong>{t("step1")}</strong> <span className="stat-vs">{chosen ? t("step1Done", { count: focus.pillars.length, topics: focus.topics.filter((x) => x.level !== "avoid").length }) : t("step1Hint")}</span> <a href="#focus">{chosen ? t("edit") : t("choose")}</a></li>
           <li><strong>{t("step2")}</strong> <span className="stat-vs">{t("step2Hint")}</span></li>
         </ol>
-        <Link className="btn" href={agentAskHref}>{t("build")}</Link>
+        {chosen
+          ? <BuildStrategyButton clientId={cid} locale={locale} hasStrategy={false} />
+          : <a className="btn" href="#focus">{t("choose")}</a>}
+        <p className="stat-vs"><Link href={agentAskHref}>{t("buildInChat")}</Link></p>
       </section>
       <StrategyChat clientId={cid} locale={locale} hasStrategy={false} />
       {editor}
@@ -81,6 +85,7 @@ export async function StrategyPanel({ locale, clientId, query, hrefFor, agentAsk
         <div className="btn-row strategy-actions">
           <Link className="btn small" href={agentAskHref}>{t("change")}</Link>
           <a className="btn small ghost" href="#focus">{t("editFocus")}</a>
+          {focus.pillars.length > 0 && <BuildStrategyButton clientId={cid} locale={locale} hasStrategy ghost />}
           <ArchiveStrategyButton clientId={cid} />
         </div>
       </section>

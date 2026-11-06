@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { buildSystemPrompt, decideProposal, runAgent, STRATEGY_CHAT_TOOLS, strategyChatFocus, type AgentEvent, type AgentMessageParam } from "@orbita/agent";
+import { alignStrategyToFocus, buildSystemPrompt, decideProposal, focusBuildRequest, focusFromRow, runAgent, STRATEGY_CHAT_TOOLS, strategyChatFocus, type AgentEvent, type AgentMessageParam } from "@orbita/agent";
 import { resolveAgentActor } from "@/lib/agent/access";
 import { loadClientContext, promptInput } from "@/lib/agent/context";
 import { makePorts } from "@/lib/agent/ports";
@@ -16,7 +16,9 @@ export const dynamic = "force-dynamic";
 
 const Body = z.object({
   clientId: z.string().uuid().optional(), locale: z.enum(["en", "fr", "es"]),
-  message: z.string().trim().min(1).max(12000),
+  /** "from_focus": build (or rebuild) the strategy around the pillars and topics chosen in this section; no message needed. */
+  mode: z.enum(["chat", "from_focus"]).default("chat"),
+  message: z.string().trim().max(12000).default(""),
   /** Earlier turns of this conversation, kept by the page (nothing is stored on the server). */
   history: z.array(z.object({ role: z.enum(["user", "assistant"]), text: z.string().max(4000) })).max(10).default([]),
 });
@@ -31,6 +33,7 @@ export async function POST(req: Request) {
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return json({ error: "bad_request" }, 400);
   const body = parsed.data;
+  if (body.mode === "chat" && !body.message) return json({ error: "bad_request" }, 400);
   const access = await resolveAgentActor(body.clientId);
   if (!access.ok) return json({ error: access.status === 401 ? "unauthorized" : access.status === 403 ? "forbidden" : "not_found" }, access.status);
   const actor = access.actor;
@@ -39,11 +42,14 @@ export async function POST(req: Request) {
   if (!(await limiter("strategy-chat", 15, 10 * 60_000).hit(actor.userId)).allowed) return json({ error: "rate_limited" }, 429);
   if (await overDailyCap(actor)) return json({ error: "daily_cap" }, 429);
 
-  const history: AgentMessageParam[] = body.history.filter((m) => m.text.trim()).map((m) => ({ role: m.role, content: m.text }));
-  while (history.length && history[0].role !== "user") history.shift();
   const ctx = await loadClientContext(actor.sb, actor.clientId);
+  const focus = focusFromRow(ctx.briefRow);
+  if (body.mode === "from_focus" && !focus.pillars.some((p) => p.name.trim())) return json({ error: "no_pillars" }, 400);
+  const message = body.mode === "from_focus" ? focusBuildRequest(focus, !!ctx.strategy) : body.message;
+  const history: AgentMessageParam[] = body.mode === "from_focus" ? [] : body.history.filter((m) => m.text.trim()).map((m) => ({ role: m.role, content: m.text }));
+  while (history.length && history[0].role !== "user") history.shift();
   const input = promptInput(actor, ctx, body.locale);
-  const ports = makePorts(actor, { conversationId: null, weekStart: input.weekStart, userTexts: [...history.filter((m) => m.role === "user").map((m) => String(m.content)), body.message] });
+  const ports = makePorts(actor, { conversationId: null, weekStart: input.weekStart, userTexts: [...history.filter((m) => m.role === "user").map((m) => String(m.content)), message] });
   const system = buildSystemPrompt(input) + strategyChatFocus(!!ctx.strategy);
 
   const stream = new ReadableStream({
@@ -54,19 +60,22 @@ export async function POST(req: Request) {
       const strategies: string[] = [];
       try {
         const result = await runAgent({
-          client: ai.client, model: ai.chatModel, system, messages: [...history, { role: "user", content: body.message }],
+          client: ai.client, model: ai.chatModel, system, messages: [...history, { role: "user", content: message }],
           ports, toolNames: STRATEGY_CHAT_TOOLS, maxSteps: 5,
           onEvent: (e: AgentEvent) => { if (e.type === "proposal" && e.target === "strategy" && e.id) strategies.push(e.id); else send(e); },
         });
         // The person asked for this change in this box: apply the strategy now, on their own session. Only the last one counts.
         const last = strategies.at(-1);
         if (last) {
-          const r = await decideProposal(supabaseProposalRepo(actor), { proposalId: last, decision: "accept" });
+          const repo = supabaseProposalRepo(actor);
+          // Built from the chosen pillars: the strategy keeps exactly those pillars and shares.
+          const edited = body.mode === "from_focus" ? alignStrategyToFocus((await repo.get(last))?.payload, focus) : undefined;
+          const r = await decideProposal(repo, { proposalId: last, decision: "accept", edited });
           send(r.ok ? { type: "applied" } : { type: "error", code: "apply_failed" });
           if (r.ok) await audit({ agencyId: actor.profile.agency_id, actor: actor.userId, action: "strategy.chat_applied", entity: "client", entityId: actor.clientId });
         }
         await recordUsage(actor, result.usage.input + result.usage.output);
-        await audit({ agencyId: actor.profile.agency_id, actor: actor.userId, action: "agent.strategy_chat", entity: "client", entityId: actor.clientId, meta: { tokens: result.usage.input + result.usage.output, applied: !!last } });
+        await audit({ agencyId: actor.profile.agency_id, actor: actor.userId, action: "agent.strategy_chat", entity: "client", entityId: actor.clientId, meta: { tokens: result.usage.input + result.usage.output, applied: !!last, mode: body.mode } });
         send({ type: "done" });
       } catch (e) {
         console.error("strategy chat failed:", describeModelError(e), `model=${ai.chatModel}`);

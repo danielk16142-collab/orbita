@@ -797,3 +797,9 @@ a.idea-card { text-decoration: none; color: inherit; }
 .focus-avoid { font: inherit; font-size: .72rem; border: 1px solid var(--mist); border-radius: 99px; background: none; padding: .15rem .5rem; cursor: pointer; color: var(--dim); }
 .focus-avoid[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
 .focus-add.inline { margin-top: 0; }
+/* Build the strategy from the chosen pillars and topics */
+.focus-build { border-top: 2px solid var(--line); margin-top: 1rem; padding-top: 1rem; display: grid; gap: .5rem; }
+.focus-build p { margin: 0; }
+.build-strategy { display: grid; gap: .4rem; justify-items: start; }
+.build-strategy .btn { white-space: normal; text-align: left; }
+.build-strategy-reply { margin: 0; overflow-wrap: anywhere; }

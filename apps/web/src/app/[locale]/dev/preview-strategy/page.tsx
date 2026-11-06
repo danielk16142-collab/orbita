@@ -44,7 +44,7 @@ export default async function Preview({ params, searchParams }: { params: Promis
       pillars: [{ name: "Proof", angle: "Real results and before/after work", share: 40, topics: ["Web design", "Case studies"] }, { name: "Education", angle: "Teach what makes a website sell", share: 30, topics: ["SEO", "Web design"] },
         { name: "Behind the scenes", angle: "The studio and the process", share: 20, topics: [] }, { name: "Offers", angle: "", share: 10, topics: ["Website audit"] }] };
     return <main className="content"><p className="eyebrow">Preview (sample data)</p><h1>Strategy</h1>
-      <FocusEditor locale={locale} initial={focus} week={weekFocus(focus, q.focus === "empty" ? [] : posts.map((p) => ({ ...p, date: d(13) })), weekStartOf(d(13)))} applyHref="#" /></main>;
+      <FocusEditor locale={locale} initial={focus} week={weekFocus(focus, q.focus === "empty" ? [] : posts.map((p) => ({ ...p, date: d(13) })), weekStartOf(d(13)))} hasStrategy={q.focus !== "new"} /></main>;
   }
   return (
     <main className="content"><p className="eyebrow">Preview (sample data)</p><h1>Strategy</h1>

@@ -73,7 +73,7 @@ same checks, limits and database rules apply. Groups:
   `remove_competitor`, `analyze_competitor`, `analysis_to_research`.
 - **Posts**: `post_ideas`, `post_chat`, `fill_week`, `add_week_posts`, `create_post`, `update_post`,
   `set_post_status`, `move_post`, `comment_post`, `delete_post`, `set_posting_goal`.
-- **Strategy**: `save_focus`, `suggest_focus`, `archive_strategy`, `strategy_connect`, `strategy_tag`.
+- **Strategy**: `save_focus`, `build_strategy` (around the chosen pillars and topics), `strategy_chat`, `suggest_focus`, `archive_strategy`, `strategy_connect`, `strategy_tag`.
 - **Kickstart**: `kickstart_run`, `kickstart_accept`, `kickstart_dismiss`, `refresh_account`.
 - **Profile**: `update_client`, `set_timezone`, `save_colors`, `save_palette`, `upload_logo`, `upload_reference`
   (files as `file_base64`), `delete_reference`.

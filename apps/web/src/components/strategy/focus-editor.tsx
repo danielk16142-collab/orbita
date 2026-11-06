@@ -1,10 +1,10 @@
 "use client";
 import { useState, useTransition } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { syncTopics, type BrandFocus, type BrandPillar, type BrandTopic, type WeekFocus } from "@orbita/agent/focus";
 import { saveFocusAction } from "@/lib/focus-actions";
+import { BuildStrategyButton } from "./build-strategy";
 
 const DEFAULTS = ["ai", "social_media", "ads", "web_design", "ecommerce", "seo", "branding", "email", "video", "automation", "analytics", "customer_stories", "behind_scenes", "tips", "industry_news", "offers"];
 const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
@@ -14,7 +14,7 @@ const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLow
  * topics, which follow the pillars (a topic a pillar covers is a focus topic; "avoid" always wins). Updated with the
  * strategy week after week; "This week" shows the pillars this week's posts use and so the topics in play.
  */
-export function FocusEditor({ clientId, locale, initial, week, applyHref }: { clientId?: string; locale: string; initial: BrandFocus; week: WeekFocus; applyHref: string }) {
+export function FocusEditor({ clientId, locale, initial, week, hasStrategy }: { clientId?: string; locale: string; initial: BrandFocus; week: WeekFocus; hasStrategy: boolean }) {
   const t = useTranslations("focus");
   const router = useRouter();
   const [focus, setFocus] = useState<BrandFocus>(() => syncTopics(initial));
@@ -61,12 +61,17 @@ export function FocusEditor({ clientId, locale, initial, week, applyHref }: { cl
     finally { setBusy(null); }
   }
 
-  const save = () => start(async () => {
+  /** Save the pillars and topics; true when saved (or nothing to save). */
+  async function persist(): Promise<boolean> {
+    if (!dirty) return true;
     const cleaned = pillars.filter((p) => p.name.trim()).map((p) => ({ ...p, name: p.name.trim(), angle: p.angle.trim(), share: Math.max(0, Math.min(100, Math.round(p.share || 0))) }));
     const r = await saveFocusAction({ clientId, focus: { topics, pillars: cleaned } });
-    if (r.ok) { setDirty(false); setNote({ ok: true, text: t("saved") }); router.refresh(); }
-    else setNote({ ok: false, text: t.has(`errors.${r.error}`) ? t(`errors.${r.error}`) : t("errors.generic") });
-  });
+    if (r.ok) { setDirty(false); setNote({ ok: true, text: t("saved") }); router.refresh(); return true; }
+    setNote({ ok: false, text: t.has(`errors.${r.error}`) ? t(`errors.${r.error}`) : t("errors.generic") });
+    return false;
+  }
+  const save = () => start(async () => { await persist(); });
+  const named = pillars.some((p) => p.name.trim());
 
   return (
     <section className="card focus-editor" id="focus" aria-labelledby="focus-h">
@@ -150,8 +155,13 @@ export function FocusEditor({ clientId, locale, initial, week, applyHref }: { cl
       <div className="btn-row focus-save">
         <button type="button" className="btn" onClick={save} disabled={saving || !dirty}>{saving ? t("saving") : t("save")}</button>
         {note && <span className={note.ok ? "ok" : "error"} role="status">{note.text}</span>}
-        {note?.ok && <Link href={applyHref}>{t("applyToStrategy")}</Link>}
       </div>
+      {named && (
+        <div className="focus-build">
+          <p className="stat-vs">{hasStrategy ? t("rebuildHint") : t("buildHint")}</p>
+          <BuildStrategyButton clientId={clientId} locale={locale} hasStrategy={hasStrategy} beforeBuild={persist} />
+        </div>
+      )}
     </section>
   );
 }
