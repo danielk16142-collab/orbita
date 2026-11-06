@@ -7,6 +7,7 @@ import { NETWORK_COLOR, NETWORK_LABEL } from "./shared";
 import { PostIdeas } from "./post-ideas";
 import { StrategyIdeas } from "./strategy-ideas";
 import { PostChat } from "./post-chat";
+import { VideoScript, type NetworkCaption } from "./video-script";
 
 /** Formats offered when creating a post, and where each one can go. */
 export const FORMAT_NETWORKS: Record<string, string[]> = {
@@ -21,6 +22,8 @@ export const FORMAT_NETWORKS: Record<string, string[]> = {
 const FORMATS = Object.keys(FORMAT_NETWORKS);
 const LANGS = ["en", "fr", "es"];
 const STEPS = ["format", "where", "details"] as const;
+/** Formats that are a video: the person may already have it and start from its script. */
+const VIDEO_FORMATS = ["reel", "video", "story"];
 
 /** Small line icons for the format cards (decorative). */
 function FormatIcon({ format }: { format: string }) {
@@ -58,6 +61,13 @@ export function CreatePostFlow({ locale, staff, clients, initialClient, initialD
   const [status, setStatus] = useState<"idea" | "draft">(staff ? "draft" : "idea");
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
+  const [hasVideo, setHasVideo] = useState(false);
+  const [script, setScript] = useState("");
+  const [captions, setCaptions] = useState<Record<string, NetworkCaption>>({});
+  const [title, setTitle] = useState("");
+  const fromVideo = hasVideo && !!format && VIDEO_FORMATS.includes(format) && script.trim().length > 0;
+  /** What the post is about: the idea, or (from a video) the title the agent gave it or the start of the script. */
+  const postIdea = idea.trim() || (fromVideo ? (title || script.trim().replace(/\s+/g, " ").slice(0, 120)) : "");
 
   const chooseFormat = (f: string) => { setFormat(f); setNetworks((n) => n.filter((x) => FORMAT_NETWORKS[f].includes(x))); setStep("where"); };
   const toggle = (n: string) => setNetworks((cur) => (cur.includes(n) ? cur.filter((x) => x !== n) : [...cur, n]));
@@ -65,11 +75,13 @@ export function CreatePostFlow({ locale, staff, clients, initialClient, initialD
 
   function create() {
     setError(null);
-    if (!format || !networks.length || !idea.trim() || (staff && !clientId)) { setError(t("errors.bad_request")); return; }
+    if (!format || !networks.length || !postIdea || (staff && !clientId)) { setError(t("errors.bad_request")); return; }
     start(async () => {
       const ids: string[] = [];
       for (const network of networks) {
-        const r = await createPostAction({ clientId: staff ? clientId : undefined, network, language, type: format, idea, planned_date: date || null, status });
+        const c = fromVideo ? captions[network] : undefined;
+        const r = await createPostAction({ clientId: staff ? clientId : undefined, network, language, type: format, idea: postIdea, planned_date: date || null, status,
+          ...(fromVideo ? { script: script.trim() } : {}), ...(c?.caption.trim() ? { caption: c.caption.trim(), hashtags: c.hashtags } : {}) });
         if (!r.ok) { setError(t.has(`errors.${r.error}`) ? t(`errors.${r.error}`) : t("errors.generic")); return; }
         if (r.id) ids.push(r.id);
       }
@@ -145,8 +157,15 @@ export function CreatePostFlow({ locale, staff, clients, initialClient, initialD
               <select value={clientId} onChange={(e) => setClientId(e.target.value)} required>{clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
             </label>
           )}
-          {(!staff || clientId) && <StrategyIdeas clientId={staff ? clientId : undefined} format={format} networks={networks} postsBase={postsBase} picked={idea} onPick={setIdea} />}
-          {(!staff || clientId) && <PostIdeas clientId={staff ? clientId : undefined} format={format} networks={networks} locale={locale} picked={idea} onPick={setIdea} />}
+          {VIDEO_FORMATS.includes(format) && (
+            <div className="video-toggle">
+              <label className="check-line"><input type="checkbox" checked={hasVideo} onChange={(e) => setHasVideo(e.target.checked)} /> <span><strong>{t("fromVideo.toggle")}</strong> <span className="stat-vs">{t("fromVideo.toggleHint")}</span></span></label>
+              {hasVideo && <VideoScript clientId={staff ? clientId : undefined} locale={locale} language={language} languageName={languageName} format={format} networks={networks} idea={idea}
+                script={script} onScript={setScript} captions={captions} onCaptions={setCaptions} onTitle={setTitle} />}
+            </div>
+          )}
+          {(!staff || clientId) && !hasVideo && <StrategyIdeas clientId={staff ? clientId : undefined} format={format} networks={networks} postsBase={postsBase} picked={idea} onPick={setIdea} />}
+          {(!staff || clientId) && !hasVideo && <PostIdeas clientId={staff ? clientId : undefined} format={format} networks={networks} locale={locale} picked={idea} onPick={setIdea} />}
           <label>{t("ideaLabel")}
             <textarea value={idea} onChange={(e) => setIdea(e.target.value)} rows={4} maxLength={2000} placeholder={t("ideaPlaceholder")} />
           </label>
@@ -163,8 +182,8 @@ export function CreatePostFlow({ locale, staff, clients, initialClient, initialD
               <small>{t("writeWithAgentHint")}</small>
             </div>
             <div className="flow-option">
-              <button type="button" className="btn ghost" onClick={create} disabled={pending || !idea.trim()}>{staff ? t("createDraft") : t("createIdea")}</button>
-              <small>{t("createHint")}</small>
+              <button type="button" className={fromVideo ? "btn" : "btn ghost"} onClick={create} disabled={pending || !postIdea}>{staff ? t("createDraft") : t("createIdea")}</button>
+              <small>{fromVideo ? t("fromVideo.createHint") : t("createHint")}</small>
             </div>
           </div>
           <button type="button" className="btn ghost small" onClick={() => setStep("where")}>{t("back")}</button>

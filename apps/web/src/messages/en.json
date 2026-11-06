@@ -854,7 +854,28 @@
       "noCaption": "No caption yet"
     },
     "deleteNamed": "Delete “{title}”",
-    "confirmDeleteNamed": "Delete “{title}” for good?"
+    "confirmDeleteNamed": "Delete “{title}” for good?",
+    "fromVideo": {
+      "toggle": "I already have the video",
+      "toggleHint": "Paste what is said in it and the agent writes the caption from it.",
+      "scriptLabel": "The video's script (what is said in it)",
+      "scriptPlaceholder": "Paste the script or the transcript of your video…",
+      "scriptHint": "The caption is written from this script only: nothing the video does not say is added. The script is saved with the post.",
+      "write": "Write the caption from the script",
+      "rewrite": "Write it again",
+      "writing": "Writing the caption…",
+      "tooShort": "Paste a bit more of the script.",
+      "captionFor": "Caption for {network}",
+      "hashtags": "Hashtags",
+      "length": "{n} characters",
+      "createHint": "Creates the post with the caption and the script, ready to review and schedule.",
+      "scriptTitle": "Video script",
+      "errors": {
+        "no_result": "No caption this time. Try again.",
+        "bad_request": "Paste the script first (at least a sentence)."
+      },
+      "inLanguage": "In {language} (change the language below, then write it again)."
+    }
   },
   "profile": {
     "eyebrow": "Your business",

@@ -811,3 +811,11 @@ a.idea-card { text-decoration: none; color: inherit; }
 @media (hover: hover) { .chip-delete:hover { background: #fff1f0; color: #b42318; border-color: #b42318; } }
 .card-wrap > .post-card { padding-right: 2rem; }
 .card-wrap > .chip-delete { top: .5rem; right: .5rem; width: 1.75rem; height: 1.75rem; font-size: .85rem; }
+/* Create post from a video that already exists: its script, then captions written from it */
+.video-toggle { border: 2px solid var(--line); border-radius: 12px; padding: .75rem .9rem; display: grid; gap: .75rem; margin: .5rem 0 1rem; }
+.video-toggle .check-line { display: flex; gap: .6rem; align-items: flex-start; font-family: var(--font-body); font-size: 1rem; letter-spacing: normal; text-transform: none; margin: 0; }
+.video-toggle .check-line input { width: auto; margin-top: .3rem; flex: none; }
+.video-script { display: grid; gap: .6rem; }
+.video-script p { margin: 0; }
+.video-caption { border-top: 2px solid var(--line); padding-top: .75rem; display: grid; gap: .5rem; }
+.video-script-text { white-space: pre-wrap; overflow-wrap: anywhere; }

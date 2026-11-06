@@ -854,7 +854,28 @@
       "noCaption": "Pas encore de légende"
     },
     "deleteNamed": "Supprimer « {title} »",
-    "confirmDeleteNamed": "Supprimer « {title} » définitivement ?"
+    "confirmDeleteNamed": "Supprimer « {title} » définitivement ?",
+    "fromVideo": {
+      "toggle": "J'ai déjà la vidéo",
+      "toggleHint": "Collez ce qui y est dit et l'agent écrit la légende à partir de ça.",
+      "scriptLabel": "Le script de la vidéo (ce qui y est dit)",
+      "scriptPlaceholder": "Collez le script ou la transcription de votre vidéo…",
+      "scriptHint": "La légende est écrite à partir de ce script seulement : rien que la vidéo ne dit pas n'est ajouté. Le script est enregistré avec la publication.",
+      "write": "Écrire la légende à partir du script",
+      "rewrite": "La réécrire",
+      "writing": "Écriture de la légende…",
+      "tooShort": "Collez un peu plus du script.",
+      "captionFor": "Légende pour {network}",
+      "hashtags": "Mots-clics",
+      "length": "{n} caractères",
+      "createHint": "Crée la publication avec la légende et le script, prête à relire et à programmer.",
+      "scriptTitle": "Script de la vidéo",
+      "errors": {
+        "no_result": "Pas de légende cette fois. Réessayez.",
+        "bad_request": "Collez d'abord le script (au moins une phrase)."
+      },
+      "inLanguage": "En {language} (changez la langue plus bas, puis réécrivez-la)."
+    }
   },
   "profile": {
     "eyebrow": "Votre entreprise",
