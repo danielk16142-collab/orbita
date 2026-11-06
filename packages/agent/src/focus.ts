@@ -2,7 +2,7 @@ import { z } from "zod";
 
 /**
  * What the brand chose to talk about: topics (focus, sometimes, avoid) and its own content pillars with their share.
- * Chosen by people in the Profile; the agent follows it (strategy pillars and shares, topics for every idea).
+ * Chosen by people in the Strategy section and updated with it week after week; the agent follows it (strategy pillars and shares, topics for every idea).
  * Stored on brand_briefs: topics (jsonb array) and pillars (jsonb array of objects; older rows hold plain strings).
  */
 export const TOPIC_LEVELS = ["focus", "sometimes", "avoid"] as const;
@@ -29,11 +29,51 @@ export function focusFromRow(row: Record<string, unknown> | null | undefined): B
   });
   return { topics, pillars };
 }
+const key = (s: string) => s.trim().toLowerCase();
+
+/**
+ * Topics follow the pillars: every topic a pillar covers is a focus topic (added if new), a focus topic no pillar covers
+ * any more drops to "sometimes", and "avoid" always wins (an avoided topic is taken out of every pillar).
+ */
+export function syncTopics(f: BrandFocus): BrandFocus {
+  const avoid = new Set(f.topics.filter((t) => t.level === "avoid").map((t) => key(t.name)));
+  const pillars = f.pillars.map((p) => ({ ...p, topics: p.topics.filter((n, i, a) => !avoid.has(key(n)) && a.findIndex((x) => key(x) === key(n)) === i) }));
+  const covered = new Map<string, string>();
+  for (const p of pillars) for (const n of p.topics) if (!covered.has(key(n))) covered.set(key(n), n.trim());
+  const topics: BrandTopic[] = f.topics.map((t) => t.level === "avoid" ? t : { ...t, level: covered.has(key(t.name)) ? "focus" : "sometimes" });
+  for (const [k, n] of covered) if (!topics.some((t) => key(t.name) === k) && topics.length < 40) topics.push({ name: n.slice(0, 60), level: "focus" });
+  return { topics, pillars };
+}
+
+export type WeekFocus = { pillars: { name: string; posts: number; topics: string[] }[]; topics: string[]; fromPlan: boolean };
+
+/**
+ * This week's focus: the pillars the week's posts use (most posts first) and the topics those pillars cover. With no
+ * tagged post this week, the chosen pillars by share stand in (fromPlan false).
+ */
+export function weekFocus(f: BrandFocus, posts: { pillar: string | null; date: string }[], weekStart: string): WeekFocus {
+  const end = new Date(Date.parse(`${weekStart}T00:00:00Z`) + 6 * 86_400_000).toISOString().slice(0, 10);
+  const counts = new Map<string, number>();
+  for (const p of posts) {
+    if (!p.pillar || p.date < weekStart || p.date > end) continue;
+    const match = f.pillars.find((x) => key(x.name) === key(p.pillar!));
+    if (match) counts.set(match.name, (counts.get(match.name) ?? 0) + 1);
+  }
+  const fromPlan = counts.size > 0;
+  const used = fromPlan
+    ? f.pillars.filter((p) => counts.has(p.name)).sort((a, b) => counts.get(b.name)! - counts.get(a.name)!)
+    : f.pillars.filter((p) => p.share > 0).sort((a, b) => b.share - a.share);
+  const avoid = new Set(f.topics.filter((t) => t.level === "avoid").map((t) => key(t.name)));
+  const topics: string[] = [];
+  for (const p of used) for (const n of p.topics) if (!avoid.has(key(n)) && !topics.some((x) => key(x) === key(n))) topics.push(n);
+  return { pillars: used.map((p) => ({ name: p.name, posts: counts.get(p.name) ?? 0, topics: p.topics })), topics, fromPlan };
+}
+
 export const hasChosenPillars = (f: BrandFocus) => f.pillars.length > 0 && f.pillars.some((p) => p.share > 0);
 
 /** The focus as the agent reads it (system prompt). */
-export function focusPrompt(f: BrandFocus): string {
-  if (!f.topics.length && !f.pillars.length) return "(not chosen yet: propose topics and pillars from the profile, and say the person can set them in the Profile)";
+export function focusPrompt(f: BrandFocus, week?: WeekFocus | null): string {
+  if (!f.topics.length && !f.pillars.length) return "(not chosen yet: propose topics and pillars from the profile, and say the person can set them in the Strategy section)";
   const by = (l: TopicLevel) => f.topics.filter((t) => t.level === l).map((t) => t.name);
   const L: string[] = [];
   if (f.topics.length) L.push(`Focus topics (talk about these most): ${by("focus").join(", ") || "-"}`, `Sometimes: ${by("sometimes").join(", ") || "-"}`, `Avoid (never use): ${by("avoid").join(", ") || "-"}`);
@@ -41,6 +81,7 @@ export function focusPrompt(f: BrandFocus): string {
     L.push("Chosen content pillars (use exactly these, with these shares):");
     for (const p of f.pillars) L.push(`- ${p.name}${p.share ? ` (${p.share}%)` : ""}${p.angle ? `: ${p.angle}` : ""}${p.topics.length ? ` [topics: ${p.topics.join(", ")}]` : ""}`);
   }
+  if (week?.fromPlan && week.pillars.length) L.push(`This week's posts use: ${week.pillars.map((p) => `${p.name} (${p.posts})`).join(", ")}. Topics this week: ${week.topics.join(", ") || "-"}. Ideas for this week stay on these topics unless the person asks otherwise.`);
   return L.join("\n");
 }
 

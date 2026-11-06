@@ -1,7 +1,7 @@
-import { FocusEditor } from "./focus-editor";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { BRIEF_SECTIONS, briefFromRow, focusFromRow } from "@orbita/agent";
+import { BRIEF_SECTIONS, briefFromRow } from "@orbita/agent";
 import { resolveAgentActor } from "@/lib/agent/access";
 import { completenessOf, loadClientContext, type ClientContext } from "@/lib/agent/context";
 import { ProposalCard, type ProposalView } from "@/components/agent/proposal-card";
@@ -99,7 +99,11 @@ export async function ProfileView({ locale, client, ctx, proposals, staff, clien
           <AddSourceForm clientId={clientId} />
         </section>
 
-        <FocusEditor clientId={clientId} locale={locale} initial={focusFromRow(ctx.briefRow)} strategyHref={strategyHref} />
+        <section className="card focus-moved">
+          <h2>{t("focusTitle")}</h2>
+          <p className="stat-vs">{t("focusMoved")}</p>
+          <Link className="btn small ghost" href={`${strategyHref}#focus`}>{t("focusOpen")}</Link>
+        </section>
 
         <section className="card">
           <h2>{ta("brief")}</h2>

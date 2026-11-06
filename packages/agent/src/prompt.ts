@@ -105,7 +105,7 @@ ${BRIEF_SECTIONS.map((s) => {
     return `### ${s}\n${Array.isArray(v) ? bullets(v) : v ? v : "(not known yet)"}`;
   }).join("\n")}
 
-## What the brand chose to talk about (set by people in the Profile: follow it)
+## What the brand chose to talk about (set by people in the Strategy section and updated with it week by week: follow it)
 ${i.focus ?? "(not chosen yet)"}
 
 ## Sources

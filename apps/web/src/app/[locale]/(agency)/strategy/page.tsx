@@ -22,7 +22,7 @@ export default async function StrategyIndex({ params, searchParams }: { params: 
       </div>
       {current ? (
         <StrategyPanel locale={locale} clientId={current.id} query={q} hrefFor={(extra) => `${base}?${new URLSearchParams({ client: current.id, ...extra })}`}
-          agentAskHref={`/${locale}/agent?${new URLSearchParams({ client: current.id, view: "chat", ask: "strategy" })}`} profileHref={`/${locale}/clients/${current.id}?tab=profile`} />
+          agentAskHref={`/${locale}/agent?${new URLSearchParams({ client: current.id, view: "chat", ask: "strategy" })}`} />
       ) : <p>{tcl("empty")}</p>}
     </>
   );

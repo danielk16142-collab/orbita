@@ -74,7 +74,7 @@ export default async function ClientDetail({ params, searchParams }: {
 
       {tab === "strategy" && (
         <StrategyPanel locale={locale} clientId={id} query={q} hrefFor={(extra) => href("strategy", extra)}
-          agentAskHref={href("agent", { view: "chat", ask: "strategy" })} profileHref={href("profile")} />
+          agentAskHref={href("agent", { view: "chat", ask: "strategy" })} />
       )}
 
       {tab === "agent" && (

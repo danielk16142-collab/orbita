@@ -12,7 +12,7 @@ export default async function PortalStrategy({ params, searchParams }: { params:
     <>
       <p className="eyebrow">{t("eyebrow")}</p><h1>{t("title")}</h1>
       <StrategyPanel locale={locale} query={q} hrefFor={(extra) => `${base}?${new URLSearchParams(extra)}`}
-        agentAskHref={`/${locale}/portal/agent?${new URLSearchParams({ view: "chat", ask: "strategy" })}`} profileHref={`/${locale}/portal/profile`} />
+        agentAskHref={`/${locale}/portal/agent?${new URLSearchParams({ view: "chat", ask: "strategy" })}`} />
     </>
   );
 }

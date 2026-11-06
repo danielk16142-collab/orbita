@@ -34,3 +34,39 @@ describe("brand focus", () => {
     expect(SuggestedTopics.parse({ topics: [{ name: "AI", level: "focus" }, { name: "X", level: "avoid" }] }).topics).toHaveLength(1);
   });
 });
+
+import { syncTopics, weekFocus } from "./focus";
+describe("topics follow the pillars", () => {
+  const f = {
+    topics: [{ name: "AI", level: "sometimes" as const }, { name: "Ads", level: "focus" as const }, { name: "Politics", level: "avoid" as const }],
+    pillars: [
+      { name: "Education", angle: "", share: 60, topics: ["AI", "SEO", "politics"] },
+      { name: "Proof", angle: "", share: 40, topics: ["Case studies", "seo"] },
+    ],
+  };
+  it("makes pillar topics focus, drops uncovered ones to sometimes, and lets avoid win", () => {
+    const s = syncTopics(f);
+    expect(s.topics).toEqual([
+      { name: "AI", level: "focus" }, { name: "Ads", level: "sometimes" }, { name: "Politics", level: "avoid" },
+      { name: "SEO", level: "focus" }, { name: "Case studies", level: "focus" },
+    ]);
+    expect(s.pillars[0].topics).toEqual(["AI", "SEO"]);
+    expect(s.pillars[1].topics).toEqual(["Case studies", "seo"]);
+  });
+  it("takes this week's topics from the pillars this week's posts use", () => {
+    const posts = [
+      { pillar: "proof", date: "2026-11-02" }, { pillar: "Proof", date: "2026-11-04" }, { pillar: "Education", date: "2026-11-08" },
+      { pillar: "Education", date: "2026-11-09" }, { pillar: null, date: "2026-11-03" }, { pillar: "Unknown", date: "2026-11-03" },
+    ];
+    const w = weekFocus(f, posts, "2026-11-02");
+    expect(w.fromPlan).toBe(true);
+    expect(w.pillars.map((p) => [p.name, p.posts])).toEqual([["Proof", 2], ["Education", 1]]);
+    expect(w.topics).toEqual(["Case studies", "seo", "AI", "SEO"].filter((x, i, a) => a.findIndex((y) => y.toLowerCase() === x.toLowerCase()) === i));
+  });
+  it("falls back to the chosen pillars by share when nothing is tagged this week", () => {
+    const w = weekFocus(f, [], "2026-11-02");
+    expect(w.fromPlan).toBe(false);
+    expect(w.pillars.map((p) => p.name)).toEqual(["Education", "Proof"]);
+    expect(w.topics).toEqual(["AI", "SEO", "Case studies"]);
+  });
+});

@@ -1,7 +1,7 @@
 "use server";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { BrandFocus } from "@orbita/agent";
+import { BrandFocus, syncTopics } from "@orbita/agent";
 import { resolveAgentActor } from "@/lib/agent/access";
 import { limiter } from "@/lib/rate-limit";
 import { audit } from "@/lib/audit";
@@ -17,7 +17,8 @@ export async function saveFocusAction(input: unknown): Promise<Result> {
   if (!a.ok) return { ok: false, error: "forbidden" };
   if (!(await limiter("focus-save", 30, 10 * 60_000).hit(a.actor.userId)).allowed) return { ok: false, error: "rate_limited" };
   const { sb, clientId } = a.actor;
-  const row = { topics: p.data.focus.topics, pillars: p.data.focus.pillars, updated_at: new Date().toISOString() };
+  const focus = syncTopics(p.data.focus); // topics follow the pillars
+  const row = { topics: focus.topics, pillars: focus.pillars, updated_at: new Date().toISOString() };
   const { data: existing } = await sb.from("brand_briefs").select("client_id").eq("client_id", clientId).maybeSingle();
   const { error } = existing ? await sb.from("brand_briefs").update(row).eq("client_id", clientId) : await sb.from("brand_briefs").insert({ client_id: clientId, ...row });
   if (error) { console.error(`focus save failed: code=${error.code}`); return { ok: false, error: MISSING.includes(error.code ?? "") ? "not_set_up" : "forbidden" }; }
