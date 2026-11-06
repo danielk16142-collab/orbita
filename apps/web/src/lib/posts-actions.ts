@@ -24,6 +24,8 @@ export async function createPostAction(input: unknown): Promise<PostResult> {
     clientId: Uuid.optional(), network: PostEdit.shape.network, language: PostEdit.shape.language, type: PostEdit.shape.type,
     idea: z.string().trim().min(1).max(2000), planned_date: PostEdit.shape.planned_date.optional(), status: z.enum(["idea", "draft"]).default("idea"),
     caption: z.string().trim().max(2200).optional(),
+    hashtags: PostEdit.shape.hashtags.optional(),
+    /** The script of a video that already exists (pasted by the person), kept with the post. */ script: z.string().trim().max(8000).optional(),
   }).safeParse(input);
   if (!p.success) return fail("bad_request");
   const g = await gate(); if (!g.ok) return fail(g.error);
@@ -34,6 +36,8 @@ export async function createPostAction(input: unknown): Promise<PostResult> {
   const { data, error } = await a.sb.from("posts").insert({
     client_id: clientId, network: p.data.network, language: p.data.language, type: p.data.type, idea: p.data.idea, status, source: "manual",
     ...(p.data.caption ? { caption: cleanText(p.data.caption, { lang: p.data.language }).text || p.data.caption } : {}), // text written by the agent is saved without the machine fingerprint
+    ...(p.data.hashtags?.length ? { hashtags: p.data.hashtags.map((h) => h.replace(/^#+/, "")) } : {}),
+    ...(p.data.script ? { script: { source: "video", text: p.data.script } } : {}),
     planned_date: p.data.planned_date ?? null, created_by: a.userId,
   }).select("id").single();
   if (error || !data) return fail("forbidden");

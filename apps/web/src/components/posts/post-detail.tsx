@@ -59,6 +59,8 @@ export async function PostDetail({ locale, id, portal }: { locale: string; id: s
   const { data: uploaded } = await s.sb.from("post_media").select("id, path, kind, name, width, height").eq("post_id", post.id).eq("source", "uploaded").order("created_at");
   const mediaItems: MediaItem[] = (await Promise.all((uploaded ?? []).map(async (m) => ({ id: m.id, kind: m.kind as "image" | "video", name: m.name, width: m.width, height: m.height, url: (await s.sb.storage.from("post-media").createSignedUrl(m.path, 3600)).data?.signedUrl ?? "" })))).filter((m) => m.url);
   const visualsUsed = mod?.enabled && !portal ? await usedThisMonth(post.client_id) : 0;
+  // The script of a video that already existed when the post was created ("I already have the video").
+  const videoScript = post.script && typeof post.script === "object" && typeof (post.script as { text?: unknown }).text === "string" ? (post.script as { text: string }).text : null;
   const arr = (v: unknown) => (Array.isArray(v) ? (v as Record<string, string>[]) : []);
 
   return (
@@ -73,6 +75,7 @@ export async function PostDetail({ locale, id, portal }: { locale: string; id: s
       </p>
 
       {post.idea && <section className="card"><h2>{t("idea")}</h2><p>{post.idea}</p></section>}
+      {videoScript && <section className="card" style={{ marginTop: "1.25rem" }}><h2>{t("fromVideo.scriptTitle")}</h2><p className="video-script-text">{videoScript}</p></section>}
 
       {!portal && ["idea", "draft", "approved"].includes(post.status) && ["reel", "video", "carousel", "static", "story", "text", "article"].includes(formatKey(post.type)) && (
         <FillWithAgent postId={post.id} clientId={post.client_id} locale={locale} format={formatKey(post.type)} approved={post.status === "approved"} network={post.network} language={post.language} idea={post.idea || post.caption || ""}

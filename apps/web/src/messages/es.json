@@ -854,7 +854,28 @@
       "noCaption": "Aún sin caption"
     },
     "deleteNamed": "Eliminar «{title}»",
-    "confirmDeleteNamed": "¿Eliminar «{title}» definitivamente?"
+    "confirmDeleteNamed": "¿Eliminar «{title}» definitivamente?",
+    "fromVideo": {
+      "toggle": "Ya tengo el video",
+      "toggleHint": "Pega lo que se dice en él y el agente escribe el texto a partir de eso.",
+      "scriptLabel": "El guion del video (lo que se dice)",
+      "scriptPlaceholder": "Pega el guion o la transcripción de tu video…",
+      "scriptHint": "El texto se escribe solo a partir de este guion: no se añade nada que el video no diga. El guion se guarda con la publicación.",
+      "write": "Escribir el texto a partir del guion",
+      "rewrite": "Escribirlo de nuevo",
+      "writing": "Escribiendo el texto…",
+      "tooShort": "Pega un poco más del guion.",
+      "captionFor": "Texto para {network}",
+      "hashtags": "Hashtags",
+      "length": "{n} caracteres",
+      "createHint": "Crea la publicación con el texto y el guion, lista para revisar y programar.",
+      "scriptTitle": "Guion del video",
+      "errors": {
+        "no_result": "Esta vez no hubo texto. Inténtalo de nuevo.",
+        "bad_request": "Primero pega el guion (al menos una frase)."
+      },
+      "inLanguage": "En {language} (cambia el idioma abajo y vuelve a escribirlo)."
+    }
   },
   "profile": {
     "eyebrow": "Tu negocio",

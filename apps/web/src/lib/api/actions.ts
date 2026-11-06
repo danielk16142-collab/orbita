@@ -15,6 +15,7 @@ import * as agentClose from "@/app/api/agent/close/route";
 import * as postChat from "@/app/api/posts/chat/route";
 import * as postIdeas from "@/app/api/posts/ideas/route";
 import * as fillWeek from "@/app/api/posts/fill-week/route";
+import * as captionFromScript from "@/app/api/posts/caption-from-script/route";
 import * as researchRun from "@/app/api/research/run/route";
 import * as competitorAnalyze from "@/app/api/competitors/analyze/route";
 import * as kickstartRun from "@/app/api/kickstart/run/route";
@@ -87,7 +88,8 @@ export const API_ACTIONS: Record<string, ApiAction> = {
   post_chat: { group: "posts", kind: "route", run: postChat.POST, stream: true, summary: "The post chat on the Create post page: work one post with the agent; its drafts arrive as suggestions (decide_proposal).", input: `${C}, message, conversationId (optional), format, networks [..], idea (optional), ${L}` },
   fill_week: { group: "posts", kind: "route", run: fillWeek.POST, summary: "Fill the week: the agent proposes posts for the open days of this week (add them with add_week_posts).", input: `${C}, network, ${L}` },
   add_week_posts: { group: "posts", kind: "fn", run: addWeekPostsAction, summary: "Add proposed week posts to the calendar as ideas.", input: `${C}, network, language, posts [{date YYYY-MM-DD, format, title, hook, why}] (1-7)` },
-  create_post: { group: "posts", kind: "fn", run: createPostAction, summary: "Add a post as an idea or draft.", input: `${C}, network, language, type, idea, planned_date (optional), status (idea|draft), caption (optional)` },
+  caption_from_script: { group: "posts", kind: "route", run: captionFromScript.POST, summary: "The video already exists: write the caption (and hashtags) for each network from its script. Nothing is saved; pass the result to create_post.", input: `${C}, script (20-8000 chars), networks [..], language, format (reel|video|story), idea (optional), ${L}` },
+  create_post: { group: "posts", kind: "fn", run: createPostAction, summary: "Add a post as an idea or draft.", input: `${C}, network, language, type, idea, planned_date (optional), status (idea|draft), caption (optional), hashtags [..] (optional), script (optional: the script of a video that already exists)` },
   update_post: { group: "posts", kind: "fn", run: updatePostAction, summary: "Edit a post (caption, hashtags, date, pillar, content...).", input: "postId, edit {network, language, type, idea, caption, hashtags, pillar, persona, funnel_stage, planned_date, suggested_time}, content (optional)" },
   set_post_status: { group: "posts", kind: "fn", run: setStatusAction, needsPublish: (i) => i.status === "scheduled" || i.status === "published" || i.status === "publishing", summary: "Move a post along: idea, draft, approved... scheduled and published need a key with the publish permission.", input: "postId, status, comment (optional)" },
   move_post: { group: "posts", kind: "fn", run: movePostAction, summary: "Move a post to another day.", input: `${C}, postId, date (YYYY-MM-DD)` },
