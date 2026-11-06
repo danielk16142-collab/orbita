@@ -3,7 +3,8 @@ import { getTranslations } from "next-intl/server";
 import { ONBOARDING_THRESHOLD } from "@orbita/agent";
 import { resolveAgentActor } from "@/lib/agent/access";
 import { completenessOf, loadClientContext } from "@/lib/agent/context";
-import { askText, type AskQuery } from "@/lib/agent/asks";
+import { HOOK_FORMULAS } from "@orbita/content";
+import { askText, type AskQuery, type WinnerPost } from "@/lib/agent/asks";
 import { Tabs } from "@/components/tabs";
 import { AgentChat } from "./agent-chat";
 import type { ProposalView } from "./proposal-card";
@@ -42,6 +43,15 @@ export async function AgentWorkspace({ locale, clientId, view, query, hrefFor, p
   if (view === "history") return <>{tabs}<AgentHistory actor={actor} locale={locale} thread={query.thread} hrefFor={(thread) => hrefFor("history", thread ? { thread } : {})} /></>;
 
   const { score, missing } = completenessOf(ctx);
+  // "Make our version" sends a competitor post's id: load the post itself (row-level security applies) so the request carries it.
+  let winner: WinnerPost | null = null;
+  if (query.ask === "winner" && /^[0-9a-f-]{36}$/i.test(query.idea ?? "")) {
+    const { data: w } = await actor.sb.from("competitor_posts").select("hook, caption, transcript, network, views, formula_id, competitors(name, url)").eq("id", query.idea!).eq("client_id", actor.clientId).maybeSingle();
+    if (w) {
+      const c = w.competitors as unknown as { name: string | null; url: string | null } | null;
+      winner = { hook: w.hook, caption: w.caption, transcript: w.transcript, network: w.network, views: w.views, competitor: c?.name || c?.url || null, formula: w.formula_id != null ? HOOK_FORMULAS.find((f) => f.id === w.formula_id)?.name ?? null : null };
+    }
+  }
   // One thread per day: continue today's open thread; otherwise start fresh and close the previous one in the background.
   const [latest, handovers, { data: pending }] = await Promise.all([
     latestThread(actor),
@@ -62,7 +72,7 @@ export async function AgentWorkspace({ locale, clientId, view, query, hrefFor, p
       {tabs}
       <div className="agent-grid single">
         <AgentChat key={`${conv?.id ?? "new"}|${query.ask ?? ""}`} locale={locale} clientId={cid} initialMessages={initial} initialConversationId={conv?.id ?? null}
-          onboarding={score < ONBOARDING_THRESHOLD} initialInput={askText(query, t, tp)}
+          onboarding={score < ONBOARDING_THRESHOLD} initialInput={askText(query, t, tp, winner)}
           closePrevious={closePrevious} historyHref={hrefFor("history")} hasEarlier={handovers.length > 0 || !!closePrevious} />
       </div>
       {/* What the agent prepared sits under the chat as compact cards; the full editor opens per card. */}

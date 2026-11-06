@@ -819,3 +819,28 @@ a.idea-card { text-decoration: none; color: inherit; }
 .video-script p { margin: 0; }
 .video-caption { border-top: 2px solid var(--line); padding-top: .75rem; display: grid; gap: .5rem; }
 .video-script-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+/* Make our version of a competitor post: theirs and ours side by side, then add it to the calendar */
+.remake { border-top: 2px solid var(--line); margin-top: .75rem; padding-top: .75rem; display: grid; grid-template-columns: minmax(0, 1fr); gap: .75rem; min-width: 0; }
+.remake-ours, .remake-save, .remake-scenes li { min-width: 0; }
+.remake input, .remake textarea, .remake select { max-width: 100%; min-width: 0; }
+.remake-cols { display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .remake-cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); } }
+.remake-col { display: grid; gap: .5rem; align-content: start; border: 2px solid var(--line); border-radius: 12px; padding: .75rem .9rem; min-width: 0; }
+.remake-col.ours { border-color: var(--brand); }
+.remake-col p, .remake-col h4 { margin: 0; }
+.remake-hook { font-weight: 700; overflow-wrap: anywhere; }
+.remake-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.remake-ours { display: grid; gap: .6rem; }
+.remake-hooks { border: 0; padding: 0; margin: 0; display: grid; gap: .4rem; }
+.remake-hooks legend { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; margin-bottom: .3rem; }
+.remake-hooks .check-line { display: flex; gap: .5rem; align-items: center; margin: 0; }
+.remake-hooks .check-line input[type="radio"] { width: auto; flex: none; }
+.remake-hooks .check-line input:not([type="radio"]) { flex: 1; min-width: 0; }
+ol.plain.remake-scenes { display: grid; gap: .6rem; }
+.remake-scenes li { display: grid; gap: .3rem; }
+.remake-scenes .stat-vs { overflow-wrap: anywhere; }
+.remake-save { border-top: 2px solid var(--line); padding-top: .75rem; display: grid; gap: .5rem; justify-items: start; }
+.remake .plan-row { width: 100%; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: .6rem; }
+.remake-save > .btn { max-width: 100%; }
+.remake-save .btn { white-space: normal; text-align: left; }
+.remake-col, .remake-ours, .remake-save, .remake-hooks, ol.plain.remake-scenes, .remake-scenes li { grid-template-columns: minmax(0, 1fr); }

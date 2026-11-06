@@ -23,11 +23,11 @@ export default async function Preview({ searchParams }: { searchParams: Promise<
   const q = await searchParams;
   if (q.view === "strategy-chat") return (<main className="content"><p className="eyebrow">Preview (fake data)</p><h1>Strategy</h1><StrategyChat locale="en" hasStrategy={q.type !== "new"} /></main>);
   if (q.view === "wins") {
-    const w = (id: string, hook: string, views: number | null, likes: number | null, comp = "a"): WinRow => ({ id, competitor_id: comp, hook, url: "https://www.instagram.com/reel/abc/", network: "instagram", views, likes, comments: 120, shares: null, followers: null, posted_at: "2026-09-14", formula_id: null });
+    const w = (id: string, hook: string, views: number | null, likes: number | null, comp = "a"): WinRow => ({ id, competitor_id: comp, hook, url: "https://www.instagram.com/reel/abc/", network: "instagram", views, likes, comments: 120, shares: null, followers: null, posted_at: "2026-09-14", formula_id: null, caption: id === "1" ? "One missing clause in a lease cost a café owner $18,000.\n\nHere are the 3 lines to check before you sign." : null, transcript: null });
     const rows = [w("1", "$18,000 is what one missing clause cost me.", 200000, 9000), w("2", "Meh update from the team", 10000, 300), w("3", "Another post about coffee", 12000, 400), w("4", "Third post", 8000, 200), w("5", "Nobody tells you cold brew takes 20 hours", 95000, 4000, "b")];
     return (
       <main className="content"><p className="eyebrow">Preview (fake data)</p><h1>What's working</h1>
-        <WinsList rows={rows} names={{ a: "Rival Café", b: "Bean There" }} staff winChat={(idea) => `/en/agent?ask=winner&idea=${encodeURIComponent(idea)}`} />
+        <WinsList rows={rows} names={{ a: "Rival Café", b: "Bean There" }} staff winChat={(idea) => `/en/agent?ask=winner&idea=${encodeURIComponent(idea)}`} locale="en" postsBase="/en/posts" />
         <AddWinForm competitorId="00000000-0000-0000-0000-000000000000" />
       </main>
     );

@@ -26,8 +26,12 @@ export async function createPostAction(input: unknown): Promise<PostResult> {
     caption: z.string().trim().max(2200).optional(),
     hashtags: PostEdit.shape.hashtags.optional(),
     /** The script of a video that already exists (pasted by the person), kept with the post. */ script: z.string().trim().max(8000).optional(),
+    /** Structured content (reel scenes, carousel slides...), validated against the format. */ content: z.unknown().optional(),
+    /** Where the post came from, e.g. our version of a competitor post. */ from: z.enum(["competitor"]).optional(),
   }).safeParse(input);
   if (!p.success) return fail("bad_request");
+  const content = p.data.content === undefined ? null : parseContent(p.data.type, p.data.content);
+  if (content && !content.ok) return fail("invalid_content");
   const g = await gate(); if (!g.ok) return fail(g.error);
   const a = g.value;
   const clientId = a.isStaff ? p.data.clientId : a.profile.client_id;
@@ -38,10 +42,11 @@ export async function createPostAction(input: unknown): Promise<PostResult> {
     ...(p.data.caption ? { caption: cleanText(p.data.caption, { lang: p.data.language }).text || p.data.caption } : {}), // text written by the agent is saved without the machine fingerprint
     ...(p.data.hashtags?.length ? { hashtags: p.data.hashtags.map((h) => h.replace(/^#+/, "")) } : {}),
     ...(p.data.script ? { script: { source: "video", text: p.data.script } } : {}),
+    ...(content?.ok && content.value ? { content: content.value } : {}),
     planned_date: p.data.planned_date ?? null, created_by: a.userId,
   }).select("id").single();
   if (error || !data) return fail("forbidden");
-  await audit({ agencyId: a.profile.agency_id, actor: a.userId, action: "post.created", entity: "post", entityId: data.id });
+  await audit({ agencyId: a.profile.agency_id, actor: a.userId, action: "post.created", entity: "post", entityId: data.id, ...(p.data.from ? { meta: { from: p.data.from } } : {}) });
   return { ok: true, id: data.id };
 }
 

@@ -66,7 +66,8 @@ export async function CompetitorsView({ locale, clientId, competitors, latest, d
         <section className="stack">
           <h2>{tw("swipeTitle")}</h2>
           <p className="stat-vs">{tw("swipeIntro")}</p>
-          <WinsList rows={wins} names={Object.fromEntries(competitors.map((c) => [c.id, competitorName(c)]))} clientId={clientId} staff={staff} winChat={winChat} limit={12} />
+          <WinsList rows={wins} names={Object.fromEntries(competitors.map((c) => [c.id, competitorName(c)]))} clientId={clientId} staff={staff} winChat={winChat} limit={12}
+            locale={locale} postsBase={staff ? `/${locale}/posts` : `/${locale}/portal/posts`} />
         </section>
       )}
     </div>
@@ -112,7 +113,8 @@ export async function CompetitorDetailView({ locale, clientId, staff, competitor
       <section className="card">
         <h2>{tw("title")}</h2>
         <p className="stat-vs">{tw("intro")}</p>
-        <WinsList rows={wins} names={{}} clientId={clientId} staff={staff} winChat={winChat} />
+        <WinsList rows={wins} names={{ [c.id]: competitorName(c) }} clientId={clientId} staff={staff} winChat={winChat}
+          locale={locale} postsBase={staff ? `/${locale}/posts` : `/${locale}/portal/posts`} />
         {staff && !!process.env.APIFY_TOKEN && <FetchPostsButtons clientId={clientId} competitorId={c.id} networks={Object.keys(scrapeTargets(c.links, c.url)) as ("instagram" | "tiktok")[]} />}
         <AddWinForm clientId={clientId} competitorId={c.id} />
       </section>

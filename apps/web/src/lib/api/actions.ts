@@ -18,6 +18,7 @@ import * as fillWeek from "@/app/api/posts/fill-week/route";
 import * as captionFromScript from "@/app/api/posts/caption-from-script/route";
 import * as researchRun from "@/app/api/research/run/route";
 import * as competitorAnalyze from "@/app/api/competitors/analyze/route";
+import * as competitorRemake from "@/app/api/competitors/remake/route";
 import * as kickstartRun from "@/app/api/kickstart/run/route";
 import * as strategyConnect from "@/app/api/strategy/connect/route";
 import * as strategyTag from "@/app/api/strategy/tag/route";
@@ -81,6 +82,7 @@ export const API_ACTIONS: Record<string, ApiAction> = {
   save_competitor: { group: "research", kind: "fn", run: saveCompetitorAction, summary: "Add or edit a competitor (pass id to edit).", input: `${C}, id (optional), name, website (https), notes, links {instagram|tiktok|...: url or @handle}` },
   remove_competitor: { group: "research", kind: "fn", run: removeCompetitorAction, summary: "Remove a competitor.", input: `${C}, id` },
   analyze_competitor: { group: "research", kind: "route", run: competitorAnalyze.POST, summary: "Have the agent analyze one competitor.", input: `${C}, competitorId, ${L}` },
+  remake_competitor_post: { group: "research", kind: "route", run: competitorRemake.POST, summary: "Our version of one recorded competitor post (same topic, points, structure and hook, made ours): a reel script, caption and hashtags. Nothing is saved; add it with create_post (type reel, content = reel).", input: `${C}, postId (competitor post uuid), language, transcript (optional: what they say in the video), notes (optional), ${L}` },
   analysis_to_research: { group: "research", kind: "fn", run: analysisToResearchAction, summary: "Save a competitor analysis as research notes.", input: `${C}, analysisId` },
 
   // Posts and calendar
@@ -89,7 +91,7 @@ export const API_ACTIONS: Record<string, ApiAction> = {
   fill_week: { group: "posts", kind: "route", run: fillWeek.POST, summary: "Fill the week: the agent proposes posts for the open days of this week (add them with add_week_posts).", input: `${C}, network, ${L}` },
   add_week_posts: { group: "posts", kind: "fn", run: addWeekPostsAction, summary: "Add proposed week posts to the calendar as ideas.", input: `${C}, network, language, posts [{date YYYY-MM-DD, format, title, hook, why}] (1-7)` },
   caption_from_script: { group: "posts", kind: "route", run: captionFromScript.POST, summary: "The video already exists: write the caption (and hashtags) for each network from its script. Nothing is saved; pass the result to create_post.", input: `${C}, script (20-8000 chars), networks [..], language, format (reel|video|story), idea (optional), ${L}` },
-  create_post: { group: "posts", kind: "fn", run: createPostAction, summary: "Add a post as an idea or draft.", input: `${C}, network, language, type, idea, planned_date (optional), status (idea|draft), caption (optional), hashtags [..] (optional), script (optional: the script of a video that already exists)` },
+  create_post: { group: "posts", kind: "fn", run: createPostAction, summary: "Add a post as an idea or draft.", input: `${C}, network, language, type, idea, planned_date (optional), status (idea|draft), caption (optional), hashtags [..] (optional), script (optional: the script of a video that already exists), content (optional: reel/carousel/static structure)` },
   update_post: { group: "posts", kind: "fn", run: updatePostAction, summary: "Edit a post (caption, hashtags, date, pillar, content...).", input: "postId, edit {network, language, type, idea, caption, hashtags, pillar, persona, funnel_stage, planned_date, suggested_time}, content (optional)" },
   set_post_status: { group: "posts", kind: "fn", run: setStatusAction, needsPublish: (i) => i.status === "scheduled" || i.status === "published" || i.status === "publishing", summary: "Move a post along: idea, draft, approved... scheduled and published need a key with the publish permission.", input: "postId, status, comment (optional)" },
   move_post: { group: "posts", kind: "fn", run: movePostAction, summary: "Move a post to another day.", input: `${C}, postId, date (YYYY-MM-DD)` },
