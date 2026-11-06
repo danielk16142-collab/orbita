@@ -35,7 +35,8 @@ export async function POST(req: Request) {
   catch (e) {
     const code = e instanceof TranscribeError ? e.code : "provider_error";
     if (!(e instanceof TranscribeError)) console.error("transcribe failed:", e instanceof Error ? e.name : "unknown");
-    return json({ error: code }, code === "bad_link" || code === "no_video" || code === "no_speech" || code === "no_transcript" || code === "too_large" ? 422 : 502);
+    const detail = e instanceof TranscribeError && e.detail ? e.detail.replace(/[^\p{L}\p{N}\s.,:;'()\/_-]/gu, "").slice(0, 200) : undefined;
+    return json({ error: code, ...(detail ? { detail } : {}) }, code === "bad_link" || code === "no_video" || code === "no_speech" || code === "no_transcript" || code === "too_large" ? 422 : 502);
   }
   // competitor_posts has no update grant for people; the row was checked above through their own session.
   const { error } = await supabaseAdmin().from("competitor_posts").update({ transcript }).eq("id", post.id).eq("client_id", actor.clientId);

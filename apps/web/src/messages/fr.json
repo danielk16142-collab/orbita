@@ -1831,7 +1831,8 @@
       "transcribe": "Transcrire la vidéo",
       "transcribing": "Transcription…",
       "transcribeHint": "Récupère automatiquement ce qu'ils disent dans la vidéo et l'enregistre sur cette publication.",
-      "transcribingHint": "Récupération de la vidéo et écoute. Jusqu'à une minute."
+      "transcribingHint": "Récupération de la vidéo et écoute. Jusqu'à une minute.",
+      "apifySaid": "Apify a répondu : {reason}"
     }
   },
   "buildStrategy": {

@@ -1831,7 +1831,8 @@
       "transcribe": "Transcribe the video",
       "transcribing": "Transcribing…",
       "transcribeHint": "Gets what they say in the video automatically and saves it on this post.",
-      "transcribingHint": "Fetching the video and listening to it. This takes up to a minute."
+      "transcribingHint": "Fetching the video and listening to it. This takes up to a minute.",
+      "apifySaid": "Apify said: {reason}"
     }
   },
   "buildStrategy": {
