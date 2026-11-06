@@ -35,7 +35,7 @@ export async function POST(req: Request) {
   catch (e) {
     const code = e instanceof TranscribeError ? e.code : "provider_error";
     if (!(e instanceof TranscribeError)) console.error("transcribe failed:", e instanceof Error ? e.name : "unknown");
-    const detail = e instanceof TranscribeError && e.detail ? e.detail.replace(/[^\p{L}\p{N}\s.,:;'()\/_-]/gu, "").slice(0, 200) : undefined;
+    const detail = e instanceof TranscribeError && e.detail ? e.detail.replace(/[^\p{L}\p{N}\s.,:;'()\/_-]/gu, "").slice(0, 400) : undefined;
     return json({ error: code, ...(detail ? { detail } : {}) }, code === "bad_link" || code === "no_video" || code === "no_speech" || code === "no_transcript" || code === "too_large" ? 422 : 502);
   }
   // competitor_posts has no update grant for people; the row was checked above through their own session.

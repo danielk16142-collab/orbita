@@ -28,10 +28,22 @@ describe("transcribing a public video", () => {
     expect(seen[0].url).toContain("maxTotalChargeUsd=");
     expect(seen[0].url).not.toContain("tok");
     expect(seen[0].body).toMatchObject({ reelUrls: ["https://www.instagram.com/reel/DAbc123xyz/"], maxItems: 1 });
-    const other = vi.fn(async () => new Response(JSON.stringify([{ status: "transcribed", shortCode: "ZZZother99", transcript: "wrong reel" }])));
+    // Instagram will not serve the reel to the actor: we find the video file and send that instead.
+    const bodies: Record<string, unknown>[] = [];
+    const viaFile = vi.fn(async (u: string | URL | Request, init?: RequestInit) => {
+      const url = String(u); const body = init?.body ? JSON.parse(String(init.body)) : {};
+      if (url.includes("instagram-scraper/")) return new Response(JSON.stringify([{ videoUrl: "https://scontent.cdninstagram.com/v/a.mp4?x=1" }]));
+      bodies.push(body);
+      return body.videoUrls ? new Response(JSON.stringify([{ status: "transcribed", shortCode: null, transcript: "Desde el archivo" }]))
+        : new Response(JSON.stringify([{ status: "failed", statusReason: "Instagram would not serve the reel directly", shortCode: "DAbc123xyz", transcript: null }]));
+    });
+    expect(await transcribePost("https://www.instagram.com/reel/DAbc123xyz/", { fetchImpl: viaFile as unknown as typeof fetch })).toBe("Desde el archivo");
+    expect(bodies.map((b) => Object.keys(b)[0])).toEqual(["reelUrls", "videoUrls"]);
+    expect(bodies[1].videoUrls).toEqual(["https://scontent.cdninstagram.com/v/a.mp4?x=1"]);
+    const other = vi.fn(async (u: string | URL | Request) => String(u).includes("instagram-scraper/") ? new Response(JSON.stringify([])) : new Response(JSON.stringify([{ status: "transcribed", shortCode: "ZZZother99", transcript: "wrong reel" }])));
     await expect(transcribePost("https://www.instagram.com/reel/DAbc123xyz/", { fetchImpl: other as unknown as typeof fetch })).rejects.toMatchObject({ code: "no_transcript" });
-    const priv = vi.fn(async () => new Response(JSON.stringify([{ status: "private", charged: false, statusReason: "Private account", shortCode: "DAbc123xyz", transcript: null }])));
-    await expect(transcribePost("https://www.instagram.com/reel/DAbc123xyz/", { fetchImpl: priv as unknown as typeof fetch })).rejects.toMatchObject({ code: "no_transcript" });
+    const priv = vi.fn(async (u: string | URL | Request) => String(u).includes("instagram-scraper/") ? new Response(JSON.stringify([])) : new Response(JSON.stringify([{ status: "private", charged: false, statusReason: "Private account", shortCode: "DAbc123xyz", transcript: null }])));
+    await expect(transcribePost("https://www.instagram.com/reel/DAbc123xyz/", { fetchImpl: priv as unknown as typeof fetch })).rejects.toMatchObject({ code: "no_transcript", detail: "Private account" });
     const refused = vi.fn(async () => new Response(JSON.stringify({ error: { type: "run-failed", message: "Actor run did not succeed" } }), { status: 400 }));
     await expect(transcribePost("https://www.instagram.com/reel/DAbc123xyz/", { fetchImpl: refused as unknown as typeof fetch })).rejects.toMatchObject({ code: "provider_error", detail: "run-failed: Actor run did not succeed" });
     expect(transcriptRow({ status: "onscreen_text_extracted", transcript: null, onScreenText: "3 tips" }, "x").text).toBe("3 tips");

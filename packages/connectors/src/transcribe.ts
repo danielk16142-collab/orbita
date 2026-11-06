@@ -147,17 +147,14 @@ export function transcriptRow(raw: unknown, code: string): { text: string; reaso
 
 const TRANSCRIPT_ACTOR = "steadyfetch~instagram-reel-transcript-scraper";
 
-/** Instagram: ask the transcript actor for this one link. Null when it delivers none (private, removed, music only...). */
-export async function apifyTranscript(link: { network: ScrapeNetwork; url: string }, opts: { token?: string; fetchImpl?: typeof fetch } = {}): Promise<{ text: string | null; reason: string | null }> {
-  if (link.network !== "instagram") return { text: null, reason: null };
-  const token = opts.token ?? process.env.APIFY_TOKEN;
-  if (!token) throw new TranscribeError("no_token");
+/** One run of the transcript actor. A refused run throws; a run that delivers nothing returns its reason. */
+async function runTranscriptActor(input: Record<string, unknown>, code: string, token: string, fetchImpl?: typeof fetch): Promise<{ text: string | null; reason: string | null }> {
   let res: Response;
   try {
     // maxTotalChargeUsd caps what this one run can cost, whatever happens.
-    res = await (opts.fetchImpl ?? fetch)(`https://api.apify.com/v2/acts/${TRANSCRIPT_ACTOR}/run-sync-get-dataset-items?timeout=180&maxTotalChargeUsd=0.25`, {
+    res = await (fetchImpl ?? fetch)(`https://api.apify.com/v2/acts/${TRANSCRIPT_ACTOR}/run-sync-get-dataset-items?timeout=180&maxTotalChargeUsd=0.25`, {
       method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ reelUrls: [link.url], maxItems: 1, includeOnScreenText: true }), signal: AbortSignal.timeout(190_000),
+      body: JSON.stringify({ ...input, maxItems: 1, includeOnScreenText: true }), signal: AbortSignal.timeout(190_000),
     });
   } catch (e) { throw new TranscribeError(e instanceof Error && (e.name === "TimeoutError" || e.name === "AbortError") ? "timeout" : "provider_error"); }
   if (res.status === 401 || res.status === 403) throw new TranscribeError("unauthorized");
@@ -172,12 +169,31 @@ export async function apifyTranscript(link: { network: ScrapeNetwork; url: strin
   }
   const items = await res.json().catch(() => null);
   if (!Array.isArray(items)) throw new TranscribeError("provider_error");
-  const rows = items.map((i) => transcriptRow(i, shortCode(link.url)));
+  const rows = items.map((i) => transcriptRow(i, code));
   const hit = rows.find((r) => r.text);
   if (hit) return { text: hit.text, reason: null };
   const why = rows.map((r) => r.reason).filter(Boolean)[0] ?? (items.length ? "no row for this reel" : "no rows returned");
   console.error(`apify transcript not delivered: ${why}`);
   return { text: null, reason: why };
+}
+
+/**
+ * Instagram: the transcript actor for this one reel link. When Instagram will not serve the reel to it (the actor's own
+ * extra lookup is rationed on Apify's free plan), we find the video file ourselves (apify/instagram-scraper) and give the
+ * actor that file link instead.
+ */
+export async function apifyTranscript(link: { network: ScrapeNetwork; url: string }, opts: { token?: string; fetchImpl?: typeof fetch } = {}): Promise<{ text: string | null; reason: string | null }> {
+  if (link.network !== "instagram") return { text: null, reason: null };
+  const token = opts.token ?? process.env.APIFY_TOKEN;
+  if (!token) throw new TranscribeError("no_token");
+  const code = shortCode(link.url);
+  const first = await runTranscriptActor({ reelUrls: [link.url] }, code, token, opts.fetchImpl);
+  if (first.text) return first;
+  let videoUrl: string;
+  try { videoUrl = await findVideoUrl(link, { token, fetchImpl: opts.fetchImpl }); }
+  catch { return first; }
+  const second = await runTranscriptActor({ videoUrls: [videoUrl] }, code, token, opts.fetchImpl);
+  return second.text ? second : { text: null, reason: second.reason ?? first.reason };
 }
 
 /** The whole chain for one post link: Apify's own transcript first, then (with an OpenAI key) speech to text on the video. */
