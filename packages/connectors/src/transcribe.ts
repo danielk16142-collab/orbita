@@ -1,6 +1,7 @@
 /**
  * Transcribe a public Instagram or TikTok video.
- * 1. Instagram reels: Apify's reel scraper returns the transcript itself (APIFY_TOKEN only), for that one reel.
+ * 1. Instagram reels and video posts: the Apify actor steadyfetch/instagram-reel-transcript-scraper transcribes that one link
+ *    (APIFY_TOKEN only; about $0.015 a reel on the free plan, only charged when a transcript is delivered).
  * 2. Otherwise, and when OPENAI_API_KEY is set: Apify finds the post's video file, we download it and a speech-to-text
  *    model turns the speech into text (OPENAI_TRANSCRIBE_MODEL, default whisper-1).
  * Keys are server env vars. Everything that comes back is untrusted: links are checked, sizes capped, text clamped.
@@ -127,33 +128,48 @@ export function transcriptOf(raw: unknown): string {
   return "";
 }
 
-/** The reel's short code (/reel/<code>/), to make sure an item is the reel we asked for. */
+/** The reel's short code (/reel/<code>/), to make sure a row is the reel we asked for. */
 const shortCode = (url: string) => url.split("/").filter(Boolean).pop() ?? "";
-function sameReel(raw: unknown, code: string): boolean {
-  if (typeof raw !== "object" || raw === null) return false;
+const DELIVERED = ["transcribed", "onscreen_text_extracted"];
+
+/** The text of one transcript-scraper row: what is said, or (music-only reels) the text shown on screen. "" when not delivered or another reel. */
+export function transcriptRow(raw: unknown, code: string): { text: string; reason: string | null } {
+  if (typeof raw !== "object" || raw === null) return { text: "", reason: null };
   const d = raw as Record<string, unknown>;
-  return [d.shortCode, d.code].some((v) => v === code) || [d.url, d.inputUrl].some((v) => typeof v === "string" && v.includes(`/${code}`));
+  if (d._summary) return { text: "", reason: null };
+  if (typeof d.shortCode === "string" && d.shortCode && d.shortCode !== code) return { text: "", reason: null };
+  if (!DELIVERED.includes(String(d.status))) return { text: "", reason: typeof d.statusReason === "string" ? d.statusReason.slice(0, 200) : String(d.status ?? "") };
+  const text = transcriptOf(d) || (typeof d.onScreenText === "string" ? clampText(d.onScreenText) : "");
+  return { text, reason: null };
 }
 
-/** Instagram reels: ask Apify's reel scraper for this one reel with its transcript. Null when it gives none (or another reel). */
+const TRANSCRIPT_ACTOR = "steadyfetch~instagram-reel-transcript-scraper";
+
+/** Instagram: ask the transcript actor for this one link. Null when it delivers none (private, removed, music only...). */
 export async function apifyTranscript(link: { network: ScrapeNetwork; url: string }, opts: { token?: string; fetchImpl?: typeof fetch } = {}): Promise<string | null> {
   if (link.network !== "instagram") return null;
   const token = opts.token ?? process.env.APIFY_TOKEN;
   if (!token) throw new TranscribeError("no_token");
   let res: Response;
   try {
-    res = await (opts.fetchImpl ?? fetch)("https://api.apify.com/v2/acts/apify~instagram-reel-scraper/run-sync-get-dataset-items?maxItems=1&timeout=120&memory=1024", {
+    // maxTotalChargeUsd caps what this one run can cost, whatever happens.
+    res = await (opts.fetchImpl ?? fetch)(`https://api.apify.com/v2/acts/${TRANSCRIPT_ACTOR}/run-sync-get-dataset-items?timeout=170&memory=2048&maxTotalChargeUsd=0.1`, {
       method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ username: [link.url], resultsLimit: 1, includeTranscript: true, includeDownloadedVideo: false, skipPinnedPosts: false }), signal: AbortSignal.timeout(130_000),
+      body: JSON.stringify({ reelUrls: [link.url], maxItems: 1, includeOnScreenText: true, describeVideo: false, maxRunSeconds: 160 }), signal: AbortSignal.timeout(185_000),
     });
   } catch (e) { throw new TranscribeError(e instanceof Error && (e.name === "TimeoutError" || e.name === "AbortError") ? "timeout" : "provider_error"); }
   if (res.status === 401 || res.status === 403) throw new TranscribeError("unauthorized");
   if (res.status === 402) throw new TranscribeError("no_credit");
-  if (!res.ok) { console.error(`apify transcript failed: status=${res.status}`); return null; }
+  if (res.status === 408) throw new TranscribeError("timeout");
+  if (!res.ok) { console.error(`apify transcript failed: status=${res.status}`); throw new TranscribeError("provider_error"); }
   const items = await res.json().catch(() => null);
-  if (!Array.isArray(items)) return null;
-  const code = shortCode(link.url);
-  return items.filter((i) => sameReel(i, code)).map(transcriptOf).find(Boolean) ?? null;
+  if (!Array.isArray(items)) throw new TranscribeError("provider_error");
+  const rows = items.map((i) => transcriptRow(i, shortCode(link.url)));
+  const hit = rows.find((r) => r.text);
+  if (hit) return hit.text;
+  const why = rows.map((r) => r.reason).filter(Boolean)[0];
+  if (why) console.error(`apify transcript not delivered: ${why}`);
+  return null;
 }
 
 /** The whole chain for one post link: Apify's own transcript first, then (with an OpenAI key) speech to text on the video. */
