@@ -63,3 +63,23 @@ export async function restoreStrategyAction(input: unknown): Promise<Result> {
   revalidatePath("/", "layout");
   return { ok: true };
 }
+
+/** Add one idea to the active strategy's topic bank (for example our version of another creator's post), without rebuilding it. */
+export async function addStrategyTopicAction(input: unknown): Promise<Result> {
+  const p = z.object({ clientId: z.string().uuid().optional(), topic: z.string().trim().min(1).max(200) }).safeParse(input);
+  if (!p.success) return { ok: false, error: "bad_request" };
+  const a = await resolveAgentActor(p.data.clientId);
+  if (!a.ok) return { ok: false, error: "forbidden" };
+  if (!(await limiter("strategy-topic", 30, 10 * 60_000).hit(a.actor.userId)).allowed) return { ok: false, error: "rate_limited" };
+  const { sb, clientId } = a.actor;
+  const { data: s } = await sb.from("strategies").select("id, content").eq("client_id", clientId).eq("active", true).maybeSingle();
+  if (!s) return { ok: false, error: "no_strategy" };
+  const content = (s.content ?? {}) as Record<string, unknown>;
+  const topics = Array.isArray(content.topics) ? (content.topics as unknown[]).map(String) : [];
+  if (!topics.some((x) => x.trim().toLowerCase() === p.data.topic.toLowerCase())) topics.push(p.data.topic);
+  const { data, error } = await sb.from("strategies").update({ content: { ...content, topics: topics.slice(-60) } }).eq("id", s.id).eq("client_id", clientId).select("id");
+  if (error || !data?.length) return { ok: false, error: "forbidden" };
+  await audit({ agencyId: a.actor.profile.agency_id, actor: a.actor.userId, action: "strategy.topic_added", entity: "client", entityId: clientId });
+  revalidatePath("/", "layout");
+  return { ok: true };
+}

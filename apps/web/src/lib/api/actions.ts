@@ -82,7 +82,7 @@ export const API_ACTIONS: Record<string, ApiAction> = {
   save_competitor: { group: "research", kind: "fn", run: saveCompetitorAction, summary: "Add or edit a competitor (pass id to edit).", input: `${C}, id (optional), name, website (https), notes, links {instagram|tiktok|...: url or @handle}` },
   remove_competitor: { group: "research", kind: "fn", run: removeCompetitorAction, summary: "Remove a competitor.", input: `${C}, id` },
   analyze_competitor: { group: "research", kind: "route", run: competitorAnalyze.POST, summary: "Have the agent analyze one competitor.", input: `${C}, competitorId, ${L}` },
-  remake_competitor_post: { group: "research", kind: "route", run: competitorRemake.POST, summary: "Our version of one recorded competitor post (same topic, points, structure and hook, made ours): a reel script, caption and hashtags. Nothing is saved; add it with create_post (type reel, content = reel).", input: `${C}, postId (competitor post uuid), language, transcript (optional: what they say in the video), notes (optional), ${L}` },
+  remake_competitor_post: { group: "research", kind: "route", run: competitorRemake.POST, summary: "Our version of one recorded competitor post, apart from the strategy (same subject, points, structure and hook, in our words and voice): a reel script, caption and hashtags. Nothing is saved; add it with create_post (type reel, content = reel).", input: `${C}, postId (competitor post uuid), language (same|en|fr|es, default same), transcript (optional: what they say in the video), notes (optional), ${L}` },
   analysis_to_research: { group: "research", kind: "fn", run: analysisToResearchAction, summary: "Save a competitor analysis as research notes.", input: `${C}, analysisId` },
 
   // Posts and calendar
