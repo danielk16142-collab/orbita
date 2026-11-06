@@ -19,6 +19,7 @@ import * as captionFromScript from "@/app/api/posts/caption-from-script/route";
 import * as researchRun from "@/app/api/research/run/route";
 import * as competitorAnalyze from "@/app/api/competitors/analyze/route";
 import * as competitorRemake from "@/app/api/competitors/remake/route";
+import * as competitorTranscribe from "@/app/api/competitors/transcribe/route";
 import * as kickstartRun from "@/app/api/kickstart/run/route";
 import * as strategyConnect from "@/app/api/strategy/connect/route";
 import * as strategyTag from "@/app/api/strategy/tag/route";
@@ -82,6 +83,7 @@ export const API_ACTIONS: Record<string, ApiAction> = {
   save_competitor: { group: "research", kind: "fn", run: saveCompetitorAction, summary: "Add or edit a competitor (pass id to edit).", input: `${C}, id (optional), name, website (https), notes, links {instagram|tiktok|...: url or @handle}` },
   remove_competitor: { group: "research", kind: "fn", run: removeCompetitorAction, summary: "Remove a competitor.", input: `${C}, id` },
   analyze_competitor: { group: "research", kind: "route", run: competitorAnalyze.POST, summary: "Have the agent analyze one competitor.", input: `${C}, competitorId, ${L}` },
+  transcribe_competitor_post: { group: "research", kind: "route", run: competitorTranscribe.POST, summary: "Transcribe what is said in a recorded competitor video (Instagram or TikTok link) and save it on the post; remake_competitor_post then uses it.", input: `${C}, postId (competitor post uuid)` },
   remake_competitor_post: { group: "research", kind: "route", run: competitorRemake.POST, summary: "Our version of one recorded competitor post, apart from the strategy (same subject, points, structure and hook, in our words and voice): a reel script, caption and hashtags. Nothing is saved; add it with create_post (type reel, content = reel).", input: `${C}, postId (competitor post uuid), language (same|en|fr|es, default same), transcript (optional: what they say in the video), notes (optional), ${L}` },
   analysis_to_research: { group: "research", kind: "fn", run: analysisToResearchAction, summary: "Save a competitor analysis as research notes.", input: `${C}, analysisId` },
 

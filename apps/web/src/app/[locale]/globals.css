@@ -844,3 +844,4 @@ ol.plain.remake-scenes { display: grid; gap: .6rem; }
 .remake-save > .btn { max-width: 100%; }
 .remake-save .btn { white-space: normal; text-align: left; }
 .remake-col, .remake-ours, .remake-save, .remake-hooks, ol.plain.remake-scenes, .remake-scenes li { grid-template-columns: minmax(0, 1fr); }
+.remake-transcribe { display: grid; gap: .3rem; justify-items: start; }

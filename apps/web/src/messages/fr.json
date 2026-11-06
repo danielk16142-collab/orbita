@@ -1810,12 +1810,27 @@
         "no_result": "Pas de version cette fois. Réessayez.",
         "not_found": "Cette publication n'est plus enregistrée.",
         "invalid_content": "Le script est incomplet : chaque scène a besoin d'un visuel et le reel d'un appel à l'action.",
-        "no_strategy": "Il n'y a pas encore de stratégie : enregistrez-la plutôt dans les publications."
+        "no_strategy": "Il n'y a pas encore de stratégie : enregistrez-la plutôt dans les publications.",
+        "not_configured": "La transcription n'est pas encore configurée : ajoutez OPENAI_API_KEY (et APIFY_TOKEN) dans Vercel.",
+        "no_link": "Cette publication n'a pas de lien vers sa vidéo.",
+        "no_video": "Impossible d'obtenir la vidéo (privée, supprimée ou pas une vidéo). Collez plutôt ce qu'ils disent.",
+        "no_speech": "Aucune parole trouvée dans cette vidéo.",
+        "too_large": "Cette vidéo est trop longue à transcrire (plus de 25 Mo).",
+        "bad_link": "Ce lien n'est pas une publication Instagram ou TikTok.",
+        "unauthorized": "Le service de transcription a refusé la clé. Vérifiez OPENAI_API_KEY et APIFY_TOKEN dans Vercel.",
+        "no_credit": "Le service de transcription n'a plus de crédit ou est occupé. Réessayez plus tard.",
+        "timeout": "C'était trop long. Réessayez.",
+        "provider_error": "Le service de transcription a échoué. Réessayez.",
+        "save_failed": "Transcrite, mais impossible de l'enregistrer sur la publication."
       },
       "sameLanguage": "Comme leur publication",
       "addNoDate": "Enregistrer dans les publications (sans date)",
       "toStrategy": "Ajouter aux idées de la stratégie",
-      "inStrategy": "Dans les idées de la stratégie"
+      "inStrategy": "Dans les idées de la stratégie",
+      "transcribe": "Transcrire la vidéo",
+      "transcribing": "Transcription…",
+      "transcribeHint": "Récupère automatiquement ce qu'ils disent dans la vidéo et l'enregistre sur cette publication.",
+      "transcribingHint": "Récupération de la vidéo et écoute. Jusqu'à une minute."
     }
   },
   "buildStrategy": {
