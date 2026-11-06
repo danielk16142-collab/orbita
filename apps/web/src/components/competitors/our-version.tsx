@@ -69,9 +69,9 @@ export function OurVersion({ post, clientId, locale, staff, postsBase, chatHref 
     setTranscribing(true); setError(null);
     try {
       const res = await fetch("/api/competitors/transcribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, postId: post.id }) });
-      const data = (await res.json().catch(() => ({}))) as { transcript?: string; error?: string };
+      const data = (await res.json().catch(() => ({}))) as { transcript?: string; error?: string; detail?: string };
       if (data.transcript) setHeard(data.transcript);
-      if (!res.ok) setError(errorText(data.error ?? "generic"));
+      if (!res.ok) setError(`${errorText(data.error ?? "generic")}${data.detail ? ` (${t("apifySaid", { reason: data.detail })})` : ""}`);
     } catch { setError(ta("errors.generic")); }
     finally { setTranscribing(false); }
   }

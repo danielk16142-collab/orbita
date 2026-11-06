@@ -9,6 +9,8 @@
 import type { ScrapeNetwork } from "./apify";
 
 export class TranscribeError extends Error {
+  /** What the provider said, when it said why (shown to staff). */
+  detail: string | null = null;
   constructor(public code: "no_token" | "no_openai_key" | "bad_link" | "no_video" | "too_large" | "timeout" | "provider_error" | "unauthorized" | "no_credit" | "no_speech" | "no_transcript") { super(code); }
 }
 export const transcribeConfigured = (env: Record<string, string | undefined> = process.env) => !!env.APIFY_TOKEN;
@@ -146,8 +148,8 @@ export function transcriptRow(raw: unknown, code: string): { text: string; reaso
 const TRANSCRIPT_ACTOR = "steadyfetch~instagram-reel-transcript-scraper";
 
 /** Instagram: ask the transcript actor for this one link. Null when it delivers none (private, removed, music only...). */
-export async function apifyTranscript(link: { network: ScrapeNetwork; url: string }, opts: { token?: string; fetchImpl?: typeof fetch } = {}): Promise<string | null> {
-  if (link.network !== "instagram") return null;
+export async function apifyTranscript(link: { network: ScrapeNetwork; url: string }, opts: { token?: string; fetchImpl?: typeof fetch } = {}): Promise<{ text: string | null; reason: string | null }> {
+  if (link.network !== "instagram") return { text: null, reason: null };
   const token = opts.token ?? process.env.APIFY_TOKEN;
   if (!token) throw new TranscribeError("no_token");
   let res: Response;
@@ -166,10 +168,10 @@ export async function apifyTranscript(link: { network: ScrapeNetwork; url: strin
   if (!Array.isArray(items)) throw new TranscribeError("provider_error");
   const rows = items.map((i) => transcriptRow(i, shortCode(link.url)));
   const hit = rows.find((r) => r.text);
-  if (hit) return hit.text;
-  const why = rows.map((r) => r.reason).filter(Boolean)[0];
-  if (why) console.error(`apify transcript not delivered: ${why}`);
-  return null;
+  if (hit) return { text: hit.text, reason: null };
+  const why = rows.map((r) => r.reason).filter(Boolean)[0] ?? (items.length ? "no row for this reel" : "no rows returned");
+  console.error(`apify transcript not delivered: ${why}`);
+  return { text: null, reason: why };
 }
 
 /** The whole chain for one post link: Apify's own transcript first, then (with an OpenAI key) speech to text on the video. */
@@ -177,8 +179,8 @@ export async function transcribePost(rawLink: string, opts: { fetchImpl?: typeof
   const link = postLink(rawLink);
   if (!link) throw new TranscribeError("bad_link");
   const fromApify = await apifyTranscript(link, opts);
-  if (fromApify) return fromApify;
-  if (!(opts.env ?? process.env).OPENAI_API_KEY) throw new TranscribeError("no_transcript");
+  if (fromApify.text) return fromApify.text;
+  if (!(opts.env ?? process.env).OPENAI_API_KEY) { const e = new TranscribeError("no_transcript"); e.detail = fromApify.reason; throw e; }
   const videoUrl = await findVideoUrl(link, opts);
   return speechToText(await downloadVideo(videoUrl, opts), opts);
 }

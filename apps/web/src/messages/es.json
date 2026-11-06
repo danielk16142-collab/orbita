@@ -1831,7 +1831,8 @@
       "transcribe": "Transcribir el video",
       "transcribing": "Transcribiendo…",
       "transcribeHint": "Obtiene automáticamente lo que dicen en el video y lo guarda en esta publicación.",
-      "transcribingHint": "Obteniendo el video y escuchándolo. Tarda hasta un minuto."
+      "transcribingHint": "Obteniendo el video y escuchándolo. Tarda hasta un minuto.",
+      "apifySaid": "Apify respondió: {reason}"
     }
   },
   "buildStrategy": {
