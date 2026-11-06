@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { postLink, safeVideoUrl, speechToText, transcribePost, TranscribeError, videoUrlOf } from "./transcribe";
+import { postLink, safeVideoUrl, speechToText, transcribePost, TranscribeError, transcriptOf, videoUrlOf } from "./transcribe";
 
 describe("transcribing a public video", () => {
   it("accepts single post links only, and cleans them", () => {
@@ -16,10 +16,22 @@ describe("transcribing a public video", () => {
     expect(videoUrlOf("instagram", { videoUrl: "https://scontent.cdninstagram.com/a.mp4" })).toContain("cdninstagram");
     expect(videoUrlOf("tiktok", { mediaUrls: ["https://api.apify.com/v2/key-value-stores/x/records/v.mp4"] })).toContain("api.apify.com");
   });
+  it("uses Apify's own transcript for an Instagram reel, only when it is the same reel", async () => {
+    vi.stubEnv("APIFY_TOKEN", "tok"); vi.stubEnv("OPENAI_API_KEY", "");
+    const sent: unknown[] = [];
+    const ok = vi.fn(async (_u: string | URL | Request, init?: RequestInit) => { sent.push(JSON.parse(String(init?.body))); return new Response(JSON.stringify([{ shortCode: "DAbc123xyz", transcript: " Hola,  esto es una prueba " }])); });
+    expect(await transcribePost("https://www.instagram.com/reel/DAbc123xyz/?igsh=1", { fetchImpl: ok as unknown as typeof fetch })).toBe("Hola, esto es una prueba");
+    expect(sent[0]).toMatchObject({ username: ["https://www.instagram.com/reel/DAbc123xyz/"], includeTranscript: true, resultsLimit: 1 });
+    const other = vi.fn(async () => new Response(JSON.stringify([{ shortCode: "ZZZother99", transcript: "wrong reel" }])));
+    await expect(transcribePost("https://www.instagram.com/reel/DAbc123xyz/", { fetchImpl: other as unknown as typeof fetch })).rejects.toMatchObject({ code: "no_transcript" });
+    expect(transcriptOf({ transcript: [{ text: "Uno" }, { text: "dos" }] })).toBe("Uno dos");
+    vi.unstubAllEnvs();
+  });
   it("runs the chain: Apify lookup with the token in a header, download, speech to text", async () => {
     const calls: string[] = [];
     const f = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
       const u = String(url); calls.push(u);
+      if (u.includes("instagram-reel-scraper")) return new Response(JSON.stringify([{ shortCode: "DAbc123xyz" }])); // no transcript: fall back
       if (u.includes("api.apify.com/v2/acts")) {
         expect((init?.headers as Record<string, string>).Authorization).toBe("Bearer tok");
         expect(JSON.parse(String(init?.body)).directUrls).toEqual(["https://www.instagram.com/reel/DAbc123xyz/"]);

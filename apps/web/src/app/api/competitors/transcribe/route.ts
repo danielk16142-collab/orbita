@@ -13,8 +13,8 @@ export const dynamic = "force-dynamic";
 const Body = z.object({ clientId: z.string().uuid().optional(), postId: z.string().uuid() });
 
 /**
- * Transcribe a recorded competitor post (Instagram or TikTok): the video is found through Apify and transcribed by the
- * speech-to-text service; the text is saved on the post so "Make our version" uses it. Staff only (it costs money).
+ * Transcribe a recorded competitor post: Apify returns the transcript of an Instagram reel (or, with an OpenAI key, the video is
+ * transcribed by speech to text); the text is saved on the post so "Make our version" uses it. Staff only (it costs money).
  */
 export async function POST(req: Request) {
   if (!sameOrigin(req)) return json({ error: "forbidden" }, 403);
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
   catch (e) {
     const code = e instanceof TranscribeError ? e.code : "provider_error";
     if (!(e instanceof TranscribeError)) console.error("transcribe failed:", e instanceof Error ? e.name : "unknown");
-    return json({ error: code }, code === "bad_link" || code === "no_video" || code === "no_speech" || code === "too_large" ? 422 : 502);
+    return json({ error: code }, code === "bad_link" || code === "no_video" || code === "no_speech" || code === "no_transcript" || code === "too_large" ? 422 : 502);
   }
   // competitor_posts has no update grant for people; the row was checked above through their own session.
   const { error } = await supabaseAdmin().from("competitor_posts").update({ transcript }).eq("id", post.id).eq("client_id", actor.clientId);
