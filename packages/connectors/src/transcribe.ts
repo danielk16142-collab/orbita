@@ -155,15 +155,21 @@ export async function apifyTranscript(link: { network: ScrapeNetwork; url: strin
   let res: Response;
   try {
     // maxTotalChargeUsd caps what this one run can cost, whatever happens.
-    res = await (opts.fetchImpl ?? fetch)(`https://api.apify.com/v2/acts/${TRANSCRIPT_ACTOR}/run-sync-get-dataset-items?timeout=170&memory=2048&maxTotalChargeUsd=0.1`, {
+    res = await (opts.fetchImpl ?? fetch)(`https://api.apify.com/v2/acts/${TRANSCRIPT_ACTOR}/run-sync-get-dataset-items?timeout=180&maxTotalChargeUsd=0.25`, {
       method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ reelUrls: [link.url], maxItems: 1, includeOnScreenText: true, describeVideo: false, maxRunSeconds: 160 }), signal: AbortSignal.timeout(185_000),
+      body: JSON.stringify({ reelUrls: [link.url], maxItems: 1, includeOnScreenText: true }), signal: AbortSignal.timeout(190_000),
     });
   } catch (e) { throw new TranscribeError(e instanceof Error && (e.name === "TimeoutError" || e.name === "AbortError") ? "timeout" : "provider_error"); }
   if (res.status === 401 || res.status === 403) throw new TranscribeError("unauthorized");
   if (res.status === 402) throw new TranscribeError("no_credit");
   if (res.status === 408) throw new TranscribeError("timeout");
-  if (!res.ok) { console.error(`apify transcript failed: status=${res.status}`); throw new TranscribeError("provider_error"); }
+  if (!res.ok) {
+    // Apify explains a refused or failed run in { error: { type, message } }: keep it (no secrets in it) so staff see why.
+    const body = (await res.json().catch(() => null)) as { error?: { type?: unknown; message?: unknown } } | null;
+    const why = [body?.error?.type, body?.error?.message].filter((x) => typeof x === "string").join(": ").slice(0, 300) || `status ${res.status}`;
+    console.error(`apify transcript failed: status=${res.status} ${why}`);
+    const e = new TranscribeError("provider_error"); e.detail = why; throw e;
+  }
   const items = await res.json().catch(() => null);
   if (!Array.isArray(items)) throw new TranscribeError("provider_error");
   const rows = items.map((i) => transcriptRow(i, shortCode(link.url)));
