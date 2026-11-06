@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { postLink, safeVideoUrl, speechToText, transcribePost, TranscribeError, transcriptOf, videoUrlOf } from "./transcribe";
+import { postLink, safeVideoUrl, speechToText, transcribePost, TranscribeError, transcriptOf, transcriptRow, videoUrlOf } from "./transcribe";
 
 describe("transcribing a public video", () => {
   it("accepts single post links only, and cleans them", () => {
@@ -16,14 +16,23 @@ describe("transcribing a public video", () => {
     expect(videoUrlOf("instagram", { videoUrl: "https://scontent.cdninstagram.com/a.mp4" })).toContain("cdninstagram");
     expect(videoUrlOf("tiktok", { mediaUrls: ["https://api.apify.com/v2/key-value-stores/x/records/v.mp4"] })).toContain("api.apify.com");
   });
-  it("uses Apify's own transcript for an Instagram reel, only when it is the same reel", async () => {
+  it("uses the transcript actor for an Instagram reel, only when it is the same reel and delivered", async () => {
     vi.stubEnv("APIFY_TOKEN", "tok"); vi.stubEnv("OPENAI_API_KEY", "");
-    const sent: unknown[] = [];
-    const ok = vi.fn(async (_u: string | URL | Request, init?: RequestInit) => { sent.push(JSON.parse(String(init?.body))); return new Response(JSON.stringify([{ shortCode: "DAbc123xyz", transcript: " Hola,  esto es una prueba " }])); });
+    const seen: { url: string; body: unknown }[] = [];
+    const ok = vi.fn(async (u: string | URL | Request, init?: RequestInit) => {
+      seen.push({ url: String(u), body: JSON.parse(String(init?.body)) });
+      return new Response(JSON.stringify([{ status: "transcribed", charged: true, shortCode: "DAbc123xyz", transcript: " Hola,  esto es una prueba " }, { _summary: true }]));
+    });
     expect(await transcribePost("https://www.instagram.com/reel/DAbc123xyz/?igsh=1", { fetchImpl: ok as unknown as typeof fetch })).toBe("Hola, esto es una prueba");
-    expect(sent[0]).toMatchObject({ username: ["https://www.instagram.com/reel/DAbc123xyz/"], includeTranscript: true, resultsLimit: 1 });
-    const other = vi.fn(async () => new Response(JSON.stringify([{ shortCode: "ZZZother99", transcript: "wrong reel" }])));
+    expect(seen[0].url).toContain("/acts/steadyfetch~instagram-reel-transcript-scraper/run-sync-get-dataset-items");
+    expect(seen[0].url).toContain("maxTotalChargeUsd=0.1");
+    expect(seen[0].url).not.toContain("tok");
+    expect(seen[0].body).toMatchObject({ reelUrls: ["https://www.instagram.com/reel/DAbc123xyz/"], maxItems: 1 });
+    const other = vi.fn(async () => new Response(JSON.stringify([{ status: "transcribed", shortCode: "ZZZother99", transcript: "wrong reel" }])));
     await expect(transcribePost("https://www.instagram.com/reel/DAbc123xyz/", { fetchImpl: other as unknown as typeof fetch })).rejects.toMatchObject({ code: "no_transcript" });
+    const priv = vi.fn(async () => new Response(JSON.stringify([{ status: "private", charged: false, statusReason: "Private account", shortCode: "DAbc123xyz", transcript: null }])));
+    await expect(transcribePost("https://www.instagram.com/reel/DAbc123xyz/", { fetchImpl: priv as unknown as typeof fetch })).rejects.toMatchObject({ code: "no_transcript" });
+    expect(transcriptRow({ status: "onscreen_text_extracted", transcript: null, onScreenText: "3 tips" }, "x").text).toBe("3 tips");
     expect(transcriptOf({ transcript: [{ text: "Uno" }, { text: "dos" }] })).toBe("Uno dos");
     vi.unstubAllEnvs();
   });
@@ -31,7 +40,7 @@ describe("transcribing a public video", () => {
     const calls: string[] = [];
     const f = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
       const u = String(url); calls.push(u);
-      if (u.includes("instagram-reel-scraper")) return new Response(JSON.stringify([{ shortCode: "DAbc123xyz" }])); // no transcript: fall back
+      if (u.includes("instagram-reel-transcript-scraper")) return new Response(JSON.stringify([{ status: "music_only", charged: false, shortCode: "DAbc123xyz", transcript: null }])); // none: fall back
       if (u.includes("api.apify.com/v2/acts")) {
         expect((init?.headers as Record<string, string>).Authorization).toBe("Bearer tok");
         expect(JSON.parse(String(init?.body)).directUrls).toEqual(["https://www.instagram.com/reel/DAbc123xyz/"]);
