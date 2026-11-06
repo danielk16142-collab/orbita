@@ -1414,7 +1414,9 @@
     "inPillars": "Principal · {list}",
     "allow": "Autoriser",
     "addToPillar": "Ajouter un sujet à {name}",
-    "addToPillarPlaceholder": "Nouveau sujet pour ce pilier"
+    "addToPillarPlaceholder": "Nouveau sujet pour ce pilier",
+    "buildHint": "Vos piliers et sujets vous conviennent ? L'agent construit la stratégie autour d'eux : exactement ces piliers et ces parts, des séries et une banque de sujets qui couvrent les sujets de chaque pilier, et jamais un sujet à éviter.",
+    "rebuildHint": "Vous avez changé vos piliers ou vos sujets ? Refaites la stratégie autour d'eux. Les changements non enregistrés le sont d'abord."
   },
   "strategyPage": {
     "eyebrow": "Plan",
@@ -1427,7 +1429,7 @@
     "choose": "Les choisir",
     "edit": "Modifier",
     "step2": "Créez la stratégie avec l’agent",
-    "step2Hint": "il utilise vos piliers, vos sujets, vos objectifs et vos résultats.",
+    "step2Hint": "autour de vos piliers et sujets, avec vos objectifs et vos résultats.",
     "build": "Créer la stratégie",
     "avoiding": "à éviter : {list}",
     "change": "Modifier la stratégie",
@@ -1435,7 +1437,8 @@
     "archive": "Archiver et recommencer",
     "archiving": "Archivage…",
     "archiveConfirm": "Archiver cette stratégie ? Elle est conservée, et vous pouvez en créer une nouvelle tout de suite.",
-    "archiveFailed": "Archivage impossible."
+    "archiveFailed": "Archivage impossible.",
+    "buildInChat": "Ou décrivez à l'agent la stratégie que vous voulez"
   },
   "apiKeys": {
     "title": "Accès API",
@@ -1736,5 +1739,21 @@
     "fetchConfirm": "Récupérer les derniers posts publics {network} de ce compte ? Cela prend jusqu'à deux minutes et coûte quelques centimes sur votre compte Apify.",
     "fetched": "{added} nouveaux posts ajoutés ({found} trouvés).",
     "fetchNote": "Comptes publics uniquement. Environ 0,08 $ pour 30 posts. La première ligne vient de la légende, pas des paroles."
+  },
+  "buildStrategy": {
+    "build": "Créer la stratégie à partir de ces piliers et sujets",
+    "rebuild": "Refaire la stratégie autour de ces piliers",
+    "building": "Création de la stratégie…",
+    "buildingHint": "L'agent la construit autour de vos piliers et sujets. Cela prend environ une minute.",
+    "built": "Stratégie créée à partir de vos piliers et sujets.",
+    "rebuilt": "Stratégie refaite autour de vos piliers et sujets.",
+    "undo": "Annuler",
+    "confirmRebuild": "Refaire la stratégie autour des piliers et sujets choisis ? L'actuelle est conservée et vous pouvez annuler.",
+    "errors": {
+      "no_pillars": "Choisissez d'abord au moins un pilier.",
+      "apply_failed": "La stratégie n'a pas pu être enregistrée. Réessayez.",
+      "model_error": "L'agent n'a pas pu répondre. Réessayez.",
+      "undo": "Impossible de restaurer la stratégie précédente."
+    }
   }
 }

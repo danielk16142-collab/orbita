@@ -1414,7 +1414,9 @@
     "inPillars": "Principal · {list}",
     "allow": "Permitir",
     "addToPillar": "Añadir un tema a {name}",
-    "addToPillarPlaceholder": "Nuevo tema para este pilar"
+    "addToPillarPlaceholder": "Nuevo tema para este pilar",
+    "buildHint": "¿Te gustan tus pilares y temas? El agente crea la estrategia a partir de ellos: exactamente estos pilares y porcentajes, series y un banco de temas que cubren los temas de cada pilar, y nunca un tema a evitar.",
+    "rebuildHint": "¿Cambiaste tus pilares o temas? Rehaz la estrategia con ellos. Los cambios sin guardar se guardan primero."
   },
   "strategyPage": {
     "eyebrow": "Plan",
@@ -1427,7 +1429,7 @@
     "choose": "Elegirlos",
     "edit": "Editar",
     "step2": "Crea la estrategia con el agente",
-    "step2Hint": "usa tus pilares, tus temas, tus objetivos y tus resultados.",
+    "step2Hint": "a partir de tus pilares y temas, con tus objetivos y resultados.",
     "build": "Crear la estrategia",
     "avoiding": "evitando: {list}",
     "change": "Cambiar la estrategia",
@@ -1435,7 +1437,8 @@
     "archive": "Archivar y empezar de nuevo",
     "archiving": "Archivando…",
     "archiveConfirm": "¿Archivar esta estrategia? Se conserva y puedes crear una nueva enseguida.",
-    "archiveFailed": "No se pudo archivar."
+    "archiveFailed": "No se pudo archivar.",
+    "buildInChat": "O describe al agente la estrategia que quieres"
   },
   "apiKeys": {
     "title": "Acceso API",
@@ -1736,5 +1739,21 @@
     "fetchConfirm": "¿Traer los últimos posts públicos de {network} de esta cuenta? Tarda hasta dos minutos y cuesta unos centavos en tu cuenta de Apify.",
     "fetched": "{added} posts nuevos añadidos ({found} encontrados).",
     "fetchNote": "Solo cuentas públicas. Unos $0.08 por 30 posts. La primera línea sale del caption, no de lo que se dice."
+  },
+  "buildStrategy": {
+    "build": "Crear la estrategia con estos pilares y temas",
+    "rebuild": "Rehacer la estrategia con estos pilares",
+    "building": "Creando la estrategia…",
+    "buildingHint": "El agente la está creando con tus pilares y temas. Tarda alrededor de un minuto.",
+    "built": "Estrategia creada con tus pilares y temas.",
+    "rebuilt": "Estrategia rehecha con tus pilares y temas.",
+    "undo": "Deshacer",
+    "confirmRebuild": "¿Rehacer la estrategia con los pilares y temas que elegiste? La actual se guarda y puedes deshacerlo.",
+    "errors": {
+      "no_pillars": "Primero elige al menos un pilar.",
+      "apply_failed": "No se pudo guardar la estrategia. Inténtalo de nuevo.",
+      "model_error": "El agente no pudo responder. Inténtalo de nuevo.",
+      "undo": "No se pudo restaurar la estrategia anterior."
+    }
   }
 }
