@@ -1810,12 +1810,27 @@
         "no_result": "No version this time. Try again.",
         "not_found": "This post is no longer recorded.",
         "invalid_content": "The script is incomplete: every scene needs a visual and the reel needs a call to action.",
-        "no_strategy": "There is no strategy yet: save it to posts instead."
+        "no_strategy": "There is no strategy yet: save it to posts instead.",
+        "not_configured": "Transcription is not set up yet: add OPENAI_API_KEY (and APIFY_TOKEN) in Vercel.",
+        "no_link": "This post has no link to its video.",
+        "no_video": "Could not get the video (private, removed, or not a video). Paste what they say instead.",
+        "no_speech": "No speech found in this video.",
+        "too_large": "This video is too long to transcribe (over 25 MB).",
+        "bad_link": "This link is not a single Instagram or TikTok post.",
+        "unauthorized": "The transcription service refused the key. Check OPENAI_API_KEY and APIFY_TOKEN in Vercel.",
+        "no_credit": "The transcription service is out of credit or busy. Try again later.",
+        "timeout": "It took too long. Try again.",
+        "provider_error": "The transcription service failed. Try again.",
+        "save_failed": "Transcribed, but it could not be saved on the post."
       },
       "sameLanguage": "Same as their post",
       "addNoDate": "Save to posts (no date yet)",
       "toStrategy": "Add to the strategy's ideas",
-      "inStrategy": "In the strategy's ideas"
+      "inStrategy": "In the strategy's ideas",
+      "transcribe": "Transcribe the video",
+      "transcribing": "Transcribing…",
+      "transcribeHint": "Gets what they say in the video automatically and saves it on this post.",
+      "transcribingHint": "Fetching the video and listening to it. This takes up to a minute."
     }
   },
   "buildStrategy": {

@@ -7,6 +7,7 @@ export * from "./types";
 export * from "./state";
 export { readJson } from "./http";
 export * from "./apify";
+export * from "./transcribe";
 export { instagramConnector, tiktokConnector, fakeConnector };
 
 type Env = Record<string, string | undefined>;

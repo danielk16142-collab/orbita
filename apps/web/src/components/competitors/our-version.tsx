@@ -34,12 +34,15 @@ export function OurVersion({ post, clientId, locale, staff, postsBase, chatHref 
   const [savedId, setSavedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [inStrategy, setInStrategy] = useState(false);
+  const [heard, setHeard] = useState<string | null>(post.transcript);
+  const [transcribing, setTranscribing] = useState(false);
+  const canTranscribe = staff && !!post.url && (post.network === "instagram" || post.network === "tiktok");
   const errorText = (c: string) => (t.has(`errors.${c}`) ? t(`errors.${c}`) : ta.has(`errors.${c}`) ? ta(`errors.${c}`) : ta("errors.generic"));
 
   async function write() {
     setBusy(true); setError(null); setSavedId(null);
     try {
-      const res = await fetch("/api/competitors/remake", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, postId: post.id, locale, language, transcript, notes }) });
+      const res = await fetch("/api/competitors/remake", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, postId: post.id, locale, language, transcript: transcript || heard || "", notes }) });
       const data = (await res.json().catch(() => ({}))) as { ours?: Ours; error?: string };
       if (!res.ok || !data.ours) { setError(errorText(data.error ?? "generic")); return; }
       setOurs(data.ours); setHook(0); setInStrategy(false);
@@ -61,6 +64,18 @@ export function OurVersion({ post, clientId, locale, staff, postsBase, chatHref 
     if (r.ok && r.id) setSavedId(r.id); else setError(errorText(r.ok ? "generic" : r.error));
   }
 
+  /** Get what is said in their video automatically (the video is fetched and transcribed on the server, then saved on the post). */
+  async function transcribe() {
+    setTranscribing(true); setError(null);
+    try {
+      const res = await fetch("/api/competitors/transcribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, postId: post.id }) });
+      const data = (await res.json().catch(() => ({}))) as { transcript?: string; error?: string };
+      if (data.transcript) setHeard(data.transcript);
+      if (!res.ok) setError(errorText(data.error ?? "generic"));
+    } catch { setError(ta("errors.generic")); }
+    finally { setTranscribing(false); }
+  }
+
   async function toStrategy() {
     if (!ours) return;
     setError(null);
@@ -76,9 +91,17 @@ export function OurVersion({ post, clientId, locale, staff, postsBase, chatHref 
           <p className="eyebrow">{t("theirs")}{post.competitor ? ` · ${post.competitor}` : ""} · {NETWORK_LABEL[post.network] ?? post.network}</p>
           <p className="remake-hook">“{post.hook}”</p>
           {post.caption && <><h4>{t("caption")}</h4><p className="remake-text">{post.caption}</p></>}
-          {post.transcript
-            ? <details><summary>{t("transcript")}</summary><p className="remake-text">{post.transcript}</p></details>
-            : <label>{t("pasteTranscript")}<textarea rows={4} maxLength={8000} value={transcript} onChange={(e) => setTranscript(e.target.value)} placeholder={t("pasteTranscriptHint")} /></label>}
+          {heard
+            ? <details open={heard !== post.transcript}><summary>{t("transcript")}</summary><p className="remake-text">{heard}</p></details>
+            : <>
+              {canTranscribe && (
+                <div className="remake-transcribe">
+                  <button type="button" className="btn small" onClick={transcribe} disabled={transcribing}>{transcribing ? t("transcribing") : t("transcribe")}</button>
+                  <span className="stat-vs">{transcribing ? t("transcribingHint") : t("transcribeHint")}</span>
+                </div>
+              )}
+              <label>{t("pasteTranscript")}<textarea rows={4} maxLength={8000} value={transcript} onChange={(e) => setTranscript(e.target.value)} placeholder={t("pasteTranscriptHint")} /></label>
+            </>}
           {post.url && <a href={post.url} target="_blank" rel="noopener noreferrer nofollow">{t("openTheirs")}</a>}
         </section>
 

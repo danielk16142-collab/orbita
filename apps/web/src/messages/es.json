@@ -1810,12 +1810,27 @@
         "no_result": "Esta vez no hubo versión. Inténtalo de nuevo.",
         "not_found": "Esta publicación ya no está registrada.",
         "invalid_content": "El guion está incompleto: cada escena necesita un visual y el reel un llamado a la acción.",
-        "no_strategy": "Todavía no hay estrategia: guárdala en publicaciones."
+        "no_strategy": "Todavía no hay estrategia: guárdala en publicaciones.",
+        "not_configured": "La transcripción aún no está configurada: añade OPENAI_API_KEY (y APIFY_TOKEN) en Vercel.",
+        "no_link": "Esta publicación no tiene enlace a su video.",
+        "no_video": "No se pudo obtener el video (privado, eliminado o no es un video). Pega lo que dicen.",
+        "no_speech": "No se encontró voz en este video.",
+        "too_large": "Este video es demasiado largo para transcribir (más de 25 MB).",
+        "bad_link": "Este enlace no es una publicación de Instagram o TikTok.",
+        "unauthorized": "El servicio de transcripción rechazó la clave. Revisa OPENAI_API_KEY y APIFY_TOKEN en Vercel.",
+        "no_credit": "El servicio de transcripción no tiene crédito o está ocupado. Inténtalo más tarde.",
+        "timeout": "Tardó demasiado. Inténtalo de nuevo.",
+        "provider_error": "El servicio de transcripción falló. Inténtalo de nuevo.",
+        "save_failed": "Transcrito, pero no se pudo guardar en la publicación."
       },
       "sameLanguage": "Igual que su publicación",
       "addNoDate": "Guardar en publicaciones (sin fecha)",
       "toStrategy": "Añadir a las ideas de la estrategia",
-      "inStrategy": "En las ideas de la estrategia"
+      "inStrategy": "En las ideas de la estrategia",
+      "transcribe": "Transcribir el video",
+      "transcribing": "Transcribiendo…",
+      "transcribeHint": "Obtiene automáticamente lo que dicen en el video y lo guarda en esta publicación.",
+      "transcribingHint": "Obteniendo el video y escuchándolo. Tarda hasta un minuto."
     }
   },
   "buildStrategy": {
