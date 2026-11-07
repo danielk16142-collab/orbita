@@ -880,6 +880,14 @@
         "bad_request": "Collez d'abord le script (au moins une phrase)."
       },
       "inLanguage": "En {language} (changez la langue plus bas, puis réécrivez-la)."
+    },
+    "export": {
+      "sheet": "Télécharger en tableur",
+      "text": "Télécharger le script",
+      "scene": "Scène",
+      "titleCol": "Titre",
+      "body": "Texte",
+      "duration": "Durée"
     }
   },
   "profile": {

@@ -6,6 +6,7 @@ import { requireStaff, requireUser } from "@/lib/session";
 import { loadPost } from "@/lib/posts/access";
 import { CopyButton } from "./copy-button";
 import { PostActions } from "./post-actions";
+import { ScriptExport } from "./script-export";
 import { PostEditor } from "./post-editor";
 import { FillWithAgent } from "./fill-with-agent";
 import { PostReview } from "./post-review";
@@ -61,6 +62,12 @@ export async function PostDetail({ locale, id, portal }: { locale: string; id: s
   const visualsUsed = mod?.enabled && !portal ? await usedThisMonth(post.client_id) : 0;
   // The script of a video that already existed when the post was created ("I already have the video").
   const videoScript = post.script && typeof post.script === "object" && typeof (post.script as { text?: unknown }).text === "string" ? (post.script as { text: string }).text : null;
+  const exportMeta = {
+    title: (post.idea || post.caption || t("untitled")).replace(/\s+/g, " ").slice(0, 120), network: NETWORK_LABEL[post.network] ?? post.network, language: post.language,
+    date: post.planned_date, caption: post.caption, hashtags: post.hashtags ?? [],
+    labels: { scene: t("export.scene"), time: t("seconds"), visual: t("visual"), voiceover: t("voiceover"), onScreen: t("onScreen"), hooks: t("hooks"), cta: t("cta"), audio: t("audio"),
+      caption: t("caption"), hashtags: t("hashtags"), slide: t("slide"), titleCol: t("export.titleCol"), body: t("export.body"), duration: t("export.duration") },
+  };
   const arr = (v: unknown) => (Array.isArray(v) ? (v as Record<string, string>[]) : []);
 
   return (
@@ -86,7 +93,8 @@ export async function PostDetail({ locale, id, portal }: { locale: string; id: s
 
       {post.type === "reel" && content && (
         <section className="card" style={{ marginTop: "1.25rem" }}>
-          <div className="section-head"><h2>{t("script")}</h2><Link className="btn small" href={`/${locale}/teleprompter/${post.id}`}>{t("teleprompter")}</Link></div>
+          <div className="section-head"><h2>{t("script")}</h2>
+            <span className="btn-row"><ScriptExport type="reel" content={content} meta={exportMeta} /><Link className="btn small" href={`/${locale}/teleprompter/${post.id}`}>{t("teleprompter")}</Link></span></div>
           <p className="stat-vs">{String(content.duration_seconds)}s</p>
           <h3>{t("hooks")}</h3>
           <ol>{(content.hook_options as string[]).map((h, i) => <li key={i}>{h}</li>)}</ol>
@@ -100,7 +108,7 @@ export async function PostDetail({ locale, id, portal }: { locale: string; id: s
       )}
       {post.type === "carousel" && content && (
         <section className="card" style={{ marginTop: "1.25rem" }}>
-          <h2>{t("carouselContent")}</h2>
+          <div className="section-head"><h2>{t("carouselContent")}</h2><ScriptExport type="carousel" content={content} meta={exportMeta} /></div>
           <ol className="slides">{arr(content.slides).map((sl, i) => <li key={i} className="plan-item"><strong>{sl.title}</strong><span>{sl.body}</span><span className="stat-vs">{sl.visual}</span></li>)}</ol>
           <p><strong>{t("cta")}:</strong> {String(content.cta)}</p>
         </section>
