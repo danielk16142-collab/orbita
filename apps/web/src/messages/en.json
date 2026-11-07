@@ -1112,9 +1112,10 @@
       "refused": "The agent could not help with that request.",
       "search_failed": "The web searches failed this time. Try again in a moment.",
       "model_error": "The agent had a problem. Please try again.",
-      "not_found": "Not found.",
+      "not_found": "This competitor no longer exists.",
       "ideas": "Some ideas could not be added. Please try again.",
-      "not_set_up": "Competitors need a database update that has not been applied yet (migration 0012_competitors.sql). Ask your administrator to run it in Supabase, then try again."
+      "not_set_up": "Competitors need a database update that has not been applied yet (migration 0012_competitors.sql). Ask your administrator to run it in Supabase, then try again.",
+      "delete_failed": "The competitor could not be deleted. Try again."
     },
     "builtOn": "Built on their post",
     "timesUsual": "{n}× their usual {metric}",
@@ -1125,7 +1126,11 @@
     },
     "ideasFromWins": "These ideas are built on their {count, plural, one {best recorded post} other {# best recorded posts}}: what already works for them, made ours.",
     "ideasNoWins": "No posts are recorded for this competitor yet, so these ideas come from the general analysis. Fetch or add their posts (What's working, below), then run the analysis again to base the ideas on what works for them.",
-    "ideasRerun": "This analysis was made before ideas were built on their best posts. Run it again to get ideas based on what already works for them."
+    "ideasRerun": "This analysis was made before ideas were built on their best posts. Run it again to get ideas based on what already works for them.",
+    "delete": "Delete",
+    "deleting": "Deleting…",
+    "deleteNamed": "Delete {name}",
+    "deleteConfirm": "Delete {name}? Its analyses and recorded posts (with transcripts and breakdowns) are deleted too. Research notes you saved from it stay."
   },
   "reset": {
     "forgotTitle": "Reset your password",
