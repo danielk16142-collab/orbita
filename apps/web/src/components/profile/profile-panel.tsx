@@ -7,6 +7,7 @@ import { completenessOf, loadClientContext, type ClientContext } from "@/lib/age
 import { ProposalCard, type ProposalView } from "@/components/agent/proposal-card";
 import { AddSourceForm, RemoveSourceButton } from "@/components/agent/small-actions";
 import { MemoriesPreview } from "./memories";
+import { LinkedInScore } from "./linkedin-score";
 import { CONTENT_TARGETS } from "@/components/agent/agent-workspace";
 import { TimezoneForm } from "@/components/posts/timezone-form";
 import { updateClientAction } from "@/app/[locale]/(agency)/clients/actions";
@@ -98,6 +99,8 @@ export async function ProfileView({ locale, client, ctx, proposals, staff, clien
           ) : <p>{ta("noSources")}</p>}
           <AddSourceForm clientId={clientId} />
         </section>
+
+        <LinkedInScore clientId={clientId} locale={locale} />
 
         <section className="card focus-moved">
           <h2>{t("focusTitle")}</h2>

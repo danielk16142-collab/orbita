@@ -1858,5 +1858,79 @@
       "model_error": "L'agent n'a pas pu répondre. Réessayez.",
       "undo": "Impossible de restaurer la stratégie précédente."
     }
+  },
+  "liProfile": {
+    "title": "Score du profil LinkedIn",
+    "intro": "Collez votre profil LinkedIn et obtenez un score sur 100 en 12 points, puis des réécritures dans l'ordre qui rapporte le plus de points. Rien n'est publié sur LinkedIn : vous collez chaque partie vous-même.",
+    "start": "Évaluer un profil LinkedIn",
+    "again": "Réévaluer",
+    "score": "Évaluer mon profil",
+    "scoring": "Évaluation… (environ une minute)",
+    "close": "Masquer",
+    "language": "Réécritures en",
+    "total": "{score}/100",
+    "fields": {
+      "headline": "Titre",
+      "about": "Infos",
+      "currentRole": "Poste actuel (titre et description)",
+      "pastRoles": "Les deux postes précédents (titres et descriptions)",
+      "featured": "Section Sélection (son contenu, ou vide)",
+      "banner": "Bannière (ce qu'elle dit, ou « par défaut »)",
+      "topSkills": "3 compétences principales",
+      "photo": "Photo de profil",
+      "activity": "Dernière publication ou commentaire",
+      "recommendations": "Recommandations reçues ces 2 dernières années",
+      "recommendationsNameOutcomes": "Elles citent des résultats précis, pas seulement des qualités",
+      "customUrl": "URL de profil personnalisée (linkedin.com/in/votrenom)",
+      "contactLink": "Courriel ou lien de rendez-vous dans les coordonnées",
+      "sameHandle": "Même nom d'utilisateur que sur vos autres plateformes"
+    },
+    "hints": {
+      "headline": "Collez-le tel qu'il apparaît",
+      "about": "Collez toute la section Infos",
+      "banner": "p. ex. bleu par défaut, ou la phrase affichée",
+      "topSkills": "p. ex. Design Web, Shopify, SEO"
+    },
+    "photo": {
+      "recent_face": "Mon visage, pris ces 2 dernières années",
+      "old_face": "Mon visage, plus vieux que 2 ans",
+      "logo_or_other": "Un logo ou autre chose",
+      "none": "Pas de photo"
+    },
+    "activity": {
+      "7d": "Ces 7 derniers jours",
+      "30d": "Ces 30 derniers jours",
+      "older": "Il y a plus d'un mois",
+      "never": "Jamais"
+    },
+    "item": "Partie",
+    "points": "Score",
+    "why": "Pourquoi",
+    "fromAnswers": "D'après vos réponses ci-dessus",
+    "items": {
+      "headline": "Titre",
+      "about_open": "Infos, 2 premières lignes",
+      "about_body": "Infos, la suite",
+      "featured": "Sélection",
+      "banner": "Bannière",
+      "photo": "Photo",
+      "current_role": "Poste actuel",
+      "experience_depth": "Expérience",
+      "skills": "Compétences",
+      "recommendations": "Recommandations",
+      "activity": "Activité",
+      "contact": "Coordonnées"
+    },
+    "projected": "Après avoir collé les réécritures : environ {score}/100 (+{delta}). Le reste demande des choses qu'une réécriture ne peut pas créer.",
+    "fixFirst": "À corriger d'abord",
+    "lostPoints": "{n} points à regagner",
+    "stillNeeds": "Ce qu'une réécriture ne peut pas corriger",
+    "copy": "Copier",
+    "copied": "Copié",
+    "note": "Le texte de votre profil reste sur cet appareil pour la prochaine fois ; Orbita ne le stocke pas. Là où un chiffre manque, le texte indique « your number » : mettez le vrai.",
+    "errors": {
+      "empty": "Collez au moins le titre, la section Infos ou le poste actuel.",
+      "no_result": "Pas de score cette fois. Réessayez."
+    }
   }
 }
