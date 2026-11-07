@@ -869,6 +869,10 @@ ol.plain.li-fixes { display: grid; gap: .75rem; }
 .channel-tab.on { background: var(--ink); color: #fff; }
 .channel-tab .net-dot { width: .7rem; height: .7rem; border-radius: 50%; border: 2px solid currentColor; }
 @media (hover: hover) { .channel-tab:not(.on):hover { background: var(--brand-soft); } }
+/* Not scheduled yet: each post with its delete button */
+ul.plain.unscheduled-list li { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+.unscheduled-text { display: grid; gap: .1rem; min-width: 0; overflow-wrap: anywhere; }
+ul.plain.unscheduled-list .chip-delete { position: static; flex: none; }
 /* Competitor ideas: the winning post each idea is built on */
 .idea-source { margin-top: .25rem; font-size: .85rem; overflow-wrap: anywhere; }
 .ideas-note { margin: .75rem 0 0; }
