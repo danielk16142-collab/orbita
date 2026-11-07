@@ -34,11 +34,11 @@ export async function POST(req: Request) {
   if (!(await limiter("competitor-run", 10, 10 * 60_000).hit(actor.userId)).allowed) return json({ error: "rate_limited" }, 429);
   if (await overDailyCap(actor)) return json({ error: "daily_cap" }, 429);
 
-  // What already works for this competitor: its recorded posts ranked by how far each beat its own median (best first, up to 8).
+  // What already works for this competitor: its recorded posts ranked by how far each beat its own median (best first, the top 5).
   const { data: rows } = await actor.sb.from("competitor_posts").select("id, competitor_id, hook, url, network, views, likes, comments, shares, followers, posted_at, formula_id, caption, transcript").eq("competitor_id", c.id).eq("client_id", actor.clientId).limit(200);
   const byId = new Map((rows ?? []).map((w) => [w.id, w]));
   const ranked = rankWins((rows ?? []).map((w) => ({ id: w.id, competitorId: w.competitor_id, hook: w.hook, url: w.url, views: w.views, likes: w.likes, comments: w.comments, shares: w.shares, followers: w.followers, postedAt: w.posted_at, formulaId: w.formula_id })))
-    .sort((a, b) => (b.multiple ?? 0) - (a.multiple ?? 0) || b.value - a.value).slice(0, 8);
+    .slice(0, 5); // the same top 5 as "What's working"
   const wins = ranked.map((w) => ({ hook: w.hook, caption: byId.get(w.id)?.caption ?? null, transcript: byId.get(w.id)?.transcript ?? null, network: byId.get(w.id)?.network ?? "instagram", multiple: w.multiple, metric: w.metric, value: w.value, formula: w.formula?.name ?? null }));
 
   try {

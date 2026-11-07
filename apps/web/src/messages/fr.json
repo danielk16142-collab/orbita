@@ -1853,7 +1853,60 @@
       "transcribeHint": "Récupère automatiquement ce qu'ils disent dans la vidéo et l'enregistre sur cette publication.",
       "transcribingHint": "Récupération de la vidéo et écoute. Jusqu'à une minute.",
       "apifySaid": "Apify a répondu : {reason}"
-    }
+    },
+    "why": {
+      "explain": "Pourquoi ça marche",
+      "explaining": "Analyse… (environ 30 secondes)",
+      "again": "Analyser à nouveau",
+      "title": "Pourquoi ça marche",
+      "hookScore": "accroche {score}/100",
+      "noTranscript": "d'après la légende seulement (transcrivez la vidéo pour la structure complète)",
+      "hook": "Accroche :",
+      "structure": "Structure :",
+      "retention": "Ce qui fait regarder jusqu'au bout :",
+      "cta": "Appel à l'action :",
+      "format": "Format :",
+      "whyWorked": "Pourquoi ça a marché",
+      "reuse": "Ce qu'on peut reprendre",
+      "explainTop": "Expliquer {count, plural, one {leur meilleure publication} other {leurs # meilleures publications}}",
+      "explainingN": "Explication {done}/{total}…",
+      "errors": {
+        "no_result": "Pas d'analyse cette fois. Réessayez.",
+        "not_set_up": "Exécutez la migration 0022 dans Supabase pour les enregistrer (l'analyse s'affiche mais n'est pas gardée).",
+        "save_failed": "Analysée, mais impossible de l'enregistrer.",
+        "batch": "L'une d'elles a échoué ; les autres sont enregistrées. Réessayez."
+      },
+      "parts": {
+        "hook": "Accroche",
+        "setup": "Mise en place",
+        "value": "Valeur",
+        "proof": "Preuve",
+        "story": "Histoire",
+        "turn": "Retournement",
+        "cta": "Appel à l'action"
+      },
+      "ctaTypes": {
+        "comment_keyword": "Commenter un mot-clé",
+        "follow": "S'abonner",
+        "save": "Enregistrer",
+        "share": "Partager",
+        "dm": "Message privé",
+        "link": "Lien",
+        "question": "Question",
+        "none": "Aucun"
+      }
+    },
+    "profile": {
+      "title": "Leur profil de structure",
+      "from": "Ce que leurs meilleures publications ont en commun, d'après {count} de leurs {top} meilleures ({transcripts} avec la transcription).",
+      "empty": "Expliquez leurs {top} meilleures publications pour voir ce qu'elles ont en commun : accroches, structure, appels à l'action et ce qui fait regarder.",
+      "hooks": "Accroches",
+      "avgScore": "accroche moyenne {score}/100",
+      "structure": "Structure",
+      "ctas": "Appels à l'action",
+      "retention": "Ce qui fait regarder"
+    },
+    "topOf": "Leurs {shown} meilleures publications sur {total} enregistrées (toutes comptent pour leurs chiffres habituels)."
   },
   "buildStrategy": {
     "build": "Créer la stratégie à partir de ces piliers et sujets",
