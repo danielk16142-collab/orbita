@@ -172,3 +172,12 @@ describe("LinkedIn post check", () => {
     expect(reviewPost({ type: "text", language: "en", caption: good, hashtags: [], content: null, network: "instagram" }).caption?.truncateAt).toBe(125);
   });
 });
+
+describe("normalizePostEdit", () => {
+  it("turns empty form fields into null (the database refuses an empty time)", async () => {
+    const { normalizePostEdit } = await import("./index");
+    const e = normalizePostEdit({ suggested_time: "", pillar: " ", persona: "", funnel_stage: "top", caption: "x" });
+    expect(e).toMatchObject({ suggested_time: null, pillar: null, persona: null, funnel_stage: "top", caption: "x" });
+    expect(normalizePostEdit({ suggested_time: "09:30", pillar: "p", persona: "q", funnel_stage: "r" }).suggested_time).toBe("09:30");
+  });
+});

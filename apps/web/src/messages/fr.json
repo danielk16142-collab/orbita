@@ -671,7 +671,8 @@
       "conflict": "Quelqu'un d'autre a modifié cette publication. Rechargez et réessayez.",
       "rate_limited": "Trop de tentatives. Réessayez plus tard.",
       "unauthorized": "Veuillez vous reconnecter.",
-      "locked": "Les publications publiées et celles des semaines passées ne peuvent pas être supprimées."
+      "locked": "Les publications publiées et celles des semaines passées ne peuvent pas être supprimées.",
+      "invalid_fields": "Un champ n'est pas valide (vérifiez la date et l'heure) et n'a pas pu être enregistré."
     },
     "untitled": "Publication sans titre",
     "unscheduledShort": "non planifiée",

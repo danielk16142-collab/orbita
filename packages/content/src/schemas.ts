@@ -41,3 +41,12 @@ export function parseContent(type: string, content: unknown) {
   const r = schema.safeParse(content);
   return r.success ? { ok: true as const, value: r.data } : { ok: false as const };
 }
+
+/**
+ * Empty form fields are "not set", not empty strings: the database refuses "" for suggested_time (it must be HH:MM or null), and
+ * an empty pillar/persona/funnel stage is clearer as null.
+ */
+export function normalizePostEdit<T extends { suggested_time: string; pillar: string; persona: string; funnel_stage: string }>(e: T) {
+  const nul = (v: string) => (v.trim() === "" ? null : v);
+  return { ...e, suggested_time: nul(e.suggested_time), pillar: nul(e.pillar), persona: nul(e.persona), funnel_stage: nul(e.funnel_stage) };
+}

@@ -531,3 +531,12 @@ delete from visual_jobs where idempotency_key='job-up';
 delete from post_media where source='uploaded';
 
 \echo ALL TENANT ISOLATION TESTS PASSED
+
+-- Editing a post: the time column accepts HH:MM or null, never an empty string; a date change on an approved post sends it back to draft.
+select pg_temp.reset();
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000001'); -- admin A
+insert into posts(id,client_id,network,language,type,status,planned_date,created_by) values ('f1000000-0000-0000-0000-0000000000a1','c1000000-0000-0000-0000-000000000001','linkedin','en','text','approved','2026-10-08','a0000000-0000-0000-0000-000000000001');
+select pg_temp.expect_error('empty suggested_time is refused by the database', $$update posts set suggested_time='' where id='f1000000-0000-0000-0000-0000000000a1'$$);
+update posts set planned_date='2026-10-15', suggested_time=null where id='f1000000-0000-0000-0000-0000000000a1';
+select pg_temp.expect('staff can move the date; approval resets to draft', (select count(*) from posts where id='f1000000-0000-0000-0000-0000000000a1' and status='draft'), 1);
+select pg_temp.reset();

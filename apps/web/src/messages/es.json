@@ -671,7 +671,8 @@
       "conflict": "Alguien más cambió esta publicación. Recarga e inténtalo de nuevo.",
       "rate_limited": "Demasiados intentos. Inténtalo más tarde.",
       "unauthorized": "Inicia sesión de nuevo.",
-      "locked": "Las publicaciones ya publicadas y las de semanas pasadas no se pueden eliminar."
+      "locked": "Las publicaciones ya publicadas y las de semanas pasadas no se pueden eliminar.",
+      "invalid_fields": "Algún campo no es válido (revisa la fecha y la hora) y no se pudo guardar."
     },
     "untitled": "Publicación sin título",
     "unscheduledShort": "sin programar",

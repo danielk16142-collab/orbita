@@ -1,6 +1,6 @@
 "use server";
 import { z } from "zod";
-import { allowedStatusChanges, canDeletePost, cleanPost, cleanText, formatKey, isTimeZone, parseContent, PostEdit, STATUSES, zonedToUtc, type Status } from "@orbita/content";
+import { allowedStatusChanges, normalizePostEdit, canDeletePost, cleanPost, cleanText, formatKey, isTimeZone, parseContent, PostEdit, STATUSES, zonedToUtc, type Status } from "@orbita/content";
 import { loadPost, postActor } from "@/lib/posts/access";
 import { limiter } from "@/lib/rate-limit";
 import { audit } from "@/lib/audit";
@@ -59,8 +59,19 @@ export async function updatePostAction(input: unknown): Promise<PostResult> {
   const post = await loadPost(a, p.data.postId); if (!post.ok) return fail(post.error);
   const content = p.data.content === undefined ? undefined : parseContent(p.data.edit.type, p.data.content);
   if (content && !content.ok) return fail("invalid_content");
-  const { data, error } = await a.sb.from("posts").update({ ...p.data.edit, ...(content ? { content: content.value } : {}) }).eq("id", post.value.id).select("id");
-  if (error || !data?.length) return fail("forbidden");
+  const edit = normalizePostEdit(p.data.edit);
+  const patch: Record<string, unknown> = { ...edit, ...(content ? { content: content.value } : {}) };
+  // A scheduled post publishes at scheduled_at: moving its date or time moves that instant too (client's timezone).
+  const v = post.value;
+  if (v.status === "scheduled" && (edit.planned_date !== v.planned_date || (edit.suggested_time ?? null) !== (v.suggested_time ?? null))) {
+    if (!edit.planned_date) return fail("date_required");
+    const { data: c } = await a.sb.from("clients").select("timezone").eq("id", v.client_id).maybeSingle();
+    const tz = c?.timezone && isTimeZone(c.timezone) ? c.timezone : "UTC";
+    patch.scheduled_at = zonedToUtc(edit.planned_date, edit.suggested_time || "09:00", tz).toISOString();
+  }
+  const { data, error } = await a.sb.from("posts").update(patch).eq("id", v.id).select("id");
+  if (error) { console.error(`post update failed: code=${error.code ?? "?"} ${String(error.message ?? "").slice(0, 160)}`); return fail(error.code === "42501" ? "forbidden" : error.code === "23514" || error.code === "22007" || error.code === "22008" ? "invalid_fields" : "generic"); }
+  if (!data?.length) return fail("forbidden");
   await audit({ agencyId: a.profile.agency_id, actor: a.userId, action: "post.updated", entity: "post", entityId: post.value.id });
   return { ok: true };
 }
