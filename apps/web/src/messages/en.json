@@ -1111,7 +1111,17 @@
       "not_found": "Not found.",
       "ideas": "Some ideas could not be added. Please try again.",
       "not_set_up": "Competitors need a database update that has not been applied yet (migration 0012_competitors.sql). Ask your administrator to run it in Supabase, then try again."
-    }
+    },
+    "builtOn": "Built on their post",
+    "timesUsual": "{n}× their usual {metric}",
+    "openPost": "Open",
+    "metric": {
+      "views": "views",
+      "engagement": "interactions"
+    },
+    "ideasFromWins": "These ideas are built on their {count, plural, one {best recorded post} other {# best recorded posts}}: what already works for them, made ours.",
+    "ideasNoWins": "No posts are recorded for this competitor yet, so these ideas come from the general analysis. Fetch or add their posts (What's working, below), then run the analysis again to base the ideas on what works for them.",
+    "ideasRerun": "This analysis was made before ideas were built on their best posts. Run it again to get ideas based on what already works for them."
   },
   "reset": {
     "forgotTitle": "Reset your password",
@@ -1843,7 +1853,60 @@
       "transcribeHint": "Gets what they say in the video automatically and saves it on this post.",
       "transcribingHint": "Fetching the video and listening to it. This takes up to a minute.",
       "apifySaid": "Apify said: {reason}"
-    }
+    },
+    "why": {
+      "explain": "Why it works",
+      "explaining": "Analysing… (about 30 seconds)",
+      "again": "Analyse again",
+      "title": "Why it works",
+      "hookScore": "hook {score}/100",
+      "noTranscript": "from the caption only (transcribe the video for the full structure)",
+      "hook": "Hook:",
+      "structure": "Structure:",
+      "retention": "What keeps people watching:",
+      "cta": "Call to action:",
+      "format": "Format:",
+      "whyWorked": "Why it worked",
+      "reuse": "What we can reuse",
+      "explainTop": "Explain their top {count, plural, one {post} other {# posts}}",
+      "explainingN": "Explaining {done}/{total}…",
+      "errors": {
+        "no_result": "No analysis this time. Try again.",
+        "not_set_up": "Run migration 0022 in Supabase to save these (the analysis is shown but not kept).",
+        "save_failed": "Analysed, but it could not be saved.",
+        "batch": "One of them failed; the others are saved. Try again."
+      },
+      "parts": {
+        "hook": "Hook",
+        "setup": "Setup",
+        "value": "Value",
+        "proof": "Proof",
+        "story": "Story",
+        "turn": "Turn",
+        "cta": "Call to action"
+      },
+      "ctaTypes": {
+        "comment_keyword": "Comment a keyword",
+        "follow": "Follow",
+        "save": "Save",
+        "share": "Share",
+        "dm": "DM",
+        "link": "Link",
+        "question": "Question",
+        "none": "None"
+      }
+    },
+    "profile": {
+      "title": "Their structure profile",
+      "from": "What their best posts have in common, from {count} of their top {top} posts ({transcripts} with the video transcript).",
+      "empty": "Explain their top {top} posts to see what their best content has in common: hooks, structure, calls to action, and what keeps people watching.",
+      "hooks": "Hooks",
+      "avgScore": "average hook score {score}/100",
+      "structure": "Structure",
+      "ctas": "Calls to action",
+      "retention": "What keeps people watching"
+    },
+    "topOf": "Their {shown} best posts out of {total} recorded (all of them count for their usual numbers)."
   },
   "buildStrategy": {
     "build": "Build the strategy from these pillars and topics",

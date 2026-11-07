@@ -1111,7 +1111,17 @@
       "not_found": "No encontrado.",
       "ideas": "Algunas ideas no se pudieron agregar. Inténtalo de nuevo.",
       "not_set_up": "Competidores necesita una actualización de la base de datos que todavía no se aplicó (migración 0012_competitors.sql). Pide a tu administrador que la ejecute en Supabase y vuelve a intentarlo."
-    }
+    },
+    "builtOn": "Basada en su publicación",
+    "timesUsual": "{n}× sus {metric} habituales",
+    "openPost": "Abrir",
+    "metric": {
+      "views": "vistas",
+      "engagement": "interacciones"
+    },
+    "ideasFromWins": "Estas ideas se basan en {count, plural, one {su mejor publicación registrada} other {sus # mejores publicaciones registradas}}: lo que ya les funciona, hecho a nuestra manera.",
+    "ideasNoWins": "Aún no hay publicaciones registradas de este competidor, así que estas ideas vienen del análisis general. Obtén o añade sus publicaciones (Lo que funciona, abajo) y vuelve a hacer el análisis para basar las ideas en lo que les funciona.",
+    "ideasRerun": "Este análisis es anterior a las ideas basadas en sus mejores publicaciones. Hazlo de nuevo para obtener ideas basadas en lo que ya les funciona."
   },
   "reset": {
     "forgotTitle": "Restablecer la contraseña",
@@ -1843,7 +1853,60 @@
       "transcribeHint": "Obtiene automáticamente lo que dicen en el video y lo guarda en esta publicación.",
       "transcribingHint": "Obteniendo el video y escuchándolo. Tarda hasta un minuto.",
       "apifySaid": "Apify respondió: {reason}"
-    }
+    },
+    "why": {
+      "explain": "Por qué funciona",
+      "explaining": "Analizando… (unos 30 segundos)",
+      "again": "Analizar de nuevo",
+      "title": "Por qué funciona",
+      "hookScore": "gancho {score}/100",
+      "noTranscript": "solo con el texto (transcribe el video para la estructura completa)",
+      "hook": "Gancho:",
+      "structure": "Estructura:",
+      "retention": "Lo que hace que sigan mirando:",
+      "cta": "Llamado a la acción:",
+      "format": "Formato:",
+      "whyWorked": "Por qué funcionó",
+      "reuse": "Lo que podemos reutilizar",
+      "explainTop": "Explicar {count, plural, one {su mejor publicación} other {sus # mejores publicaciones}}",
+      "explainingN": "Explicando {done}/{total}…",
+      "errors": {
+        "no_result": "Esta vez no hubo análisis. Inténtalo de nuevo.",
+        "not_set_up": "Ejecuta la migración 0022 en Supabase para guardarlos (el análisis se muestra pero no se guarda).",
+        "save_failed": "Analizada, pero no se pudo guardar.",
+        "batch": "Una falló; las demás están guardadas. Inténtalo de nuevo."
+      },
+      "parts": {
+        "hook": "Gancho",
+        "setup": "Contexto",
+        "value": "Valor",
+        "proof": "Prueba",
+        "story": "Historia",
+        "turn": "Giro",
+        "cta": "Llamado a la acción"
+      },
+      "ctaTypes": {
+        "comment_keyword": "Comentar una palabra",
+        "follow": "Seguir",
+        "save": "Guardar",
+        "share": "Compartir",
+        "dm": "Mensaje directo",
+        "link": "Enlace",
+        "question": "Pregunta",
+        "none": "Ninguno"
+      }
+    },
+    "profile": {
+      "title": "Su perfil de estructura",
+      "from": "Lo que tienen en común sus mejores publicaciones, según {count} de sus {top} mejores ({transcripts} con la transcripción).",
+      "empty": "Explica sus {top} mejores publicaciones para ver qué tienen en común: ganchos, estructura, llamados a la acción y lo que hace que sigan mirando.",
+      "hooks": "Ganchos",
+      "avgScore": "gancho promedio {score}/100",
+      "structure": "Estructura",
+      "ctas": "Llamados a la acción",
+      "retention": "Lo que hace que sigan mirando"
+    },
+    "topOf": "Sus {shown} mejores publicaciones de {total} registradas (todas cuentan para sus números habituales)."
   },
   "buildStrategy": {
     "build": "Crear la estrategia con estos pilares y temas",
