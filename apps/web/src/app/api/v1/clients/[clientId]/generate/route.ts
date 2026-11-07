@@ -38,7 +38,7 @@ export const POST = withApi<{ clientId: string }>(async (req, ctx, { clientId })
 
   const language = p.data.language ?? actor.client.languages[0] ?? "en";
   const ctxData = await loadClientContext(actor.sb, actor.clientId);
-  const input = promptInput(actor, ctxData, language);
+  const input = promptInput(actor, ctxData, language, { scope: "post" }); // the idea is the subject: no strategy or plan pulling it elsewhere
   const started = new Date().toISOString();
   const proposals: string[] = [];
   try {

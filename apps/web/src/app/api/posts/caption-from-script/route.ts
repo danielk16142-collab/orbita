@@ -38,7 +38,7 @@ export async function POST(req: Request) {
   const ctx = await loadClientContext(actor.sb, actor.clientId);
   try {
     const r = await runStructured({
-      client: ai.client, model: ai.chatModel, system: buildSystemPrompt(promptInput(actor, ctx, body.data.locale)), serverTools: [], maxSteps: 2,
+      client: ai.client, model: ai.chatModel, system: buildSystemPrompt(promptInput(actor, ctx, body.data.locale, { scope: "post" })), serverTools: [], maxSteps: 2,
       tool: CAPTION_FROM_SCRIPT_TOOL, schema: ScriptCaptions, user: captionFromScriptRequest(body.data),
     });
     await recordUsage(actor, r.usage);

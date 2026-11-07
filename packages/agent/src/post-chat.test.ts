@@ -23,3 +23,29 @@ describe("post chat", () => {
     expect(IDEAS_TOOL.strict).toBe(true);
   });
 });
+
+import { buildSystemPrompt, contentAsText } from "./index";
+describe("working on one post", () => {
+  const existing = { day: "2026-11-09", time: "18:00", pillar: null, why: null, hasContent: true, idea: "Smash burger reveal", draft: contentAsText("reel", { duration_seconds: 20, hook_options: ["The crust is the whole point"], scenes: [{ seconds: "0-3s", visual: "Patty hits the grill", voiceover: "Listen to that.", on_screen_text: "Smash" }], cta: "Come try it", audio_note: "" }), caption: "Our smash burger is here.", hashtags: ["burger"], videoScript: null };
+  it("gives the agent the post itself and tells it to change only what is asked, never to pull from the strategy", () => {
+    const f = postChatFocus({ format: "reel", networks: ["tiktok"], idea: "Smash burger reveal", existing });
+    expect(f).toContain("the source of truth");
+    expect(f).toContain("Listen to that.");
+    expect(f).toContain("Our smash burger is here.");
+    expect(f).toContain("#burger");
+    expect(f).toContain("Change only what the person asks");
+    expect(f).toContain("Never bring in topics, angles or examples from the strategy");
+    expect(f).not.toContain("Base the angle on the active strategy");
+  });
+  it("keeps a new post on the person's idea", () => {
+    expect(postChatFocus({ format: "reel", networks: ["tiktok"], idea: "Burger" })).toContain("Stay on the person's idea");
+  });
+  it("leaves the strategy, plan and research out of the prompt in post scope", () => {
+    const base = { locale: "en", clientName: "B", clientLanguages: ["en"], markets: [], brief: {}, memories: [], sources: [], proofItems: [], rules: [], recentExamples: [], audit: null, briefUpdatedAt: null, today: "2026-11-08", weekStart: "2026-11-09",
+      strategy: { title: "Q4 lead gen", period: "quarter", createdAt: "2026-10-01T00:00:00Z", content: { topics: ["AI automation for leads"] } }, lastPlan: "Monday: AI audit post", research: [] } as unknown as Parameters<typeof buildSystemPrompt>[0];
+    expect(buildSystemPrompt(base)).toContain("AI automation for leads");
+    const scoped = buildSystemPrompt({ ...base, scope: "post" });
+    expect(scoped).not.toContain("AI automation for leads");
+    expect(scoped).not.toContain("Monday: AI audit post");
+  });
+});
