@@ -1858,5 +1858,79 @@
       "model_error": "The agent could not answer. Try again.",
       "undo": "Could not restore the previous strategy."
     }
+  },
+  "liProfile": {
+    "title": "LinkedIn profile score",
+    "intro": "Paste your LinkedIn profile and get a score out of 100 on 12 points, then rewrites in the order that wins back the most points. Nothing is posted to LinkedIn; you paste each part in yourself.",
+    "start": "Score a LinkedIn profile",
+    "again": "Score it again",
+    "score": "Score my profile",
+    "scoring": "Scoring… (about a minute)",
+    "close": "Hide",
+    "language": "Rewrites in",
+    "total": "{score}/100",
+    "fields": {
+      "headline": "Headline",
+      "about": "About",
+      "currentRole": "Current role (title and description)",
+      "pastRoles": "The two roles before (titles and descriptions)",
+      "featured": "Featured section (what is in it, or empty)",
+      "banner": "Banner (what it says, or \"default\")",
+      "topSkills": "Top 3 skills",
+      "photo": "Profile photo",
+      "activity": "Last post or comment",
+      "recommendations": "Recommendations received in the last 2 years",
+      "recommendationsNameOutcomes": "They name specific results, not just character",
+      "customUrl": "Custom profile URL (linkedin.com/in/yourname)",
+      "contactLink": "Email or booking link in contact info",
+      "sameHandle": "Same handle as your other platforms"
+    },
+    "hints": {
+      "headline": "Paste it exactly as it shows",
+      "about": "Paste the whole About section",
+      "banner": "e.g. default blue, or the line it shows",
+      "topSkills": "e.g. Web design, Shopify, SEO"
+    },
+    "photo": {
+      "recent_face": "My face, taken in the last 2 years",
+      "old_face": "My face, older than 2 years",
+      "logo_or_other": "A logo or something else",
+      "none": "No photo"
+    },
+    "activity": {
+      "7d": "In the last 7 days",
+      "30d": "In the last 30 days",
+      "older": "More than a month ago",
+      "never": "Never"
+    },
+    "item": "Part",
+    "points": "Score",
+    "why": "Why",
+    "fromAnswers": "From your answers above",
+    "items": {
+      "headline": "Headline",
+      "about_open": "About, first 2 lines",
+      "about_body": "About, the rest",
+      "featured": "Featured",
+      "banner": "Banner",
+      "photo": "Photo",
+      "current_role": "Current role",
+      "experience_depth": "Experience",
+      "skills": "Skills",
+      "recommendations": "Recommendations",
+      "activity": "Activity",
+      "contact": "Contact"
+    },
+    "projected": "After pasting the rewrites: about {score}/100 (+{delta}). The rest needs things a rewrite cannot create.",
+    "fixFirst": "Fix first",
+    "lostPoints": "{n} points to win back",
+    "stillNeeds": "What a rewrite cannot fix",
+    "copy": "Copy",
+    "copied": "Copied",
+    "note": "Your profile text stays on this device for next time; Orbita does not store it. Where a number is missing, the text says “your number”: fill in the real one.",
+    "errors": {
+      "empty": "Paste at least the headline, the About or the current role.",
+      "no_result": "No score this time. Try again."
+    }
   }
 }

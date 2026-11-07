@@ -29,4 +29,5 @@ export * from "./strategy-map";
 export * from "./focus";
 export * from "./script-caption";
 export * from "./remake";
+export * from "./li-profile";
 export * from "./strategy-chat";

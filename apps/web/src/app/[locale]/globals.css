@@ -847,3 +847,19 @@ ol.plain.remake-scenes { display: grid; gap: .6rem; }
 .remake-transcribe { display: grid; gap: .3rem; justify-items: start; }
 .script-export { display: inline-flex; flex-wrap: wrap; gap: .4rem; }
 .section-head > .btn-row { flex-wrap: wrap; justify-content: flex-end; }
+/* LinkedIn profile score */
+.li-score .section-head { align-items: baseline; }
+.li-total { font-family: var(--font-mono); font-size: 1.4rem; }
+.li-form, .li-result { display: grid; grid-template-columns: minmax(0, 1fr); gap: .6rem; margin-top: .75rem; }
+.li-form .plan-row { grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: .6rem; }
+.li-checks { display: grid; gap: .4rem; }
+.li-checks .check-line { display: flex; gap: .5rem; align-items: flex-start; margin: 0; font-family: var(--font-body); font-size: .95rem; letter-spacing: normal; text-transform: none; }
+.li-checks .check-line input { width: auto; flex: none; margin-top: .25rem; }
+.li-lang { display: flex; gap: .4rem; align-items: center; margin: 0; }
+.li-lang select { width: auto; }
+.li-table td.num { font-family: var(--font-mono); white-space: nowrap; }
+.li-table tr.full td { color: var(--dim); }
+.li-table td { overflow-wrap: anywhere; }
+ol.plain.li-fixes { display: grid; gap: .75rem; }
+.li-fix { border: 2px solid var(--line); border-radius: 12px; padding: .6rem .8rem; display: grid; gap: .4rem; min-width: 0; }
+.li-fix p { margin: 0; }

@@ -1858,5 +1858,79 @@
       "model_error": "El agente no pudo responder. Inténtalo de nuevo.",
       "undo": "No se pudo restaurar la estrategia anterior."
     }
+  },
+  "liProfile": {
+    "title": "Puntuación del perfil de LinkedIn",
+    "intro": "Pega tu perfil de LinkedIn y obtén una puntuación sobre 100 en 12 puntos, y luego textos reescritos en el orden que más puntos recupera. Nada se publica en LinkedIn: tú pegas cada parte.",
+    "start": "Puntuar un perfil de LinkedIn",
+    "again": "Puntuarlo de nuevo",
+    "score": "Puntuar mi perfil",
+    "scoring": "Puntuando… (alrededor de un minuto)",
+    "close": "Ocultar",
+    "language": "Reescrituras en",
+    "total": "{score}/100",
+    "fields": {
+      "headline": "Titular",
+      "about": "Acerca de",
+      "currentRole": "Cargo actual (título y descripción)",
+      "pastRoles": "Los dos cargos anteriores (títulos y descripciones)",
+      "featured": "Sección Destacado (qué contiene, o vacía)",
+      "banner": "Banner (qué dice, o «predeterminado»)",
+      "topSkills": "3 aptitudes principales",
+      "photo": "Foto de perfil",
+      "activity": "Última publicación o comentario",
+      "recommendations": "Recomendaciones recibidas en los últimos 2 años",
+      "recommendationsNameOutcomes": "Mencionan resultados concretos, no solo cualidades",
+      "customUrl": "URL de perfil personalizada (linkedin.com/in/tunombre)",
+      "contactLink": "Correo o enlace de reserva en la información de contacto",
+      "sameHandle": "El mismo usuario que en tus otras plataformas"
+    },
+    "hints": {
+      "headline": "Pégalo tal como aparece",
+      "about": "Pega toda la sección Acerca de",
+      "banner": "p. ej. azul predeterminado, o la frase que muestra",
+      "topSkills": "p. ej. Diseño web, Shopify, SEO"
+    },
+    "photo": {
+      "recent_face": "Mi cara, de los últimos 2 años",
+      "old_face": "Mi cara, de hace más de 2 años",
+      "logo_or_other": "Un logo u otra cosa",
+      "none": "Sin foto"
+    },
+    "activity": {
+      "7d": "En los últimos 7 días",
+      "30d": "En los últimos 30 días",
+      "older": "Hace más de un mes",
+      "never": "Nunca"
+    },
+    "item": "Parte",
+    "points": "Puntos",
+    "why": "Por qué",
+    "fromAnswers": "Según tus respuestas de arriba",
+    "items": {
+      "headline": "Titular",
+      "about_open": "Acerca de, 2 primeras líneas",
+      "about_body": "Acerca de, el resto",
+      "featured": "Destacado",
+      "banner": "Banner",
+      "photo": "Foto",
+      "current_role": "Cargo actual",
+      "experience_depth": "Experiencia",
+      "skills": "Aptitudes",
+      "recommendations": "Recomendaciones",
+      "activity": "Actividad",
+      "contact": "Contacto"
+    },
+    "projected": "Después de pegar las reescrituras: alrededor de {score}/100 (+{delta}). El resto necesita cosas que una reescritura no puede crear.",
+    "fixFirst": "Corregir primero",
+    "lostPoints": "{n} puntos por recuperar",
+    "stillNeeds": "Lo que una reescritura no puede arreglar",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "note": "El texto de tu perfil se queda en este dispositivo para la próxima vez; Orbita no lo guarda. Donde falta un número, el texto dice «your number»: pon el real.",
+    "errors": {
+      "empty": "Pega al menos el titular, el Acerca de o el cargo actual.",
+      "no_result": "Esta vez no hubo puntuación. Inténtalo de nuevo."
+    }
   }
 }
