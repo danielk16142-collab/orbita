@@ -863,3 +863,9 @@ ol.plain.remake-scenes { display: grid; gap: .6rem; }
 ol.plain.li-fixes { display: grid; gap: .75rem; }
 .li-fix { border: 2px solid var(--line); border-radius: 12px; padding: .6rem .8rem; display: grid; gap: .4rem; min-width: 0; }
 .li-fix p { margin: 0; }
+/* One calendar per channel */
+.channel-tabs { display: flex; flex-wrap: wrap; gap: .4rem; margin: .25rem 0 1rem; }
+.channel-tab { display: inline-flex; align-items: center; gap: .45rem; border: 2px solid var(--ink); border-radius: 99px; padding: .4rem .9rem; font-weight: 700; text-decoration: none; color: var(--ink); background: var(--card); }
+.channel-tab.on { background: var(--ink); color: #fff; }
+.channel-tab .net-dot { width: .7rem; height: .7rem; border-radius: 50%; border: 2px solid currentColor; }
+@media (hover: hover) { .channel-tab:not(.on):hover { background: var(--brand-soft); } }

@@ -888,7 +888,9 @@
       "titleCol": "Título",
       "body": "Texto",
       "duration": "Duración"
-    }
+    },
+    "allChannels": "Todas las redes",
+    "channels": "Redes"
   },
   "profile": {
     "eyebrow": "Tu negocio",

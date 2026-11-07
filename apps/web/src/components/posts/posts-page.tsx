@@ -1,13 +1,17 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { addDays, iso, navigate, rangeFor, validDate, VIEWS, type View } from "@orbita/content";
 import { requireStaff, requireUser } from "@/lib/session";
 import { CalendarView } from "./calendar-view";
 import { PostList, type ListPost } from "./post-list";
 import { NETWORK_LABEL, type CalPost } from "./shared";
+import { ChannelTabs, CHANNEL_COOKIE } from "./channel-tabs";
 
 type SP = { view?: string; date?: string; client?: string; network?: string; status?: string };
 const STATUS_FILTERS = ["idea", "draft", "approved", "scheduled", "published"];
+/** One calendar per channel; "all" shows every network together. YouTube and Facebook posts appear under "all". */
+const CHANNELS = ["instagram", "tiktok", "linkedin"];
 
 /** The posts calendar for the agency (all clients, filterable) or a client portal (own client). */
 export async function PostsPage({ locale, searchParams, portal }: { locale: string; searchParams: SP; portal: boolean }) {
@@ -18,7 +22,9 @@ export async function PostsPage({ locale, searchParams, portal }: { locale: stri
   const view: View = (VIEWS as readonly string[]).includes(searchParams.view ?? "") ? (searchParams.view as View) : "month";
   const anchor = validDate(searchParams.date) ? searchParams.date : today;
   const { from, to } = rangeFor(view, anchor);
-  const network = NETWORK_LABEL[searchParams.network ?? ""] ? searchParams.network! : "";
+  // The channel comes from the link, else the last one chosen (cookie), else Instagram.
+  const asked = searchParams.network ?? (await cookies()).get(CHANNEL_COOKIE)?.value ?? "instagram";
+  const network = NETWORK_LABEL[asked] ? asked : "";
   const status = STATUS_FILTERS.includes(searchParams.status ?? "") ? searchParams.status! : "";
   const clientFilter = !portal && /^[0-9a-f-]{36}$/i.test(searchParams.client ?? "") ? searchParams.client! : "";
 
@@ -42,7 +48,8 @@ export async function PostsPage({ locale, searchParams, portal }: { locale: stri
   const { data: unscheduled } = await u;
   const { data: clients } = portal ? { data: [] as { id: string; name: string }[] } : await s.sb.from("clients").select("id, name").order("name");
 
-  const qs = (over: Record<string, string>) => `${base}?${new URLSearchParams({ view, date: anchor, ...(clientFilter && { client: clientFilter }), ...(network && { network }), ...(status && { status }), ...over })}`;
+  const qs = (over: Record<string, string>) => `${base}?${new URLSearchParams({ view, date: anchor, ...(clientFilter && { client: clientFilter }), network: network || "all", ...(status && { status }), ...over })}`;
+  const channels = [...CHANNELS, ...(network && !CHANNELS.includes(network) ? [network] : []), "all"].map((k) => ({ key: k, label: k === "all" ? t("allChannels") : NETWORK_LABEL[k], href: qs({ network: k }) }));
   const title = new Intl.DateTimeFormat(locale, view === "day" ? { dateStyle: "full", timeZone: "UTC" } : view === "week" ? { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" } : { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${anchor}T12:00:00Z`));
   const exportQs = new URLSearchParams({ from, to, ...(clientFilter && { client: clientFilter }), ...(network && { network }), ...(status && { status }) });
 
@@ -51,8 +58,9 @@ export async function PostsPage({ locale, searchParams, portal }: { locale: stri
       <p className="eyebrow">{t("eyebrow")}</p>
       <div className="page-head">
         <h1>{t("title")}</h1>
-        <Link className="btn" href={`${base}/new?${new URLSearchParams({ ...(clientFilter && { client: clientFilter }), ...(view === "day" && { date: anchor }) })}`}>+ {t("createPost")}</Link>
+        <Link className="btn" href={`${base}/new?${new URLSearchParams({ ...(clientFilter && { client: clientFilter }), ...(view === "day" && { date: anchor }), ...(network && { network }) })}`}>+ {t("createPost")}</Link>
       </div>
+      <ChannelTabs items={channels} current={network || "all"} label={t("channels")} />
       <div className="cal-toolbar">
         <div className="cal-nav" role="group" aria-label={t("navigate")}>
           <Link className="btn ghost small" href={qs({ date: navigate(view, anchor, -1) })} aria-label={t("previous")}>←</Link>
@@ -67,7 +75,7 @@ export async function PostsPage({ locale, searchParams, portal }: { locale: stri
       <form method="get" className="cal-filters">
         <input type="hidden" name="view" value={view} /><input type="hidden" name="date" value={anchor} />
         {!portal && <label>{t("client")}<select name="client" defaultValue={clientFilter}><option value="">{t("all")}</option>{(clients ?? []).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select></label>}
-        <label>{t("network")}<select name="network" defaultValue={network}><option value="">{t("all")}</option>{Object.entries(NETWORK_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></label>
+        <input type="hidden" name="network" value={network || "all"} />
         <label>{t("status")}<select name="status" defaultValue={status}><option value="">{t("all")}</option>{STATUS_FILTERS.map((x) => <option key={x} value={x}>{t(`statuses.${x}`)}</option>)}</select></label>
         <button className="btn small">{t("filter")}</button>
         <a className="btn ghost small" href={`/api/posts/export?${exportQs}`} download>{t("exportCsv")}</a>
