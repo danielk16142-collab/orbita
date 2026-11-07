@@ -3,6 +3,7 @@ import { formatKey } from "@orbita/content";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { postError } from "./shared";
 import { updatePostAction } from "@/lib/posts-actions";
 import type { PostRow } from "@/lib/posts/access";
 
@@ -44,7 +45,7 @@ export function PostEditor({ post }: { post: PostRow }) {
         },
         content: c,
       });
-      if (r.ok) { setSaved(true); router.refresh(); } else setError(t.has(`errors.${r.error}`) ? t(`errors.${r.error}`) : t("errors.generic"));
+      if (r.ok) { setSaved(true); router.refresh(); } else setError(postError(t, r));
     });
   }
 

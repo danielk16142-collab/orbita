@@ -671,7 +671,11 @@
       "conflict": "Quelqu'un d'autre a modifié cette publication. Rechargez et réessayez.",
       "rate_limited": "Trop de tentatives. Réessayez plus tard.",
       "unauthorized": "Veuillez vous reconnecter.",
-      "locked": "Les publications publiées et celles des semaines passées ne peuvent pas être supprimées."
+      "locked": "Les publications publiées et celles des semaines passées ne peuvent pas être supprimées.",
+      "invalid_value": "La base de données a refusé une valeur. Vérifiez ce champ :",
+      "not_saved": "Rien n'a été enregistré.",
+      "save_failed": "L'enregistrement a échoué.",
+      "invalid_reference": "Cela renvoie à quelque chose qui n'existe plus."
     },
     "untitled": "Publication sans titre",
     "unscheduledShort": "non planifiée",

@@ -671,7 +671,11 @@
       "conflict": "Alguien más cambió esta publicación. Recarga e inténtalo de nuevo.",
       "rate_limited": "Demasiados intentos. Inténtalo más tarde.",
       "unauthorized": "Inicia sesión de nuevo.",
-      "locked": "Las publicaciones ya publicadas y las de semanas pasadas no se pueden eliminar."
+      "locked": "Las publicaciones ya publicadas y las de semanas pasadas no se pueden eliminar.",
+      "invalid_value": "La base de datos rechazó un valor. Revisa este campo:",
+      "not_saved": "No se guardó nada.",
+      "save_failed": "No se pudo guardar.",
+      "invalid_reference": "Esto hace referencia a algo que ya no existe."
     },
     "untitled": "Publicación sin título",
     "unscheduledShort": "sin programar",

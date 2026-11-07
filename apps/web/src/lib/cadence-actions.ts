@@ -45,7 +45,8 @@ export async function movePostAction(input: unknown): Promise<{ ok: boolean; err
   const a = await resolveAgentActor(p.data.clientId);
   if (!a.ok || a.actor.profile.role === "client") return { ok: false, error: "forbidden" };
   const { data, error } = await a.actor.sb.from("posts").update({ planned_date: p.data.date }).eq("id", p.data.postId).eq("client_id", a.actor.clientId).select("id");
-  if (error || !data?.length) return { ok: false, error: "forbidden" };
+  if (error) { console.error(`post move failed: code=${error.code ?? "?"} ${String(error.message ?? "").slice(0, 200)}`); return { ok: false, error: error.code === "P0001" ? "not_allowed" : "save_failed" }; }
+  if (!data?.length) return { ok: false, error: "not_saved" };
   revalidatePath("/", "layout");
   return { ok: true };
 }

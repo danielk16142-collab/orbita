@@ -2,6 +2,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { postError } from "./shared";
 import { cleanPostTextAction } from "@/lib/posts-actions";
 
 /** Runs the humanizer over the post's caption and text. */
@@ -14,7 +15,7 @@ export function CleanTextButton({ postId, disabled }: { postId: string; disabled
   const run = () => start(async () => {
     setError(null); setNote(null);
     const r = await cleanPostTextAction({ postId });
-    if (!r.ok) { setError(t.has(`errors.${r.error}`) ? t(`errors.${r.error}`) : t("errors.generic")); return; }
+    if (!r.ok) { setError(postError(t, r)); return; }
     setNote(r.removed ? t("cleaned", { count: r.removed }) : t("nothingToClean"));
     router.refresh();
   });

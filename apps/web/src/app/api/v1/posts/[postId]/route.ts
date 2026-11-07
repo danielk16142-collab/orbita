@@ -25,7 +25,7 @@ export const PATCH = withApi<{ postId: string }>(async (req, ctx, { postId }) =>
   const c = contentFor(p.data.type ?? post.type, p.data.content);
   if (!c.ok) return apiError("invalid_content", 400, "content does not match the post type's structure.");
   const { content: _content, ...fields } = p.data;
-  const patch: Record<string, unknown> = { ...fields, ...(c.value !== undefined ? { content: c.value } : {}) };
+  const patch: Record<string, unknown> = { ...fields, ...(fields.suggested_time === "" ? { suggested_time: null } : {}), ...(c.value !== undefined ? { content: c.value } : {}) };
   if (p.data.status === "scheduled") {
     const { data: client } = await ctx.sb.from("clients").select("timezone").eq("id", post.client_id).maybeSingle();
     const at = scheduledAt(p.data.planned_date ?? post.planned_date, p.data.suggested_time ?? post.suggested_time, client?.timezone ?? null);
@@ -33,7 +33,13 @@ export const PATCH = withApi<{ postId: string }>(async (req, ctx, { postId }) =>
     patch.scheduled_at = at;
   } else if (p.data.status && post.status === "scheduled") patch.scheduled_at = null;
   const { data, error } = await ctx.sb.from("posts").update(patch).eq("id", postId).select(POST_COLS).maybeSingle();
-  if (error || !data) return apiError("forbidden", 403, "The post could not be updated.");
+  if (error) {
+    console.error(`api post update failed: code=${error.code ?? "?"}`);
+    return error.code === "23514" || error.code === "22P02" || error.code === "22007" ? apiError("invalid_value", 400, `The database refused a value: ${String(error.message ?? "").slice(0, 200)}`)
+      : error.code === "P0001" ? apiError("not_allowed", 409, String(error.message ?? "").slice(0, 200))
+      : apiError("save_failed", 500, `The post could not be updated (${error.code ?? "error"}).`);
+  }
+  if (!data) return apiError("not_saved", 409, "Nothing was updated: the post may have changed or be locked.");
   await apiAudit(ctx, "api.post.updated", { entity: "post", entityId: postId, meta: { fields: Object.keys(patch), status: data.status } });
   return apiJson({ post: data });
 });

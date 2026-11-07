@@ -2,6 +2,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { postError } from "./shared";
 import { addCommentAction, deletePostAction, setStatusAction } from "@/lib/posts-actions";
 
 /** Status buttons (only the moves this role may make), comment box, and delete for staff (not for published posts or past weeks). */
@@ -11,10 +12,10 @@ export function PostActions({ postId, moves, requireComment, staff, canDelete = 
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [note, setNote] = useState("");
-  const msg = (e: string) => (t.has(`errors.${e}`) ? t(`errors.${e}`) : t("errors.generic"));
-  const run = (fn: () => Promise<{ ok: boolean; error?: string }>, after?: () => void) => start(async () => {
+  const msg = (r: { error?: string; detail?: string }) => postError(t, r);
+  const run = (fn: () => Promise<{ ok: boolean; error?: string; detail?: string }>, after?: () => void) => start(async () => {
     setError(null); const r = await fn();
-    if (r.ok) { after?.(); router.refresh(); } else setError(msg(r.error ?? "generic"));
+    if (r.ok) { after?.(); router.refresh(); } else setError(msg(r));
   });
   return (
     <div className="post-actions">

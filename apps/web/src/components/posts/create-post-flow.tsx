@@ -3,7 +3,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createPostAction } from "@/lib/posts-actions";
-import { NETWORK_COLOR, NETWORK_LABEL } from "./shared";
+import { NETWORK_COLOR, NETWORK_LABEL, postError } from "./shared";
 import { PostIdeas } from "./post-ideas";
 import { StrategyIdeas } from "./strategy-ideas";
 import { PostChat } from "./post-chat";
@@ -82,7 +82,7 @@ export function CreatePostFlow({ locale, staff, clients, initialClient, initialD
         const c = fromVideo ? captions[network] : undefined;
         const r = await createPostAction({ clientId: staff ? clientId : undefined, network, language, type: format, idea: postIdea, planned_date: date || null, status,
           ...(fromVideo ? { script: script.trim() } : {}), ...(c?.caption.trim() ? { caption: c.caption.trim(), hashtags: c.hashtags } : {}) });
-        if (!r.ok) { setError(t.has(`errors.${r.error}`) ? t(`errors.${r.error}`) : t("errors.generic")); return; }
+        if (!r.ok) { setError(postError(t, r)); return; }
         if (r.id) ids.push(r.id);
       }
       router.push(ids.length === 1 ? `${postsBase}/${ids[0]}` : `${postsBase}?${new URLSearchParams({ view: "month", ...(date && { date }) })}`);
