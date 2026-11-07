@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { postError } from "./shared";
 import ReactMarkdown from "react-markdown";
 import { getProposalAction } from "@/lib/agent-actions";
 import { createPostAction, fillPostCaptionAction } from "@/lib/posts-actions";
@@ -83,7 +84,7 @@ export function PostChat({ clientId, locale, format, networks, language, idea, s
     setError(null);
     if (postId) {
       const r = await fillPostCaptionAction({ postId, caption: messages[i].text.slice(0, 2200) });
-      if (!r.ok) { setError(t.has(`errors.${r.error}`) ? t(`errors.${r.error}`) : t("errors.generic")); return; }
+      if (!r.ok) { setError(postError(t, r)); return; }
       setSaved((s) => ({ ...s, [i]: true })); router.refresh();
       return;
     }

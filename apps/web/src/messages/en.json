@@ -671,7 +671,11 @@
       "conflict": "Someone else changed this post. Reload and try again.",
       "rate_limited": "Too many attempts. Try again later.",
       "unauthorized": "Please sign in again.",
-      "locked": "Published posts and posts from past weeks can't be deleted."
+      "locked": "Published posts and posts from past weeks can't be deleted.",
+      "invalid_value": "The database refused a value. Check this field:",
+      "not_saved": "Nothing was saved.",
+      "save_failed": "The save failed.",
+      "invalid_reference": "This refers to something that no longer exists."
     },
     "untitled": "Untitled post",
     "unscheduledShort": "not scheduled",

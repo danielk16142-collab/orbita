@@ -2,6 +2,7 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { postError } from "./shared";
 import { deletePostAction } from "@/lib/posts-actions";
 
 /** A small ✕ next to a post on the calendar: deletes it after a confirmation (the server refuses published posts and past weeks). */
@@ -16,7 +17,7 @@ export function DeletePostButton({ postId, title }: { postId: string; title: str
         start(async () => {
           const r = await deletePostAction({ postId });
           if (r.ok) router.refresh();
-          else window.alert(t.has(`errors.${r.error}`) ? t(`errors.${r.error}`) : t("errors.generic"));
+          else window.alert(postError(t, r));
         });
       }}>{pending ? "…" : "✕"}</button>
   );
