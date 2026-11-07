@@ -5,7 +5,8 @@ import { addDays, iso, navigate, rangeFor, validDate, VIEWS, type View } from "@
 import { requireStaff, requireUser } from "@/lib/session";
 import { CalendarView } from "./calendar-view";
 import { PostList, type ListPost } from "./post-list";
-import { NETWORK_LABEL, type CalPost } from "./shared";
+import { NETWORK_LABEL, postTitle, type CalPost } from "./shared";
+import { DeletePostButton } from "./delete-post-button";
 import { ChannelTabs, CHANNEL_COOKIE } from "./channel-tabs";
 
 type SP = { view?: string; date?: string; client?: string; network?: string; status?: string };
@@ -43,7 +44,7 @@ export async function PostsPage({ locale, searchParams, portal }: { locale: stri
     const urlByPath = new Map((signed.data ?? []).filter((x) => x.signedUrl).map((x) => [x.path, x.signedUrl]));
     listPosts = rows.map((r) => ({ ...r, thumb: urlByPath.get(first.get(r.id) ?? "") ?? null, hasVideo: video.has(r.id) }));
   }
-  let u = s.sb.from("posts").select("id, client_id, network, type, status, planned_date, suggested_time, idea, caption, clients(name)").is("planned_date", null).order("created_at", { ascending: false }).limit(20);
+  let u = s.sb.from("posts").select("id, client_id, network, type, status, planned_date, suggested_time, idea, caption, clients(name)").is("planned_date", null).not("status", "in", "(published,publishing)").order("created_at", { ascending: false }).limit(20); // published posts are done: not "to schedule"
   if (network) u = u.eq("network", network); if (status) u = u.eq("status", status); if (clientFilter) u = u.eq("client_id", clientFilter);
   const { data: unscheduled } = await u;
   const { data: clients } = portal ? { data: [] as { id: string; name: string }[] } : await s.sb.from("clients").select("id, name").order("name");
@@ -89,7 +90,11 @@ export async function PostsPage({ locale, searchParams, portal }: { locale: stri
       {(unscheduled?.length ?? 0) > 0 && (
         <section className="card" style={{ marginTop: "1.25rem" }}>
           <h2>{t("unscheduled")}</h2>
-          <ul className="plain">{(unscheduled as unknown as CalPost[]).map((p) => <li key={p.id}><Link href={`${base}/${p.id}`}>{(p.idea || p.caption || "—").slice(0, 80)}</Link><span className="stat-vs">{!portal && p.clients?.name ? `${p.clients.name} · ` : ""}{NETWORK_LABEL[p.network] ?? p.network} · {t(`statuses.${p.status}`)}</span></li>)}</ul>
+          <ul className="plain unscheduled-list">{(unscheduled as unknown as CalPost[]).map((p) => (
+            <li key={p.id}>
+              <span className="unscheduled-text"><Link href={`${base}/${p.id}`}>{(p.idea || p.caption || "—").slice(0, 80)}</Link><span className="stat-vs">{!portal && p.clients?.name ? `${p.clients.name} · ` : ""}{NETWORK_LABEL[p.network] ?? p.network} · {t(`statuses.${p.status}`)}</span></span>
+              {!portal && <DeletePostButton postId={p.id} title={postTitle(p, 60)} />}
+            </li>))}</ul>
         </section>
       )}
     </>
