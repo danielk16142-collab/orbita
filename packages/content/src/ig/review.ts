@@ -7,8 +7,9 @@ import { analyseBeats, type BeatSheet } from "./beats";
 import { lintCaption, type CaptionLint } from "./caption";
 import { cleanText, detectAi, totalRemoved, type AiReport, type CleanOptions } from "./humanize";
 import { rankHooks, type HookScore } from "./hooks";
+import { lintLinkedInPost } from "../li/post";
 
-export type ReviewInput = { type: string; language: string; caption: string | null; hashtags: string[] | null; content: unknown };
+export type ReviewInput = { type: string; language: string; caption: string | null; hashtags: string[] | null; content: unknown; /** LinkedIn posts are checked with the LinkedIn rules. */ network?: string };
 export type PostReview = {
   language: string;
   /** Reel hook options, or the first slide title / headline for carousels and static posts. */
@@ -39,7 +40,8 @@ export function reviewPost(p: ReviewInput): PostReview {
   const c = parsed.ok ? (parsed.value as Content | null) : null;
   const hookLines = !c ? [] : p.type === "reel" ? (c.hook_options as string[]) : p.type === "carousel" ? [str((c.slides as Content[])[0]?.title)] : p.type === "static" ? [str(c.headline)] : [];
   const beats = p.type === "reel" && c ? analyseBeats(spokenTexts("reel", c).join("\n"), { target: Number(c.duration_seconds) || undefined }) : null;
-  const caption = p.caption || p.hashtags?.length ? lintCaption(p.caption ?? "", { hashtags: p.hashtags ?? [] }) : null;
+  const caption = !(p.caption || p.hashtags?.length) ? null
+    : p.network === "linkedin" ? lintLinkedInPost(p.caption ?? "", { hashtags: p.hashtags ?? [] }) : lintCaption(p.caption ?? "", { hashtags: p.hashtags ?? [] });
   const all = [p.caption ?? "", ...spokenTexts(p.type, c)].filter(Boolean);
   const english = p.language === "en";
   const ai = all.length ? detectAi(all.join("\n\n")) : null;
