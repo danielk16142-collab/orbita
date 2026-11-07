@@ -44,8 +44,8 @@ function FormatIcon({ format }: { format: string }) {
  * Create a post in three steps: what (format), where (networks), then the details. The person either creates it as an idea
  * or draft and fills it in, or hands it to the agent, which opens the chat with the request prepared (nothing is sent automatically).
  */
-export function CreatePostFlow({ locale, staff, clients, initialClient, initialDate, initialIdea = "", postsBase, agentBase }: {
-  locale: string; staff: boolean; clients: { id: string; name: string }[]; initialClient: string; initialDate: string; /** from "Your next post" */ initialIdea?: string;
+export function CreatePostFlow({ locale, staff, clients, initialClient, initialDate, initialIdea = "", initialNetwork, postsBase, agentBase }: {
+  locale: string; staff: boolean; clients: { id: string; name: string }[]; initialClient: string; initialDate: string; /** from "Your next post" */ initialIdea?: string; /** the calendar's channel, picked in advance when the format allows it */ initialNetwork?: string;
   /** e.g. /en/posts or /en/portal/posts */ postsBase: string;
   /** e.g. /en/agent (staff, the client id is added) or /en/portal/agent */ agentBase: string;
 }) {
@@ -53,7 +53,7 @@ export function CreatePostFlow({ locale, staff, clients, initialClient, initialD
   const router = useRouter();
   const [step, setStep] = useState<(typeof STEPS)[number] | "write">("format");
   const [format, setFormat] = useState<string | null>(null);
-  const [networks, setNetworks] = useState<string[]>([]);
+  const [networks, setNetworks] = useState<string[]>(initialNetwork && Object.values(FORMAT_NETWORKS).some((l) => l.includes(initialNetwork)) ? [initialNetwork] : []);
   const [clientId, setClientId] = useState(initialClient || clients[0]?.id || "");
   const [language, setLanguage] = useState(LANGS.includes(locale) ? locale : "en");
   const [idea, setIdea] = useState(initialIdea);
