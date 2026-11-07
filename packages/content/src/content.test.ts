@@ -127,3 +127,24 @@ describe("deleting posts", () => {
     expect(canDeletePost({ status: "idea", planned_date: "2026-11-01" }, today)).toBe(false);
   });
 });
+
+import { scriptCsv, scriptText } from "./index";
+describe("script export", () => {
+  const labels = { scene: "Scene", time: "Time", visual: "Visual", voiceover: "Voiceover", onScreen: "On-screen text", hooks: "Hook options", cta: "Call to action", audio: "Audio", caption: "Caption", hashtags: "Hashtags", slide: "Slide", titleCol: "Title", body: "Text", duration: "Duration" };
+  const meta = { title: "Claude runs your Instagram", network: "Instagram", language: "en", date: "2026-11-09", caption: "Comment SKILL", hashtags: ["claude", "#ai"], labels };
+  const reel = { duration_seconds: 45, hook_options: ["Comment SKILL", "=Claude now"], scenes: [{ seconds: "0-4s", visual: "Dany, camera", voiceover: "Claude can, now", on_screen_text: "" }], cta: "Comment SKILL", audio_note: "Upbeat" };
+  it("makes a sheet that opens safely in spreadsheets", () => {
+    const s = scriptCsv("reel", reel, meta);
+    expect(s.startsWith("﻿")).toBe(true);
+    expect(s).toContain("Scene,Time,Visual,Voiceover,On-screen text");
+    expect(s).toContain('1,0-4s,"Dany, camera","Claude can, now",');
+    expect(s).toContain(",'=Claude now"); // a formula-looking cell stays text
+    expect(s).toContain("Hashtags,#claude #ai");
+  });
+  it("makes a readable script, carousels too", () => {
+    const t = scriptText("reel", reel, meta);
+    expect(t).toContain("Scene 1 (0-4s)\nVisual: Dany, camera\nVoiceover: Claude can, now");
+    expect(t).not.toContain("On-screen text:");
+    expect(scriptText("carousel", { slides: [{ title: "3 tips", body: "b", visual: "" }], cta: "Save" }, meta)).toContain("Slide 1: 3 tips\nb");
+  });
+});

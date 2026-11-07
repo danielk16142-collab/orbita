@@ -880,6 +880,14 @@
         "bad_request": "Paste the script first (at least a sentence)."
       },
       "inLanguage": "In {language} (change the language below, then write it again)."
+    },
+    "export": {
+      "sheet": "Download as sheet",
+      "text": "Download script",
+      "scene": "Scene",
+      "titleCol": "Title",
+      "body": "Text",
+      "duration": "Duration"
     }
   },
   "profile": {

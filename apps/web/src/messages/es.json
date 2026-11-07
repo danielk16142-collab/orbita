@@ -880,6 +880,14 @@
         "bad_request": "Primero pega el guion (al menos una frase)."
       },
       "inLanguage": "En {language} (cambia el idioma abajo y vuelve a escribirlo)."
+    },
+    "export": {
+      "sheet": "Descargar como hoja",
+      "text": "Descargar guion",
+      "scene": "Escena",
+      "titleCol": "Título",
+      "body": "Texto",
+      "duration": "Duración"
     }
   },
   "profile": {
