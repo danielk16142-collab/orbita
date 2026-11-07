@@ -78,7 +78,7 @@ export function RemoveCompetitorButton({ clientId, id, listHref }: { clientId?: 
   return <button type="button" className="btn ghost small" disabled={pending} onClick={() => { if (confirm(t("removeConfirm"))) start(async () => { const r = await removeCompetitorAction({ clientId, id }); if (r.ok) router.push(listHref); }); }}>{t("remove")}</button>;
 }
 
-type Idea = { title: string; format: string; network: string; why: string };
+type Idea = { title: string; format: string; network: string; why: string; source_post?: { hook: string; multiple: number | null; metric: string; value: number; url: string | null } };
 
 /** Pick content ideas from the analysis and add them to the calendar as ideas (one post each, unscheduled). */
 export function IdeasPicker({ clientId, ideas, locale, calendarHref }: { clientId?: string; ideas: Idea[]; locale: string; calendarHref: string }) {
@@ -93,7 +93,8 @@ export function IdeasPicker({ clientId, ideas, locale, calendarHref }: { clientI
     setError(null);
     for (const i of picked) {
       const idea = ideas[i];
-      const r = await createPostAction({ clientId, network: idea.network, language: ["en", "fr", "es"].includes(locale) ? locale : "en", type: idea.format, idea: [idea.title, idea.why].filter(Boolean).join(". ").slice(0, 2000), status: "idea" });
+      const source = idea.source_post ? `${t("builtOn")}: "${idea.source_post.hook}"` : "";
+      const r = await createPostAction({ clientId, network: idea.network, language: ["en", "fr", "es"].includes(locale) ? locale : "en", type: idea.format, idea: [idea.title, idea.why, source].filter(Boolean).join(". ").slice(0, 2000), status: "idea" });
       if (!r.ok) { setError(t("errors.ideas")); return; }
       setAdded((a) => [...a, i]);
     }
@@ -106,7 +107,14 @@ export function IdeasPicker({ clientId, ideas, locale, calendarHref }: { clientI
           <li key={i}>
             <label className="idea">
               <input type="checkbox" checked={picked.includes(i) || added.includes(i)} disabled={added.includes(i)} onChange={() => toggle(i)} />
-              <span><strong>{idea.title}</strong> <span className="badge">{tp.has(`formats.${idea.format}`) ? tp(`formats.${idea.format}`) : idea.format}</span> <span className="badge">{LABEL[idea.network] ?? idea.network}</span>{idea.why && <span className="stat-vs block">{idea.why}</span>}</span>
+              <span><strong>{idea.title}</strong> <span className="badge">{tp.has(`formats.${idea.format}`) ? tp(`formats.${idea.format}`) : idea.format}</span> <span className="badge">{LABEL[idea.network] ?? idea.network}</span>{idea.why && <span className="stat-vs block">{idea.why}</span>}
+                {idea.source_post && (
+                  <span className="idea-source block">
+                    {t("builtOn")}: “{idea.source_post.hook}”{" "}
+                    <span className="badge">{idea.source_post.multiple ? t("timesUsual", { n: idea.source_post.multiple, metric: t(`metric.${idea.source_post.metric}`) }) : `${idea.source_post.value} ${t(`metric.${idea.source_post.metric}`)}`}</span>
+                    {idea.source_post.url && <> <a href={idea.source_post.url} target="_blank" rel="noopener noreferrer nofollow">{t("openPost")}</a></>}
+                  </span>
+                )}</span>
             </label>
           </li>
         ))}

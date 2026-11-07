@@ -869,3 +869,18 @@ ol.plain.li-fixes { display: grid; gap: .75rem; }
 .channel-tab.on { background: var(--ink); color: #fff; }
 .channel-tab .net-dot { width: .7rem; height: .7rem; border-radius: 50%; border: 2px solid currentColor; }
 @media (hover: hover) { .channel-tab:not(.on):hover { background: var(--brand-soft); } }
+/* Competitor ideas: the winning post each idea is built on */
+.idea-source { margin-top: .25rem; font-size: .85rem; overflow-wrap: anywhere; }
+.ideas-note { margin: .75rem 0 0; }
+/* Why it works (one competitor post) and their structure profile */
+.why { margin-top: .5rem; }
+.why summary { cursor: pointer; overflow-wrap: anywhere; }
+.why-body { display: grid; gap: .4rem; margin-top: .5rem; min-width: 0; }
+.why-body p, .why-body ul { margin: 0; overflow-wrap: anywhere; }
+ol.why-structure { margin: 0; padding-left: 1.2rem; display: grid; gap: .25rem; overflow-wrap: anywhere; }
+.structure-profile .profile-facts { display: grid; grid-template-columns: minmax(7rem, auto) minmax(0, 1fr); gap: .4rem 1rem; margin: .5rem 0; }
+.structure-profile dt { font-weight: 700; }
+.structure-profile dd { margin: 0; overflow-wrap: anywhere; }
+@media (max-width: 560px) { .structure-profile .profile-facts { grid-template-columns: minmax(0, 1fr); } .structure-profile dd { margin-bottom: .4rem; } }
+.why-body > .btn { justify-self: start; }
+.structure-profile ul.plain li { display: block; }

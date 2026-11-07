@@ -30,4 +30,5 @@ export * from "./focus";
 export * from "./script-caption";
 export * from "./remake";
 export * from "./li-profile";
+export * from "./structure";
 export * from "./strategy-chat";
