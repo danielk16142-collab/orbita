@@ -522,3 +522,15 @@ describe("plan text is cleaned", () => {
     expect(row.idea).not.toMatch(/—|seamless/);
   });
 });
+
+describe("LinkedIn tools", () => {
+  it("lists the 21 formulas and checks a post", async () => {
+    const p = { getBrief: async () => ({}) } as unknown as Parameters<typeof runTool>[2];
+    const s = { pages: 0, proposals: 0, research: 0 } as unknown as Parameters<typeof runTool>[3];
+    const f = JSON.parse((await runTool("linkedin_hook_formulas", {}, p, s)).content);
+    expect(f.formulas).toHaveLength(21);
+    const l = JSON.parse((await runTool("lint_linkedin_post", { text: "Short.\n\nThoughts?", hashtags: ["a", "b", "c", "d"] }, p, s)).content);
+    expect(l.issues.join(" ")).toMatch(/HASHTAGS/);
+    expect(l.issues.join(" ")).toMatch(/CLOSE/);
+  });
+});

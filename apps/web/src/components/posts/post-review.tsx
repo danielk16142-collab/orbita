@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { reviewPost, timecode, FEED_CUT, type ReviewInput } from "@orbita/content";
+import { reviewPost, timecode, type ReviewInput } from "@orbita/content";
 import { CleanTextButton } from "./clean-text-button";
 import { HumanizeRewrite } from "./humanize-rewrite";
 
@@ -47,7 +47,7 @@ export async function PostReview({ postId, post }: { postId: string; post: Revie
       {r.caption && (
         <div className="review-block">
           <h3>{t("caption")} <span className={`badge review-${tone(r.caption.verdict)}`}>{t(`captionVerdict.${r.caption.verdict}`)}</span></h3>
-          <p className="stat-vs">{t("captionVisible")} (~{FEED_CUT})</p>
+          <p className="stat-vs">{t("captionVisible")} (~{r.caption.truncateAt})</p>
           <p className="feed-box pre">{r.caption.visible}{r.caption.truncated ? <span className="stat-vs"> {t("captionMore")}</span> : <span className="stat-vs"> {t("captionFits")}</span>}</p>
           <ul>{r.caption.checks.filter((c) => c.status !== "PASS").map((c, i) => <li key={i}><strong>{c.check}</strong>: {c.detail}</li>)}</ul>
         </div>

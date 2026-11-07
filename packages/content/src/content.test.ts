@@ -148,3 +148,27 @@ describe("script export", () => {
     expect(scriptText("carousel", { slides: [{ title: "3 tips", body: "b", visual: "" }], cta: "Save" }, meta)).toContain("Slide 1: 3 tips\nb");
   });
 });
+
+import { LI_HOOK_FORMULAS, lintLinkedInPost, reviewPost } from "./index";
+describe("LinkedIn post check", () => {
+  const para = "Short paragraph with one real point and a number, 42.";
+  const good = ["Writing a proposal used to take me 5 hours. It now takes 20 minutes.", "", "Here is what changed.", "", ...Array(14).fill(para).flatMap((p) => [p, ""]), "Which part of your week would you cut first?", "", "#sales #productivity"].join("\n");
+  it("has the 21 formulas", () => { expect(LI_HOOK_FORMULAS).toHaveLength(21); expect(LI_HOOK_FORMULAS[16].name).toBe("Time Anchor"); });
+  it("passes a post in the shape the skill asks for", () => {
+    const l = lintLinkedInPost(good);
+    expect(l.truncateAt).toBe(140);
+    expect(l.checks.filter((c) => c.status !== "PASS")).toEqual([]);
+    expect(l.verdict).toBe("READY");
+  });
+  it("flags links, hashtag walls, bait, walls of text and placeholders", () => {
+    const bad = ["We grew revenue by {{your number}} this year, here is the full breakdown of every single thing we did along the way and why it worked for us?", "", "A".repeat(400), "", "Read more at https://example.com/post", "", "Thoughts?"].join("\n");
+    const l = lintLinkedInPost(bad, { hashtags: ["a", "b", "c", "d"] });
+    const by = Object.fromEntries(l.checks.map((c) => [c.check, c.status]));
+    expect(by).toMatchObject({ "HOOK LINE": "WARN", "HOOK QUESTION": "WARN", "WHITE SPACE": "WARN", HASHTAGS: "WARN", LINKS: "WARN", CLOSE: "WARN", PLACEHOLDER: "FAIL" });
+    expect(l.verdict).toBe("FIX");
+  });
+  it("is used by the quality check for LinkedIn posts only", () => {
+    expect(reviewPost({ type: "text", language: "en", caption: good, hashtags: [], content: null, network: "linkedin" }).caption?.truncateAt).toBe(140);
+    expect(reviewPost({ type: "text", language: "en", caption: good, hashtags: [], content: null, network: "instagram" }).caption?.truncateAt).toBe(125);
+  });
+});

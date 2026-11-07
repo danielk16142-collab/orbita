@@ -12,7 +12,8 @@ export type IdeaFormat = (typeof IDEA_FORMATS)[number];
 export const POST_DRAFT_TOOL: Partial<Record<IdeaFormat, string>> = {
   reel: "propose_reel", video: "propose_reel", carousel: "propose_carousel", static: "propose_static_post", story: "propose_static_post",
 };
-export const postChatTools = (format: IdeaFormat) => ["get_brief", "get_account_analytics", ...(POST_DRAFT_TOOL[format] ? [POST_DRAFT_TOOL[format]!] : [])];
+export const postChatTools = (format: IdeaFormat) => ["get_brief", "get_account_analytics", ...(POST_DRAFT_TOOL[format] ? [POST_DRAFT_TOOL[format]!] : []),
+  ...(format === "text" || format === "article" ? ["linkedin_hook_formulas", "lint_linkedin_post"] : [])];
 
 const FORMAT_WORDS: Record<IdeaFormat, string> = {
   reel: "a reel (short vertical video)", video: "a longer video script", carousel: "a carousel", static: "a single image post",

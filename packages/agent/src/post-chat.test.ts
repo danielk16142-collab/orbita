@@ -5,7 +5,7 @@ describe("post chat", () => {
   it("only offers the tool that drafts the chosen format", () => {
     expect(postChatTools("carousel")).toEqual(["get_brief", "get_account_analytics", "propose_carousel"]);
     expect(postChatTools("video")).toContain("propose_reel");
-    expect(postChatTools("article")).toEqual(["get_brief", "get_account_analytics"]); // written in the reply
+    expect(postChatTools("article")).toEqual(["get_brief", "get_account_analytics", "linkedin_hook_formulas", "lint_linkedin_post"]); // written in the reply, with the LinkedIn tools
     for (const f of ["reel", "carousel", "static", "story", "video", "text", "article"] as const)
       for (const name of postChatTools(f)) expect(TOOL_DEFS.some((t) => t.name === name)).toBe(true);
   });

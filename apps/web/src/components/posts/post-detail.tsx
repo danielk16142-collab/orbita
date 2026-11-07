@@ -136,7 +136,7 @@ export async function PostDetail({ locale, id, portal }: { locale: string; id: s
         </section>
       )}
 
-      {!portal && <PostReview postId={post.id} post={{ type: post.type, language: post.language, caption: post.caption, hashtags: post.hashtags, content: post.content }} />}
+      {!portal && <PostReview postId={post.id} post={{ type: post.type, language: post.language, caption: post.caption, hashtags: post.hashtags, content: post.content, network: post.network }} />}
 
       <section className="card" style={{ marginTop: "1.25rem" }}>
         <h2>{t("review")}</h2>

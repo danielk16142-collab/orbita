@@ -4,7 +4,7 @@ import { CarouselContent, PAYLOADS, PostInputBase, ReelContent, StaticContent, S
 import { DAYS, LOCALES, MEMORY_KINDS, NETWORKS, SOURCE_KINDS, BRIEF_SECTIONS, CONTENT_FORMATS, RESEARCH_KINDS, type AuditReport, type ResearchKind, type Source, type SourceKind } from "./types";
 import type { SiteSnapshot } from "./site";
 import { wrapUntrusted } from "./untrusted";
-import { lintCaption, rankHooks } from "@orbita/content";
+import { LI_HOOK_FORMULAS, LI_HOOK_RULES, lintCaption, lintLinkedInPost, rankHooks } from "@orbita/content";
 
 /** What a tool may do. Implemented by the web app with the signed-in user's own session, already bound to ONE client. */
 export interface ToolPorts {
@@ -87,6 +87,10 @@ export const TOOL_DEFS = [
     input_schema: { type: "object", properties: { hooks: { type: "array", items: str, description: "the opening lines, one per item" } }, required: ["hooks"], additionalProperties: false } },
   { name: "lint_caption", description: "Check a caption (with its hashtags) before you propose it: what the feed shows before the \"... more\" cut, first line, concreteness, hashtag count and filler, links, number of calls to action, emoji density.",
     input_schema: { type: "object", properties: { caption: str, hashtags: { ...strList, description: "hashtags without the # sign; empty list if none" } }, required: ["caption", "hashtags"], additionalProperties: false } },
+  { name: "lint_linkedin_post", description: "Check a LinkedIn post before you propose it: what shows before \"see more\" (about 140 characters on mobile), length (900-1,300 is the working range), white space, hashtags (3 at most, at the bottom), links in the body (LinkedIn shows those posts to fewer people: first comment instead), engagement bait and the close.",
+    input_schema: { type: "object", properties: { text: str, hashtags: { ...strList, description: "hashtags without the # sign; empty list if none" } }, required: ["text", "hashtags"], additionalProperties: false } },
+  { name: "linkedin_hook_formulas", description: "The 21 LinkedIn hook formulas (template, example, what each is for and how it gets ruined) and the hook rules. Call it before writing a LinkedIn post, then pick the three formulas that genuinely fit the idea.",
+    input_schema: { type: "object", properties: {}, required: [], additionalProperties: false } },
   { name: "save_research", strict: true, description: "Save a useful finding from your web research (a trend, what competitors or similar accounts do, audience insight, or a content idea) so future plans can use it. Summarize in your own words, name the sources. Do not save anything you could not support.",
     input_schema: { type: "object", properties: { kind: { type: "string", enum: [...RESEARCH_KINDS] }, title: str, summary: str, sources: { type: "array", items: { type: "object", properties: { title: str, url: str }, required: ["title", "url"], additionalProperties: false } } }, required: ["kind", "title", "summary", "sources"], additionalProperties: false } },
 ] as const;
@@ -106,6 +110,8 @@ const Inputs = {
   get_account_analytics: z.object({ network: z.enum(["all", ...NETWORKS]) }),
   score_hooks: z.object({ hooks: z.array(z.string().trim().min(1).max(300)).min(1).max(6) }),
   lint_caption: z.object({ caption: z.string().max(2500), hashtags: z.array(z.string().trim().max(60)).max(30) }),
+  lint_linkedin_post: z.object({ text: z.string().max(3500), hashtags: z.array(z.string().trim().max(60)).max(30) }),
+  linkedin_hook_formulas: z.object({}),
   propose_brief_update: PAYLOADS.brief.extend({ reason: z.string().max(1000) }),
   propose_memory: PAYLOADS.memory.extend({ reason: z.string().max(1000) }),
   propose_proof_item: PAYLOADS.proof_item,
@@ -192,6 +198,13 @@ export async function runTool(name: string, input: unknown, ports: ToolPorts, st
         const l = lintCaption(caption, { hashtags });
         return ok({ verdict: l.verdict, visibleBeforeMore: l.visible, truncated: l.truncated, issues: l.checks.filter((c) => c.status !== "PASS").map((c) => `${c.status} ${c.check}: ${c.detail}`) });
       }
+      case "lint_linkedin_post": {
+        const { text, hashtags } = a as { text: string; hashtags: string[] };
+        const l = lintLinkedInPost(text, { hashtags });
+        return ok({ verdict: l.verdict, visibleBeforeSeeMore: l.visible, truncated: l.truncated, characters: l.characters, issues: l.checks.filter((c) => c.status !== "PASS").map((c) => `${c.status} ${c.check}: ${c.detail}`) });
+      }
+      case "linkedin_hook_formulas":
+        return ok({ rules: LI_HOOK_RULES, formulas: LI_HOOK_FORMULAS.map((f) => ({ id: f.id, name: f.name, template: f.template, example: f.example, best_for: f.best_for, trap: f.trap })) });
       case "save_research": {
         const n = a as unknown as z.infer<typeof Inputs.save_research>;
         if (state.research >= MAX_RESEARCH_PER_TURN) return err("Research note limit for this reply reached.");
