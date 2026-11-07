@@ -148,6 +148,7 @@ export async function CompetitorDetailView({ locale, clientId, staff, competitor
             <h2>{t("useTitle")}</h2>
             <p className="stat-vs">{t("useHint")}</p>
             <UseInStrategyButton clientId={clientId} analysisId={analysis!.id} chatHref={chatHref} />
+            {a.winsUsed === undefined ? <p className="stat-vs ideas-note">{t("ideasRerun")}</p> : a.winsUsed === 0 ? <p className="stat-vs ideas-note">{t("ideasNoWins")}</p> : <p className="stat-vs ideas-note">{t("ideasFromWins", { count: a.winsUsed })}</p>}
             {a.content_ideas.length > 0 && (
               <>
                 <h3 style={{ marginTop: "1.25rem" }}>{t("ideasTitle")}</h3>

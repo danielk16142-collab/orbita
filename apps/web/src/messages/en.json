@@ -1111,7 +1111,17 @@
       "not_found": "Not found.",
       "ideas": "Some ideas could not be added. Please try again.",
       "not_set_up": "Competitors need a database update that has not been applied yet (migration 0012_competitors.sql). Ask your administrator to run it in Supabase, then try again."
-    }
+    },
+    "builtOn": "Built on their post",
+    "timesUsual": "{n}× their usual {metric}",
+    "openPost": "Open",
+    "metric": {
+      "views": "views",
+      "engagement": "interactions"
+    },
+    "ideasFromWins": "These ideas are built on their {count, plural, one {best recorded post} other {# best recorded posts}}: what already works for them, made ours.",
+    "ideasNoWins": "No posts are recorded for this competitor yet, so these ideas come from the general analysis. Fetch or add their posts (What's working, below), then run the analysis again to base the ideas on what works for them.",
+    "ideasRerun": "This analysis was made before ideas were built on their best posts. Run it again to get ideas based on what already works for them."
   },
   "reset": {
     "forgotTitle": "Reset your password",

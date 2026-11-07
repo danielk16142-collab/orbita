@@ -31,6 +31,9 @@ export type FindingsResult = z.infer<typeof Findings>;
 
 export const ContentIdea = z.object({
   title: text(200).pipe(z.string().min(1)), format: z.enum(IDEA_FORMATS).catch("static"), network: z.enum(NETWORKS).catch("instagram"), why: text(400).catch(""),
+  /** Which of the competitor's winning posts it builds on (number in the list we sent; 0 = none), and that post as stored once matched. */
+  based_on: z.number().int().min(0).max(20).catch(0).default(0),
+  source_post: z.object({ hook: z.string(), multiple: z.number().nullable(), metric: z.string(), value: z.number(), url: z.string().nullable() }).optional(),
 });
 export const CompetitorAnalysis = z.object({
   summary: text(1200).pipe(z.string().min(1)), positioning: text(600).catch(""), audience: text(600).catch(""),
@@ -38,6 +41,8 @@ export const CompetitorAnalysis = z.object({
   what_works: list(8, 300), weaknesses: list(8, 300), opportunities: list(8, 300),
   content_ideas: z.array(z.unknown()).catch([]).transform((a) => a.flatMap((x) => { const r = ContentIdea.safeParse(x); return r.success ? [r.data] : []; }).slice(0, 8)),
   sources: Sources, confidence_note: text(600).catch(""),
+  /** How many of the competitor's recorded winning posts the ideas were built from (missing on analyses made before this existed). */
+  winsUsed: z.number().int().min(0).optional(),
 });
 export type CompetitorAnalysis = z.infer<typeof CompetitorAnalysis>;
 
@@ -60,7 +65,10 @@ export const ANALYSIS_TOOL = {
   input_schema: { type: "object", properties: {
     summary: str, positioning: str, audience: str, content_pillars: strList, formats: strList, posting_pattern: str,
     what_works: strList, weaknesses: strList, opportunities: { ...strList, description: "Where our business can stand out or do better" },
-    content_ideas: { type: "array", items: { type: "object", properties: { title: str, format: { type: "string", enum: [...IDEA_FORMATS] }, network: { type: "string", enum: [...NETWORKS] }, why: str }, required: ["title", "format", "network", "why"], additionalProperties: false } },
+    content_ideas: { type: "array", items: { type: "object", properties: { title: str, format: { type: "string", enum: [...IDEA_FORMATS] }, network: { type: "string", enum: [...NETWORKS] },
+      why: { ...str, description: "What made their post work (topic, hook, format) and how this idea uses it for us" },
+      based_on: { type: "integer", description: "The number of the competitor's winning post this idea is built on, from the list in the request; 0 only when no winning posts were given" } },
+      required: ["title", "format", "network", "why", "based_on"], additionalProperties: false } },
     sources: sourceList, confidence_note: str,
   }, required: ["summary", "positioning", "audience", "content_pillars", "formats", "posting_pattern", "what_works", "weaknesses", "opportunities", "content_ideas", "sources", "confidence_note"], additionalProperties: false },
 } as const;
@@ -79,12 +87,20 @@ export function competitorSystem(b: Business, locale: Locale) {
   return `You analyze one competitor of a business for its content strategy. Write in ${LANG[locale]}.
 Our business: ${b.name}. Markets: ${b.markets.join(", ") || "not set"}.
 ${b.brief ? `What we know about our brand:\n${b.brief}\n` : ""}
-Search the web for the competitor and read its website if one is given. Then call present_analysis once: how it positions itself, who it speaks to, its content pillars and formats, how often it seems to post, what works, its weak spots, where we can stand out, and up to 8 content ideas for us that are inspired by it but not copies. ${RULES}`;
+Search the web for the competitor and read its website if one is given. Then call present_analysis once: how it positions itself, who it speaks to, its content pillars and formats, how often it seems to post, what works, its weak spots, where we can stand out, and up to 8 content ideas for us. When the request lists the competitor's winning posts (ranked by how far each beat its own usual numbers), every content idea is built on one of them: keep what made it work (the topic, the hook, the format and the network) and make it about our business, in our words; set based_on to that post's number and say in why what worked and how we use it. Favour the posts that beat their median the most. Never copy their wording. ${RULES}`;
 }
 
-export function competitorRequest(c: { name: string; website: string | null; links: { network: string; url: string }[]; notes: string | null }) {
+export type CompetitorWin = { hook: string; caption: string | null; transcript: string | null; network: string; multiple: number | null; metric: string; value: number; formula: string | null };
+
+export function competitorRequest(c: { name: string; website: string | null; links: { network: string; url: string }[]; notes: string | null; wins?: CompetitorWin[] }) {
   const lines = [`Competitor: ${c.name}`, c.website ? `Website: ${c.website}` : "", ...c.links.map((l) => `${l.network}: ${l.url}`)].filter(Boolean).join("\n");
-  return `${lines}${c.notes ? `\n${wrapUntrusted("notes from the user about this competitor", c.notes, 1000)}` : ""}`;
+  const wins = (c.wins ?? []).map((w, i) => [
+    `${i + 1}. ${w.network}, ${w.multiple ? `${w.multiple}x its usual ${w.metric}` : `${w.value} ${w.metric}`}${w.formula ? `, hook formula: ${w.formula}` : ""}`,
+    `   Hook: ${w.hook}`, w.caption ? `   Caption: ${w.caption.replace(/\s+/g, " ").slice(0, 500)}` : "", w.transcript ? `   What is said: ${w.transcript.replace(/\s+/g, " ").slice(0, 900)}` : "",
+  ].filter(Boolean).join("\n")).join("\n");
+  return `${lines}${c.notes ? `\n${wrapUntrusted("notes from the user about this competitor", c.notes, 1000)}` : ""}${wins
+    ? `\n\nTheir winning posts, best first (recorded from their accounts; build every content idea on one of these and set based_on to its number):\n${wrapUntrusted("competitor winning posts", wins, 9000)}`
+    : "\n\nNo winning posts are recorded for this competitor yet: base the content ideas on what works for it and set based_on to 0."}`;
 }
 
 export type StructuredResult<T> =
