@@ -6,6 +6,7 @@ import { requireStaff, requireUser } from "@/lib/session";
 import { CalendarView } from "./calendar-view";
 import { PostList, type ListPost } from "./post-list";
 import { NETWORK_LABEL, type CalPost } from "./shared";
+import { UnscheduledList } from "./unscheduled-list";
 import { ChannelTabs, CHANNEL_COOKIE } from "./channel-tabs";
 
 type SP = { view?: string; date?: string; client?: string; network?: string; status?: string };
@@ -44,7 +45,8 @@ export async function PostsPage({ locale, searchParams, portal }: { locale: stri
     listPosts = rows.map((r) => ({ ...r, thumb: urlByPath.get(first.get(r.id) ?? "") ?? null, hasVideo: video.has(r.id) }));
   }
   let u = s.sb.from("posts").select("id, client_id, network, type, status, planned_date, suggested_time, idea, caption, clients(name)").is("planned_date", null).order("created_at", { ascending: false }).limit(20);
-  if (network) u = u.eq("network", network); if (status) u = u.eq("status", status); if (clientFilter) u = u.eq("client_id", clientFilter);
+  if (network) u = u.eq("network", network); if (status) u = u.eq("status", status); else u = u.neq("status", "published"); // published posts are done: they leave this list unless asked for
+  if (clientFilter) u = u.eq("client_id", clientFilter);
   const { data: unscheduled } = await u;
   const { data: clients } = portal ? { data: [] as { id: string; name: string }[] } : await s.sb.from("clients").select("id, name").order("name");
 
@@ -86,12 +88,7 @@ export async function PostsPage({ locale, searchParams, portal }: { locale: stri
         : <CalendarView locale={locale} view={view} anchor={anchor} posts={(posts ?? []) as unknown as CalPost[]} today={today} showClient={!portal} canDelete={!portal}
             postHref={(id) => `${base}/${id}`} dayHref={(d) => qs({ view: "day", date: d })} />}
 
-      {(unscheduled?.length ?? 0) > 0 && (
-        <section className="card" style={{ marginTop: "1.25rem" }}>
-          <h2>{t("unscheduled")}</h2>
-          <ul className="plain">{(unscheduled as unknown as CalPost[]).map((p) => <li key={p.id}><Link href={`${base}/${p.id}`}>{(p.idea || p.caption || "—").slice(0, 80)}</Link><span className="stat-vs">{!portal && p.clients?.name ? `${p.clients.name} · ` : ""}{NETWORK_LABEL[p.network] ?? p.network} · {t(`statuses.${p.status}`)}</span></li>)}</ul>
-        </section>
-      )}
+      <UnscheduledList posts={(unscheduled ?? []) as unknown as CalPost[]} base={base} portal={portal} today={today} />
     </>
   );
 }

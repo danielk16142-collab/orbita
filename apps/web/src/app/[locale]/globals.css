@@ -869,3 +869,7 @@ ol.plain.li-fixes { display: grid; gap: .75rem; }
 .channel-tab.on { background: var(--ink); color: #fff; }
 .channel-tab .net-dot { width: .7rem; height: .7rem; border-radius: 50%; border: 2px solid currentColor; }
 @media (hover: hover) { .channel-tab:not(.on):hover { background: var(--brand-soft); } }
+
+/* Not scheduled yet: a row with a delete button */
+.unscheduled-list li { position: relative; padding-right: 2rem; }
+.unscheduled-list .chip-delete { top: 50%; transform: translateY(-50%); right: 0; }

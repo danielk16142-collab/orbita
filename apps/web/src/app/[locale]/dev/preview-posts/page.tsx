@@ -3,6 +3,7 @@ import { fakeEnabled } from "@orbita/connectors";
 import { CalendarView } from "@/components/posts/calendar-view";
 import type { CalPost } from "@/components/posts/shared";
 import { PostList, type ListPost } from "@/components/posts/post-list";
+import { UnscheduledList } from "@/components/posts/unscheduled-list";
 import { ChannelTabs } from "@/components/posts/channel-tabs";
 
 /** Development only (CONNECTORS_FAKE=1): the calendar rendered from sample posts. */
@@ -12,6 +13,13 @@ export default async function Preview({ params, searchParams }: { params: Promis
   const today = new Date().toISOString().slice(0, 10), ym = today.slice(0, 8);
   const mk = (d: number, network: string, type: string, status: string, idea: string, time: string | null = "09:00"): CalPost => ({ id: `${d}${network}${idea.length}`, client_id: "c", network, type, status, planned_date: `${ym}${String(d).padStart(2, "0")}`, suggested_time: time, idea, caption: "Caption text for the day view preview.", clients: { name: "Café Luna" } });
   const posts = [mk(3, "instagram", "reel", "published", "Behind the espresso machine"), mk(5, "tiktok", "reel", "approved", "3 mistakes making iced coffee"), mk(5, "instagram", "carousel", "draft", "Menu of the week", "12:30"), mk(5, "instagram", "static", "idea", "Friday promo", null), mk(5, "tiktok", "reel", "idea", "Staff pick"), mk(5, "instagram", "static", "scheduled", "Fifth one"), mk(12, "instagram", "static", "scheduled", "Weekend brunch announcement"), mk(18, "tiktok", "reel", "idea", "Day in the life of a barista")];
+  if ((await searchParams as { view?: string }).view === "unscheduled") {
+    const un: CalPost[] = [
+      { ...posts[0], id: "u1", planned_date: null, status: "draft", idea: "Real estate leads: scored, answered, approved with one tap" },
+      { ...posts[1], id: "u2", planned_date: null, status: "idea", idea: "Warm-up day 3: story with a behind-the-scenes" },
+    ];
+    return (<main className="content"><h1>Posts</h1><UnscheduledList posts={un} base="#" portal={false} today={today} /></main>);
+  }
   if (view === "list") {
     const cover = `data:image/svg+xml;utf8,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000"><rect width="800" height="1000" fill="#e8dcc4"/><text x="60" y="520" font-family="Arial" font-weight="800" font-size="90" fill="#2b1d14">Cold brew</text></svg>')}`;
     const reel = { duration_seconds: 28, hook_options: ["Stop pouring hot espresso over ice"], scenes: [{ seconds: "0-3", visual: "v", voiceover: "Stop.", on_screen_text: "x" }, { seconds: "3-9", visual: "v", voiceover: "Try this.", on_screen_text: "" }], cta: "Follow", audio_note: "" };
