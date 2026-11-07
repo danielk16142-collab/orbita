@@ -18,9 +18,9 @@ export function WhyItWorks({ postId, clientId, locale, initial }: { postId: stri
     setBusy(true); setError(null);
     try {
       const res = await fetch("/api/competitors/breakdown", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, postId, locale }) });
-      const data = (await res.json().catch(() => ({}))) as { breakdown?: Breakdown; error?: string };
+      const data = (await res.json().catch(() => ({}))) as { breakdown?: Breakdown; error?: string; detail?: string };
       if (data.breakdown) { setB(data.breakdown); setOpen(true); router.refresh(); }
-      if (!res.ok) { const c = data.error ?? "generic"; setError(t.has(`errors.${c}`) ? t(`errors.${c}`) : ta.has(`errors.${c}`) ? ta(`errors.${c}`) : ta("errors.generic")); }
+      if (!res.ok) { const c = data.error ?? (res.status === 504 ? "timeout" : "generic"); const msg = t.has(`errors.${c}`) ? t(`errors.${c}`) : ta.has(`errors.${c}`) ? ta(`errors.${c}`) : ta("errors.generic"); setError(data.detail ? `${msg} (${data.detail})` : msg); }
     } catch { setError(ta("errors.generic")); }
     finally { setBusy(false); }
   }
@@ -41,7 +41,7 @@ export function WhyItWorks({ postId, clientId, locale, initial }: { postId: stri
           <ol className="why-structure">{b.structure.map((s, i) => <li key={i}><span className="badge">{t(`parts.${s.part}`)}</span>{s.timing && <code> {s.timing}</code>} {s.what}</li>)}</ol>
         </>}
         {b.retention.length > 0 && <p><strong>{t("retention")}</strong> {b.retention.join(" · ")}</p>}
-        <p><strong>{t("cta")}</strong> {t(`ctaTypes.${b.cta.type}`)}{b.cta.text ? `: “${b.cta.text}”` : ""}</p>
+        <p><strong>{t("cta")}</strong> {t(`ctaTypes.${b.cta.kind}`)}{b.cta.text ? `: “${b.cta.text}”` : ""}</p>
         {b.format && <p><strong>{t("format")}</strong> {b.format}</p>}
         {b.why_it_worked.length > 0 && <><p><strong>{t("whyWorked")}</strong></p><ul>{b.why_it_worked.map((x, i) => <li key={i}>{x}</li>)}</ul></>}
         {b.reuse.length > 0 && <><p><strong>{t("reuse")}</strong></p><ul>{b.reuse.map((x, i) => <li key={i}>{x}</li>)}</ul></>}

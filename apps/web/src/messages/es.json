@@ -1883,7 +1883,8 @@
         "no_result": "Esta vez no hubo análisis. Inténtalo de nuevo.",
         "not_set_up": "Ejecuta la migración 0022 en Supabase para guardarlos (el análisis se muestra pero no se guarda).",
         "save_failed": "Analizada, pero no se pudo guardar.",
-        "batch": "Una falló; las demás están guardadas. Inténtalo de nuevo."
+        "batch": "Una falló; las demás están guardadas. Inténtalo de nuevo.",
+        "timeout": "Tardó demasiado. Inténtalo de nuevo."
       },
       "parts": {
         "hook": "Gancho",
