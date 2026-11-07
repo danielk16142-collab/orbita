@@ -889,3 +889,9 @@ ol.why-structure { margin: 0; padding-left: 1.2rem; display: grid; gap: .25rem; 
 .why-body > .btn { justify-self: start; }
 .structure-profile ul.plain li { display: block; }
 .remove-competitor { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+/* Build the strategy: which channels */
+.strategy-channels { border: 0; padding: 0; margin: 0 0 .4rem; display: flex; flex-wrap: wrap; gap: .4rem 1rem; align-items: center; }
+.strategy-channels legend { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; margin-bottom: .3rem; }
+.strategy-channels .check-line { display: inline-flex; gap: .4rem; align-items: center; margin: 0; font-family: var(--font-body); font-size: 1rem; letter-spacing: normal; text-transform: none; }
+.strategy-channels .check-line input { width: auto; }
+.strategy-channels .stat-vs { flex-basis: 100%; margin: 0; }

@@ -18,6 +18,8 @@ const Body = z.object({
   clientId: z.string().uuid().optional(), locale: z.enum(["en", "fr", "es"]),
   /** "from_focus": build (or rebuild) the strategy around the pillars and topics chosen in this section; no message needed. */
   mode: z.enum(["chat", "from_focus"]).default("chat"),
+  /** The channels to plan for (from_focus); empty = whatever the brand uses. */
+  networks: z.array(z.enum(["instagram", "tiktok", "linkedin", "youtube", "facebook"])).max(5).default([]),
   message: z.string().trim().max(12000).default(""),
   /** Earlier turns of this conversation, kept by the page (nothing is stored on the server). */
   history: z.array(z.object({ role: z.enum(["user", "assistant"]), text: z.string().max(4000) })).max(10).default([]),
@@ -45,7 +47,7 @@ export async function POST(req: Request) {
   const ctx = await loadClientContext(actor.sb, actor.clientId);
   const focus = focusFromRow(ctx.briefRow);
   if (body.mode === "from_focus" && !focus.pillars.some((p) => p.name.trim())) return json({ error: "no_pillars" }, 400);
-  const message = body.mode === "from_focus" ? focusBuildRequest(focus, !!ctx.strategy) : body.message;
+  const message = body.mode === "from_focus" ? focusBuildRequest(focus, !!ctx.strategy, body.networks) : body.message;
   const history: AgentMessageParam[] = body.mode === "from_focus" ? [] : body.history.filter((m) => m.text.trim()).map((m) => ({ role: m.role, content: m.text }));
   while (history.length && history[0].role !== "user") history.shift();
   const input = promptInput(actor, ctx, body.locale);
@@ -69,7 +71,7 @@ export async function POST(req: Request) {
         if (last) {
           const repo = supabaseProposalRepo(actor);
           // Built from the chosen pillars: the strategy keeps exactly those pillars and shares.
-          const edited = body.mode === "from_focus" ? alignStrategyToFocus((await repo.get(last))?.payload, focus) : undefined;
+          const edited = body.mode === "from_focus" ? alignStrategyToFocus((await repo.get(last))?.payload, focus, body.networks) : undefined;
           const r = await decideProposal(repo, { proposalId: last, decision: "accept", edited });
           send(r.ok ? { type: "applied" } : { type: "error", code: "apply_failed" });
           if (r.ok) await audit({ agencyId: actor.profile.agency_id, actor: actor.userId, action: "strategy.chat_applied", entity: "client", entityId: actor.clientId });

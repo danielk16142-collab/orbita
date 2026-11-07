@@ -24,3 +24,20 @@ describe("strategy from pillars and topics", () => {
     expect(alignStrategyToFocus({ content: {} }, { topics: [], pillars: [] })).toEqual({ content: {} });
   });
 });
+
+import { channelsRule } from "./strategy-chat";
+describe("strategy for the chosen channels", () => {
+  it("asks for only those channels, the same videos on Instagram and TikTok, LinkedIn on its own", () => {
+    const r = focusBuildRequest(focus, false, ["instagram", "tiktok", "linkedin"]);
+    expect(r).toContain("plan only for Instagram, TikTok, LinkedIn");
+    expect(r).toContain("same short videos");
+    expect(r).toContain("LinkedIn gets its own content");
+    expect(channelsRule(["linkedin"])).not.toContain("same short videos");
+    expect(channelsRule([])).toBe("");
+  });
+  it("keeps only the chosen networks in the cadence and series", () => {
+    const out = alignStrategyToFocus({ content: { pillars: [], cadence: [{ network: "instagram" }, { network: "youtube" }], series: [{ name: "A", networks: ["youtube"] }, { name: "B", networks: ["instagram", "youtube"] }] } }, focus, ["instagram", "tiktok"]) as { content: { cadence: unknown[]; series: { name: string; networks: string[] }[] } };
+    expect(out.content.cadence).toEqual([{ network: "instagram" }]);
+    expect(out.content.series).toEqual([{ name: "B", networks: ["instagram"] }]);
+  });
+});

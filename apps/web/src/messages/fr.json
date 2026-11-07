@@ -1932,7 +1932,12 @@
       "apply_failed": "La stratégie n'a pas pu être enregistrée. Réessayez.",
       "model_error": "L'agent n'a pas pu répondre. Réessayez.",
       "undo": "Impossible de restaurer la stratégie précédente."
-    }
+    },
+    "channels": "Réseaux",
+    "channelsHint": "Seuls les réseaux cochés ont un rythme et des séries.",
+    "sameVideos": "Instagram et TikTok reçoivent les mêmes vidéos, avec une légende pour chacun.",
+    "forChannels": "Pour {list}",
+    "linkedinOwn": "LinkedIn a ses propres publications."
   },
   "liProfile": {
     "title": "Score du profil LinkedIn",
