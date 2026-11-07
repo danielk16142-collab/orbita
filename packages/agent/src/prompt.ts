@@ -31,6 +31,8 @@ export type PromptInput = {
   webSearch?: boolean;                 // whether the web_search tool is available this request
   analytics?: string | null;           // text summary of connected-account analytics (see analytics.ts)
   firstTurn?: boolean;                 // onboarding, and the person's first message answers the welcome (business and goals)
+  /** "post": the agent is working on one specific piece of content, so the strategy, plans and research are left out on purpose. */
+  scope?: "post";
 };
 
 const LANG_NAME: Record<Locale, string> = { en: "English", fr: "French", es: "Spanish" };
@@ -131,10 +133,10 @@ Facts: ${g.fact.length ? "\n" + bullets(g.fact) : "(none yet)"}
 ${bullets(i.recentExamples)}
 
 ## Active content strategy
-${i.strategy ? `${i.strategy.title} (${i.strategy.period}, set ${i.strategy.createdAt.slice(0, 10)})\n${JSON.stringify(i.strategy.content)}` : "(none yet: offer to build one when the profile is ready)"}
+${i.scope === "post" ? "(not used here: you are working on one specific post, described below. Do not bring in topics, angles or examples from the strategy.)" : i.strategy ? `${i.strategy.title} (${i.strategy.period}, set ${i.strategy.createdAt.slice(0, 10)})\n${JSON.stringify(i.strategy.content)}` : "(none yet: offer to build one when the profile is ready)"}
 
 ## Last weekly plan
-${i.lastPlan ?? "(none yet)"}
+${i.scope === "post" ? "(not used here)" : i.lastPlan ?? "(none yet)"}
 
 ## Earlier conversations (handovers written when each thread closed; pick up open items when the person refers to them)
 ${i.recentThreads?.length ? wrapUntrusted("earlier conversation handovers", i.recentThreads.map((r) => `[${r.date}] ${r.summary}`).join("\n\n"), 4000) : "(none: this is the first conversation)"}
@@ -143,7 +145,7 @@ ${i.recentThreads?.length ? wrapUntrusted("earlier conversation handovers", i.re
 ${i.analytics ? wrapUntrusted("account analytics", i.analytics, 6000) : "(no connected accounts yet)"}
 
 ## Recent research (web findings from the last 30 days; verify before relying on them)
-${i.research?.length ? wrapUntrusted("saved research notes", i.research.map((r) => `[${r.createdAt.slice(0, 10)} ${r.kind}] ${r.title}: ${r.summary}`).join("\n"), 6000) : "(none yet)"}
+${i.scope === "post" ? "(not used here)" : i.research?.length ? wrapUntrusted("saved research notes", i.research.map((r) => `[${r.createdAt.slice(0, 10)} ${r.kind}] ${r.title}: ${r.summary}`).join("\n"), 6000) : "(none yet)"}
 `;
 }
 

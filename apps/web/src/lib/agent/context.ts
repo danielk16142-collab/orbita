@@ -65,14 +65,19 @@ export function completenessOf(ctx: ClientContext) {
   return computeCompleteness(briefFromRow(ctx.briefRow), { hasSources: ctx.sources.length > 0 });
 }
 
-export function promptInput(actor: AgentActor, ctx: ClientContext, locale: "en" | "fr" | "es", opts: { webSearch?: boolean; firstTurn?: boolean; now?: Date } = {}): PromptInput {
+/**
+ * opts.scope "post": the agent works on one specific piece of content (a post being written or rewritten, a caption from a
+ * script). The strategy, the weekly plan, research and this week's topics are left out so they cannot pull it off the post.
+ */
+export function promptInput(actor: AgentActor, ctx: ClientContext, locale: "en" | "fr" | "es", opts: { webSearch?: boolean; firstTurn?: boolean; now?: Date; scope?: "post" } = {}): PromptInput {
   const now = opts.now ?? new Date();
   return {
     locale, clientName: actor.client.name, clientLanguages: actor.client.languages, markets: actor.client.markets, timezone: actor.client.timezone,
     brief: briefFromRow(ctx.briefRow), memories: ctx.memories, sources: ctx.sources, proofItems: ctx.proofItems, rules: ctx.rules,
     recentExamples: ctx.examples, audit: ctx.audit, briefUpdatedAt: (ctx.briefRow?.updated_at as string | undefined) ?? null,
     today: now.toISOString().slice(0, 10), weekStart: planningWeekStart(now),
-    focus: (() => { const f = focusFromRow(ctx.briefRow); return focusPrompt(f, weekFocus(f, ctx.pillarPosts ?? [], planningWeekStart(now))); })(),
+    focus: (() => { const f = focusFromRow(ctx.briefRow); return focusPrompt(f, opts.scope === "post" ? null : weekFocus(f, ctx.pillarPosts ?? [], planningWeekStart(now))); })(),
+    scope: opts.scope,
     strategy: ctx.strategy, research: ctx.research, lastPlan: ctx.lastPlan, analytics: ctx.analytics, webSearch: !!opts.webSearch, firstTurn: !!opts.firstTurn,
   };
 }

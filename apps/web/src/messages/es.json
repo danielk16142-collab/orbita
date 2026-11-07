@@ -836,7 +836,7 @@
       "buttonAgain": "Reescribir con el agente",
       "uses": "El agente usará",
       "accepted": "Guardado en este post.",
-      "opening": "Escribe el {format} para este post planificado ({where}, en {language}), a partir de la idea y del motivo por el que se recomendó: {idea}",
+      "opening": "Trabaja en esta publicación ({format}, {where}, en {language}): mantén su tema y lo que ya dice, y mejora cómo se dice. Tema: {idea}",
       "approvedNote": "Aceptar una versión nueva devuelve este post aprobado a borrador."
     },
     "strategyIdeas": {

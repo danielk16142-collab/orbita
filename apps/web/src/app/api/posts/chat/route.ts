@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { buildSystemPrompt, IDEA_FORMATS, NETWORKS, postChatFocus, postChatTools, runAgent, type AgentEvent, type AgentMessageParam } from "@orbita/agent";
+import { buildSystemPrompt, contentAsText, IDEA_FORMATS, NETWORKS, postChatFocus, postChatTools, runAgent, type AgentEvent, type AgentMessageParam, type ExistingPost } from "@orbita/agent";
 import { resolveAgentActor } from "@/lib/agent/access";
 import { loadClientContext, promptInput } from "@/lib/agent/context";
 import { makePorts } from "@/lib/agent/ports";
@@ -36,16 +36,18 @@ export async function POST(req: Request) {
   if (!access.ok) return json({ error: access.status === 401 ? "unauthorized" : access.status === 403 ? "forbidden" : "not_found" }, access.status);
   const actor = access.actor;
   // An existing post: staff only, in this client, still an idea or draft. Format, network, language and idea are the post's own.
-  let existing: { day: string | null; time: string | null; pillar: string | null; why: string | null; hasContent: boolean } | undefined;
+  let existing: ExistingPost | undefined;
   if (body.postId) {
     if (actor.profile.role === "client") return json({ error: "forbidden" }, 403);
-    const { data: post } = await actor.sb.from("posts").select("id, network, language, type, status, pillar, planned_date, suggested_time, idea, caption, content").eq("id", body.postId).eq("client_id", actor.clientId).maybeSingle();
+    const { data: post } = await actor.sb.from("posts").select("id, network, language, type, status, pillar, planned_date, suggested_time, idea, caption, hashtags, content, script").eq("id", body.postId).eq("client_id", actor.clientId).maybeSingle();
     if (!post) return json({ error: "not_found" }, 404);
     if (!["idea", "draft", "approved"].includes(post.status)) return json({ error: "not_editable" }, 409);
     const fmt = formatKey(post.type) as (typeof IDEA_FORMATS)[number];
     const content = parseContent(fmt, post.content);
     const why = post.content && typeof post.content === "object" && "rationale" in post.content ? String((post.content as { rationale?: unknown }).rationale ?? "") : null;
-    existing = { day: post.planned_date, time: post.suggested_time, pillar: post.pillar, why, hasContent: content.ok && !!content.value };
+    const videoScript = post.script && typeof post.script === "object" && typeof (post.script as { text?: unknown }).text === "string" ? (post.script as { text: string }).text : null;
+    existing = { day: post.planned_date, time: post.suggested_time, pillar: post.pillar, why, hasContent: content.ok && !!content.value,
+      idea: post.idea, draft: content.ok && content.value ? contentAsText(fmt, content.value) : null, caption: post.caption, hashtags: post.hashtags ?? [], videoScript };
     body = { ...body, format: fmt, networks: [post.network as (typeof NETWORKS)[number]], idea: (post.idea || post.caption || "").slice(0, 500) };
   }
   const ai = await resolveModelAccess(actor);
@@ -68,7 +70,8 @@ export async function POST(req: Request) {
   await actor.sb.from("messages").insert({ conversation_id: conversationId, client_id: actor.clientId, role: "user", content: { text: body.message } });
 
   const ctx = await loadClientContext(actor.sb, actor.clientId);
-  const input = promptInput(actor, ctx, body.locale);
+  // One post: its subject comes from the post (or the person's idea), never from the strategy or the plan.
+  const input = promptInput(actor, ctx, body.locale, { scope: existing || body.idea ? "post" : undefined });
   const ports = makePorts(actor, { conversationId, weekStart: input.weekStart, fillPostId: body.postId, userTexts: [...history.filter((m) => m.role === "user").map((m) => String(m.content)), body.message] });
   const system = buildSystemPrompt(input) + postChatFocus({ format: body.format, networks: body.networks, idea: body.idea, existing });
   const convId = conversationId;

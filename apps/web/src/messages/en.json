@@ -836,7 +836,7 @@
       "buttonAgain": "Rewrite with the agent",
       "uses": "The agent will use",
       "accepted": "Saved into this post.",
-      "opening": "Write the {format} for this planned post ({where}, in {language}), based on the idea and the reason it was recommended: {idea}",
+      "opening": "Work on this post ({format}, {where}, in {language}): keep its subject and what it already says, and improve how it is said. About: {idea}",
       "approvedNote": "Accepting a new version sends this approved post back to draft."
     },
     "strategyIdeas": {

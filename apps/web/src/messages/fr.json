@@ -836,7 +836,7 @@
       "buttonAgain": "Réécrire avec l'agent",
       "uses": "L'agent utilisera",
       "accepted": "Enregistré dans ce post.",
-      "opening": "Écris le {format} pour ce post planifié ({where}, en {language}), à partir de l'idée et de la raison pour laquelle il a été recommandé : {idea}",
+      "opening": "Travaille sur cette publication ({format}, {where}, en {language}) : garde son sujet et ce qu'elle dit déjà, et améliore la façon de le dire. Sujet : {idea}",
       "approvedNote": "Accepter une nouvelle version remet ce post approuvé en brouillon."
     },
     "strategyIdeas": {
