@@ -60,7 +60,9 @@ export async function POST(req: Request) {
     await audit({ agencyId: actor.profile.agency_id, actor: actor.userId, action: "competitor.post_explained", entity: "competitor_post", entityId: post.id });
     return json({ breakdown });
   } catch (e) {
-    console.error("competitor breakdown failed:", describeModelError(e));
-    return json({ error: "model_error" }, 502);
+    const reason = describeModelError(e);
+    console.error("competitor breakdown failed:", reason);
+    // Staff see the provider's reason (keys are already masked), so a failure can be fixed instead of guessed.
+    return json({ error: "model_error", ...(actor.profile.role !== "client" ? { detail: reason.replace(/request=\S+/, "").slice(0, 240) } : {}) }, 502);
   }
 }

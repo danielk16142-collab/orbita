@@ -13,7 +13,7 @@ export const BREAKDOWN_TOOL = {
     hook: { type: "object", properties: { formula: { ...str, description: "the hook formula name it uses (from the list), or a short name of your own" }, why: { ...str, description: "why it stops the scroll, in one or two sentences" } }, required: ["formula", "why"], additionalProperties: false },
     structure: { type: "array", items: { type: "object", properties: { part: { type: "string", enum: [...PARTS] }, timing: { ...str, description: "e.g. 0-3s, or empty when unknown" }, what: { ...str, description: "what happens in this part, one line" } }, required: ["part", "timing", "what"], additionalProperties: false } },
     retention: { type: "array", items: str, description: "what keeps people watching or reading (open loop, pattern break, numbered list, on-screen text...)" },
-    cta: { type: "object", properties: { type: { type: "string", enum: ["comment_keyword", "follow", "save", "share", "dm", "link", "question", "none"] }, text: str }, required: ["type", "text"], additionalProperties: false },
+    cta: { type: "object", properties: { kind: { type: "string", enum: ["comment_keyword", "follow", "save", "share", "dm", "link", "question", "none"] }, text: str }, required: ["kind", "text"], additionalProperties: false },
     format: { ...str, description: "format and pacing in one line: length, talking head or b-roll, on-screen text, cuts" },
     why_it_worked: { type: "array", items: str, description: "2 to 4 reasons, tied to the numbers when given" },
     reuse: { type: "array", items: str, description: "2 to 4 things we can reuse (structure, not their words)" },
@@ -26,7 +26,7 @@ export const Breakdown = z.object({
   hook: z.object({ formula: line(80), why: line(400) }).catch({ formula: "", why: "" }),
   structure: z.array(z.unknown()).catch([]).transform((a) => a.flatMap((x) => { const r = z.object({ part: z.enum(PARTS), timing: line(20), what: line(300) }).safeParse(x); return r.success && r.data.what ? [r.data] : []; }).slice(0, 10)),
   retention: lines(6, 200),
-  cta: z.object({ type: z.enum(["comment_keyword", "follow", "save", "share", "dm", "link", "question", "none"]).catch("none"), text: line(200) }).catch({ type: "none", text: "" }),
+  cta: z.object({ kind: z.enum(["comment_keyword", "follow", "save", "share", "dm", "link", "question", "none"]).catch("none"), text: line(200) }).catch({ kind: "none", text: "" }),
   format: line(300),
   why_it_worked: lines(4, 300),
   reuse: lines(4, 300),
@@ -72,7 +72,7 @@ const norm = (s: string) => s.toLowerCase().replace(/[^\p{L}\p{N} ]/gu, "").repl
 export function structureProfile(bs: Breakdown[]): StructureProfile {
   const formulas = count(bs.map((b) => b.hookFormula || b.hook.formula).filter(Boolean) as string[]).map(({ k, n }) => ({ name: k, count: n }));
   const structure = count(bs.map((b) => b.structure.map((s) => s.part).filter((p, i, a) => a[i - 1] !== p).join(" > ")).filter(Boolean)).map(({ k, n }) => ({ sequence: k, count: n }));
-  const ctas = count(bs.map((b) => b.cta.type)).map(({ k, n }) => ({ type: k, count: n }));
+  const ctas = count(bs.map((b) => b.cta.kind)).map(({ k, n }) => ({ type: k, count: n }));
   const seen = new Map<string, string>();
   const devices = bs.flatMap((b) => [...new Set(b.retention.map((r) => { const key = norm(r).split(" ").slice(0, 4).join(" "); if (!seen.has(key)) seen.set(key, r); return key; }))]);
   const retention = count(devices).slice(0, 6).map(({ k, n }) => ({ device: seen.get(k) ?? k, count: n }));

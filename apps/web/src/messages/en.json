@@ -1883,7 +1883,8 @@
         "no_result": "No analysis this time. Try again.",
         "not_set_up": "Run migration 0022 in Supabase to save these (the analysis is shown but not kept).",
         "save_failed": "Analysed, but it could not be saved.",
-        "batch": "One of them failed; the others are saved. Try again."
+        "batch": "One of them failed; the others are saved. Try again.",
+        "timeout": "It took too long. Try again."
       },
       "parts": {
         "hook": "Hook",

@@ -1883,7 +1883,8 @@
         "no_result": "Pas d'analyse cette fois. Réessayez.",
         "not_set_up": "Exécutez la migration 0022 dans Supabase pour les enregistrer (l'analyse s'affiche mais n'est pas gardée).",
         "save_failed": "Analysée, mais impossible de l'enregistrer.",
-        "batch": "L'une d'elles a échoué ; les autres sont enregistrées. Réessayez."
+        "batch": "L'une d'elles a échoué ; les autres sont enregistrées. Réessayez.",
+        "timeout": "C'était trop long. Réessayez."
       },
       "parts": {
         "hook": "Accroche",
