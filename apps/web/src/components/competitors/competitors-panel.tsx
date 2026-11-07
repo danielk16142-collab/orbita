@@ -57,7 +57,10 @@ export async function CompetitorsView({ locale, clientId, competitors, latest, d
               <Links c={c} />
               <p className="stat-vs">{c.last_researched_at ? t("analyzedOn", { date: date.format(new Date(c.last_researched_at)) }) : t("notAnalyzed")}</p>
               {a && <p className="comp-gist">{a.summary}</p>}
-              <Link className="btn small" href={`${detailBase}/${c.id}`}>{a ? t("openAnalysis") : t("openProfile")}</Link>
+              <div className="btn-row">
+                <Link className="btn small" href={`${detailBase}/${c.id}`}>{a ? t("openAnalysis") : t("openProfile")}</Link>
+                {staff && <RemoveCompetitorButton clientId={clientId} id={c.id} name={competitorName(c)} />}
+              </div>
             </article>
           );
         })}
@@ -129,7 +132,10 @@ export async function CompetitorDetailView({ locale, clientId, staff, competitor
       <section className="card">
         <div className="section-head">
           <div><Links c={c} />{c.notes && <p className="stat-vs">{c.notes}</p>}</div>
-          <AnalyzeButton clientId={clientId} competitorId={c.id} locale={locale} again={!!a} />
+          <div className="btn-row">
+            <AnalyzeButton clientId={clientId} competitorId={c.id} locale={locale} again={!!a} />
+            {staff && <RemoveCompetitorButton clientId={clientId} id={c.id} name={competitorName(c)} listHref={listHref} />}
+          </div>
         </div>
         <p className="stat-vs">{analysis ? t("analyzedOn", { date: date.format(new Date(analysis.createdAt)) }) : t("notAnalyzedLong")}</p>
       </section>
@@ -196,7 +202,6 @@ export async function CompetitorDetailView({ locale, clientId, staff, competitor
       <details className="card">
         <summary><strong>{t("editProfile")}</strong></summary>
         <CompetitorForm clientId={clientId} detailBase={listHref} initial={{ id: c.id, name: c.name ?? "", website: c.website ?? "", notes: c.notes ?? "", links: linkMap }} />
-        {staff && <div style={{ marginTop: "1rem" }}><RemoveCompetitorButton clientId={clientId} id={c.id} listHref={listHref} /></div>}
       </details>
     </div>
   );

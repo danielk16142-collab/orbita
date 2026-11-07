@@ -71,11 +71,27 @@ export function AnalyzeButton({ clientId, competitorId, locale, again }: { clien
   );
 }
 
-export function RemoveCompetitorButton({ clientId, id, listHref }: { clientId?: string; id: string; listHref: string }) {
+/** Delete a competitor (staff), after a confirmation that says what goes with it. On the list it refreshes; on its page it goes back to the list. */
+export function RemoveCompetitorButton({ clientId, id, name, listHref }: { clientId?: string; id: string; name: string; listHref?: string }) {
   const t = useTranslations("competitors");
   const router = useRouter();
   const [pending, start] = useTransition();
-  return <button type="button" className="btn ghost small" disabled={pending} onClick={() => { if (confirm(t("removeConfirm"))) start(async () => { const r = await removeCompetitorAction({ clientId, id }); if (r.ok) router.push(listHref); }); }}>{t("remove")}</button>;
+  const [error, setError] = useState<string | null>(null);
+  const remove = () => {
+    if (!window.confirm(t("deleteConfirm", { name }))) return;
+    setError(null);
+    start(async () => {
+      const r = await removeCompetitorAction({ clientId, id });
+      if (r.ok) { if (listHref) router.push(listHref); else router.refresh(); }
+      else setError(t.has(`errors.${r.error}`) ? t(`errors.${r.error}`) : t("errors.generic"));
+    });
+  };
+  return (
+    <span className="remove-competitor">
+      <button type="button" className="btn ghost small" disabled={pending} onClick={remove} aria-label={t("deleteNamed", { name })}>{pending ? t("deleting") : t("delete")}</button>
+      {error && <span className="error" role="alert">{error}</span>}
+    </span>
+  );
 }
 
 type Idea = { title: string; format: string; network: string; why: string; source_post?: { hook: string; multiple: number | null; metric: string; value: number; url: string | null } };

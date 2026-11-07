@@ -1112,9 +1112,10 @@
       "refused": "L'agent ne peut pas aider avec cette demande.",
       "search_failed": "Les recherches web ont échoué cette fois. Réessayez dans un instant.",
       "model_error": "L'agent a eu un problème. Veuillez réessayer.",
-      "not_found": "Introuvable.",
+      "not_found": "Ce concurrent n'existe plus.",
       "ideas": "Certaines idées n'ont pas pu être ajoutées. Veuillez réessayer.",
-      "not_set_up": "Les concurrents nécessitent une mise à jour de la base de données qui n'a pas encore été appliquée (migration 0012_competitors.sql). Demandez à votre administrateur de l'exécuter dans Supabase, puis réessayez."
+      "not_set_up": "Les concurrents nécessitent une mise à jour de la base de données qui n'a pas encore été appliquée (migration 0012_competitors.sql). Demandez à votre administrateur de l'exécuter dans Supabase, puis réessayez.",
+      "delete_failed": "Impossible de supprimer ce concurrent. Réessayez."
     },
     "builtOn": "Basée sur leur publication",
     "timesUsual": "{n}× leurs {metric} habituelles",
@@ -1125,7 +1126,11 @@
     },
     "ideasFromWins": "Ces idées reposent sur {count, plural, one {leur meilleure publication enregistrée} other {leurs # meilleures publications enregistrées}} : ce qui marche déjà pour eux, à notre façon.",
     "ideasNoWins": "Aucune publication n'est enregistrée pour ce concurrent : ces idées viennent de l'analyse générale. Récupérez ou ajoutez leurs publications (Ce qui marche, plus bas), puis relancez l'analyse pour baser les idées sur ce qui marche pour eux.",
-    "ideasRerun": "Cette analyse date d'avant les idées basées sur leurs meilleures publications. Relancez-la pour des idées basées sur ce qui marche déjà pour eux."
+    "ideasRerun": "Cette analyse date d'avant les idées basées sur leurs meilleures publications. Relancez-la pour des idées basées sur ce qui marche déjà pour eux.",
+    "delete": "Supprimer",
+    "deleting": "Suppression…",
+    "deleteNamed": "Supprimer {name}",
+    "deleteConfirm": "Supprimer {name} ? Ses analyses et ses publications enregistrées (avec transcriptions et explications) sont supprimées aussi. Les notes de recherche que vous en avez tirées restent."
   },
   "reset": {
     "forgotTitle": "Réinitialiser le mot de passe",

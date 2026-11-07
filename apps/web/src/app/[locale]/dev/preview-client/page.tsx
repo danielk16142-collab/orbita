@@ -84,7 +84,7 @@ export default async function Preview({ params, searchParams }: { params: Promis
           </>}
         </>)}
         {tab === "research" && <ResearchView locale={locale} clientId={client.id} notes={notes} />}
-        {tab === "competitors" && <CompetitorsView locale={locale} clientId={client.id} competitors={[rival, other]} latest={new Map([["e1", rivalAnalysis]])} detailBase="?tab=competitor&id=" />}
+        {tab === "competitors" && <CompetitorsView locale={locale} clientId={client.id} staff competitors={[rival, other]} latest={new Map([["e1", rivalAnalysis]])} detailBase="?tab=competitor&id=" />}
         {tab === "competitor" && <CompetitorDetailView locale={locale} clientId={client.id} staff competitor={rival} analysis={{ id: "a1", createdAt: day(2), data: rivalAnalysis }} listHref="?tab=competitors" chatHref="#" calendarHref="#" />}
         {tab === "insights" && <InsightsView locale={locale} data={data} audit={audit} strategy={strategy} pendingSuggestions={1} links={{ connect: "#", audit: "#", recommend: "#", strategy: "#", review: "#" }} now={now} />}
         {tab === "branding" && <BrandingPanel locale={locale} client={client} canEdit isAdmin logos={{ light: "/brand/orbita-logo.svg", dark: "/brand/orbita-logo-light.svg" }} references={[{ id: "f1", kind: "style", caption: "Warm morning light, wood counter", url: "/brand/orbita-logo.png", width: null, height: null }, { id: "f2", kind: "avoid", caption: "No stock photos with fake smiles", url: "/brand/orbita-mark.svg", width: null, height: null }]} />}

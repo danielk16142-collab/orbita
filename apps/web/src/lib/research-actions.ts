@@ -94,8 +94,11 @@ export async function removeCompetitorAction(input: unknown): Promise<ResearchAc
   if (!p.success) return { ok: false, error: "bad_request" };
   const g = await gate(p.data.clientId);
   if ("error" in g) return { ok: false, error: g.error };
-  const { data } = await g.actor.sb.from("competitors").delete().eq("id", p.data.id).eq("client_id", g.actor.clientId).select("id");
-  if (!data?.length) return { ok: false, error: "forbidden" };
+  if (g.actor.profile.role === "client") return { ok: false, error: "forbidden" }; // staff only (the database enforces it too)
+  // Its analyses and recorded posts (with transcripts and breakdowns) go with it (on delete cascade). Saved research notes stay.
+  const { data, error } = await g.actor.sb.from("competitors").delete().eq("id", p.data.id).eq("client_id", g.actor.clientId).select("id");
+  if (error) { console.error(`competitor delete failed: code=${error.code ?? "?"} ${String(error.message ?? "").slice(0, 200)}`); return { ok: false, error: "delete_failed" }; }
+  if (!data?.length) return { ok: false, error: "not_found" };
   await audit({ agencyId: g.actor.profile.agency_id, actor: g.actor.userId, action: "competitor.removed", entity: "competitor", entityId: p.data.id });
   return { ok: true };
 }
