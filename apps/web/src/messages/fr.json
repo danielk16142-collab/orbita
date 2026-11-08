@@ -2124,6 +2124,9 @@
       "save_failed": "Impossible d'enregistrer l'audit. Réessayez.",
       "timeout": "C'était trop long. Réessayez.",
       "refused": "L'agent n'a pas pu faire cet audit."
-    }
+    },
+    "stepSocial": "Lecture des dernières publications Instagram et TikTok",
+    "socialRead": "{network} @{handle} : {count, plural, one {# publication lue} other {# publications lues}}",
+    "socialFailed": "Lecture impossible : {list}"
   }
 }
