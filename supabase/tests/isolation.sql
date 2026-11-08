@@ -393,6 +393,27 @@ select pg_temp.expect('client cannot delete analyses', (select count(*) from com
 select pg_temp.reset();
 select pg_temp.as_user('a0000000-0000-0000-0000-000000000004'); -- other client
 select pg_temp.expect('other client sees no competitors or analyses', (select count(*) from competitors) + (select count(*) from competitor_analyses) + (select count(*) from competitor_posts), 0);
+-- channel stats (TikTok via Apify, LinkedIn export): the client's own team reads and adds; the numbers are never edited
+select pg_temp.reset();
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000005'); -- client A1 user
+insert into channel_stats(client_id,network,source,summary) values ('c1000000-0000-0000-0000-000000000001','linkedin','linkedin_export','{"impressions":100}');
+select pg_temp.expect('client adds channel stats', (select count(*) from channel_stats), 1);
+update channel_stats set audit = '{"summary":"ok"}', audited_at = now();
+select pg_temp.expect('client saves an audit on its stats', (select count(*) from channel_stats where audit is not null), 1);
+select pg_temp.expect_error('channel stats numbers cannot be edited', $$update channel_stats set summary = '{"impressions":999}'$$);
+select pg_temp.expect_error('channel stats cannot point at another client', $$insert into channel_stats(client_id,network,source,summary) values ('c2000000-0000-0000-0000-000000000002','tiktok','apify','{}')$$);
+select pg_temp.expect_error('channel stats network is checked', $$insert into channel_stats(client_id,network,source,summary) values ('c1000000-0000-0000-0000-000000000001','myspace','apify','{}')$$);
+delete from channel_stats;
+select pg_temp.expect('client cannot delete channel stats', (select count(*) from channel_stats), 1);
+select pg_temp.reset();
+select pg_temp.as_user('a0000000-0000-0000-0000-000000000004'); -- other client
+select pg_temp.expect('other client sees no channel stats', (select count(*) from channel_stats), 0);
+update channel_stats set audit = '{"x":1}';
+select pg_temp.reset();
+select pg_temp.as_user('b0000000-0000-0000-0000-000000000001'); -- other agency
+select pg_temp.expect('other agency sees no channel stats', (select count(*) from channel_stats), 0);
+select pg_temp.reset();
+select pg_temp.expect('nobody else changed the audit', (select count(*) from channel_stats where audit->>'summary' = 'ok'), 1);
 select pg_temp.reset();
 select pg_temp.as_user('b0000000-0000-0000-0000-000000000001'); -- other agency
 select pg_temp.expect('other agency sees no competitors or analyses', (select count(*) from competitors) + (select count(*) from competitor_analyses) + (select count(*) from competitor_posts), 0);

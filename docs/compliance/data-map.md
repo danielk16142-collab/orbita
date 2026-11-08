@@ -33,3 +33,9 @@ Private messages, passwords for social networks, payment card data (use a paymen
 
 ## Cross-border
 Hosting region [[DATA_REGION]]; AI provider and Cloudflare process outside Quebec/EU. Complete a **transfer assessment** (Law 25 s.17) and keep SCCs on file (GDPR).
+
+
+## TikTok and LinkedIn numbers (Home)
+- **TikTok:** with `APIFY_TOKEN` set, staff can fetch the client's own TikTok account (the handle saved in Profile > Links) through Apify (`clockworks/tiktok-scraper`, up to 30 latest public videos). Only the public account name goes to Apify; public counts and captions come back. A summary (followers, last 30 days, best and weakest videos) is stored in `channel_stats` (migration 0023).
+- **LinkedIn:** people upload the analytics file they export from LinkedIn (.xlsx, 5 MB max). It is read on the server and only a summary is stored in `channel_stats` (impressions, reach, engagement, followers, top post links and dates, the top audience categories); the file itself is not kept.
+- **Audit:** the agent's audit of a snapshot (no personal data beyond the above) is stored on the same row. Rows are deleted with the client.
