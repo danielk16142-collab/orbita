@@ -90,8 +90,10 @@ export async function POST(req: Request) {
         await audit({ agencyId: actor.profile.agency_id, actor: actor.userId, action: "agent.chat", entity: "client", entityId: actor.clientId, meta: { steps: result.steps, tokens: result.usage.input + result.usage.output, stop: result.stopReason } });
         send({ type: "done", learnDue: (userMsgs ?? 0) > 0 && (userMsgs ?? 0) % LEARN_EVERY === 0 });
       } catch (e) {
-        console.error("agent chat failed:", describeModelError(e), `model=${ai.chatModel}`);
-        send({ type: "error", code: "model_error" }); // never leak provider details to the browser
+        const reason = describeModelError(e);
+        console.error("agent chat failed:", reason, `model=${ai.chatModel}`);
+        // Staff see the provider's reason (keys masked) so a failure can be fixed; client users only see that it failed.
+        send({ type: "error", code: "model_error", ...(actor.profile.role !== "client" ? { detail: reason.replace(/request=\S+/, "").slice(0, 240) } : {}) });
       } finally {
         open = false;
         try { controller.close(); } catch { /* already closed */ }
