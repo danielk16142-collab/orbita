@@ -1497,7 +1497,10 @@
     "addToPillar": "Añadir un tema a {name}",
     "addToPillarPlaceholder": "Nuevo tema para este pilar",
     "buildHint": "¿Te gustan tus pilares y temas? El agente crea la estrategia a partir de ellos: exactamente estos pilares y porcentajes, series y un banco de temas que cubren los temas de cada pilar, y nunca un tema a evitar.",
-    "rebuildHint": "¿Cambiaste tus pilares o temas? Rehaz la estrategia con ellos. Los cambios sin guardar se guardan primero."
+    "rebuildHint": "¿Cambiaste tus pilares o temas? Rehaz la estrategia con ellos. Los cambios sin guardar se guardan primero.",
+    "updatePillar": "Actualizar",
+    "updatePillarHint": "Temas nuevos para este pilar según su nombre y su ángulo, guardados al instante",
+    "pillarUpdated": "{name} actualizado con {count, plural, one {# tema} other {# temas}}. Guardado."
   },
   "strategyPage": {
     "eyebrow": "Plan",

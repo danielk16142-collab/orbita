@@ -23,7 +23,7 @@ export function FocusEditor({ clientId, locale, initial, week, hasStrategy }: { 
   const [suggested, setSuggested] = useState<string[]>([]);
   const [dirty, setDirty] = useState(false);
   const [note, setNote] = useState<{ ok: boolean; text: string } | null>(null);
-  const [busy, setBusy] = useState<"topics" | "pillars" | null>(null);
+  const [busy, setBusy] = useState<"topics" | "pillars" | `pillar-${number}` | null>(null);
   const [saving, start] = useTransition();
   const { topics, pillars } = focus;
   /** Every change goes through syncTopics, so the topics always follow the pillars. */
@@ -62,15 +62,42 @@ export function FocusEditor({ clientId, locale, initial, week, hasStrategy }: { 
   }
 
   /** Save the pillars and topics; true when saved (or nothing to save). */
-  async function persist(): Promise<boolean> {
-    if (!dirty) return true;
-    const cleaned = pillars.filter((p) => p.name.trim()).map((p) => ({ ...p, name: p.name.trim(), angle: p.angle.trim(), share: Math.max(0, Math.min(100, Math.round(p.share || 0))) }));
-    const r = await saveFocusAction({ clientId, focus: { topics, pillars: cleaned } });
+  async function persist(f: BrandFocus = focus, force = false): Promise<boolean> {
+    if (!dirty && !force) return true;
+    const cleaned = f.pillars.filter((p) => p.name.trim()).map((p) => ({ ...p, name: p.name.trim(), angle: p.angle.trim(), share: Math.max(0, Math.min(100, Math.round(p.share || 0))) }));
+    const r = await saveFocusAction({ clientId, focus: { topics: f.topics, pillars: cleaned } });
     if (r.ok) { setDirty(false); setNote({ ok: true, text: t("saved") }); router.refresh(); return true; }
     setNote({ ok: false, text: t.has(`errors.${r.error}`) ? t(`errors.${r.error}`) : t("errors.generic") });
     return false;
   }
   const save = () => start(async () => { await persist(); });
+
+  /**
+   * "Update" on a pillar: the agent picks new topics from the pillar's name and angle, they replace the pillar's topics,
+   * the old ones no other pillar uses leave the list (avoided topics stay), and everything is saved.
+   */
+  async function refreshPillar(i: number) {
+    const p = pillars[i];
+    if (!p?.name.trim()) return;
+    setBusy(`pillar-${i}`); setNote(null);
+    try {
+      const others = pillars.flatMap((q, j) => (j === i ? [] : q.topics));
+      const avoid = topics.filter((x) => x.level === "avoid").map((x) => x.name);
+      const res = await fetch("/api/brand/suggest", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, kind: "pillar", locale, pillar: { name: p.name.trim(), angle: p.angle.trim() }, others, avoid }) });
+      const data = (await res.json().catch(() => ({}))) as { topics?: BrandTopic[]; error?: string };
+      if (!res.ok) { setNote({ ok: false, text: t.has(`errors.${data.error}`) ? t(`errors.${data.error}`) : t("errors.generic") }); return; }
+      const fresh = (data.topics ?? []).map((x) => x.name.trim().slice(0, 60)).filter((n, k, a) => n && !avoid.some((v) => same(v, n)) && a.findIndex((m) => same(m, n)) === k).slice(0, 12);
+      if (!fresh.length) { setNote({ ok: false, text: t("errors.no_result") }); return; }
+      const dropped = p.topics.filter((n) => !fresh.some((m) => same(m, n)) && !others.some((m) => same(m, n)));
+      const next = syncTopics({
+        topics: focus.topics.filter((x) => x.level === "avoid" || !dropped.some((n) => same(n, x.name))),
+        pillars: focus.pillars.map((q, j) => (j === i ? { ...q, topics: fresh } : q)),
+      });
+      setFocus(next); setDirty(true);
+      if (await persist(next, true)) setNote({ ok: true, text: t("pillarUpdated", { name: p.name.trim(), count: fresh.length }) });
+    } catch { setNote({ ok: false, text: t("errors.generic") }); }
+    finally { setBusy(null); }
+  }
   const named = pillars.some((p) => p.name.trim());
 
   return (
@@ -102,6 +129,7 @@ export function FocusEditor({ clientId, locale, initial, week, hasStrategy }: { 
               <label className="focus-field share">{t("share")}
                 <span className="focus-share"><input type="range" min={0} max={100} step={5} value={p.share} onChange={(e) => setPillar(i, { share: Number(e.target.value) })} aria-label={t("share")} /><strong>{p.share}%</strong></span>
               </label>
+              <button type="button" className="btn small ghost focus-refresh" onClick={() => refreshPillar(i)} disabled={busy !== null || saving || !p.name.trim()} title={t("updatePillarHint")}>{busy === `pillar-${i}` ? t("thinking") : t("updatePillar")}</button>
               <button type="button" className="focus-remove" onClick={() => update((f) => ({ ...f, pillars: f.pillars.filter((_, j) => j !== i) }))} aria-label={t("remove", { name: p.name || t("pillarName") })}>✕</button>
             </div>
             <label className="focus-field">{t("angle")}<input value={p.angle} maxLength={300} placeholder={t("anglePlaceholder")} onChange={(e) => setPillar(i, { angle: e.target.value })} /></label>
