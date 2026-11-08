@@ -22,7 +22,7 @@ export default async function Dashboard({ params, searchParams }: { params: Prom
         <p className="eyebrow"><Link href={`/${locale}/dashboard`}>{t("title")}</Link></p>
         <h1>{client.name}</h1>
         <ClientDashboard sb={sb} clientId={client.id} locale={locale} connectHref={`/${locale}/clients/${client.id}?tab=connections`}
-          links={{ postsBase: `/${locale}/posts`, newPostHref: `/${locale}/posts/new?client=${client.id}`, agentHref: `/${locale}/clients/${client.id}?tab=agent`, actorClientId: client.id }} />
+          links={{ postsBase: `/${locale}/posts`, newPostHref: `/${locale}/posts/new?client=${client.id}`, agentHref: `/${locale}/clients/${client.id}?tab=agent`, actorClientId: client.id, profileHref: `/${locale}/clients/${client.id}?tab=profile` }} />
       </>
     );
   }

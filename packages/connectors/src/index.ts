@@ -31,3 +31,4 @@ export function createConnector(network: ConnectorNetwork, env: Env = process.en
     : tiktokConnector({ clientId: env.TIKTOK_CLIENT_KEY!, clientSecret: env.TIKTOK_CLIENT_SECRET!, fetchImpl });
 }
 export * from "./sync";
+export * from "./linkedin-export";

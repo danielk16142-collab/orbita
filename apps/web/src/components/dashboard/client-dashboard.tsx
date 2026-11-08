@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChannelCards } from "./channel-cards";
 import { getTranslations } from "next-intl/server";
 import type { getSession } from "@/lib/session";
 import { dashboardFor, loadAnalyticsData, type AnalyticsData } from "@/lib/analytics/load";
@@ -14,7 +15,7 @@ type Sb = NonNullable<Awaited<ReturnType<typeof getSession>>>["sb"];
 const NETWORK_COLOR: Record<string, string> = { instagram: "var(--series-1)", tiktok: "var(--series-2)", linkedin: "var(--series-3)", youtube: "var(--series-4)", facebook: "var(--series-5)" };
 const NETWORK_LABEL: Record<string, string> = { instagram: "Instagram", tiktok: "TikTok", linkedin: "LinkedIn", youtube: "YouTube", facebook: "Facebook" };
 
-export type DashboardLinks = { postsBase: string; newPostHref: string; agentHref: string; /** set for staff (the client being viewed), unset in the portal */ actorClientId?: string };
+export type DashboardLinks = { postsBase: string; newPostHref: string; agentHref: string; /** set for staff (the client being viewed), unset in the portal */ actorClientId?: string; /** where the TikTok link is added */ profileHref?: string };
 
 /** "Your next post", then the headline numbers, the follower trend, per-network summary and the best recent posts for ONE client. */
 export async function ClientDashboard({ sb, clientId, locale, connectHref, links }: { sb: Sb; clientId: string; locale: string; connectHref: string; links: DashboardLinks }) {
@@ -27,6 +28,7 @@ export async function ClientDashboard({ sb, clientId, locale, connectHref, links
       <NextPostCard cadence={cadence} locale={locale} clientId={links.actorClientId} postsBase={links.postsBase} newPostHref={links.newPostHref} agentHref={links.agentHref}
         network={data.accounts[0]?.network ?? "instagram"} staff={!!links.actorClientId} />
       <DashboardView data={data} locale={locale} connectHref={connectHref} />
+      <ChannelCards sb={sb} clientId={clientId} locale={locale} staff={!!links.actorClientId} actorClientId={links.actorClientId} profileHref={links.profileHref ?? connectHref} />
     </>
   );
 }

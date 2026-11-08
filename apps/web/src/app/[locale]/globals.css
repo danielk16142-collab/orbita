@@ -889,3 +889,21 @@ ol.why-structure { margin: 0; padding-left: 1.2rem; display: grid; gap: .25rem; 
 .why-body > .btn { justify-self: start; }
 .structure-profile ul.plain li { display: block; }
 .remove-competitor { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+/* TikTok and LinkedIn on Home: numbers, upload, audit */
+.channel-cards { display: grid; gap: 1.25rem; margin-top: 1.25rem; }
+.channel-card h2 { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.channel-card h3, .channel-card h4 { margin: .75rem 0 .35rem; }
+.channel-card .mini-stats { grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr)); }
+.channel-card .mini-stats small { font-size: .7em; color: var(--dim); }
+ol.channel-posts { margin: 0; padding-left: 1.2rem; display: grid; gap: .25rem; overflow-wrap: anywhere; }
+.channel-action { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.channel-upload { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .6rem; margin-top: .75rem; }
+.channel-upload label { flex: 1 1 16rem; margin: 0; }
+.channel-howto { margin-top: .75rem; }
+.channel-howto ol { margin: .4rem 0 0; padding-left: 1.2rem; }
+.channel-audit { border-top: 2px solid var(--line); margin-top: 1rem; padding-top: .75rem; display: grid; gap: .5rem; }
+.channel-verdict { font-weight: 700; margin: 0; }
+.channel-audit-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: 1rem; }
+.channel-audit-cols ul, .channel-audit-body > ul { margin: 0; padding-left: 1.2rem; }
+ol.channel-recs { margin: 0; padding-left: 1.2rem; display: grid; gap: .6rem; }
+.channel-recs li, .channel-audit-body li { overflow-wrap: anywhere; }

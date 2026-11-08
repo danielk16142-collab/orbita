@@ -31,4 +31,5 @@ export * from "./script-caption";
 export * from "./remake";
 export * from "./li-profile";
 export * from "./structure";
+export * from "./channels";
 export * from "./strategy-chat";
