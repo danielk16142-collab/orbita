@@ -1967,7 +1967,7 @@
   },
   "liProfile": {
     "title": "Puntuación del perfil de LinkedIn",
-    "intro": "Pega tu perfil de LinkedIn y obtén una puntuación sobre 100 en 12 puntos, y luego textos reescritos en el orden que más puntos recupera. Nada se publica en LinkedIn: tú pegas cada parte.",
+    "intro": "Pega el enlace de tu perfil y obtén una nota sobre 100 en 12 puntos, y luego reescrituras en el orden que más puntos recupera. Orbita lee el perfil público por ti; no se publica nada en LinkedIn.",
     "start": "Puntuar un perfil de LinkedIn",
     "again": "Puntuarlo de nuevo",
     "score": "Puntuar mi perfil",
@@ -2036,8 +2036,24 @@
     "note": "El texto de tu perfil se queda en este dispositivo para la próxima vez; Orbita no lo guarda. Donde falta un número, el texto dice «your number»: pon el real.",
     "errors": {
       "empty": "Pega al menos el titular, el Acerca de o el cargo actual.",
-      "no_result": "Esta vez no hubo puntuación. Inténtalo de nuevo."
-    }
+      "no_result": "Esta vez no hubo puntuación. Inténtalo de nuevo.",
+      "not_a_profile": "Ese no es un enlace de perfil personal. Usa linkedin.com/in/tunombre.",
+      "read_not_configured": "La lectura de perfiles no está configurada (falta APIFY_TOKEN). Complétalo a mano abajo.",
+      "read_no_credit": "La cuenta de Apify no tiene crédito, así que no se pudo leer el perfil. Complétalo a mano abajo.",
+      "read_timeout": "LinkedIn tardó demasiado en responder. Inténtalo de nuevo o complétalo a mano abajo.",
+      "read_failed": "No se pudo leer el perfil (puede ser privado). Complétalo a mano abajo.",
+      "read_empty": "El perfil llegó vacío. Complétalo a mano abajo."
+    },
+    "linkLabel": "El enlace de tu perfil de LinkedIn",
+    "readAndScore": "Leer y evaluar",
+    "readAgain": "Leer y evaluar de nuevo",
+    "reading": "Leyendo el perfil… (unos 30 segundos)",
+    "readHint": "Orbita lee el perfil público y tus últimas publicaciones, lo completa todo y lo evalúa. El texto del banner no le es visible.",
+    "linkHint": "Usa un enlace de perfil personal, como linkedin.com/in/tunombre. Las páginas de empresa no se pueden evaluar.",
+    "readDone": "Perfil de {name} leído.",
+    "checkGuesses": "LinkedIn no muestra esto, así que son estimaciones: {list}. Revísalas y evalúa de nuevo si alguna está mal.",
+    "openForm": "Revisar las respuestas",
+    "byHand": "Completarlo a mano"
   },
   "channels": {
     "notSetUp": "Ejecuta la migración 0023 en Supabase para guardar aquí los números de TikTok y LinkedIn.",
