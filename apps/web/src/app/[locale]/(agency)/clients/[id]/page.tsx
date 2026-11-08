@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FirstAuditCard } from "@/components/agent/first-audit";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 import { getTranslations } from "next-intl/server";
@@ -22,7 +23,7 @@ type Tab = (typeof TABS)[number];
 
 export default async function ClientDetail({ params, searchParams }: {
   params: Promise<{ locale: string; id: string }>;
-  searchParams: Promise<{ tab?: string; view?: string; ask?: string; format?: string; network?: string; idea?: string; thread?: string; month?: string; layout?: string; saved?: string; error?: string; invited?: string; connected?: string; connect?: string; step?: string }>;
+  searchParams: Promise<{ tab?: string; view?: string; ask?: string; format?: string; network?: string; idea?: string; thread?: string; month?: string; layout?: string; saved?: string; error?: string; invited?: string; connected?: string; connect?: string; step?: string; firstAudit?: string }>;
 }) {
   const { locale, id } = await params;
   const q = await searchParams;
@@ -41,6 +42,13 @@ export default async function ClientDetail({ params, searchParams }: {
 
   const visualsState = async () => { const m = await readModule(s.sb, id); return { enabled: m.enabled, monthlyCap: m.monthlyCap, brandKitId: m.brandKitId }; };
   const sign = async (path: string | null) => path ? (await s.sb.storage.from("client-logos").createSignedUrl(path, 3600)).data?.signedUrl ?? null : null;
+  // The first audit: shown until one exists (it starts by itself right after the business was added with its links).
+  const [{ data: lastAudit }, { count: sourceCount }] = await Promise.all([
+    s.sb.from("audits").select("report").eq("client_id", id).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+    s.sb.from("client_sources").select("id", { count: "exact", head: true }).eq("client_id", id),
+  ]);
+  const auditReport = lastAudit?.report as { summary?: string; missing_info?: string[] } | null;
+  const showFirstAudit = q.firstAudit === "1" || (!lastAudit && (sourceCount ?? 0) > 0);
   const [{ data: people }, { data: pending }] = tab === "users" ? await Promise.all([
     s.sb.from("profiles").select("user_id, full_name, role").eq("client_id", id),
     s.sb.from("invitations").select("id, email, role, expires_at").eq("client_id", id).is("used_at", null).gt("expires_at", new Date().toISOString()),
@@ -56,6 +64,8 @@ export default async function ClientDetail({ params, searchParams }: {
           <Link className="btn" href={`/${locale}/posts/new?client=${id}`}>{tp("createPost")}</Link>
         </div>
       </div>
+      {showFirstAudit && <FirstAuditCard clientId={id} locale={locale} autoStart={q.firstAudit === "1"} agentHref={href("agent", { view: "chat" })} profileHref={href("profile")}
+        done={auditReport?.summary ? { summary: auditReport.summary, questions: auditReport.missing_info ?? [] } : null} />}
       <Tabs label={t("title")} current={tab} items={TABS.map((x) => ({ key: x, label: t(`tabs.${x}`), href: href(x) }))} />
 
       {tab === "profile" && (

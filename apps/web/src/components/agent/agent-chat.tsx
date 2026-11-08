@@ -10,7 +10,8 @@ type Ev = { type: string; text?: string; conversationId?: string; code?: string;
 /** A normal chat. Streams the agent's reply and refreshes the page when it adds suggestions, sources or an audit. */
 const GOALS = ["sales", "awareness", "followers", "offer", "trust", "educate", "consistency"] as const;
 
-export function AgentChat({ locale, clientId, initialMessages, initialConversationId, onboarding = false, initialInput = "", closePrevious = null, historyHref, hasEarlier = false }: {
+export function AgentChat({ locale, clientId, initialMessages, initialConversationId, onboarding = false, initialInput = "", closePrevious = null, historyHref, hasEarlier = false, firstAudit = null }: {
+  /** The first audit (website read when the business was added): the welcome starts from it and asks its questions. */ firstAudit?: { summary: string; questions: string[] } | null;
   locale: string; clientId?: string; initialMessages: Msg[]; initialConversationId: string | null; onboarding?: boolean;
   /** An earlier thread to close in the background (a new day started): last learning pass and its handover. */
   closePrevious?: string | null;
@@ -116,9 +117,16 @@ export function AgentChat({ locale, clientId, initialMessages, initialConversati
         {welcome && (
           <div className="agent-msg assistant">
             <span className="eyebrow">{t("assistant")}</span>
-            <p>{t("welcome.greeting")}</p>
-            <ol><li>{t("welcome.q1")}</li><li>{t("welcome.q2")}</li></ol>
-            <p className="stat-vs">{t("welcome.hint")}</p>
+            {firstAudit ? (<>
+              <p>{t("welcome.fromAudit")}</p>
+              <p>{firstAudit.summary}</p>
+              {firstAudit.questions.length > 0 && <><p>{t("welcome.auditQuestions")}</p><ol>{firstAudit.questions.slice(0, 4).map((q, i) => <li key={i}>{q}</li>)}</ol></>}
+              <p className="stat-vs">{t("welcome.auditHint")}</p>
+            </>) : (<>
+              <p>{t("welcome.greeting")}</p>
+              <ol><li>{t("welcome.q1")}</li><li>{t("welcome.q2")}</li></ol>
+              <p className="stat-vs">{t("welcome.hint")}</p>
+            </>)}
             <div className="agent-goals" role="group" aria-label={t("welcome.goalsLabel")}>
               {GOALS.map((g) => <button key={g} type="button" className="btn ghost small" aria-pressed={goals.includes(g)} onClick={() => toggleGoal(g)} disabled={busy}>{t(`welcome.goals.${g}`)}</button>)}
             </div>

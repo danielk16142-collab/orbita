@@ -41,6 +41,18 @@ export default async function ClientsPage({ params, searchParams }: { params: Pr
         <label htmlFor="markets">{t("markets")}</label>
         <input id="markets" name="markets" maxLength={300} />
         <small>{t("marketsHint")}</small>
+        <fieldset className="new-client-links">
+          <legend className="eyebrow">{t("linksTitle")}</legend>
+          <p className="stat-vs">{t("linksHint")}</p>
+          <label htmlFor="website">{t("website")}</label>
+          <input id="website" name="website" maxLength={300} placeholder="https://" inputMode="url" />
+          {(["instagram", "tiktok", "linkedin", "facebook", "youtube"] as const).map((k) => (
+            <div key={k}>
+              <label htmlFor={`src-${k}`}>{t(`social.${k}`)}</label>
+              <input id={`src-${k}`} name={k} maxLength={300} placeholder={t("socialPlaceholder")} />
+            </div>
+          ))}
+        </fieldset>
         <div><button className="btn" style={{ marginTop: "1.25rem" }}>{tc("create")}</button></div>
       </form>
     </>
