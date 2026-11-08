@@ -1497,7 +1497,10 @@
     "addToPillar": "Add a topic to {name}",
     "addToPillarPlaceholder": "New topic for this pillar",
     "buildHint": "Happy with your pillars and topics? The agent builds the strategy around them: these pillars and shares exactly, series and a topic bank that cover each pillar's topics, and never an avoided topic.",
-    "rebuildHint": "Changed your pillars or topics? Rebuild the strategy around them. Unsaved changes are saved first."
+    "rebuildHint": "Changed your pillars or topics? Rebuild the strategy around them. Unsaved changes are saved first.",
+    "updatePillar": "Update",
+    "updatePillarHint": "New topics for this pillar from its name and angle, saved right away",
+    "pillarUpdated": "{name} updated with {count, plural, one {# new topic} other {# new topics}}. Saved."
   },
   "strategyPage": {
     "eyebrow": "Plan",

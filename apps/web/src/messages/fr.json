@@ -1497,7 +1497,10 @@
     "addToPillar": "Ajouter un sujet à {name}",
     "addToPillarPlaceholder": "Nouveau sujet pour ce pilier",
     "buildHint": "Vos piliers et sujets vous conviennent ? L'agent construit la stratégie autour d'eux : exactement ces piliers et ces parts, des séries et une banque de sujets qui couvrent les sujets de chaque pilier, et jamais un sujet à éviter.",
-    "rebuildHint": "Vous avez changé vos piliers ou vos sujets ? Refaites la stratégie autour d'eux. Les changements non enregistrés le sont d'abord."
+    "rebuildHint": "Vous avez changé vos piliers ou vos sujets ? Refaites la stratégie autour d'eux. Les changements non enregistrés le sont d'abord.",
+    "updatePillar": "Mettre à jour",
+    "updatePillarHint": "De nouveaux sujets pour ce pilier, selon son nom et son angle, enregistrés tout de suite",
+    "pillarUpdated": "{name} mis à jour avec {count, plural, one {# sujet} other {# sujets}}. Enregistré."
   },
   "strategyPage": {
     "eyebrow": "Plan",
