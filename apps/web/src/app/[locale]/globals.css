@@ -913,3 +913,14 @@ ol.channel-recs { margin: 0; padding-left: 1.2rem; display: grid; gap: .6rem; }
 .strategy-channels .check-line { display: inline-flex; gap: .4rem; align-items: center; margin: 0; font-family: var(--font-body); font-size: 1rem; letter-spacing: normal; text-transform: none; }
 .strategy-channels .check-line input { width: auto; }
 .strategy-channels .stat-vs { flex-basis: 100%; margin: 0; }
+/* New client: website and social links. First audit card. */
+.new-client-links { border: 0; padding: 0; margin: 1rem 0 0; display: grid; gap: .25rem; }
+.new-client-links p { margin: 0 0 .5rem; }
+.first-audit { margin-bottom: 1.25rem; border-color: var(--brand); }
+.first-audit-steps { margin: .25rem 0; padding-left: 1.2rem; }
+.first-audit-result { display: grid; gap: .5rem; }
+.first-audit-result p, .first-audit-result ol { margin: 0; overflow-wrap: anywhere; }
+.first-audit-facts { display: grid; gap: .2rem; }
+.first-audit-colors { display: flex; align-items: center; gap: .4rem; }
+.first-audit-colors .swatch { width: 1.2rem; height: 1.2rem; border-radius: 50%; border: 2px solid var(--ink); display: inline-block; }
+ul.plain.first-audit-facts li { display: flex; justify-content: flex-start; gap: .4rem; flex-wrap: wrap; }

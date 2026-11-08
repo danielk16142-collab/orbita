@@ -9,13 +9,14 @@ import { AuditView, ContentSuggestions, ProfileNudge, StrategyView } from "@/com
 import { ResearchView } from "@/components/research/research-panel";
 import { CompetitorsView, CompetitorDetailView } from "@/components/competitors/competitors-panel";
 import { AgentChat } from "@/components/agent/agent-chat";
+import { FirstAuditCard } from "@/components/agent/first-audit";
 import { InsightsView } from "@/components/insights/insights-panel";
 import { BrandingPanel } from "@/components/branding-panel";
 import { CreatePostFlow } from "@/components/posts/create-post-flow";
 import type { AnalyticsData } from "@/lib/analytics/load";
 
 /** Development only (CONNECTORS_FAKE=1): the client screens with sample data, to review layout without a database. */
-export default async function Preview({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ tab?: string; view?: string }> }) {
+export default async function Preview({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ tab?: string; view?: string; firstAudit?: string }> }) {
   if (!fakeEnabled()) notFound();
   const { locale } = await params;
   const q = await searchParams;
@@ -65,6 +66,7 @@ export default async function Preview({ params, searchParams }: { params: Promis
         {tab === "new" ? (<><p className="eyebrow">Posts</p><h1>Create post</h1><CreatePostFlow locale={locale} staff clients={[{ id: client.id, name: client.name }]} initialClient={client.id} initialDate="" postsBase="#" agentBase="#" /></>) : (<>
         <p className="eyebrow">Clients</p>
         <div className="page-head"><h1 className="h1-client">{client.name}</h1><div className="btn-row"><a className="btn ghost" href="#">Content calendar</a><a className="btn" href="?tab=new">Create post</a></div></div>
+        {q.firstAudit && <FirstAuditCard clientId={client.id} locale={locale} autoStart={q.firstAudit === "run"} agentHref="?tab=agent&firstAudit=done" profileHref="?tab=profile" done={null} />}
         <Tabs label="Clients" current={tab} items={TABS.map((x) => ({ key: x, label: labels[x], href: href(x) }))} />
         {tab === "profile" && <ProfileView locale={locale} client={client} ctx={{ briefRow, memories, sources, proofItems: ["Open since 2019 (source: owner)"], rules: [] }} proposals={proposals} staff clientId={client.id} learnedHref="?tab=learned" memoryTotal={memories.length} />}
         {tab === "learned" && <><p className="page-intro stat-vs">Preview of the full page</p><MemoriesView locale={locale} memories={memories} clientId={client.id} /></>}
@@ -73,7 +75,8 @@ export default async function Preview({ params, searchParams }: { params: Promis
           {view === "strategy" && <StrategyView locale={locale} strategy={strategy} askHref={() => "#"} />}
           {view === "audit" && <AuditView locale={locale} audit={audit} sources={sources} askHref={() => "#"} profileHref="#" />}
           {view === "chat" && <>
-            <div className="agent-grid single"><AgentChat locale={locale} initialMessages={[]} initialConversationId={null} /></div>
+            <div className="agent-grid single"><AgentChat locale={locale} initialMessages={[]} initialConversationId={null} onboarding={!!q.firstAudit}
+              firstAudit={q.firstAudit ? { summary: "Café Luna is a specialty café in Montreal's Plateau with brunch on weekends. The site is clear but has no online booking, and Instagram is linked but not shown.", questions: ["What do you want Instagram to bring you this year: more weekend brunch tables, or more weekday regulars?", "Which items sell best, and which do you want to push?", "What makes Café Luna different from the other cafés on Mont-Royal?"] } : null} /></div>
             <div className="agent-below">
               <ContentSuggestions proposals={[
                 { id: "s1", target: "post", reason: "Same pain and value angle, trimmed for TikTok's faster pace. Day and time are assumptions to test.", payload: { format: "reel", network: "tiktok", language: "en", day: "fri", suggested_time: "17:00", pillar: "Value", idea: "The three tasks AI can take off your plate, framed as \"stop doing these by hand\".", caption: "Stop doing these by hand.", hashtags: ["ai", "smallbusiness"], content: { duration_seconds: 22, hook_options: ["Stop doing these three things by hand. Seriously.", "If you reply to leads manually, you're already behind.", "AI won't take your job. But it will take your admin."], scenes: [{ seconds: "0-2s", visual: "Dany to camera, text pops up.", voiceover: "Stop doing these three things by hand.", on_screen_text: "Stop doing this by hand" }], cta: "Follow for part 2" } } },

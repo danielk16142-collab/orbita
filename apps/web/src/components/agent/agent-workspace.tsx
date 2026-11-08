@@ -73,6 +73,7 @@ export async function AgentWorkspace({ locale, clientId, view, query, hrefFor, p
       <div className="agent-grid single">
         <AgentChat key={`${conv?.id ?? "new"}|${query.ask ?? ""}`} locale={locale} clientId={cid} initialMessages={initial} initialConversationId={conv?.id ?? null}
           onboarding={score < ONBOARDING_THRESHOLD} initialInput={askText(query, t, tp, winner)}
+          firstAudit={ctx.audit?.summary ? { summary: ctx.audit.summary, questions: ctx.audit.missing_info ?? [] } : null}
           closePrevious={closePrevious} historyHref={hrefFor("history")} hasEarlier={handovers.length > 0 || !!closePrevious} />
       </div>
       {/* What the agent prepared sits under the chat as compact cards; the full editor opens per card. */}

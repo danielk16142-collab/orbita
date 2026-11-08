@@ -13,6 +13,18 @@ import { removeMedia } from "@/lib/visuals/service";
 const Uuid = z.string().uuid();
 const Locales = z.array(z.enum(["en", "fr", "es"])).min(1);
 
+const SOCIAL_HOSTS: Record<string, RegExp> = { instagram: /(^|\.)instagram\.com$/, tiktok: /(^|\.)tiktok\.com$/, linkedin: /(^|\.)linkedin\.com$/, facebook: /(^|\.)(facebook|fb)\.com$/, youtube: /(^|\.)(youtube\.com|youtu\.be)$/ };
+/** A link typed in the new-client form: the website as an https URL, a social account as its URL or @handle. Anything else is dropped. */
+function sourceFrom(kind: string, raw: FormDataEntryValue | null): { kind: string; url: string | null; handle: string | null } | null {
+  const v = String(raw ?? "").trim().slice(0, 300);
+  if (!v) return null;
+  const asUrl = (s: string) => { try { const u = new URL(/^https?:\/\//i.test(s) ? s : `https://${s}`); u.protocol = "https:"; return u.username || u.password ? null : u; } catch { return null; } };
+  if (kind === "website") { const u = asUrl(v); return u && u.hostname.includes(".") ? { kind, url: u.toString().slice(0, 500), handle: null } : null; }
+  if (/^@?[A-Za-z0-9._-]{1,60}$/.test(v)) return { kind, url: null, handle: v.replace(/^@/, "") };
+  const u = asUrl(v);
+  return u && SOCIAL_HOSTS[kind]?.test(u.hostname.toLowerCase()) ? { kind, url: `${u.origin}${u.pathname}`.slice(0, 500), handle: null } : null;
+}
+
 export async function createClientAction(form: FormData) {
   const locale = localeFrom(form);
   const s = await requireStaff(locale);
@@ -29,8 +41,14 @@ export async function createClientAction(form: FormData) {
   }).select("id").single();
   if (error || !data) redirect(`/${locale}/clients?error=1`);
   await s.sb.from("brand_briefs").insert({ client_id: data!.id });
-  await audit({ agencyId: s.profile.agency_id, actor: s.user.id, action: "client.created", entity: "client", entityId: data!.id });
-  redirect(`/${locale}/clients/${data!.id}`);
+  // Its website and social accounts: the first audit reads them right away (see the client page).
+  const sources = ["website", "instagram", "tiktok", "linkedin", "facebook", "youtube"].map((k) => sourceFrom(k, form.get(k))).filter((x): x is NonNullable<typeof x> => !!x);
+  if (sources.length) {
+    const { error: srcError } = await s.sb.from("client_sources").insert(sources.map((x) => ({ client_id: data!.id, ...x, added_by: s.user.id })));
+    if (srcError) console.error(`new client sources failed: code=${srcError.code ?? "?"}`);
+  }
+  await audit({ agencyId: s.profile.agency_id, actor: s.user.id, action: "client.created", entity: "client", entityId: data!.id, meta: { sources: sources.length } });
+  redirect(`/${locale}/clients/${data!.id}${sources.length ? "?firstAudit=1" : ""}`);
 }
 
 /** Business details on the Profile tab (staff only: the database stops client users from renaming). */

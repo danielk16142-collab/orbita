@@ -127,7 +127,18 @@
     "admin": "Admin",
     "team": "Equipo",
     "client": "Cliente",
-    "typeName": "Escribe {name} para confirmar"
+    "typeName": "Escribe {name} para confirmar",
+    "linksTitle": "Sitio web y redes sociales",
+    "linksHint": "Añádelos ahora: Orbita los lee enseguida para completar el perfil de marca, tomar los colores y preparar las preguntas del agente.",
+    "website": "Sitio web",
+    "socialPlaceholder": "@cuenta o enlace del perfil",
+    "social": {
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "linkedin": "LinkedIn",
+      "facebook": "Facebook",
+      "youtube": "YouTube"
+    }
   },
   "branding": {
     "title": "Marca",
@@ -476,7 +487,10 @@
         "trust": "Generar confianza y reseñas",
         "educate": "Educar a la audiencia",
         "consistency": "Publicar con constancia y ahorrar tiempo"
-      }
+      },
+      "fromAudit": "Leí el sitio web y los enlaces. Esto es lo que entendí:",
+      "auditQuestions": "Algunas preguntas que solo tú puedes responder:",
+      "auditHint": "Responde con tus palabras, aunque sea brevemente. Dime si entendí algo mal."
     },
     "views": {
       "chat": "Chat",
@@ -2087,6 +2101,29 @@
       "no_result": "Esta vez no hubo auditoría. Inténtalo de nuevo.",
       "not_configured": "El agente aún no está configurado.",
       "daily_cap": "Se acabó el límite de hoy del agente."
+    }
+  },
+  "firstAudit": {
+    "title": "Conociendo el negocio",
+    "intro": "Leer el sitio web y los enlaces para completar el perfil de marca, tomar los colores de la marca y preparar las primeras preguntas del agente.",
+    "run": "Hacer la primera auditoría",
+    "working": "Leyendo el sitio y los enlaces…",
+    "step1": "Leyendo el sitio (inicio, nosotros, servicios, precios, contacto)",
+    "step2": "Tomando los colores de la marca",
+    "step3": "Escribiendo lo que aprendió el agente y sus preguntas",
+    "wait": "Tarda alrededor de un minuto. Puedes quedarte en esta página.",
+    "pagesRead": "{count, plural, one {# página leída} other {# páginas leídas}}",
+    "pagesFailed": "{count, plural, one {# página no se pudo leer} other {# páginas no se pudieron leer}}",
+    "filled": "{count, plural, one {# parte del perfil de marca completada} other {# partes del perfil de marca completadas}}",
+    "colors": "Colores de la marca:",
+    "questions": "Las preguntas del agente para ti",
+    "answer": "Responderlas en el chat del agente",
+    "seeProfile": "Ver el perfil de marca",
+    "errors": {
+      "no_sources": "Primero añade el sitio web o una cuenta social (Perfil > Enlaces).",
+      "save_failed": "No se pudo guardar la auditoría. Inténtalo de nuevo.",
+      "timeout": "Tardó demasiado. Inténtalo de nuevo.",
+      "refused": "El agente no pudo hacer esta auditoría."
     }
   }
 }

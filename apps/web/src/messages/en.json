@@ -127,7 +127,18 @@
     "admin": "Admin",
     "team": "Team",
     "client": "Client",
-    "typeName": "Type {name} to confirm"
+    "typeName": "Type {name} to confirm",
+    "linksTitle": "Website and social accounts",
+    "linksHint": "Add them now: Orbita reads them right away to fill the brand profile, take the colours and prepare the agent's questions.",
+    "website": "Website",
+    "socialPlaceholder": "@account or profile link",
+    "social": {
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "linkedin": "LinkedIn",
+      "facebook": "Facebook",
+      "youtube": "YouTube"
+    }
   },
   "branding": {
     "title": "Branding",
@@ -476,7 +487,10 @@
         "trust": "Build trust and reviews",
         "educate": "Educate the audience",
         "consistency": "Post consistently, save time"
-      }
+      },
+      "fromAudit": "I've read the website and links. Here's what I understood:",
+      "auditQuestions": "A few questions only you can answer:",
+      "auditHint": "Answer in your own words, even briefly. Tell me if I got something wrong."
     },
     "views": {
       "chat": "Chat",
@@ -2087,6 +2101,29 @@
       "no_result": "No audit this time. Try again.",
       "not_configured": "The agent is not set up yet.",
       "daily_cap": "Today's agent allowance is used up."
+    }
+  },
+  "firstAudit": {
+    "title": "Getting to know the business",
+    "intro": "Read the website and links to fill the brand profile, take the brand colours and prepare the agent's first questions.",
+    "run": "Run the first audit",
+    "working": "Reading the website and the links…",
+    "step1": "Reading the website (homepage, about, services, pricing, contact)",
+    "step2": "Taking the brand colours",
+    "step3": "Writing what the agent learned and its questions",
+    "wait": "This takes about a minute. You can stay on this page.",
+    "pagesRead": "{count, plural, one {# page read} other {# pages read}}",
+    "pagesFailed": "{count, plural, one {# page could not be read} other {# pages could not be read}}",
+    "filled": "{count, plural, one {# part of the brand profile filled} other {# parts of the brand profile filled}}",
+    "colors": "Brand colours:",
+    "questions": "The agent's questions for you",
+    "answer": "Answer them in the agent chat",
+    "seeProfile": "See the brand profile",
+    "errors": {
+      "no_sources": "Add the website or a social account first (Profile > Links).",
+      "save_failed": "The audit could not be saved. Try again.",
+      "timeout": "It took too long. Try again.",
+      "refused": "The agent could not do this audit."
     }
   }
 }

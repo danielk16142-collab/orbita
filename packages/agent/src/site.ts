@@ -3,10 +3,12 @@ import { isIP } from "node:net";
 import * as cheerio from "cheerio";
 import { Agent, fetch as undiciFetch } from "undici";
 import { assertSafeUrl, isPrivateAddress, UnsafeUrlError } from "@orbita/security/ssrf";
+import { pickBrandColors } from "./brand-colors";
 
 export type SiteSnapshot = {
   url: string; title: string; description: string; lang: string | null; headings: string[]; ctas: string[];
   socialLinks: { kind: string; url: string }[]; hasViewport: boolean; jsonLdTypes: string[]; text: string; internalLinks: string[];
+  /** Brand colour candidates from the page's own CSS, most used first. */ colors?: string[];
 };
 
 export const USER_AGENT = "OrbitaBot/1.0 (+marketing audit requested by the site owner)";
@@ -133,13 +135,15 @@ export function analyzeHtml(html: string, pageUrl: string): SiteSnapshot {
   $("button").each((_, el) => { const l = $(el).text().replace(/\s+/g, " ").trim(); if (l && l.length <= 60 && CTA_WORDS.test(l)) ctas.add(l); });
   const headings: string[] = [];
   $("h1, h2, h3").each((_, el) => { const t = $(el).text().replace(/\s+/g, " ").trim(); if (t && headings.length < 40) headings.push(`${el.tagName.toUpperCase()}: ${t.slice(0, 160)}`); });
+  const css = [$("style").text(), ...$("[style]").map((_, el) => $(el).attr("style") ?? "").get()].join("\n").slice(0, 400_000);
+  const colors = pickBrandColors(css, $('meta[name="theme-color"]').attr("content"));
   $("script, style, noscript, svg, iframe, template, [hidden], [aria-hidden='true']").remove();
   const text = $("body").text().replace(/\s+/g, " ").trim().slice(0, MAX_TEXT);
   return {
     url: pageUrl, title: ($("title").first().text() || "").trim().slice(0, 200),
     description: ($('meta[name="description"]').attr("content") || $('meta[property="og:description"]').attr("content") || "").trim().slice(0, 400),
     lang: $("html").attr("lang") || null, headings, ctas: [...ctas].slice(0, 15), socialLinks: socialLinks.slice(0, 10),
-    hasViewport: $('meta[name="viewport"]').length > 0, jsonLdTypes: [...new Set(jsonLdTypes)].slice(0, 10), text, internalLinks: [...internal].slice(0, 60),
+    hasViewport: $('meta[name="viewport"]').length > 0, jsonLdTypes: [...new Set(jsonLdTypes)].slice(0, 10), text, internalLinks: [...internal].slice(0, 60), colors,
   };
 }
 

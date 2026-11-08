@@ -127,7 +127,18 @@
     "admin": "Admin",
     "team": "Équipe",
     "client": "Client",
-    "typeName": "Tapez {name} pour confirmer"
+    "typeName": "Tapez {name} pour confirmer",
+    "linksTitle": "Site web et comptes sociaux",
+    "linksHint": "Ajoutez-les maintenant : Orbita les lit tout de suite pour remplir le profil de marque, prendre les couleurs et préparer les questions de l'agent.",
+    "website": "Site web",
+    "socialPlaceholder": "@compte ou lien du profil",
+    "social": {
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "linkedin": "LinkedIn",
+      "facebook": "Facebook",
+      "youtube": "YouTube"
+    }
   },
   "branding": {
     "title": "Image de marque",
@@ -476,7 +487,10 @@
         "trust": "Bâtir la confiance et les avis",
         "educate": "Éduquer l'audience",
         "consistency": "Publier régulièrement, gagner du temps"
-      }
+      },
+      "fromAudit": "J'ai lu le site et les liens. Voici ce que j'ai compris :",
+      "auditQuestions": "Quelques questions auxquelles vous seul pouvez répondre :",
+      "auditHint": "Répondez avec vos mots, même brièvement. Dites-moi si j'ai mal compris quelque chose."
     },
     "views": {
       "chat": "Discussion",
@@ -2087,6 +2101,29 @@
       "no_result": "Pas d'audit cette fois. Réessayez.",
       "not_configured": "L'agent n'est pas encore configuré.",
       "daily_cap": "La limite du jour de l'agent est atteinte."
+    }
+  },
+  "firstAudit": {
+    "title": "Faire connaissance avec l'entreprise",
+    "intro": "Lire le site et les liens pour remplir le profil de marque, prendre les couleurs de la marque et préparer les premières questions de l'agent.",
+    "run": "Lancer le premier audit",
+    "working": "Lecture du site et des liens…",
+    "step1": "Lecture du site (accueil, à propos, services, tarifs, contact)",
+    "step2": "Récupération des couleurs de la marque",
+    "step3": "Rédaction de ce que l'agent a appris et de ses questions",
+    "wait": "Environ une minute. Vous pouvez rester sur cette page.",
+    "pagesRead": "{count, plural, one {# page lue} other {# pages lues}}",
+    "pagesFailed": "{count, plural, one {# page illisible} other {# pages illisibles}}",
+    "filled": "{count, plural, one {# partie du profil de marque remplie} other {# parties du profil de marque remplies}}",
+    "colors": "Couleurs de la marque :",
+    "questions": "Les questions de l'agent pour vous",
+    "answer": "Y répondre dans le chat de l'agent",
+    "seeProfile": "Voir le profil de marque",
+    "errors": {
+      "no_sources": "Ajoutez d'abord le site ou un compte social (Profil > Liens).",
+      "save_failed": "Impossible d'enregistrer l'audit. Réessayez.",
+      "timeout": "C'était trop long. Réessayez.",
+      "refused": "L'agent n'a pas pu faire cet audit."
     }
   }
 }

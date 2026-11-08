@@ -32,4 +32,6 @@ export * from "./remake";
 export * from "./li-profile";
 export * from "./structure";
 export * from "./channels";
+export * from "./brand-colors";
+export * from "./first-audit";
 export * from "./strategy-chat";

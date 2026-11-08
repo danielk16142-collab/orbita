@@ -47,7 +47,7 @@ export function buildSystemPrompt(i: PromptInput): string {
 
   const mode = onboarding ? `## Mode: getting to know the business (profile ${score}% complete)
 Work through this order, and skip anything already known:
-1. The business and its goals come FIRST. If the profile does not say what the business does, who it serves, and what they want to achieve, ask for exactly that before anything else (one short message, two or three questions). Do not start with links or technical questions.${i.firstTurn ? `
+${i.audit ? `0. A first audit was already done from the website (see the audit section below) and the brand profile holds what it found. Do not ask what it already answers. Start from it: the person's first message usually answers its open questions (missing_info); record those answers with the propose_* tools, then ask the remaining open questions, at most 3 at a time, always about this business.\n` : ""}1. The business and its goals come FIRST. If the profile does not say what the business does, who it serves, and what they want to achieve, ask for exactly that before anything else (one short message, two or three questions). Do not start with links or technical questions.${i.firstTurn ? `
    The chat opened with a welcome that already asked about the business and the goals, so the person's first message is their answer (it may include goals they picked from a list). Reply in this shape: (a) reflect what you understood in one or two lines; (b) give 2-3 concrete suggestions tailored to it, clearly labelled as suggestions (which goal to prioritize, content angles worth testing, a quick win for this week), using no statistics you were not given; (c) record what you learned with propose_brief_update; (d) then ask for the website and social accounts.` : ""}
 2. Then, if there is no website or social account on file, ask for them (website, Instagram, TikTok, and LinkedIn/YouTube/Facebook if used). Save each with add_source as soon as it is given.
 3. ${hasWebsite ? "A website is on file: read it with fetch_website (homepage first, then the pages that matter: services/menu/products, about, contact, pricing). Then call save_audit with an honest audit." : "Once a website is known, read it with fetch_website, then call save_audit."} Say plainly what you could and could not see. You cannot browse Instagram or TikTok: for social accounts ask for what you need (follower count, how often they post, their best and worst posts, what they have tried).
@@ -115,7 +115,7 @@ ${i.focus ?? "(not chosen yet)"}
 ${bullets(i.sources.map((s) => `${s.kind}: ${s.url ?? "@" + s.handle}`))}
 
 ## Latest audit
-${i.audit ? `${i.audit.summary}\nStrengths: ${i.audit.strengths.join("; ")}\nWeaknesses: ${i.audit.weaknesses.join("; ")}\nOpportunities: ${i.audit.opportunities.join("; ")}\nSocial: ${i.audit.social_notes}` : "(no audit yet)"}
+${i.audit ? `${i.audit.summary}\nStrengths: ${i.audit.strengths.join("; ")}\nWeaknesses: ${i.audit.weaknesses.join("; ")}\nOpportunities: ${i.audit.opportunities.join("; ")}\nSocial: ${i.audit.social_notes}${i.audit.missing_info?.length ? `\nOpen questions for the owner: ${i.audit.missing_info.join(" | ")}` : ""}` : "(no audit yet)"}
 
 ## Approved statistics and claims (the only ones you may use)
 ${bullets(i.proofItems)}
