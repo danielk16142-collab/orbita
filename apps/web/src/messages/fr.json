@@ -1129,7 +1129,8 @@
       "not_found": "Ce concurrent n'existe plus.",
       "ideas": "Certaines idées n'ont pas pu être ajoutées. Veuillez réessayer.",
       "not_set_up": "Les concurrents nécessitent une mise à jour de la base de données qui n'a pas encore été appliquée (migration 0012_competitors.sql). Demandez à votre administrateur de l'exécuter dans Supabase, puis réessayez.",
-      "delete_failed": "Impossible de supprimer ce concurrent. Réessayez."
+      "delete_failed": "Impossible de supprimer ce concurrent. Réessayez.",
+      "noStrategy": "Il n'y a pas encore de stratégie. Créez-en une d'abord, ou ajoutez plutôt les idées au calendrier."
     },
     "builtOn": "Basée sur leur publication",
     "timesUsual": "{n}× leurs {metric} habituelles",
@@ -1144,7 +1145,10 @@
     "delete": "Supprimer",
     "deleting": "Suppression…",
     "deleteNamed": "Supprimer {name}",
-    "deleteConfirm": "Supprimer {name} ? Ses analyses et ses publications enregistrées (avec transcriptions et explications) sont supprimées aussi. Les notes de recherche que vous en avez tirées restent."
+    "deleteConfirm": "Supprimer {name} ? Ses analyses et ses publications enregistrées (avec transcriptions et explications) sont supprimées aussi. Les notes de recherche que vous en avez tirées restent.",
+    "addToStrategy": "{count, plural, =0 {Choisissez des idées} one {Ajouter # idée aux idées de la stratégie} other {Ajouter # idées aux idées de la stratégie}}",
+    "addToCalendar": "Les ajouter plutôt au calendrier",
+    "ideasInStrategy": "{count, plural, one {# idée dans la stratégie} other {# idées dans la stratégie}} : ouvrir la stratégie"
   },
   "reset": {
     "forgotTitle": "Réinitialiser le mot de passe",

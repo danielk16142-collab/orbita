@@ -1129,7 +1129,8 @@
       "not_found": "This competitor no longer exists.",
       "ideas": "Some ideas could not be added. Please try again.",
       "not_set_up": "Competitors need a database update that has not been applied yet (migration 0012_competitors.sql). Ask your administrator to run it in Supabase, then try again.",
-      "delete_failed": "The competitor could not be deleted. Try again."
+      "delete_failed": "The competitor could not be deleted. Try again.",
+      "noStrategy": "There is no strategy yet. Build one first, or add the ideas to the calendar instead."
     },
     "builtOn": "Built on their post",
     "timesUsual": "{n}× their usual {metric}",
@@ -1144,7 +1145,10 @@
     "delete": "Delete",
     "deleting": "Deleting…",
     "deleteNamed": "Delete {name}",
-    "deleteConfirm": "Delete {name}? Its analyses and recorded posts (with transcripts and breakdowns) are deleted too. Research notes you saved from it stay."
+    "deleteConfirm": "Delete {name}? Its analyses and recorded posts (with transcripts and breakdowns) are deleted too. Research notes you saved from it stay.",
+    "addToStrategy": "{count, plural, =0 {Pick ideas to add} one {Add # idea to the strategy's ideas} other {Add # ideas to the strategy's ideas}}",
+    "addToCalendar": "Add to the calendar instead",
+    "ideasInStrategy": "{count, plural, one {# idea in the strategy} other {# ideas in the strategy}}: open the strategy"
   },
   "reset": {
     "forgotTitle": "Reset your password",
