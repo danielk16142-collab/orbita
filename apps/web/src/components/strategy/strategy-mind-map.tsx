@@ -1,4 +1,5 @@
 "use client";
+import { FormatSwitch } from "@/components/posts/format-switch";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -98,6 +99,7 @@ export function StrategyMindMap({ data, locale, clientId, postsBase, newPostHref
       <span className="kickstart-body">
         <span className="badge"><span className="net-dot small" style={{ background: NETWORK_COLOR[p.network] }} aria-hidden="true" />{fmt(p.format)}</span>{" "}
         {p.kind === "live" ? (p.permalink ? <a href={p.permalink} target="_blank" rel="noopener noreferrer nofollow">{p.title || fmt(p.format)}</a> : p.title) : <Link href={`${postsBase}/${p.id}`}>{p.title || fmt(p.format)}</Link>}
+        {p.kind === "plan" && clientId && ["idea", "draft", "approved"].includes(p.status) && <FormatSwitch postId={p.id} current={p.format} compact />}
         {p.kind === "live" && <small>✓ {t("legendLive")}{p.views ? ` · ${nf.format(p.views)} ${t("m.views").toLowerCase()}` : ""}{typeof p.rate === "number" ? ` · ${pf.format(p.rate)}` : ""}</small>}
       </span>
     </li>

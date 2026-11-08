@@ -924,3 +924,9 @@ ol.channel-recs { margin: 0; padding-left: 1.2rem; display: grid; gap: .6rem; }
 .first-audit-colors { display: flex; align-items: center; gap: .4rem; }
 .first-audit-colors .swatch { width: 1.2rem; height: 1.2rem; border-radius: 50%; border: 2px solid var(--ink); display: inline-block; }
 ul.plain.first-audit-facts li { display: flex; justify-content: flex-start; gap: .4rem; flex-wrap: wrap; }
+/* Change a planned post's format */
+.format-switch { display: grid; gap: .35rem; margin: .75rem 0; }
+.format-chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+.format-chips .map-topic[aria-pressed="true"] { background: var(--ink); color: #fff; }
+.format-switch.compact { display: inline-flex; margin: 0 0 0 .4rem; gap: .3rem; align-items: center; }
+.format-switch.compact select { width: auto; padding: .1rem .4rem; font-size: .8rem; }

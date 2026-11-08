@@ -49,8 +49,8 @@ export default async function Preview({ params, searchParams }: { params: Promis
   return (
     <main className="content"><p className="eyebrow">Preview (sample data)</p><h1>Strategy</h1>
       {q.layout === "calendar"
-        ? <StrategyMap data={data} locale={locale} postsBase="#" newPostHref="#" prevMonthHref="#" nextMonthHref="#" askStrategyHref="#" />
-        : <StrategyMindMap data={data} locale={locale} postsBase="#" newPostHref="#" />}
+        ? <StrategyMap data={data} locale={locale} clientId="00000000-0000-0000-0000-000000000000" postsBase="#" newPostHref="#" prevMonthHref="#" nextMonthHref="#" askStrategyHref="#" />
+        : <StrategyMindMap data={data} locale={locale} clientId="00000000-0000-0000-0000-000000000000" postsBase="#" newPostHref="#" />}
     </main>
   );
 }
