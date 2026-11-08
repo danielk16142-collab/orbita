@@ -20,7 +20,19 @@ You are editing this client's content strategy in the Strategy section. ${hasStr
  * "Build the strategy from these pillars and topics": the request the Strategy section sends for the person, written from
  * what they chose. The pillars and shares are fixed; the agent builds everything else around them.
  */
-export function focusBuildRequest(f: BrandFocus, hasStrategy: boolean): string {
+const NET_NAME: Record<string, string> = { instagram: "Instagram", tiktok: "TikTok", linkedin: "LinkedIn", youtube: "YouTube", facebook: "Facebook" };
+
+/** The channels part of the request: only these networks, the same short videos on Instagram and TikTok, LinkedIn on its own. */
+export function channelsRule(channels: string[]): string {
+  const c = channels.filter((n) => NET_NAME[n]);
+  if (!c.length) return "";
+  const L = [`Channels: plan only for ${c.map((n) => NET_NAME[n]).join(", ")}. No cadence, series or posts for any other network.`];
+  if (c.includes("instagram") && c.includes("tiktok")) L.push("Instagram and TikTok get the same short videos: plan each reel once for both (the same days and count in their cadence), with a caption written for each network.");
+  if (c.includes("linkedin")) L.push("LinkedIn gets its own content for a professional audience (text posts, document carousels, the occasional video), on its own cadence, not the reels reposted.");
+  return L.join(" ");
+}
+
+export function focusBuildRequest(f: BrandFocus, hasStrategy: boolean, channels: string[] = []): string {
   const by = (l: string) => f.topics.filter((t) => t.level === l).map((t) => t.name);
   const L = [
     hasStrategy
@@ -32,17 +44,32 @@ export function focusBuildRequest(f: BrandFocus, hasStrategy: boolean): string {
   if (by("sometimes").length) L.push(`Topics to use now and then: ${by("sometimes").join(", ")}.`);
   if (by("avoid").length) L.push(`Never use: ${by("avoid").join(", ")}.`);
   L.push("Give each pillar at least one recurring series where it fits, and make the topic bank cover every pillar's topics in proportion to its share.");
+  const ch = channelsRule(channels);
+  if (ch) L.push(ch);
   return L.join("\n");
 }
 
-/** The strategy keeps exactly the chosen pillars and shares, whatever the model wrote (its angle is kept when none was chosen). */
-export function alignStrategyToFocus(payload: unknown, f: BrandFocus): unknown {
-  const p = payload as { content?: { pillars?: { name: string; angle: string; share_percent: number }[] } } | null;
-  if (!p?.content || !f.pillars.length) return payload;
-  const theirs = p.content.pillars ?? [];
-  const pillars = f.pillars.filter((x) => x.name.trim()).map((x) => ({
-    name: x.name, share_percent: x.share,
-    angle: x.angle || theirs.find((t) => t.name.trim().toLowerCase() === x.name.trim().toLowerCase())?.angle || "",
-  }));
-  return { ...p, content: { ...p.content, pillars } };
+/**
+ * The strategy keeps exactly the chosen pillars and shares, whatever the model wrote (its angle is kept when none was chosen),
+ * and, when channels were chosen, only those networks in its cadence and series.
+ */
+export function alignStrategyToFocus(payload: unknown, f: BrandFocus, channels: string[] = []): unknown {
+  type Content = { pillars?: { name: string; angle: string; share_percent: number }[]; cadence?: { network: string }[]; series?: { networks: string[] }[] };
+  const p = payload as { content?: Content } | null;
+  if (!p?.content) return payload;
+  let content: Content = p.content;
+  if (f.pillars.length) {
+    const theirs = content.pillars ?? [];
+    content = { ...content, pillars: f.pillars.filter((x) => x.name.trim()).map((x) => ({
+      name: x.name, share_percent: x.share,
+      angle: x.angle || theirs.find((t) => t.name.trim().toLowerCase() === x.name.trim().toLowerCase())?.angle || "",
+    })) };
+  }
+  if (channels.length) {
+    const keep = (n: string) => channels.includes(n);
+    content = { ...content,
+      ...(Array.isArray(content.cadence) ? { cadence: content.cadence.filter((c) => keep(c.network)) } : {}),
+      ...(Array.isArray(content.series) ? { series: content.series.map((s) => ({ ...s, networks: (s.networks ?? []).filter(keep) })).filter((s) => s.networks.length) } : {}) };
+  }
+  return { ...p, content };
 }

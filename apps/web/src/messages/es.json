@@ -1932,7 +1932,12 @@
       "apply_failed": "No se pudo guardar la estrategia. Inténtalo de nuevo.",
       "model_error": "El agente no pudo responder. Inténtalo de nuevo.",
       "undo": "No se pudo restaurar la estrategia anterior."
-    }
+    },
+    "channels": "Redes",
+    "channelsHint": "Solo las redes marcadas tienen ritmo y series.",
+    "sameVideos": "Instagram y TikTok reciben los mismos videos, con un texto para cada uno.",
+    "forChannels": "Para {list}",
+    "linkedinOwn": "LinkedIn tiene sus propias publicaciones."
   },
   "liProfile": {
     "title": "Puntuación del perfil de LinkedIn",
