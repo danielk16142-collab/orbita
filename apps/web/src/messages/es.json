@@ -2124,6 +2124,9 @@
       "save_failed": "No se pudo guardar la auditoría. Inténtalo de nuevo.",
       "timeout": "Tardó demasiado. Inténtalo de nuevo.",
       "refused": "El agente no pudo hacer esta auditoría."
-    }
+    },
+    "stepSocial": "Leyendo las últimas publicaciones de Instagram y TikTok",
+    "socialRead": "{network} @{handle}: {count, plural, one {# publicación leída} other {# publicaciones leídas}}",
+    "socialFailed": "No se pudo leer: {list}"
   }
 }

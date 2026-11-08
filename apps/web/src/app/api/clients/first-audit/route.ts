@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { briefFromRow, computeCompleteness, fetchPage, FIRST_AUDIT_TOOL, FirstAudit, firstAuditBriefOps, firstAuditRequest, firstAuditSystem, pagesToRead, runStructured, type SiteSnapshot } from "@orbita/agent";
+import { briefFromRow, computeCompleteness, fetchPage, FIRST_AUDIT_TOOL, FirstAudit, firstAuditBriefOps, firstAuditRequest, firstAuditSystem, pagesToRead, runStructured, summarizeTikTok, type SiteSnapshot, type SocialPosts } from "@orbita/agent";
+import { ApifyError, fetchLatestPosts, usernameFromLink } from "@orbita/connectors";
 import { checkBrandColor } from "@orbita/security";
 import { resolveAgentActor } from "@/lib/agent/access";
 import { researchTools, resolveModelAccess } from "@/lib/agent/model";
@@ -15,7 +16,8 @@ export const dynamic = "force-dynamic";
 const Body = z.object({ clientId: z.string().uuid().optional(), locale: z.enum(["en", "fr", "es"]) });
 
 /**
- * The first audit of a business: read its website (homepage and up to 3 key pages), take its brand colours, have the agent
+ * The first audit of a business: read its website (homepage and up to 3 key pages) and its Instagram / TikTok posts (Apify),
+ * take its brand colours, have the agent
  * write what it learned (only where the brand profile is still empty), the audit and the questions for the owner.
  */
 export async function POST(req: Request) {
@@ -45,6 +47,29 @@ export async function POST(req: Request) {
     await sb.from("client_sources").update({ last_audited_at: new Date().toISOString() }).eq("client_id", clientId).eq("kind", "website");
   }
 
+  // 1b. Its Instagram and TikTok: the latest public posts (Apify), so the audit sees what it posts and what works.
+  //     Staff only (it costs a few cents); a TikTok read is also saved as the first snapshot of the TikTok card on Home.
+  const socialPosts: SocialPosts[] = []; const socialErrors: string[] = [];
+  if (process.env.APIFY_TOKEN && actor.profile.role !== "client") {
+    const targets = (["instagram", "tiktok"] as const).flatMap((network) => {
+      const src = socials.find((x) => x.kind === network);
+      const handle = src ? (src.handle?.replace(/^@/, "").trim() || (src.url ? usernameFromLink(network, src.url) : null)) : null;
+      return handle && /^[A-Za-z0-9._]{1,60}$/.test(handle) ? [{ network, handle }] : [];
+    });
+    await Promise.all(targets.map(async ({ network, handle }) => {
+      try {
+        const posts = await fetchLatestPosts(network, handle, { limit: 15 });
+        if (!posts.length) { socialErrors.push(`${network} @${handle}: no public posts found`); return; }
+        socialPosts.push({ network, handle, followers: posts.map((p) => p.followers).find((f): f is number => typeof f === "number") ?? null,
+          posts: posts.map((p) => ({ hook: p.hook, caption: p.caption, views: p.views, likes: p.likes, comments: p.comments, postedAt: p.postedAt })) });
+        if (network === "tiktok") {
+          const { error } = await sb.from("channel_stats").insert({ client_id: clientId, network: "tiktok", source: "apify", handle, summary: summarizeTikTok(posts, new Date()), created_by: actor.userId });
+          if (error) console.error(`first audit tiktok snapshot failed: code=${error.code ?? "?"}`);
+        }
+      } catch (e) { socialErrors.push(`${network} @${handle}: ${e instanceof ApifyError ? e.code : "could not be read"}`); }
+    }));
+  }
+
   // 2. Brand colours: the site's two most used readable colours, saved only if none are set yet.
   const colors = (pages[0]?.colors ?? []).filter((c) => checkBrandColor(c) === null);
   let colorsSaved = false;
@@ -61,7 +86,7 @@ export async function POST(req: Request) {
     const r = await runStructured({
       client: ai.client, model: ai.chatModel, system: firstAuditSystem(body.data.locale), serverTools: researchTools(ai.chatModel, { fetch: false }), maxSteps: 6,
       tool: FIRST_AUDIT_TOOL, schema: FirstAudit,
-      user: firstAuditRequest({ name: actor.client.name, markets: actor.client.markets, languages: actor.client.languages, pages, socials, pageErrors }),
+      user: firstAuditRequest({ name: actor.client.name, markets: actor.client.markets, languages: actor.client.languages, pages, socials, pageErrors, socialPosts, socialErrors }),
     });
     await recordUsage(actor, r.usage);
     if (!r.ok) return json({ error: r.error === "refused" ? "refused" : "no_result" }, 502);
@@ -82,8 +107,9 @@ export async function POST(req: Request) {
     const report = { summary: a.summary, strengths: a.strengths, weaknesses: a.weaknesses, opportunities: a.opportunities, social_notes: a.social_notes, missing_info: a.questions };
     const { error: auditError } = await sb.from("audits").insert({ client_id: clientId, report, pages: pages.map((p) => ({ url: p.url, title: p.title })), created_by: actor.userId });
     if (auditError) { console.error(`first audit save failed: code=${auditError.code ?? "?"}`); return json({ error: "save_failed" }, 500); }
-    await audit({ agencyId: actor.profile.agency_id, actor: actor.userId, action: "client.first_audit", entity: "client", entityId: clientId, meta: { pages: pages.length, filled: ops.length, colors: colorsSaved } });
-    return json({ summary: a.summary, filled: ops.map((o) => o.section), colors: colorsSaved ? colors.slice(0, 2) : [], questions: a.questions, pages: pages.length, pageErrors: pageErrors.length });
+    await audit({ agencyId: actor.profile.agency_id, actor: actor.userId, action: "client.first_audit", entity: "client", entityId: clientId, meta: { pages: pages.length, filled: ops.length, colors: colorsSaved, socials: socialPosts.length } });
+    return json({ summary: a.summary, filled: ops.map((o) => o.section), colors: colorsSaved ? colors.slice(0, 2) : [], questions: a.questions, pages: pages.length, pageErrors: pageErrors.length,
+      socials: socialPosts.map((x) => ({ network: x.network, handle: x.handle, posts: x.posts.length })), socialErrors });
   } catch (e) {
     const reason = describeModelError(e);
     console.error("first audit failed:", reason);

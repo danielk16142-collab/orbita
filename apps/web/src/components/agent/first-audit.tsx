@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-type Result = { summary: string; filled: string[]; colors: string[]; questions: string[]; pages: number; pageErrors: number };
+type Result = { summary: string; filled: string[]; colors: string[]; questions: string[]; pages: number; pageErrors: number; socials?: { network: string; handle: string; posts: number }[]; socialErrors?: string[] };
 
 /**
  * "Getting to know the business": the first audit. It starts by itself right after a business is added with its links
@@ -36,7 +36,7 @@ export function FirstAuditCard({ clientId, locale, autoStart, agentHref, profile
   return (
     <section className="card first-audit" aria-live="polite">
       <h2>{t("title")}</h2>
-      {busy && <><p>{t("working")}</p><ol className="first-audit-steps"><li>{t("step1")}</li><li>{t("step2")}</li><li>{t("step3")}</li></ol><p className="stat-vs">{t("wait")}</p></>}
+      {busy && <><p>{t("working")}</p><ol className="first-audit-steps"><li>{t("step1")}</li><li>{t("stepSocial")}</li><li>{t("step2")}</li><li>{t("step3")}</li></ol><p className="stat-vs">{t("wait")}</p></>}
       {!busy && !shown && <><p className="stat-vs">{t("intro")}</p><button type="button" className="btn" onClick={run}>{t("run")}</button></>}
       {error && <p className="error" role="alert">{error}</p>}
       {!busy && shown && (
@@ -45,6 +45,8 @@ export function FirstAuditCard({ clientId, locale, autoStart, agentHref, profile
           {result && (
             <ul className="plain first-audit-facts">
               <li>{t("pagesRead", { count: result.pages })}{result.pageErrors ? ` · ${t("pagesFailed", { count: result.pageErrors })}` : ""}</li>
+              {(result.socials ?? []).map((x) => <li key={x.network}>{t("socialRead", { count: x.posts, network: x.network === "tiktok" ? "TikTok" : "Instagram", handle: x.handle })}</li>)}
+              {(result.socialErrors ?? []).length > 0 && <li className="stat-vs">{t("socialFailed", { list: result.socialErrors!.join("; ") })}</li>}
               {result.filled.length > 0 && <li>{t("filled", { count: result.filled.length })}</li>}
               {result.colors.length > 0 && <li className="first-audit-colors">{t("colors")} {result.colors.map((c) => <span key={c} className="swatch" style={{ background: c }} title={c} />)}</li>}
             </ul>

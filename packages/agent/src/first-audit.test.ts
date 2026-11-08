@@ -44,3 +44,24 @@ describe("the agent after a first audit", () => {
     expect(buildSystemPrompt({ ...base, audit: null })).not.toContain("A first audit was already done");
   });
 });
+
+import { socialPostsText } from "./first-audit";
+describe("first audit with the social accounts", () => {
+  const ig = { network: "instagram", handle: "cafeluna", followers: 2300, posts: [
+    { hook: "Brunch is back", caption: "Brunch is back this Sunday", views: 9000, likes: 400, comments: 30, postedAt: "2026-11-01" },
+    { hook: "New beans", caption: null, views: 1200, likes: 50, comments: 2, postedAt: "2026-10-25" },
+    { hook: "Meet Ana", caption: "Meet Ana, our barista", views: 3000, likes: 120, comments: 9, postedAt: "2026-10-18" },
+  ] };
+  it("sums up how often it posts and what performs", () => {
+    const t = socialPostsText(ig);
+    expect(t).toContain("instagram @cafeluna: 3 latest public posts, 2300 followers, from 2026-10-18 to 2026-11-01, about 1 a week");
+    expect(t).toContain("Best: 2026-11-01 · 9000 views");
+    expect(t).toContain("Captions (newest first): Brunch is back this Sunday || New beans || Meet Ana, our barista");
+  });
+  it("puts the posts in the request as data, and says which accounts failed", () => {
+    const q = firstAuditRequest({ name: "Café Luna", markets: [], languages: ["en"], pages: [], socials: [], pageErrors: [], socialPosts: [ig], socialErrors: ["tiktok @cafeluna: private"] });
+    expect(q).toContain("latest public posts");
+    expect(q).toMatch(/untrusted/);
+    expect(q).toContain("tiktok @cafeluna: private");
+  });
+});

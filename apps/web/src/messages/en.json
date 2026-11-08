@@ -2124,6 +2124,9 @@
       "save_failed": "The audit could not be saved. Try again.",
       "timeout": "It took too long. Try again.",
       "refused": "The agent could not do this audit."
-    }
+    },
+    "stepSocial": "Reading the latest Instagram and TikTok posts",
+    "socialRead": "{network} @{handle}: {count, plural, one {# post read} other {# posts read}}",
+    "socialFailed": "Could not read: {list}"
   }
 }
