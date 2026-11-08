@@ -190,3 +190,22 @@ export async function cleanPostTextAction(input: unknown): Promise<PostResult & 
   await audit({ agencyId: a.profile.agency_id, actor: a.userId, action: "post.cleaned", entity: "post", entityId: v.id, meta: { removed: r.removed } });
   return { ok: true, removed: r.removed };
 }
+
+/**
+ * Change a planned post's format (reel, carousel, static post...), from the strategy or the post page (staff). Its script or
+ * slides are kept only when they fit the new format; otherwise they are cleared so the agent writes the new one.
+ */
+export async function changePostFormatAction(input: unknown): Promise<PostResult & { cleared?: boolean }> {
+  const p = z.object({ postId: Uuid, type: z.enum(["reel", "carousel", "static", "story", "video", "text", "article"]) }).safeParse(input);
+  if (!p.success) return fail("bad_request");
+  const g = await gate(); if (!g.ok) return fail(g.error);
+  const a = g.value; if (!a.isStaff) return fail("forbidden");
+  const post = await loadPost(a, p.data.postId); if (!post.ok) return fail(post.error);
+  if (!["idea", "draft", "approved"].includes(post.value.status)) return fail("not_allowed", "only ideas and drafts can change format");
+  if (formatKey(post.value.type) === p.data.type) return { ok: true, cleared: false };
+  const keep = post.value.content != null && parseContent(p.data.type, post.value.content).ok && parseContent(p.data.type, post.value.content).value != null;
+  const { data, error } = await a.sb.from("posts").update({ type: p.data.type, ...(keep ? {} : { content: null }) }).eq("id", post.value.id).select("id");
+  if (error || !data?.length) return dbFail(error, "post format");
+  await audit({ agencyId: a.profile.agency_id, actor: a.userId, action: "post.format", entity: "post", entityId: post.value.id, meta: { from: post.value.type, to: p.data.type, cleared: !keep && post.value.content != null } });
+  return { ok: true, cleared: !keep && post.value.content != null };
+}

@@ -7,6 +7,7 @@ import { loadPost } from "@/lib/posts/access";
 import { CopyButton } from "./copy-button";
 import { PostActions } from "./post-actions";
 import { ScriptExport } from "./script-export";
+import { FormatSwitch } from "./format-switch";
 import { PostEditor } from "./post-editor";
 import { FillWithAgent } from "./fill-with-agent";
 import { PostReview } from "./post-review";
@@ -81,6 +82,7 @@ export async function PostDetail({ locale, id, portal }: { locale: string; id: s
         {post.planned_date ? ` · ${post.planned_date}${post.suggested_time ? ` ${post.suggested_time}` : ""}${client?.timezone ? ` (${client.timezone})` : ""}` : ` · ${t("unscheduledShort")}`}
       </p>
 
+      {!portal && ["idea", "draft", "approved"].includes(post.status) && <FormatSwitch postId={post.id} current={formatKey(post.type)} hasContent={!!content} />}
       {post.idea && <section className="card"><h2>{t("idea")}</h2><p>{post.idea}</p></section>}
       {videoScript && <section className="card" style={{ marginTop: "1.25rem" }}><h2>{t("fromVideo.scriptTitle")}</h2><p className="video-script-text">{videoScript}</p></section>}
 

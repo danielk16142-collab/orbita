@@ -646,7 +646,12 @@
     "unscheduled": "Aún sin programar",
     "newPost": "Nueva publicación",
     "newIdea": "Nueva idea",
-    "format": "Formato",
+    "format": {
+      "label": "Formato",
+      "confirm": "¿Cambiar esta publicación a {format}? Su guion o diapositivas no encajan y se borrarán; el agente escribe la nueva versión.",
+      "cleared": "Ahora es {format}. Usa Escribir con el agente para crearlo.",
+      "changed": "Formato cambiado."
+    },
     "language": "Idioma",
     "idea": "Idea",
     "date": "Fecha",

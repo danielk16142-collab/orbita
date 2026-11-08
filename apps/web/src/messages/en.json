@@ -646,7 +646,12 @@
     "unscheduled": "Not scheduled yet",
     "newPost": "New post",
     "newIdea": "New idea",
-    "format": "Format",
+    "format": {
+      "label": "Format",
+      "confirm": "Change this post to a {format}? Its current script or slides don't fit and will be cleared; the agent writes the new one.",
+      "cleared": "Now a {format}. Use Write it with the agent to build it.",
+      "changed": "Format changed."
+    },
     "language": "Language",
     "idea": "Idea",
     "date": "Date",

@@ -1,4 +1,5 @@
 "use client";
+import { FormatSwitch } from "@/components/posts/format-switch";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -246,6 +247,7 @@ export function StrategyMap({ data, locale, clientId, postsBase, newPostHref, pr
                     {p.pillar && <span className="badge" style={{ borderColor: color(p.pillar) }}>{p.pillar}</span>}
                   </p>
                   <p className="stat-vs">{day(p.date)}</p>
+                  {p.kind === "plan" && clientId && ["idea", "draft", "approved"].includes(p.status) && <FormatSwitch postId={p.id} current={p.format} />}
                   {p.kind === "live" && (
                     <dl className="map-metrics">
                       {p.views !== null && p.views !== undefined && <div><dt>{t("m.views")}</dt><dd>{nf.format(p.views)}</dd></div>}
