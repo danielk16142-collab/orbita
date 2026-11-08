@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { COMPETITOR_NETWORKS } from "@/lib/competitors";
 import { analysisToResearchAction, removeCompetitorAction, saveCompetitorAction } from "@/lib/research-actions";
+import { addStrategyTopicAction } from "@/lib/focus-actions";
 import { createPostAction } from "@/lib/posts-actions";
 
 const LABEL: Record<string, string> = { instagram: "Instagram", tiktok: "TikTok", linkedin: "LinkedIn", youtube: "YouTube", facebook: "Facebook" };
@@ -97,14 +98,28 @@ export function RemoveCompetitorButton({ clientId, id, name, listHref }: { clien
 type Idea = { title: string; format: string; network: string; why: string; source_post?: { hook: string; multiple: number | null; metric: string; value: number; url: string | null } };
 
 /** Pick content ideas from the analysis and add them to the calendar as ideas (one post each, unscheduled). */
-export function IdeasPicker({ clientId, ideas, locale, calendarHref }: { clientId?: string; ideas: Idea[]; locale: string; calendarHref: string }) {
+/**
+ * The analysis's content ideas: picked ideas go to the strategy's ideas (the topic bank Create post and Fill the week draw
+ * from), since they still have to be built; or straight onto the calendar as ideas when wanted now.
+ */
+export function IdeasPicker({ clientId, ideas, locale, calendarHref, strategyHref }: { clientId?: string; ideas: Idea[]; locale: string; calendarHref: string; strategyHref: string }) {
   const t = useTranslations("competitors");
   const tp = useTranslations("posts");
   const [picked, setPicked] = useState<number[]>([]);
   const [added, setAdded] = useState<number[]>([]);
+  const [where, setWhere] = useState<"strategy" | "calendar" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
   const toggle = (i: number) => setPicked((p) => (p.includes(i) ? p.filter((x) => x !== i) : [...p, i]));
+  const toStrategy = () => start(async () => {
+    setError(null);
+    for (const i of picked) {
+      const r = await addStrategyTopicAction({ clientId, topic: ideas[i].title.slice(0, 200) });
+      if (!r.ok) { setError(r.error === "no_strategy" ? t("errors.noStrategy") : t("errors.ideas")); return; }
+      setAdded((a) => [...a, i]); setWhere("strategy");
+    }
+    setPicked([]);
+  });
   const add = () => start(async () => {
     setError(null);
     for (const i of picked) {
@@ -112,7 +127,7 @@ export function IdeasPicker({ clientId, ideas, locale, calendarHref }: { clientI
       const source = idea.source_post ? `${t("builtOn")}: "${idea.source_post.hook}"` : "";
       const r = await createPostAction({ clientId, network: idea.network, language: ["en", "fr", "es"].includes(locale) ? locale : "en", type: idea.format, idea: [idea.title, idea.why, source].filter(Boolean).join(". ").slice(0, 2000), status: "idea" });
       if (!r.ok) { setError(t("errors.ideas")); return; }
-      setAdded((a) => [...a, i]);
+      setAdded((a) => [...a, i]); setWhere("calendar");
     }
     setPicked([]);
   });
@@ -137,8 +152,9 @@ export function IdeasPicker({ clientId, ideas, locale, calendarHref }: { clientI
       </ul>
       {error && <p className="error" role="alert">{error}</p>}
       <div className="btn-row">
-        <button type="button" className="btn small" disabled={pending || picked.length === 0} onClick={add}>{t("addIdeas", { count: picked.length })}</button>
-        {added.length > 0 && <a className="btn small ghost" href={calendarHref}>✓ {t("ideasAdded", { count: added.length })}</a>}
+        <button type="button" className="btn small" disabled={pending || picked.length === 0} onClick={toStrategy}>{t("addToStrategy", { count: picked.length })}</button>
+        <button type="button" className="btn small ghost" disabled={pending || picked.length === 0} onClick={add}>{t("addToCalendar")}</button>
+        {added.length > 0 && <a className="btn small ghost" href={where === "calendar" ? calendarHref : strategyHref}>✓ {where === "calendar" ? t("ideasAdded", { count: added.length }) : t("ideasInStrategy", { count: added.length })}</a>}
       </div>
     </div>
   );

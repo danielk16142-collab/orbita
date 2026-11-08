@@ -1129,7 +1129,8 @@
       "not_found": "Este competidor ya no existe.",
       "ideas": "Algunas ideas no se pudieron agregar. Inténtalo de nuevo.",
       "not_set_up": "Competidores necesita una actualización de la base de datos que todavía no se aplicó (migración 0012_competitors.sql). Pide a tu administrador que la ejecute en Supabase y vuelve a intentarlo.",
-      "delete_failed": "No se pudo eliminar el competidor. Inténtalo de nuevo."
+      "delete_failed": "No se pudo eliminar el competidor. Inténtalo de nuevo.",
+      "noStrategy": "Todavía no hay estrategia. Crea una primero o añade las ideas al calendario."
     },
     "builtOn": "Basada en su publicación",
     "timesUsual": "{n}× sus {metric} habituales",
@@ -1144,7 +1145,10 @@
     "delete": "Eliminar",
     "deleting": "Eliminando…",
     "deleteNamed": "Eliminar {name}",
-    "deleteConfirm": "¿Eliminar {name}? Sus análisis y publicaciones registradas (con transcripciones y explicaciones) también se eliminan. Las notas de investigación que guardaste se mantienen."
+    "deleteConfirm": "¿Eliminar {name}? Sus análisis y publicaciones registradas (con transcripciones y explicaciones) también se eliminan. Las notas de investigación que guardaste se mantienen.",
+    "addToStrategy": "{count, plural, =0 {Elige ideas para añadir} one {Añadir # idea a las ideas de la estrategia} other {Añadir # ideas a las ideas de la estrategia}}",
+    "addToCalendar": "Añadirlas al calendario",
+    "ideasInStrategy": "{count, plural, one {# idea en la estrategia} other {# ideas en la estrategia}}: abrir la estrategia"
   },
   "reset": {
     "forgotTitle": "Restablecer la contraseña",

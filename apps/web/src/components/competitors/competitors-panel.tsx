@@ -184,7 +184,8 @@ export async function CompetitorDetailView({ locale, clientId, staff, competitor
             {a.content_ideas.length > 0 && (
               <>
                 <h3 style={{ marginTop: "1.25rem" }}>{t("ideasTitle")}</h3>
-                <IdeasPicker clientId={clientId} ideas={a.content_ideas} locale={locale} calendarHref={calendarHref} />
+                <IdeasPicker clientId={clientId} ideas={a.content_ideas} locale={locale} calendarHref={calendarHref}
+                  strategyHref={staff ? `/${locale}/strategy${clientId ? `?client=${clientId}` : ""}` : `/${locale}/portal/strategy`} />
               </>
             )}
           </section>
