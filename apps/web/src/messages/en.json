@@ -1932,7 +1932,12 @@
       "apply_failed": "The strategy could not be saved. Try again.",
       "model_error": "The agent could not answer. Try again.",
       "undo": "Could not restore the previous strategy."
-    }
+    },
+    "channels": "Channels",
+    "channelsHint": "Only the checked channels get a cadence and series.",
+    "sameVideos": "Instagram and TikTok get the same videos, with a caption for each.",
+    "forChannels": "For {list}",
+    "linkedinOwn": "LinkedIn gets its own posts."
   },
   "liProfile": {
     "title": "LinkedIn profile score",
