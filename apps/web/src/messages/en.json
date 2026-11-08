@@ -59,7 +59,8 @@
     "secure": "Protected session",
     "privacy": "Privacy",
     "menu": "Menu",
-    "strategy": "Strategy"
+    "strategy": "Strategy",
+    "switchClient": "Switch client"
   },
   "legal": {
     "englishPrevails": "This document is currently available in English only. The English version prevails.",

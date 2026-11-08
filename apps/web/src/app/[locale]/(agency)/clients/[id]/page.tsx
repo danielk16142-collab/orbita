@@ -66,7 +66,8 @@ export default async function ClientDetail({ params, searchParams }: {
       </div>
       {showFirstAudit && <FirstAuditCard clientId={id} locale={locale} autoStart={q.firstAudit === "1"} agentHref={href("agent", { view: "chat" })} profileHref={href("profile")}
         done={auditReport?.summary ? { summary: auditReport.summary, questions: auditReport.missing_info ?? [] } : null} />}
-      <Tabs label={t("title")} current={tab} items={TABS.map((x) => ({ key: x, label: t(`tabs.${x}`), href: href(x) }))} />
+      {/* On wide screens the sidebar lists these sections; the tab row stays for phones. */}
+      <div className="client-tabs"><Tabs label={t("title")} current={tab} items={TABS.map((x) => ({ key: x, label: t(`tabs.${x}`), href: href(x) }))} /></div>
 
       {tab === "profile" && (
         <ProfilePanel locale={locale} clientId={id} staff client={client} learnedHref={`${base}/learned`} strategyHref={href("strategy")} flash={{ saved: q.saved === "1", error: q.error }}

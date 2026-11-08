@@ -1,12 +1,14 @@
 import { getTranslations } from "next-intl/server";
-import { Nav } from "@/components/nav";
+import { Suspense } from "react";
+import { AgencyNav } from "@/components/agency-nav";
 import { Sidebar } from "@/components/sidebar";
 import { requireStaff } from "@/lib/session";
 
 export default async function AgencyLayout({ children, params }: { children: React.ReactNode; params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations("nav");
-  await requireStaff(locale); // sign-in + terms + MFA (AAL2) + role, for every staff page
+  const { sb } = await requireStaff(locale); // sign-in + terms + MFA (AAL2) + role, for every staff page
+  const { data: clients } = await sb.from("clients").select("id, name").order("name"); // for the client menu in the sidebar
   return (
     <div className="shell">
       <Sidebar menuLabel={t("menu")}
@@ -15,14 +17,7 @@ export default async function AgencyLayout({ children, params }: { children: Rea
           <img className="brand-logo" src="/brand/orbita-logo-light.svg" alt="Orbita" width={716} height={203} />
         </div>}
         foot={<div className="sidebar-foot">{t("secure")}</div>}>
-        <Nav locale={locale} items={[
-          { href: "dashboard", label: t("home") },
-          { href: "posts", label: t("posts") },
-          { href: "strategy", label: t("strategy") },
-          { href: "agent", label: t("agent") },
-          { href: "clients", label: t("clients") },
-          { href: "settings", label: t("settings") },
-        ]} />
+        <Suspense fallback={null}><AgencyNav locale={locale} clients={clients ?? []} /></Suspense>
       </Sidebar>
       <main className="content">{children}</main>
     </div>
