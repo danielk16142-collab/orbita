@@ -7,6 +7,7 @@ export * from "./types";
 export * from "./state";
 export { readJson } from "./http";
 export * from "./apify";
+export * from "./linkedin-profile";
 export * from "./transcribe";
 export { instagramConnector, tiktokConnector, fakeConnector };
 

@@ -1967,7 +1967,7 @@
   },
   "liProfile": {
     "title": "LinkedIn profile score",
-    "intro": "Paste your LinkedIn profile and get a score out of 100 on 12 points, then rewrites in the order that wins back the most points. Nothing is posted to LinkedIn; you paste each part in yourself.",
+    "intro": "Paste your profile link and get a score out of 100 on 12 points, then rewrites in the order that wins back the most points. Orbita reads the public profile for you; nothing is posted to LinkedIn.",
     "start": "Score a LinkedIn profile",
     "again": "Score it again",
     "score": "Score my profile",
@@ -2036,8 +2036,24 @@
     "note": "Your profile text stays on this device for next time; Orbita does not store it. Where a number is missing, the text says “your number”: fill in the real one.",
     "errors": {
       "empty": "Paste at least the headline, the About or the current role.",
-      "no_result": "No score this time. Try again."
-    }
+      "no_result": "No score this time. Try again.",
+      "not_a_profile": "That isn't a personal profile link. Use linkedin.com/in/yourname.",
+      "read_not_configured": "Profile reading is not set up (APIFY_TOKEN is missing). Fill it in by hand below.",
+      "read_no_credit": "The Apify account is out of credit, so the profile couldn't be read. Fill it in by hand below.",
+      "read_timeout": "LinkedIn took too long to answer. Try again, or fill it in by hand below.",
+      "read_failed": "The profile couldn't be read (it may be private). Fill it in by hand below.",
+      "read_empty": "The profile came back empty. Fill it in by hand below."
+    },
+    "linkLabel": "Your LinkedIn profile link",
+    "readAndScore": "Read and score",
+    "readAgain": "Read and score again",
+    "reading": "Reading the profile… (about 30 seconds)",
+    "readHint": "Orbita reads the public profile and your latest posts, fills everything in and scores it. Banner text is not visible to it.",
+    "linkHint": "Use a personal profile link, like linkedin.com/in/yourname. Company pages can't be scored.",
+    "readDone": "Read {name}'s profile.",
+    "checkGuesses": "LinkedIn doesn't show these, so they are best guesses: {list}. Check them and score again if one is wrong.",
+    "openForm": "Check the answers",
+    "byHand": "Fill it in by hand instead"
   },
   "channels": {
     "notSetUp": "Run migration 0023 in Supabase to keep TikTok and LinkedIn numbers here.",

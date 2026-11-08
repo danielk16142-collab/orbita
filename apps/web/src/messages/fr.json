@@ -1967,7 +1967,7 @@
   },
   "liProfile": {
     "title": "Score du profil LinkedIn",
-    "intro": "Collez votre profil LinkedIn et obtenez un score sur 100 en 12 points, puis des réécritures dans l'ordre qui rapporte le plus de points. Rien n'est publié sur LinkedIn : vous collez chaque partie vous-même.",
+    "intro": "Collez le lien de votre profil et obtenez une note sur 100 en 12 points, puis des réécritures dans l'ordre qui rapporte le plus de points. Orbita lit le profil public pour vous ; rien n'est publié sur LinkedIn.",
     "start": "Évaluer un profil LinkedIn",
     "again": "Réévaluer",
     "score": "Évaluer mon profil",
@@ -2036,8 +2036,24 @@
     "note": "Le texte de votre profil reste sur cet appareil pour la prochaine fois ; Orbita ne le stocke pas. Là où un chiffre manque, le texte indique « your number » : mettez le vrai.",
     "errors": {
       "empty": "Collez au moins le titre, la section Infos ou le poste actuel.",
-      "no_result": "Pas de score cette fois. Réessayez."
-    }
+      "no_result": "Pas de score cette fois. Réessayez.",
+      "not_a_profile": "Ce n'est pas un lien de profil personnel. Utilisez linkedin.com/in/votrenom.",
+      "read_not_configured": "La lecture des profils n'est pas configurée (APIFY_TOKEN manquant). Remplissez-le à la main ci-dessous.",
+      "read_no_credit": "Le compte Apify n'a plus de crédit, le profil n'a pas pu être lu. Remplissez-le à la main ci-dessous.",
+      "read_timeout": "LinkedIn a mis trop de temps à répondre. Réessayez, ou remplissez-le à la main ci-dessous.",
+      "read_failed": "Le profil n'a pas pu être lu (il est peut-être privé). Remplissez-le à la main ci-dessous.",
+      "read_empty": "Le profil est revenu vide. Remplissez-le à la main ci-dessous."
+    },
+    "linkLabel": "Le lien de votre profil LinkedIn",
+    "readAndScore": "Lire et noter",
+    "readAgain": "Relire et noter",
+    "reading": "Lecture du profil… (environ 30 secondes)",
+    "readHint": "Orbita lit le profil public et vos dernières publications, remplit tout et donne la note. Le texte de la bannière ne lui est pas visible.",
+    "linkHint": "Utilisez un lien de profil personnel, comme linkedin.com/in/votrenom. Les pages d'entreprise ne peuvent pas être notées.",
+    "readDone": "Profil de {name} lu.",
+    "checkGuesses": "LinkedIn ne montre pas ces éléments, ce sont donc des estimations : {list}. Vérifiez-les et notez à nouveau si l'un est faux.",
+    "openForm": "Vérifier les réponses",
+    "byHand": "Remplir à la main"
   },
   "channels": {
     "notSetUp": "Exécutez la migration 0023 dans Supabase pour garder ici les chiffres TikTok et LinkedIn.",

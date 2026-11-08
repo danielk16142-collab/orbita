@@ -852,6 +852,11 @@ ol.plain.remake-scenes { display: grid; gap: .6rem; }
 .li-total { font-family: var(--font-mono); font-size: 1.4rem; }
 .li-form, .li-result { display: grid; grid-template-columns: minmax(0, 1fr); gap: .6rem; margin-top: .75rem; }
 .li-form .plan-row { grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: .6rem; }
+.li-read { display: grid; gap: .35rem; margin: .5rem 0 .75rem; }
+.li-read-row { display: flex; flex-wrap: wrap; gap: .5rem; }
+.li-read-row input { flex: 1 1 14rem; min-width: 0; }
+.li-guess-note { font-size: .9rem; }
+.li-guess { outline: 2px dashed var(--accent, currentColor); outline-offset: 3px; border-radius: 6px; }
 .li-checks { display: grid; gap: .4rem; }
 .li-checks .check-line { display: flex; gap: .5rem; align-items: flex-start; margin: 0; font-family: var(--font-body); font-size: .95rem; letter-spacing: normal; text-transform: none; }
 .li-checks .check-line input { width: auto; flex: none; margin-top: .25rem; }

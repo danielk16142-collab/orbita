@@ -100,7 +100,7 @@ export async function ProfileView({ locale, client, ctx, proposals, staff, clien
           <AddSourceForm clientId={clientId} />
         </section>
 
-        <LinkedInScore clientId={clientId} locale={locale} />
+        <LinkedInScore clientId={clientId} locale={locale} linkedinUrl={ctx.sources.find((s) => s.kind === "linkedin" && s.url && /linkedin\.com\/in\//i.test(s.url))?.url ?? undefined} />
 
         <section className="card focus-moved">
           <h2>{t("focusTitle")}</h2>
