@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import ReactMarkdown from "react-markdown";
 
 type Msg = { role: "user" | "assistant"; text: string };
-type Ev = { type: string; text?: string; conversationId?: string; code?: string; learnDue?: boolean };
+type Ev = { type: string; text?: string; conversationId?: string; code?: string; detail?: string; learnDue?: boolean };
 
 /** A normal chat. Streams the agent's reply and refreshes the page when it adds suggestions, sources or an audit. */
 const GOALS = ["sales", "awareness", "followers", "offer", "trust", "educate", "consistency"] as const;
@@ -80,7 +80,7 @@ export function AgentChat({ locale, clientId, initialMessages, initialConversati
           if (ev.type === "meta" && ev.conversationId) conv.current = ev.conversationId;
           else if (ev.type === "text" && ev.text) setMessages((m) => { const c = [...m]; const last = c[c.length - 1]; c[c.length - 1] = { ...last, text: last.text + ev.text }; return c; });
           else if (["proposal", "source", "audit", "research"].includes(ev.type)) touched = true;
-          else if (ev.type === "error") setError(t.has(`errors.${ev.code}`) ? t(`errors.${ev.code}`) : t("errors.generic"));
+          else if (ev.type === "error") setError(`${t.has(`errors.${ev.code}`) ? t(`errors.${ev.code}`) : t("errors.generic")}${ev.detail ? ` (${ev.detail})` : ""}`);
           else if (ev.type === "done") learnDue = !!ev.learnDue;
         }
       }

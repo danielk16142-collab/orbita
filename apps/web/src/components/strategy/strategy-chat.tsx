@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { restoreStrategyAction } from "@/lib/focus-actions";
 
 type Msg = { role: "user" | "assistant"; text: string };
-type Ev = { type: string; text?: string; code?: string };
+type Ev = { type: string; text?: string; code?: string; detail?: string };
 
 /** A box on the Strategy section: say what to change (or paste a new strategy) and the agent updates it right away. */
 export function StrategyChat({ clientId, locale, hasStrategy }: { clientId?: string; locale: string; hasStrategy: boolean }) {
@@ -45,7 +45,7 @@ export function StrategyChat({ clientId, locale, hasStrategy }: { clientId?: str
           let ev: Ev; try { ev = JSON.parse(part.slice(6)); } catch { continue; }
           if (ev.type === "text" && ev.text) setMessages((m) => { const c = [...m]; c[c.length - 1] = { ...c[c.length - 1], text: c[c.length - 1].text + ev.text }; return c; });
           else if (ev.type === "applied") { setApplied(true); router.refresh(); }
-          else if (ev.type === "error") setError(t.has(`errors.${ev.code}`) ? t(`errors.${ev.code}`) : ta.has(`errors.${ev.code}`) ? ta(`errors.${ev.code}`) : ta("errors.generic"));
+          else if (ev.type === "error") setError(`${t.has(`errors.${ev.code}`) ? t(`errors.${ev.code}`) : ta.has(`errors.${ev.code}`) ? ta(`errors.${ev.code}`) : ta("errors.generic")}${ev.detail ? ` (${ev.detail})` : ""}`);
         }
       }
     } catch { setError(ta("errors.generic")); }

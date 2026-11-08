@@ -9,7 +9,7 @@ import { createPostAction, fillPostCaptionAction } from "@/lib/posts-actions";
 import { ProposalCard, type ProposalView } from "@/components/agent/proposal-card";
 
 type Msg = { role: "user" | "assistant"; text: string };
-type Ev = { type: string; text?: string; conversationId?: string; code?: string; id?: string; target?: string };
+type Ev = { type: string; text?: string; conversationId?: string; code?: string; detail?: string; id?: string; target?: string };
 /** Formats the agent drafts as a structured post (review card); the others are written in the reply. */
 const STRUCTURED = ["reel", "video", "carousel", "static", "story"];
 
@@ -69,7 +69,7 @@ export function PostChat({ clientId, locale, format, networks, language, idea, s
             const r = await getProposalAction({ clientId, id: ev.id });
             const after = replyIndex.current;
             if (r.ok) setDrafts((d) => (d.some((x) => x.proposal.id === r.proposal.id) ? d : [...d, { proposal: r.proposal as ProposalView, after }]));
-          } else if (ev.type === "error") setError(ta.has(`errors.${ev.code}`) ? ta(`errors.${ev.code}`) : ta("errors.generic"));
+          } else if (ev.type === "error") setError(`${ta.has(`errors.${ev.code}`) ? ta(`errors.${ev.code}`) : ta("errors.generic")}${ev.detail ? ` (${ev.detail})` : ""}`);
         }
       }
     } catch { setError(ta("errors.generic")); }

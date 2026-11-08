@@ -46,10 +46,10 @@ export function BuildStrategyButton({ clientId, locale, hasStrategy, ghost, befo
         const parts = buf.split("\n\n"); buf = parts.pop() ?? "";
         for (const part of parts) {
           if (!part.startsWith("data: ")) continue;
-          let ev: { type: string; text?: string; code?: string }; try { ev = JSON.parse(part.slice(6)); } catch { continue; }
+          let ev: { type: string; text?: string; code?: string; detail?: string }; try { ev = JSON.parse(part.slice(6)); } catch { continue; }
           if (ev.type === "text" && ev.text) setReply((r) => r + ev.text);
           else if (ev.type === "applied") { setApplied(true); router.refresh(); }
-          else if (ev.type === "error") setError(errorText(ev.code ?? "generic"));
+          else if (ev.type === "error") setError(`${errorText(ev.code ?? "generic")}${ev.detail ? ` (${ev.detail})` : ""}`);
         }
       }
     } catch { setError(ta("errors.generic")); }
