@@ -14,8 +14,8 @@ const LABEL: Record<string, string> = { instagram: "Instagram", tiktok: "TikTok"
 /** The last choice, per client, on this device. */
 const channelsKey = (clientId?: string) => `orbita:strategy-channels:${clientId ?? "me"}`;
 
-export function BuildStrategyButton({ clientId, locale, hasStrategy, ghost, beforeBuild }: {
-  clientId?: string; locale: string; hasStrategy: boolean; ghost?: boolean; beforeBuild?: () => Promise<boolean>;
+export function BuildStrategyButton({ clientId, locale, hasStrategy, ghost, beforeBuild, language }: {
+  clientId?: string; locale: string; hasStrategy: boolean; ghost?: boolean; beforeBuild?: () => Promise<boolean>; /** which language's strategy */ language?: string;
 }) {
   const t = useTranslations("buildStrategy");
   const ta = useTranslations("agent");
@@ -36,7 +36,7 @@ export function BuildStrategyButton({ clientId, locale, hasStrategy, ghost, befo
     setBusy(true); setError(null); setReply(""); setApplied(false);
     try {
       if (beforeBuild && !(await beforeBuild())) return;
-      const res = await fetch("/api/strategy/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, locale, mode: "from_focus", networks: channels }) });
+      const res = await fetch("/api/strategy/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, locale, language, mode: "from_focus", networks: channels }) });
       if (!res.ok || !res.body) { setError(errorText(((await res.json().catch(() => ({}))) as { error?: string }).error ?? "generic")); return; }
       const reader = res.body.getReader(); const dec = new TextDecoder(); let buf = "";
       for (;;) {
@@ -75,7 +75,7 @@ export function BuildStrategyButton({ clientId, locale, hasStrategy, ghost, befo
       {busy && <p className="stat-vs" role="status">{t("buildingHint")}</p>}
       {applied && (
         <p className="ok" role="status">✓ {hasStrategy ? t("rebuilt") : t("built")}{" "}
-          {hasStrategy && <button type="button" className="btn ghost small" disabled={undoing} onClick={() => startUndo(async () => { const r = await restoreStrategyAction({ clientId }); if (r.ok) { setApplied(false); router.refresh(); } else setError(t("errors.undo")); })}>{t("undo")}</button>}
+          {hasStrategy && <button type="button" className="btn ghost small" disabled={undoing} onClick={() => startUndo(async () => { const r = await restoreStrategyAction({ clientId, language }); if (r.ok) { setApplied(false); router.refresh(); } else setError(t("errors.undo")); })}>{t("undo")}</button>}
         </p>
       )}
       {reply && !busy && <p className="build-strategy-reply">{reply}</p>}

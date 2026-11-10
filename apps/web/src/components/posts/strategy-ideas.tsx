@@ -7,17 +7,17 @@ import { NETWORK_LABEL } from "./shared";
 type Data = { hasStrategy: boolean; title: string | null; planned: { id: string; idea: string; network: string; date: string | null; status: string }[]; series: { name: string; subject: string }[]; topics: string[] };
 
 /** Ideas that come straight from the active strategy (no AI call): posts already planned, recurring series and the topic bank. */
-export function StrategyIdeas({ clientId, format, networks, postsBase, onPick, picked }: {
-  clientId?: string; format: string; networks: string[]; postsBase: string; onPick: (text: string) => void; picked: string;
+export function StrategyIdeas({ clientId, format, networks, postsBase, onPick, picked, language }: {
+  clientId?: string; /** the post language: ideas from that language's strategy */ language?: string; format: string; networks: string[]; postsBase: string; onPick: (text: string) => void; picked: string;
 }) {
   const t = useTranslations("posts");
   const [data, setData] = useState<Data | null>(null);
   const [failed, setFailed] = useState(false);
-  const key = `${clientId}|${format}|${networks.join(",")}`;
+  const key = `${clientId}|${format}|${networks.join(",")}|${language}`;
   useEffect(() => {
     let live = true;
     setData(null); setFailed(false);
-    fetch("/api/posts/strategy-ideas", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, format, networks }) })
+    fetch("/api/posts/strategy-ideas", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, format, networks, language }) })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
       .then((d: Data) => { if (live) setData(d); })
       .catch(() => { if (live) setFailed(true); });

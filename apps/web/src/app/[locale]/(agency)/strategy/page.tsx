@@ -4,7 +4,7 @@ import { ClientSwitcher } from "@/components/client-switcher";
 import { StrategyPanel } from "@/components/strategy/strategy-panel";
 
 /** Agency view: one client's strategy (mind map and calendar map), with a switcher to change client. */
-export default async function StrategyIndex({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ client?: string; month?: string; layout?: string }> }) {
+export default async function StrategyIndex({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ client?: string; month?: string; layout?: string; lang?: string }> }) {
   const { locale } = await params;
   const q = await searchParams;
   const t = await getTranslations("strategyPage");
@@ -18,7 +18,7 @@ export default async function StrategyIndex({ params, searchParams }: { params: 
       <p className="eyebrow">{t("eyebrow")}</p>
       <div className="page-head">
         <h1>{t("title")}</h1>
-        {current && <ClientSwitcher action={base} clients={clients ?? []} current={current.id} label={tcl("client")} button={tcl("open")} keep={q.layout ? { layout: q.layout } : {}} />}
+        {current && <ClientSwitcher action={base} clients={clients ?? []} current={current.id} label={tcl("client")} button={tcl("open")} keep={{ ...(q.layout ? { layout: q.layout } : {}), ...(q.lang ? { lang: q.lang } : {}) }} />}
       </div>
       {current ? (
         <StrategyPanel locale={locale} clientId={current.id} query={q} hrefFor={(extra) => `${base}?${new URLSearchParams({ client: current.id, ...extra })}`}

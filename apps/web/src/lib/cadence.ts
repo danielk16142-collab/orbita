@@ -1,4 +1,5 @@
 import "server-only";
+import { strategyLanguage } from "@/lib/languages";
 import { bestPostingWindows, lastWeekRecap, missedPosts, nextPost, weekAhead, weekProgress, type CadencePost, type CadenceRule, type NextPost, type WeekProgress } from "@orbita/agent";
 import type { AnalyticsData } from "@/lib/analytics/load";
 import type { getSession } from "@/lib/session";
@@ -21,16 +22,16 @@ export function localDay(timezone: string, at = new Date()): string {
  */
 export async function loadCadence(sb: Sb, clientId: string, analytics: AnalyticsData, now = new Date()): Promise<Cadence> {
   // posting_goal comes with migration 0014; until it is applied, use the default.
-  let client = (await sb.from("clients").select("timezone, posting_goal").eq("id", clientId).maybeSingle()).data as { timezone: string; posting_goal?: number } | null;
+  let client = (await sb.from("clients").select("timezone, languages, posting_goal").eq("id", clientId).maybeSingle()).data as { timezone: string; languages?: string[]; posting_goal?: number } | null;
   const goalSaved = !!client;
-  if (!client) client = (await sb.from("clients").select("timezone").eq("id", clientId).maybeSingle()).data as { timezone: string } | null;
+  if (!client) client = (await sb.from("clients").select("timezone, languages").eq("id", clientId).maybeSingle()).data as { timezone: string; languages?: string[] } | null;
   const tz = client?.timezone ?? "UTC";
   const today = localDay(tz, now);
   const since = new Date(now.getTime() - 120 * 86_400_000).toISOString().slice(0, 10);
 
   const [posts, strategy, research] = await Promise.all([
     sb.from("posts").select("id, idea, type, network, status, planned_date").eq("client_id", clientId).gte("planned_date", since).order("planned_date").limit(300),
-    sb.from("strategies").select("content").eq("client_id", clientId).eq("active", true).maybeSingle(),
+    sb.from("strategies").select("content").eq("client_id", clientId).eq("language", strategyLanguage(null, client?.languages)).eq("active", true).maybeSingle(), // the main language's strategy
     sb.from("research_notes").select("title, summary, kind").eq("client_id", clientId).in("kind", ["idea", "trend"]).order("created_at", { ascending: false }).limit(5),
   ]);
   const rows = (posts.data ?? []) as CadencePost[];

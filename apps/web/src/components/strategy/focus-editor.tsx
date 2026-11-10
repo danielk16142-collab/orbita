@@ -14,7 +14,7 @@ const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLow
  * topics, which follow the pillars (a topic a pillar covers is a focus topic; "avoid" always wins). Updated with the
  * strategy week after week; "This week" shows the pillars this week's posts use and so the topics in play.
  */
-export function FocusEditor({ clientId, locale, initial, week, hasStrategy }: { clientId?: string; locale: string; initial: BrandFocus; week: WeekFocus; hasStrategy: boolean }) {
+export function FocusEditor({ clientId, locale, initial, week, hasStrategy, language }: { clientId?: string; locale: string; initial: BrandFocus; week: WeekFocus; hasStrategy: boolean; /** the strategy language shown */ language?: string }) {
   const t = useTranslations("focus");
   const router = useRouter();
   const [focus, setFocus] = useState<BrandFocus>(() => syncTopics(initial));
@@ -187,7 +187,7 @@ export function FocusEditor({ clientId, locale, initial, week, hasStrategy }: { 
       {named && (
         <div className="focus-build">
           <p className="stat-vs">{hasStrategy ? t("rebuildHint") : t("buildHint")}</p>
-          <BuildStrategyButton clientId={clientId} locale={locale} hasStrategy={hasStrategy} beforeBuild={persist} />
+          <BuildStrategyButton clientId={clientId} locale={locale} hasStrategy={hasStrategy} beforeBuild={persist} language={language} />
         </div>
       )}
     </section>

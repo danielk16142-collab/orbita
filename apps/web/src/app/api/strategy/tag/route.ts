@@ -6,13 +6,14 @@ import { overDailyCap, recordUsage } from "@/lib/agent/usage";
 import { describeModelError, json, sameOrigin } from "@/lib/agent/http";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { limiter } from "@/lib/rate-limit";
+import { strategyLanguage } from "@/lib/languages";
 import { audit } from "@/lib/audit";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
 export const dynamic = "force-dynamic";
 
-const Body = z.object({ clientId: z.string().uuid().optional() });
+const Body = z.object({ clientId: z.string().uuid().optional(), language: z.enum(["en", "fr", "es"]).optional() });
 const MAX = 80;
 
 /**
@@ -32,13 +33,14 @@ export async function POST(req: Request) {
   if (!(await limiter("pillar-tag", 6, 60 * 60_000).hit(actor.userId)).allowed) return json({ error: "rate_limited" }, 429);
   if (await overDailyCap(actor)) return json({ error: "daily_cap" }, 429);
 
-  const { data: strat } = await actor.sb.from("strategies").select("content").eq("client_id", actor.clientId).eq("active", true).maybeSingle();
+  const language = strategyLanguage(body.data.language, actor.client.languages);
+  const { data: strat } = await actor.sb.from("strategies").select("content").eq("client_id", actor.clientId).eq("language", language).eq("active", true).maybeSingle();
   const pillars = ((strat?.content as { pillars?: MapPillar[] } | null)?.pillars ?? []).filter((p) => p.name);
   if (!pillars.length) return json({ error: "no_strategy" }, 409);
 
   const since = new Date(Date.now() - 120 * 86_400_000).toISOString();
   const [{ data: planned }, { data: live, error: liveError }] = await Promise.all([
-    actor.sb.from("posts").select("id, idea, caption, type").eq("client_id", actor.clientId).is("pillar", null).gte("created_at", since).limit(MAX),
+    actor.sb.from("posts").select("id, idea, caption, type").eq("client_id", actor.clientId).eq("language", language).is("pillar", null).gte("created_at", since).limit(MAX),
     actor.sb.from("account_posts").select("id, caption, media_type").eq("client_id", actor.clientId).is("pillar", null).gte("published_at", since).order("published_at", { ascending: false }).limit(MAX),
   ]);
   if (liveError && ["42703", "PGRST204"].includes(liveError.code ?? "")) return json({ error: "not_set_up" }, 503);

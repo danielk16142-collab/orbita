@@ -18,6 +18,8 @@ export function FillWeek({ clientId, locale, network }: { clientId?: string; loc
   const [keep, setKeep] = useState<boolean[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
+  /** The language the agent wrote the posts in (the client's main one): they go to that language's calendar. */
+  const [language, setLanguage] = useState(locale);
   useEffect(() => { if (!busy) return; setSeconds(0); const i = setInterval(() => setSeconds((s) => s + 1), 1000); return () => clearInterval(i); }, [busy]);
   const err = (code?: string) => (code && t.has(`fillErrors.${code}`) ? t(`fillErrors.${code}`) : t("fillErrors.generic"));
 
@@ -25,15 +27,15 @@ export function FillWeek({ clientId, locale, network }: { clientId?: string; loc
     setBusy(true); setError(null); setPosts(null);
     try {
       const res = await fetch("/api/posts/fill-week", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, network, locale }) });
-      const data = (await res.json().catch(() => ({}))) as { posts?: WeekPost[]; error?: string };
-      if (!res.ok || !data.posts) setError(err(data.error)); else { setPosts(data.posts); setKeep(data.posts.map(() => true)); }
+      const data = (await res.json().catch(() => ({}))) as { posts?: WeekPost[]; language?: string; error?: string };
+      if (!res.ok || !data.posts) setError(err(data.error)); else { setPosts(data.posts); setKeep(data.posts.map(() => true)); setLanguage(data.language ?? locale); }
     } catch { setError(err()); }
     finally { setBusy(false); }
   }
   const add = () => start(async () => {
     const chosen = (posts ?? []).filter((_, i) => keep[i]);
     if (!chosen.length) return;
-    const r = await addWeekPostsAction({ clientId, network, language: locale, posts: chosen });
+    const r = await addWeekPostsAction({ clientId, network, language, posts: chosen });
     if (r.ok) { setPosts(null); router.refresh(); } else setError(err(r.error));
   });
 
@@ -78,6 +80,8 @@ export function MoveButton({ clientId, postId, date, locale }: { clientId?: stri
   const t = useTranslations("cadence");
   const router = useRouter();
   const [pending, start] = useTransition();
+  /** The language the agent wrote the posts in (the client's main one): they go to that language's calendar. */
+  const [language, setLanguage] = useState(locale);
   const [failed, setFailed] = useState(false);
   return (
     <button type="button" className="btn small ghost" disabled={pending} onClick={() => start(async () => { const r = await movePostAction({ clientId, postId, date }); if (r.ok) router.refresh(); else setFailed(true); })}>

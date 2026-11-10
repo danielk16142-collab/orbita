@@ -5,17 +5,17 @@ import { useTranslations } from "next-intl";
 type Idea = { title: string; hook: string; why: string; source: string };
 
 /** Ideas for the chosen format and networks, grounded in the client's strategy, latest plan and research. Clicking one fills the idea. */
-export function PostIdeas({ clientId, format, networks, locale, onPick, picked }: {
-  clientId?: string; format: string; networks: string[]; locale: string; onPick: (text: string) => void; picked: string;
+export function PostIdeas({ clientId, format, networks, locale, language, onPick, picked }: {
+  clientId?: string; /** the post language */ language?: string; format: string; networks: string[]; locale: string; onPick: (text: string) => void; picked: string;
 }) {
   const t = useTranslations("posts");
   const [state, setState] = useState<{ loading: boolean; ideas: Idea[]; generated: boolean; hasStrategy: boolean; failed: boolean }>({ loading: true, ideas: [], generated: false, hasStrategy: true, failed: false });
   const [round, setRound] = useState(0);
-  const key = `${clientId}|${format}|${networks.join(",")}|${round}`;
+  const key = `${clientId}|${format}|${networks.join(",")}|${language}|${round}`;
   useEffect(() => {
     let live = true;
     setState((s) => ({ ...s, loading: true, failed: false }));
-    fetch("/api/posts/ideas", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, format, networks, locale }) })
+    fetch("/api/posts/ideas", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, format, networks, locale, language }) })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
       .then((d) => { if (live) setState({ loading: false, ideas: d.ideas ?? [], generated: !!d.generated, hasStrategy: d.hasStrategy !== false, failed: false }); })
       .catch(() => { if (live) setState((s) => ({ ...s, loading: false, failed: true })); });

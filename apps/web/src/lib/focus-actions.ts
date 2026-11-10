@@ -5,6 +5,7 @@ import { BrandFocus, syncTopics } from "@orbita/agent";
 import { resolveAgentActor } from "@/lib/agent/access";
 import { limiter } from "@/lib/rate-limit";
 import { audit } from "@/lib/audit";
+import { strategyLanguage } from "@/lib/languages";
 
 type Result = { ok: true } | { ok: false; error: string };
 const MISSING = ["PGRST204", "42703"];
@@ -27,30 +28,32 @@ export async function saveFocusAction(input: unknown): Promise<Result> {
   return { ok: true };
 }
 
-/** Archive the active strategy so a new one can be built. It is kept (inactive) for the record, not deleted. */
+/** Archive the active strategy (of one language) so a new one can be built. It is kept (inactive) for the record, not deleted. */
 export async function archiveStrategyAction(input: unknown): Promise<Result> {
-  const p = z.object({ clientId: z.string().uuid().optional() }).safeParse(input);
+  const p = z.object({ clientId: z.string().uuid().optional(), language: z.enum(["en", "fr", "es"]).optional() }).safeParse(input);
   if (!p.success) return { ok: false, error: "bad_request" };
   const a = await resolveAgentActor(p.data.clientId);
   if (!a.ok) return { ok: false, error: "forbidden" };
-  const { data, error } = await a.actor.sb.from("strategies").update({ active: false }).eq("client_id", a.actor.clientId).eq("active", true).select("id");
+  const language = strategyLanguage(p.data.language, a.actor.client.languages);
+  const { data, error } = await a.actor.sb.from("strategies").update({ active: false }).eq("client_id", a.actor.clientId).eq("language", language).eq("active", true).select("id");
   if (error || !data?.length) return { ok: false, error: "forbidden" };
   await audit({ agencyId: a.actor.profile.agency_id, actor: a.actor.userId, action: "strategy.archived", entity: "client", entityId: a.actor.clientId });
   revalidatePath("/", "layout");
   return { ok: true };
 }
 
-/** Put back the strategy that was active before the latest change (the newest inactive one). The one being replaced is kept, inactive. */
+/** Put back the strategy that was active before the latest change (the newest inactive one in that language). The one being replaced is kept, inactive. */
 export async function restoreStrategyAction(input: unknown): Promise<Result> {
-  const p = z.object({ clientId: z.string().uuid().optional() }).safeParse(input);
+  const p = z.object({ clientId: z.string().uuid().optional(), language: z.enum(["en", "fr", "es"]).optional() }).safeParse(input);
   if (!p.success) return { ok: false, error: "bad_request" };
   const a = await resolveAgentActor(p.data.clientId);
   if (!a.ok) return { ok: false, error: "forbidden" };
   if (!(await limiter("strategy-restore", 20, 10 * 60_000).hit(a.actor.userId)).allowed) return { ok: false, error: "rate_limited" };
   const { sb, clientId } = a.actor;
+  const language = strategyLanguage(p.data.language, a.actor.client.languages);
   const [{ data: prev }, { data: cur }] = await Promise.all([
-    sb.from("strategies").select("id").eq("client_id", clientId).eq("active", false).order("created_at", { ascending: false }).limit(1).maybeSingle(),
-    sb.from("strategies").select("id").eq("client_id", clientId).eq("active", true).maybeSingle(),
+    sb.from("strategies").select("id").eq("client_id", clientId).eq("language", language).eq("active", false).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+    sb.from("strategies").select("id").eq("client_id", clientId).eq("language", language).eq("active", true).maybeSingle(),
   ]);
   if (!prev) return { ok: false, error: "nothing_to_restore" };
   if (cur) { const { data } = await sb.from("strategies").update({ active: false }).eq("id", cur.id).eq("client_id", clientId).select("id"); if (!data?.length) return { ok: false, error: "forbidden" }; }
@@ -66,13 +69,14 @@ export async function restoreStrategyAction(input: unknown): Promise<Result> {
 
 /** Add one idea to the active strategy's topic bank (for example our version of another creator's post), without rebuilding it. */
 export async function addStrategyTopicAction(input: unknown): Promise<Result> {
-  const p = z.object({ clientId: z.string().uuid().optional(), topic: z.string().trim().min(1).max(200) }).safeParse(input);
+  const p = z.object({ clientId: z.string().uuid().optional(), topic: z.string().trim().min(1).max(200), language: z.enum(["en", "fr", "es"]).optional() }).safeParse(input);
   if (!p.success) return { ok: false, error: "bad_request" };
   const a = await resolveAgentActor(p.data.clientId);
   if (!a.ok) return { ok: false, error: "forbidden" };
   if (!(await limiter("strategy-topic", 30, 10 * 60_000).hit(a.actor.userId)).allowed) return { ok: false, error: "rate_limited" };
   const { sb, clientId } = a.actor;
-  const { data: s } = await sb.from("strategies").select("id, content").eq("client_id", clientId).eq("active", true).maybeSingle();
+  const language = strategyLanguage(p.data.language, a.actor.client.languages);
+  const { data: s } = await sb.from("strategies").select("id, content").eq("client_id", clientId).eq("language", language).eq("active", true).maybeSingle();
   if (!s) return { ok: false, error: "no_strategy" };
   const content = (s.content ?? {}) as Record<string, unknown>;
   const topics = Array.isArray(content.topics) ? (content.topics as unknown[]).map(String) : [];

@@ -25,7 +25,10 @@ export async function acceptKickstartAction(input: unknown): Promise<Result> {
   if (!plan.success) return { ok: false, error: "not_found" };
   const chosen = [...new Set(p.data.items)].map((i) => plan.data.plan[i]).filter(Boolean);
   if (chosen.length) {
-    const r = await insertIdeas(a.actor, row.network, p.data.language, chosen.map((it) => ({ ...it, date: addDays(row.start_date, it.day_offset) })));
+    // The language the plan was written in (saved with it); older plans use the language sent.
+    const planLanguage = (row.plan as { language?: string } | null)?.language;
+    const language = planLanguage === "en" || planLanguage === "fr" || planLanguage === "es" ? planLanguage : p.data.language;
+    const r = await insertIdeas(a.actor, row.network, language, chosen.map((it) => ({ ...it, date: addDays(row.start_date, it.day_offset) })));
     if (!r.ok) return r;
   }
   if (p.data.setGoal) await sb.from("clients").update({ posting_goal: plan.data.posts_per_week }).eq("id", clientId);

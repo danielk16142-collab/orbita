@@ -3,11 +3,12 @@ import { formatKey } from "@orbita/content";
 import { resolveAgentActor } from "@/lib/agent/access";
 import { json, sameOrigin } from "@/lib/agent/http";
 import { limiter } from "@/lib/rate-limit";
+import { strategyLanguage } from "@/lib/languages";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const Body = z.object({ clientId: z.string().uuid().optional(), format: z.string().max(20), networks: z.array(z.string().max(20)).max(5).default([]) });
+const Body = z.object({ clientId: z.string().uuid().optional(), format: z.string().max(20), networks: z.array(z.string().max(20)).max(5).default([]), language: z.enum(["en", "fr", "es"]).optional() });
 type Content = { topics?: string[]; series?: { name: string; subject: string; networks?: string[]; formats?: string[] }[]; pillars?: { name: string; angle: string; share_percent: number }[] };
 
 /**
@@ -23,10 +24,11 @@ export async function POST(req: Request) {
   const actor = access.actor;
   if (!(await limiter("strategy-ideas", 60, 10 * 60_000).hit(actor.userId)).allowed) return json({ error: "rate_limited" }, 429);
   const format = formatKey(body.data.format);
+  const language = strategyLanguage(body.data.language, actor.client.languages); // the strategy and planned posts of the post's language
 
   const [{ data: strategy }, { data: planned }] = await Promise.all([
-    actor.sb.from("strategies").select("title, content").eq("client_id", actor.clientId).eq("active", true).maybeSingle(),
-    actor.sb.from("posts").select("id, type, network, idea, planned_date, status").eq("client_id", actor.clientId).in("status", ["idea", "draft"]).not("idea", "is", null).order("planned_date", { ascending: true, nullsFirst: false }).limit(60),
+    actor.sb.from("strategies").select("title, content").eq("client_id", actor.clientId).eq("language", language).eq("active", true).maybeSingle(),
+    actor.sb.from("posts").select("id, type, network, idea, planned_date, status").eq("client_id", actor.clientId).eq("language", language).in("status", ["idea", "draft"]).not("idea", "is", null).order("planned_date", { ascending: true, nullsFirst: false }).limit(60),
   ]);
   const c = (strategy?.content ?? {}) as Content;
   const nets = body.data.networks;

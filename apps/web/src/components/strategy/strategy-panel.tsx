@@ -13,6 +13,8 @@ import { ArchiveStrategyButton } from "./archive-strategy";
 import { StrategyChat } from "./strategy-chat";
 import { FocusEditor } from "./focus-editor";
 import { BuildStrategyButton } from "./build-strategy";
+import { LanguageTabs } from "@/components/language-tabs";
+import { languageTabs, strategyLanguage } from "@/lib/languages";
 
 const shiftMonth = (month: string, n: number) => { const d = new Date(Date.parse(`${month}-01T00:00:00Z`)); d.setUTCMonth(d.getUTCMonth() + n); return d.toISOString().slice(0, 7); };
 
@@ -22,7 +24,7 @@ const shiftMonth = (month: string, n: number) => { const d = new Date(Date.parse
  * Used by the agency and the portal.
  */
 export async function StrategyPanel({ locale, clientId, query, hrefFor, agentAskHref }: {
-  locale: string; clientId?: string; query: { month?: string; layout?: string };
+  locale: string; clientId?: string; query: { month?: string; layout?: string; lang?: string };
   /** This section with other params (layout, month). */ hrefFor: (extra: Record<string, string>) => string;
   /** The agent chat with the strategy request prepared. */ agentAskHref: string;
 }) {
@@ -34,23 +36,33 @@ export async function StrategyPanel({ locale, clientId, query, hrefFor, agentAsk
   const cid = actor.profile.role === "client" ? undefined : actor.clientId;
   const month = /^\d{4}-(0[1-9]|1[0-2])$/.test(query.month ?? "") ? query.month! : localDay(actor.client.timezone ?? "UTC").slice(0, 7);
   const layout = query.layout === "calendar" ? "calendar" : "mind";
-  const [data, { data: briefRow }] = await Promise.all([
-    loadStrategyMap(actor, month),
+  // One strategy per language: the tabs switch between them (and the map shows that language's posts).
+  const lang = strategyLanguage(query.lang, actor.client.languages);
+  const [data, { data: briefRow }, { data: built }] = await Promise.all([
+    loadStrategyMap(actor, month, lang),
     actor.sb.from("brand_briefs").select("*").eq("client_id", actor.clientId).maybeSingle(),
+    actor.sb.from("strategies").select("language").eq("client_id", actor.clientId).eq("active", true),
   ]);
+  const withStrategy = new Set((built ?? []).map((r) => r.language as string));
+  const langTabs = (
+    <LanguageTabs langs={languageTabs(actor.client.languages)} current={lang} locale={locale} label={t("language")}
+      hrefFor={(l) => hrefFor({ lang: l, layout, month })} note={(l) => (withStrategy.has(l) ? null : t("noStrategyYet"))} />
+  );
+  const keep = { lang, month };
   const focus = focusFromRow(briefRow as Record<string, unknown> | null);
   const postsBase = cid ? `/${locale}/posts` : `/${locale}/portal/posts`;
-  const newPostHref = cid ? `${postsBase}/new?client=${cid}` : `${postsBase}/new`;
+  const newPostHref = cid ? `${postsBase}/new?client=${cid}&lang=${lang}` : `${postsBase}/new?lang=${lang}`;
   const dateF = new Intl.DateTimeFormat(locale, { dateStyle: "medium" });
   // This week's pillars come from the posts planned this week (the map loads the month; outside it, only the share fallback).
   const thisWeek = weekStartOf(data.today);
   const week = weekFocus(focus, data.posts.filter((p) => p.kind === "plan"), thisWeek);
-  const editor = <FocusEditor clientId={cid} locale={locale} initial={focus} week={week} hasStrategy={!!data.strategy} />;
+  const editor = <FocusEditor clientId={cid} locale={locale} initial={focus} week={week} hasStrategy={!!data.strategy} language={lang} />;
 
   if (!data.strategy) {
     const chosen = focus.pillars.length > 0;
     return (
       <div className="strategy-section">
+      {langTabs}
       <section className="card strategy-empty">
         <h2>{t("emptyTitle")}</h2>
         <p>{t("emptyText")}</p>
@@ -59,11 +71,11 @@ export async function StrategyPanel({ locale, clientId, query, hrefFor, agentAsk
           <li><strong>{t("step2")}</strong> <span className="stat-vs">{t("step2Hint")}</span></li>
         </ol>
         {chosen
-          ? <BuildStrategyButton clientId={cid} locale={locale} hasStrategy={false} />
+          ? <BuildStrategyButton clientId={cid} locale={locale} hasStrategy={false} language={lang} />
           : <a className="btn" href="#focus">{t("choose")}</a>}
         <p className="stat-vs"><Link href={agentAskHref}>{t("buildInChat")}</Link></p>
       </section>
-      <StrategyChat clientId={cid} locale={locale} hasStrategy={false} />
+      <StrategyChat clientId={cid} locale={locale} hasStrategy={false} language={lang} />
       {editor}
       </div>
     );
@@ -71,6 +83,7 @@ export async function StrategyPanel({ locale, clientId, query, hrefFor, agentAsk
 
   return (
     <div className="strategy-section">
+      {langTabs}
       <section className="card strategy-head">
         <div>
           <p className="eyebrow">{ta(`periods.${data.strategy.period}`)} · {dateF.format(new Date(data.strategy.createdAt))}</p>
@@ -85,21 +98,21 @@ export async function StrategyPanel({ locale, clientId, query, hrefFor, agentAsk
         <div className="btn-row strategy-actions">
           <Link className="btn small" href={agentAskHref}>{t("change")}</Link>
           <a className="btn small ghost" href="#focus">{t("editFocus")}</a>
-          {focus.pillars.length > 0 && <BuildStrategyButton clientId={cid} locale={locale} hasStrategy ghost />}
-          <ArchiveStrategyButton clientId={cid} />
+          {focus.pillars.length > 0 && <BuildStrategyButton clientId={cid} locale={locale} hasStrategy ghost language={lang} />}
+          <ArchiveStrategyButton clientId={cid} language={lang} />
         </div>
       </section>
 
-      <StrategyChat clientId={cid} locale={locale} hasStrategy />
+      <StrategyChat clientId={cid} locale={locale} hasStrategy language={lang} />
 
       <nav className="map-views" aria-label={ta("strategyViews")}>
-        <Link className="btn small ghost" aria-current={layout === "mind" ? "page" : undefined} href={hrefFor({ layout: "mind", month })}>{ta("mindMap")}</Link>
-        <Link className="btn small ghost" aria-current={layout === "calendar" ? "page" : undefined} href={hrefFor({ layout: "calendar", month })}>{ta("calendarMap")}</Link>
+        <Link className="btn small ghost" aria-current={layout === "mind" ? "page" : undefined} href={hrefFor({ ...keep, layout: "mind" })}>{ta("mindMap")}</Link>
+        <Link className="btn small ghost" aria-current={layout === "calendar" ? "page" : undefined} href={hrefFor({ ...keep, layout: "calendar" })}>{ta("calendarMap")}</Link>
       </nav>
       {layout === "mind"
         ? <StrategyMindMap data={data} locale={locale} clientId={cid} postsBase={postsBase} newPostHref={newPostHref} />
         : <StrategyMap data={data} locale={locale} clientId={cid} postsBase={postsBase} newPostHref={newPostHref}
-            prevMonthHref={hrefFor({ month: shiftMonth(month, -1), layout: "calendar" })} nextMonthHref={hrefFor({ month: shiftMonth(month, 1), layout: "calendar" })} askStrategyHref={agentAskHref} />}
+            prevMonthHref={hrefFor({ lang, month: shiftMonth(month, -1), layout: "calendar" })} nextMonthHref={hrefFor({ lang, month: shiftMonth(month, 1), layout: "calendar" })} askStrategyHref={agentAskHref} />}
       {editor}
       <details className="card map-details">
         <summary><strong>{ta("strategyDetails")}</strong></summary>

@@ -4,6 +4,7 @@ import { CalendarView } from "@/components/posts/calendar-view";
 import type { CalPost } from "@/components/posts/shared";
 import { PostList, type ListPost } from "@/components/posts/post-list";
 import { ChannelTabs } from "@/components/posts/channel-tabs";
+import { LanguageTabs } from "@/components/language-tabs";
 
 /** Development only (CONNECTORS_FAKE=1): the calendar rendered from sample posts. */
 export default async function Preview({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ view?: string }> }) {
@@ -25,6 +26,7 @@ export default async function Preview({ params, searchParams }: { params: Promis
     ];
     return (<main className="content"><h1>Posts</h1><PostList locale={locale} posts={lp} today={today} showClient canDelete postHref={() => "#"} /></main>);
   }
+  const langs = <LanguageTabs langs={["es", "en", "fr"]} current="es" locale={locale} label="Language" hrefFor={(l) => `#${l}`} allHref="#all" allLabel="All languages" />;
   const tabs = <ChannelTabs label="Channels" current="instagram" items={["instagram", "tiktok", "linkedin", "all"].map((k) => ({ key: k, label: k === "all" ? "All channels" : k[0].toUpperCase() + k.slice(1), href: "#" }))} />;
-  return (<main className="content"><h1>Posts</h1>{tabs}<CalendarView locale={locale} view={view} anchor={`${ym}05`} posts={posts} today={today} showClient canDelete postHref={() => "#"} dayHref={(d) => `#${d}`} /></main>);
+  return (<main className="content"><h1>Posts</h1>{langs}{tabs}<CalendarView locale={locale} view={view} anchor={`${ym}05`} posts={posts} today={today} showClient canDelete postHref={() => "#"} dayHref={(d) => `#${d}`} /></main>);
 }

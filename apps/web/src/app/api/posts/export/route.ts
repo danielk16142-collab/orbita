@@ -18,6 +18,7 @@ export async function GET(req: NextRequest) {
   if (validDate(sp.get("to"))) q = q.lte("planned_date", sp.get("to")!);
   if (["instagram", "tiktok", "linkedin", "youtube", "facebook"].includes(sp.get("network") ?? "")) q = q.eq("network", sp.get("network")!);
   if (["idea", "draft", "approved", "scheduled", "published"].includes(sp.get("status") ?? "")) q = q.eq("status", sp.get("status")!);
+  if (["en", "fr", "es"].includes(sp.get("language") ?? "")) q = q.eq("language", sp.get("language")!);
   if (profile.role !== "client" && /^[0-9a-f-]{36}$/i.test(sp.get("client") ?? "")) q = q.eq("client_id", sp.get("client")!);
   const { data } = await q;
   const rows: ExportRow[] = (data ?? []).map((p) => ({ date: p.planned_date, time: p.suggested_time, client: (p.clients as unknown as { name: string } | null)?.name ?? "", network: p.network, format: p.type, status: p.status, language: p.language, pillar: p.pillar, idea: p.idea, caption: p.caption, hashtags: p.hashtags ?? [] }));

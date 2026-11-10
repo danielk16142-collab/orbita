@@ -8,6 +8,7 @@ import { resolveModelAccess } from "@/lib/agent/model";
 import { overDailyCap, recordUsage } from "@/lib/agent/usage";
 import { describeModelError, json, sameOrigin } from "@/lib/agent/http";
 import { limiter } from "@/lib/rate-limit";
+import { strategyLanguage } from "@/lib/languages";
 import { audit } from "@/lib/audit";
 
 export const runtime = "nodejs";
@@ -16,6 +17,8 @@ export const dynamic = "force-dynamic";
 
 const Body = z.object({
   clientId: z.string().uuid().optional(), locale: z.enum(["en", "fr", "es"]),
+  /** Which language's strategy this is (each language has its own); default the client's first language. */
+  language: z.enum(["en", "fr", "es"]).optional(),
   /** "from_focus": build (or rebuild) the strategy around the pillars and topics chosen in this section; no message needed. */
   mode: z.enum(["chat", "from_focus"]).default("chat"),
   /** The channels to plan for (from_focus); empty = whatever the brand uses. */
@@ -44,7 +47,8 @@ export async function POST(req: Request) {
   if (!(await limiter("strategy-chat", 15, 10 * 60_000).hit(actor.userId)).allowed) return json({ error: "rate_limited" }, 429);
   if (await overDailyCap(actor)) return json({ error: "daily_cap" }, 429);
 
-  const ctx = await loadClientContext(actor.sb, actor.clientId);
+  const language = strategyLanguage(body.language, actor.client.languages);
+  const ctx = await loadClientContext(actor.sb, actor.clientId, { language });
   const focus = focusFromRow(ctx.briefRow);
   if (body.mode === "from_focus" && !focus.pillars.some((p) => p.name.trim())) return json({ error: "no_pillars" }, 400);
   const message = body.mode === "from_focus" ? focusBuildRequest(focus, !!ctx.strategy, body.networks) : body.message;
@@ -52,7 +56,7 @@ export async function POST(req: Request) {
   while (history.length && history[0].role !== "user") history.shift();
   const input = promptInput(actor, ctx, body.locale);
   const ports = makePorts(actor, { conversationId: null, weekStart: input.weekStart, userTexts: [...history.filter((m) => m.role === "user").map((m) => String(m.content)), message] });
-  const system = buildSystemPrompt(input) + strategyChatFocus(!!ctx.strategy);
+  const system = buildSystemPrompt(input) + strategyChatFocus(!!ctx.strategy, language);
 
   const stream = new ReadableStream({
     async start(controller) {
@@ -71,7 +75,10 @@ export async function POST(req: Request) {
         if (last) {
           const repo = supabaseProposalRepo(actor);
           // Built from the chosen pillars: the strategy keeps exactly those pillars and shares.
-          const edited = body.mode === "from_focus" ? alignStrategyToFocus((await repo.get(last))?.payload, focus, body.networks) : undefined;
+          const payload = (await repo.get(last))?.payload;
+          const aligned = body.mode === "from_focus" ? alignStrategyToFocus(payload, focus, body.networks) : payload;
+          // Saved as this language's strategy (the others stay as they are).
+          const edited = aligned && typeof aligned === "object" ? { ...(aligned as Record<string, unknown>), language } : aligned;
           const r = await decideProposal(repo, { proposalId: last, decision: "accept", edited });
           send(r.ok ? { type: "applied" } : { type: "error", code: "apply_failed" });
           if (r.ok) await audit({ agencyId: actor.profile.agency_id, actor: actor.userId, action: "strategy.chat_applied", entity: "client", entityId: actor.clientId });

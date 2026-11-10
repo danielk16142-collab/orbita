@@ -914,7 +914,10 @@
       "duration": "Durée"
     },
     "allChannels": "Tous les réseaux",
-    "channels": "Réseaux"
+    "channels": "Réseaux",
+    "languageTabs": "Langue",
+    "allLanguages": "Toutes les langues",
+    "languageHint": "Cette publication est en {language}. Elle va dans le calendrier {language} et suit la stratégie {language}."
   },
   "profile": {
     "eyebrow": "Votre entreprise",
@@ -1523,7 +1526,9 @@
     "archiving": "Archivage…",
     "archiveConfirm": "Archiver cette stratégie ? Elle est conservée, et vous pouvez en créer une nouvelle tout de suite.",
     "archiveFailed": "Archivage impossible.",
-    "buildInChat": "Ou décrivez à l'agent la stratégie que vous voulez"
+    "buildInChat": "Ou décrivez à l'agent la stratégie que vous voulez",
+    "language": "Langue de la stratégie",
+    "noStrategyYet": "pas encore créée"
   },
   "apiKeys": {
     "title": "Accès API",

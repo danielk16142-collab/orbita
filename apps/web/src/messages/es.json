@@ -914,7 +914,10 @@
       "duration": "Duración"
     },
     "allChannels": "Todas las redes",
-    "channels": "Redes"
+    "channels": "Redes",
+    "languageTabs": "Idioma",
+    "allLanguages": "Todos los idiomas",
+    "languageHint": "Esta publicación está en {language}. Va al calendario en {language} y usa la estrategia en {language}."
   },
   "profile": {
     "eyebrow": "Tu negocio",
@@ -1523,7 +1526,9 @@
     "archiving": "Archivando…",
     "archiveConfirm": "¿Archivar esta estrategia? Se conserva y puedes crear una nueva enseguida.",
     "archiveFailed": "No se pudo archivar.",
-    "buildInChat": "O describe al agente la estrategia que quieres"
+    "buildInChat": "O describe al agente la estrategia que quieres",
+    "language": "Idioma de la estrategia",
+    "noStrategyYet": "aún no creada"
   },
   "apiKeys": {
     "title": "Acceso API",

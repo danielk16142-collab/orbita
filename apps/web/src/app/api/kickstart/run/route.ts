@@ -7,6 +7,7 @@ import { overDailyCap, recordUsage } from "@/lib/agent/usage";
 import { describeModelError, json, sameOrigin } from "@/lib/agent/http";
 import { localDay } from "@/lib/cadence";
 import { limiter } from "@/lib/rate-limit";
+import { strategyLanguage } from "@/lib/languages";
 import { audit } from "@/lib/audit";
 
 export const runtime = "nodejs";
@@ -31,18 +32,19 @@ export async function POST(req: Request) {
   if (!(await limiter("kickstart-run", 5, 60 * 60_000).hit(actor.userId)).allowed) return json({ error: "rate_limited" }, 429);
   if (await overDailyCap(actor)) return json({ error: "daily_cap" }, 429);
 
-  const ctx = await loadClientContext(actor.sb, actor.clientId);
+  const language = strategyLanguage(null, actor.client.languages); // the first weeks go to the client's main language
+  const ctx = await loadClientContext(actor.sb, actor.clientId, { language });
   const { data: client } = await actor.sb.from("clients").select("timezone").eq("id", actor.clientId).maybeSingle();
   const startDate = addDays(localDay(client?.timezone ?? "UTC"), 1);
   try {
     const r = await runStructured({
       client: ai.client, model: ai.chatModel, system: buildSystemPrompt(promptInput(actor, ctx, body.data.locale)),
-      user: kickstartRequest(account.network, account.handle, startDate), tool: KICKSTART_TOOL, schema: Kickstart, serverTools: [], maxSteps: 2,
+      user: `${kickstartRequest(account.network, account.handle, startDate)}\n\nWrite every post in ${({ en: "English", fr: "French", es: "Spanish" } as const)[language]}.`, tool: KICKSTART_TOOL, schema: Kickstart, serverTools: [], maxSteps: 2,
     });
     await recordUsage(actor, r.usage);
     if (!r.ok) return json({ error: r.error === "refused" ? "refused" : "no_result" }, 502);
     const { error } = await actor.sb.from("kickstarts").upsert({
-      client_id: actor.clientId, account_id: account.id, network: account.network, plan: r.data, start_date: startDate, status: "ready", decided_at: null,
+      client_id: actor.clientId, account_id: account.id, network: account.network, plan: { ...r.data, language }, start_date: startDate, status: "ready", decided_at: null,
     }, { onConflict: "account_id" });
     if (error) { console.error(`kickstart save failed: code=${error.code}`); return json({ error: MISSING.includes(error.code ?? "") ? "not_set_up" : "forbidden" }, MISSING.includes(error.code ?? "") ? 503 : 403); }
     await audit({ agencyId: actor.profile.agency_id, actor: actor.userId, action: "kickstart.built", entity: "client", entityId: actor.clientId, meta: { network: account.network, tokens: r.usage } });

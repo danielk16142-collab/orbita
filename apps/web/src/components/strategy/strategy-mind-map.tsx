@@ -66,7 +66,7 @@ export function StrategyMindMap({ data, locale, clientId, postsBase, newPostHref
   function connect() {
     setNote(null);
     start(async () => {
-      const res = await fetch("/api/strategy/connect", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, locale }) }).catch(() => null);
+      const res = await fetch("/api/strategy/connect", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, locale, language: data.language }) }).catch(() => null);
       const body = (await res?.json().catch(() => ({}))) as { error?: string } | undefined;
       if (res?.ok) { setNote(t("connected")); router.refresh(); } else setNote(body?.error && t.has(`errors.${body.error}`) ? t(`errors.${body.error}`) : t("errors.generic"));
     });

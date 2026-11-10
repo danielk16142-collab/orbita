@@ -47,7 +47,8 @@ export const PAYLOADS = {
   rule: z.object({ rule: s(500), reason: z.string().trim().max(300) }),
   plan: z.object({ title: s(100), week_start: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), strategy_note: z.string().trim().max(1500), items: z.array(PlanItemSchema).min(1).max(14) }),
   post: PostPayload,
-  strategy: z.object({ title: s(200), period: z.enum(["month", "quarter"]), content: StrategyContent }),
+  /** language: whose strategy this is (one active strategy per language). Set by the app, never by the model. */
+  strategy: z.object({ title: s(200), period: z.enum(["month", "quarter"]), content: StrategyContent, language: z.enum(["en", "fr", "es"]).optional() }),
 } as const;
 export type ProposalTarget = keyof typeof PAYLOADS;
 
@@ -57,7 +58,7 @@ export type Op =
   | { op: "insert"; table: "brand_memories" | "proof_items" | "client_rules" | "posts"; row: Record<string, unknown> }
   /** Fill an existing post (caption, hashtags, content). Only for the client's own posts; `ifStatus` rows move to draft. */
   | { op: "update_post"; id: string; row: Record<string, unknown>; setSuggestedTime: string | null }
-  /** Make this the client's one active strategy (the previous one is kept but deactivated). */
+  /** Make this the client's active strategy in its language (the previous one in that language is kept but deactivated). */
   | { op: "activate_strategy"; row: Record<string, unknown> };
 
 export function dayToDate(weekStart: string, day: Day): string {
@@ -117,7 +118,7 @@ export function proposalToOps(target: ProposalTarget, payload: unknown): Op[] {
     }
     case "strategy": {
       const p = PAYLOADS.strategy.parse(payload);
-      return [{ op: "activate_strategy", row: { title: p.title, period: p.period, content: p.content } }];
+      return [{ op: "activate_strategy", row: { title: p.title, period: p.period, content: p.content, ...(p.language ? { language: p.language } : {}) } }];
     }
   }
 }

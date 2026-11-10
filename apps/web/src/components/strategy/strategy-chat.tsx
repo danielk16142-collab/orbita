@@ -8,7 +8,7 @@ type Msg = { role: "user" | "assistant"; text: string };
 type Ev = { type: string; text?: string; code?: string; detail?: string };
 
 /** A box on the Strategy section: say what to change (or paste a new strategy) and the agent updates it right away. */
-export function StrategyChat({ clientId, locale, hasStrategy }: { clientId?: string; locale: string; hasStrategy: boolean }) {
+export function StrategyChat({ clientId, locale, hasStrategy, language }: { clientId?: string; locale: string; hasStrategy: boolean; language?: string }) {
   const t = useTranslations("strategyChat");
   const ta = useTranslations("agent");
   const router = useRouter();
@@ -27,7 +27,7 @@ export function StrategyChat({ clientId, locale, hasStrategy }: { clientId?: str
     const history = messages.slice(-10);
     setMessages((m) => [...m, { role: "user", text: message }, { role: "assistant", text: "" }]);
     try {
-      const res = await fetch("/api/strategy/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, locale, message, history }) });
+      const res = await fetch("/api/strategy/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, locale, language, message, history }) });
       if (!res.ok || !res.body) {
         const code = ((await res.json().catch(() => ({}))) as { error?: string }).error ?? "generic";
         setError(ta.has(`errors.${code}`) ? ta(`errors.${code}`) : ta("errors.generic"));
@@ -67,7 +67,7 @@ export function StrategyChat({ clientId, locale, hasStrategy }: { clientId?: str
       )}
       {applied && (
         <p className="ok" role="status">✓ {t("applied")}{" "}
-          <button type="button" className="btn ghost small" disabled={undoing} onClick={() => startUndo(async () => { const r = await restoreStrategyAction({ clientId }); if (r.ok) { setApplied(false); router.refresh(); } else setError(t("errors.undo")); })}>{t("undo")}</button>
+          <button type="button" className="btn ghost small" disabled={undoing} onClick={() => startUndo(async () => { const r = await restoreStrategyAction({ clientId, language }); if (r.ok) { setApplied(false); router.refresh(); } else setError(t("errors.undo")); })}>{t("undo")}</button>
         </p>
       )}
       {error && <p className="error" role="alert">{error}</p>}

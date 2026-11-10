@@ -237,14 +237,18 @@ select pg_temp.reset();
 
 -- strategies, research notes, structured post content
 select pg_temp.as_user('a0000000-0000-0000-0000-000000000005'); -- client A1 user
-insert into strategies(client_id,title,period,content) values ('c1000000-0000-0000-0000-000000000001','Q4','quarter','{"objectives":["grow"]}');
-select pg_temp.expect_error('only one active strategy per client',
-  $$insert into strategies(client_id,title,period,content) values ('c1000000-0000-0000-0000-000000000001','Q4b','quarter','{}')$$);
-update strategies set active=false;
-insert into strategies(client_id,title,period,content) values ('c1000000-0000-0000-0000-000000000001','Q4b','quarter','{}');
-select pg_temp.expect('a new strategy can replace the old one', (select count(*) from strategies where active), 1);
+insert into strategies(client_id,language,title,period,content) values ('c1000000-0000-0000-0000-000000000001','en','Q4','quarter','{"objectives":["grow"]}');
+select pg_temp.expect_error('only one active strategy per client and language',
+  $$insert into strategies(client_id,language,title,period,content) values ('c1000000-0000-0000-0000-000000000001','en','Q4b','quarter','{}')$$);
+select pg_temp.expect_error('a strategy needs a language',
+  $$insert into strategies(client_id,title,period,content) values ('c1000000-0000-0000-0000-000000000001','Q4c','quarter','{}')$$);
+insert into strategies(client_id,language,title,period,content) values ('c1000000-0000-0000-0000-000000000001','es','Q4 ES','quarter','{}');
+select pg_temp.expect('another language can have its own active strategy', (select count(*) from strategies where active), 2);
+update strategies set active=false where language='en';
+insert into strategies(client_id,language,title,period,content) values ('c1000000-0000-0000-0000-000000000001','en','Q4b','quarter','{}');
+select pg_temp.expect('a new strategy can replace the old one in its language', (select count(*) from strategies where active), 2);
 select pg_temp.expect_error('cannot create a strategy for another client',
-  $$insert into strategies(client_id,title,period,content) values ('c2000000-0000-0000-0000-000000000002','x','month','{}')$$);
+  $$insert into strategies(client_id,language,title,period,content) values ('c2000000-0000-0000-0000-000000000002','en','x','month','{}')$$);
 insert into research_notes(client_id,kind,title,summary) values ('c1000000-0000-0000-0000-000000000001','trend','Short reels','Trend summary');
 select pg_temp.expect('client user sees its research', (select count(*) from research_notes), 1);
 select pg_temp.expect_error('bad research kind rejected', $$insert into research_notes(client_id,kind,title,summary) values ('c1000000-0000-0000-0000-000000000001','gossip','t','s')$$);

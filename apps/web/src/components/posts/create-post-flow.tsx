@@ -44,8 +44,9 @@ function FormatIcon({ format }: { format: string }) {
  * Create a post in three steps: what (format), where (networks), then the details. The person either creates it as an idea
  * or draft and fills it in, or hands it to the agent, which opens the chat with the request prepared (nothing is sent automatically).
  */
-export function CreatePostFlow({ locale, staff, clients, initialClient, initialDate, initialIdea = "", initialNetwork, postsBase, agentBase }: {
-  locale: string; staff: boolean; clients: { id: string; name: string }[]; initialClient: string; initialDate: string; /** from "Your next post" */ initialIdea?: string; /** the calendar's channel, picked in advance when the format allows it */ initialNetwork?: string;
+export function CreatePostFlow({ locale, staff, clients, initialClient, initialDate, initialIdea = "", initialNetwork, initialLanguage, ownLanguages, postsBase, agentBase }: {
+  locale: string; staff: boolean; clients: { id: string; name: string; languages?: string[] }[];
+  /** the calendar's or strategy's language (?lang=) */ initialLanguage?: string; /** portal: the client's own languages */ ownLanguages?: string[]; initialClient: string; initialDate: string; /** from "Your next post" */ initialIdea?: string; /** the calendar's channel, picked in advance when the format allows it */ initialNetwork?: string;
   /** e.g. /en/posts or /en/portal/posts */ postsBase: string;
   /** e.g. /en/agent (staff, the client id is added) or /en/portal/agent */ agentBase: string;
 }) {
@@ -55,7 +56,10 @@ export function CreatePostFlow({ locale, staff, clients, initialClient, initialD
   const [format, setFormat] = useState<string | null>(null);
   const [networks, setNetworks] = useState<string[]>(initialNetwork && Object.values(FORMAT_NETWORKS).some((l) => l.includes(initialNetwork)) ? [initialNetwork] : []);
   const [clientId, setClientId] = useState(initialClient || clients[0]?.id || "");
-  const [language, setLanguage] = useState(LANGS.includes(locale) ? locale : "en");
+  // Each language has its own calendar and strategy: open on the language asked for, else the client's first language.
+  const langsOf = (id: string) => (staff ? clients.find((c) => c.id === id)?.languages : ownLanguages) ?? [];
+  const firstLang = (id: string) => langsOf(id).find((l) => LANGS.includes(l)) ?? (LANGS.includes(locale) ? locale : "en");
+  const [language, setLanguage] = useState(initialLanguage && LANGS.includes(initialLanguage) ? initialLanguage : firstLang(initialClient || clients[0]?.id || ""));
   const [idea, setIdea] = useState(initialIdea);
   const [date, setDate] = useState(initialDate);
   const [status, setStatus] = useState<"idea" | "draft">(staff ? "draft" : "idea");
@@ -85,7 +89,7 @@ export function CreatePostFlow({ locale, staff, clients, initialClient, initialD
         if (!r.ok) { setError(postError(t, r)); return; }
         if (r.id) ids.push(r.id);
       }
-      router.push(ids.length === 1 ? `${postsBase}/${ids[0]}` : `${postsBase}?${new URLSearchParams({ view: "month", ...(date && { date }) })}`);
+      router.push(ids.length === 1 ? `${postsBase}/${ids[0]}` : `${postsBase}?${new URLSearchParams({ view: "month", lang: language, ...(staff && clientId && { client: clientId }), ...(date && { date }) })}`);
     });
   }
   /** Opens the post chat on this page (a conversation only about this post). */
@@ -154,9 +158,20 @@ export function CreatePostFlow({ locale, staff, clients, initialClient, initialD
           </p>
           {staff && (
             <label>{t("client")}
-              <select value={clientId} onChange={(e) => setClientId(e.target.value)} required>{clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
+              <select value={clientId} onChange={(e) => { setClientId(e.target.value); if (!initialLanguage) setLanguage(firstLang(e.target.value)); }} required>{clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
             </label>
           )}
+          <fieldset className="lang-pick">
+            <legend>{t("language")}</legend>
+            <div className="lang-pick-row">
+              {LANGS.map((x) => (
+                <button key={x} type="button" className={`btn small${x === language ? "" : " ghost"}`} aria-pressed={x === language} onClick={() => setLanguage(x)}>
+                  {x.toUpperCase()}
+                </button>
+              ))}
+            </div>
+            <small className="stat-vs">{t("languageHint", { language: languageName })}</small>
+          </fieldset>
           {VIDEO_FORMATS.includes(format) && (
             <div className="video-toggle">
               <label className="check-line"><input type="checkbox" checked={hasVideo} onChange={(e) => setHasVideo(e.target.checked)} /> <span><strong>{t("fromVideo.toggle")}</strong> <span className="stat-vs">{t("fromVideo.toggleHint")}</span></span></label>
@@ -164,13 +179,12 @@ export function CreatePostFlow({ locale, staff, clients, initialClient, initialD
                 script={script} onScript={setScript} captions={captions} onCaptions={setCaptions} onTitle={setTitle} />}
             </div>
           )}
-          {(!staff || clientId) && !hasVideo && <StrategyIdeas clientId={staff ? clientId : undefined} format={format} networks={networks} postsBase={postsBase} picked={idea} onPick={setIdea} />}
-          {(!staff || clientId) && !hasVideo && <PostIdeas clientId={staff ? clientId : undefined} format={format} networks={networks} locale={locale} picked={idea} onPick={setIdea} />}
+          {(!staff || clientId) && !hasVideo && <StrategyIdeas clientId={staff ? clientId : undefined} language={language} format={format} networks={networks} postsBase={postsBase} picked={idea} onPick={setIdea} />}
+          {(!staff || clientId) && !hasVideo && <PostIdeas clientId={staff ? clientId : undefined} format={format} networks={networks} locale={locale} language={language} picked={idea} onPick={setIdea} />}
           <label>{t("ideaLabel")}
             <textarea value={idea} onChange={(e) => setIdea(e.target.value)} rows={4} maxLength={2000} placeholder={t("ideaPlaceholder")} />
           </label>
           <div className="plan-row">
-            <label>{t("language")}<select value={language} onChange={(e) => setLanguage(e.target.value)}>{LANGS.map((x) => <option key={x} value={x}>{x.toUpperCase()}</option>)}</select></label>
             <label>{t("date")}<input type="date" value={date} onChange={(e) => setDate(e.target.value)} /></label>
             {staff && <label>{t("status")}<select value={status} onChange={(e) => setStatus(e.target.value as "idea" | "draft")}><option value="draft">{t("statuses.draft")}</option><option value="idea">{t("statuses.idea")}</option></select></label>}
           </div>
@@ -193,7 +207,7 @@ export function CreatePostFlow({ locale, staff, clients, initialClient, initialD
       {step === "write" && format && (
         <PostChat key={`${clientId}|${format}|${networks.join(",")}`} clientId={staff ? clientId : undefined} locale={locale} format={format} networks={networks}
           language={language} idea={idea} staff={staff} opening={opening}
-          calendarHref={`${postsBase}?${new URLSearchParams({ view: "month", ...(staff && clientId && { client: clientId }) })}`} onBack={() => setStep("details")} />
+          calendarHref={`${postsBase}?${new URLSearchParams({ view: "month", lang: language, ...(staff && clientId && { client: clientId }) })}`} onBack={() => setStep("details")} />
       )}
     </div>
   );

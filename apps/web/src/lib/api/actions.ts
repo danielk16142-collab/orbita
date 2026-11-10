@@ -104,12 +104,12 @@ export const API_ACTIONS: Record<string, ApiAction> = {
   // Strategy and focus
   save_focus: { group: "strategy", kind: "fn", run: saveFocusAction, summary: "Save what the brand talks about: topics and pillars.", input: `${C}, focus {topics: [..], pillars: [..]} (see GET /clients/{id} → focus for the shape)` },
   suggest_focus: { group: "strategy", kind: "route", run: brandSuggest.POST, summary: "Have the agent suggest topics or pillars.", input: `${C}, kind (topics|pillars), topics [..] (for pillars), ${L}` },
-  strategy_chat: { group: "strategy", kind: "route", run: strategyChat.POST, summary: "Tell the agent what to change in the strategy (or paste one). It is applied right away (events include \"applied\"); the previous one can be restored.", input: `${C}, message, history [{role, text}] (optional), ${L}` },
-  build_strategy: { group: "strategy", kind: "route", summary: "Build (or rebuild) the strategy around the chosen pillars and topics (save_focus first). Applied right away with exactly those pillars and shares.", input: `${C}, ${L}`,
+  strategy_chat: { group: "strategy", kind: "route", run: strategyChat.POST, summary: "Tell the agent what to change in the strategy (or paste one). It is applied right away (events include \"applied\"); the previous one can be restored.", input: `${C}, message, history [{role, text}] (optional), ${L}, language (en|fr|es, optional: which language's strategy, default the client's first)` },
+  build_strategy: { group: "strategy", kind: "route", summary: "Build (or rebuild) the strategy around the chosen pillars and topics (save_focus first). Applied right away with exactly those pillars and shares.", input: `${C}, ${L}, language (en|fr|es, optional: which language's strategy, default the client's first)`,
     run: async (req) => strategyChat.POST(new Request(req.url, { method: "POST", headers: { "Content-Type": "application/json", Origin: req.headers.get("origin") ?? "" }, body: JSON.stringify({ ...(await req.json()), mode: "from_focus" }) })) },
-  archive_strategy: { group: "strategy", kind: "fn", run: archiveStrategyAction, summary: "Archive the current strategy to start a new one with the agent.", input: C },
-  strategy_connect: { group: "strategy", kind: "route", run: strategyConnect.POST, summary: "Have the agent connect pillars to goals and audiences (the mind map).", input: `${C}, ${L}` },
-  strategy_tag: { group: "strategy", kind: "route", run: strategyTag.POST, summary: "Have the agent tag untagged posts with a pillar.", input: C },
+  archive_strategy: { group: "strategy", kind: "fn", run: archiveStrategyAction, summary: "Archive the current strategy to start a new one with the agent.", input: `${C}, language (en|fr|es, optional: which language's strategy, default the client's first)` },
+  strategy_connect: { group: "strategy", kind: "route", run: strategyConnect.POST, summary: "Have the agent connect pillars to goals and audiences (the mind map).", input: `${C}, ${L}, language (en|fr|es, optional: which language's strategy, default the client's first)` },
+  strategy_tag: { group: "strategy", kind: "route", run: strategyTag.POST, summary: "Have the agent tag untagged posts with a pillar.", input: `${C}, language (en|fr|es, optional: which language's strategy, default the client's first)` },
 
   // Kickstart and accounts
   kickstart_run: { group: "kickstart", kind: "route", run: kickstartRun.POST, summary: "Build the first two weeks plan for a connected account.", input: `${C}, accountId, ${L}` },

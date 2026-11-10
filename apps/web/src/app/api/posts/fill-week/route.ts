@@ -7,12 +7,16 @@ import { overDailyCap, recordUsage } from "@/lib/agent/usage";
 import { describeModelError, json, sameOrigin } from "@/lib/agent/http";
 import { localDay } from "@/lib/cadence";
 import { limiter } from "@/lib/rate-limit";
+import { strategyLanguage } from "@/lib/languages";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
 export const dynamic = "force-dynamic";
 
-const Body = z.object({ clientId: z.string().uuid().optional(), network: z.enum(NETWORKS), locale: z.enum(["en", "fr", "es"]) });
+const Body = z.object({ clientId: z.string().uuid().optional(), network: z.enum(NETWORKS), locale: z.enum(["en", "fr", "es"]),
+  /** Which language's calendar to fill (default the client's first language): its strategy guides the posts, written in it. */
+  language: z.enum(["en", "fr", "es"]).optional() });
+const LANGUAGE_NAME: Record<string, string> = { en: "English", fr: "French", es: "Spanish" };
 
 /** "Fill the week": the agent proposes posts for the open days of the next 7 days. Nothing is saved; the person picks. */
 export async function POST(req: Request) {
@@ -30,22 +34,23 @@ export async function POST(req: Request) {
   let client = (await actor.sb.from("clients").select("timezone, posting_goal").eq("id", actor.clientId).maybeSingle()).data as { timezone: string; posting_goal?: number } | null;
   if (!client) client = (await actor.sb.from("clients").select("timezone").eq("id", actor.clientId).maybeSingle()).data as { timezone: string } | null;
   const today = localDay(client?.timezone ?? "UTC");
-  const { data: rows } = await actor.sb.from("posts").select("id, idea, type, network, status, planned_date").eq("client_id", actor.clientId).gte("planned_date", today).order("planned_date").limit(100);
+  const language = strategyLanguage(body.data.language, actor.client.languages);
+  const { data: rows } = await actor.sb.from("posts").select("id, idea, type, network, status, planned_date").eq("client_id", actor.clientId).eq("language", language).gte("planned_date", today).order("planned_date").limit(100);
   const planned = (rows ?? []) as CadencePost[];
   const ahead = weekAhead(planned, today, client?.posting_goal ?? 3);
   const count = Math.min(Math.max(ahead.short, 1), ahead.openDays.length);
   if (!count) return json({ error: "week_full" }, 409);
 
-  const ctx = await loadClientContext(actor.sb, actor.clientId);
+  const ctx = await loadClientContext(actor.sb, actor.clientId, { language });
   try {
     const r = await runStructured({
       client: ai.client, model: ai.chatModel, system: buildSystemPrompt(promptInput(actor, ctx, body.data.locale)),
-      user: fillWeekRequest(body.data.network, count, ahead.openDays, planned.map((p) => `${p.planned_date} ${p.type}: ${(p.idea ?? "").split("\n")[0].slice(0, 120)}`)),
+      user: fillWeekRequest(body.data.network, count, ahead.openDays, planned.map((p) => `${p.planned_date} ${p.type}: ${(p.idea ?? "").split("\n")[0].slice(0, 120)}`)) + `\n\nWrite every post in ${LANGUAGE_NAME[language]}.`,
       tool: fillWeekTool(ahead.openDays), schema: weekPostsSchema(ahead.openDays, count), serverTools: [], maxSteps: 2,
     });
     await recordUsage(actor, r.usage);
     if (!r.ok) return json({ error: r.error === "refused" ? "refused" : "no_result" }, 502);
-    return json({ posts: r.data.posts, network: body.data.network });
+    return json({ posts: r.data.posts, network: body.data.network, language });
   } catch (e) {
     console.error("fill week failed:", describeModelError(e), `model=${ai.chatModel}`);
     return json({ error: "model_error" }, 502);

@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { requireClientUser } from "@/lib/session";
 import { StrategyPanel } from "@/components/strategy/strategy-panel";
 
-export default async function PortalStrategy({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ month?: string; layout?: string }> }) {
+export default async function PortalStrategy({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ month?: string; layout?: string; lang?: string }> }) {
   const { locale } = await params;
   const q = await searchParams;
   const t = await getTranslations("strategyPage");

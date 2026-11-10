@@ -2,6 +2,7 @@ import "server-only";
 import { briefFromRow, computeCompleteness, type Op, type ProposalRepo } from "@orbita/agent";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import type { AgentActor } from "./access";
+import { strategyLanguage } from "@/lib/languages";
 
 /** Proposal persistence using the signed-in user's own session. Every query is pinned to the actor's client. */
 export function supabaseProposalRepo(actor: AgentActor): ProposalRepo {
@@ -34,9 +35,11 @@ export function supabaseProposalRepo(actor: AgentActor): ProposalRepo {
             : await sb.from("brand_briefs").insert({ client_id: clientId, [op.column]: op.value, completeness: score });
           if (error) throw new Error("brief update failed");
         } else if (op.op === "activate_strategy") {
-          // One active strategy per client: retire the current one, then add the new one (history is kept).
-          await sb.from("strategies").update({ active: false }).eq("client_id", clientId).eq("active", true);
-          const { error } = await sb.from("strategies").insert({ ...op.row, client_id: clientId, created_by: userId, active: true });
+          // One active strategy per client and language: retire the current one in that language, then add the new one
+          // (history is kept). A proposal without a language is for the client's first language.
+          const language = strategyLanguage(op.row.language as string | undefined, actor.client.languages);
+          await sb.from("strategies").update({ active: false }).eq("client_id", clientId).eq("language", language).eq("active", true);
+          const { error } = await sb.from("strategies").insert({ ...op.row, language, client_id: clientId, created_by: userId, active: true });
           if (error) throw new Error("strategy insert failed");
         } else if (op.op === "update_post") {
           // Fill an existing planned post: only this client's own idea/draft posts, with the user's own session.

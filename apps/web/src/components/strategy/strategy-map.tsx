@@ -61,7 +61,7 @@ export function StrategyMap({ data, locale, clientId, postsBase, newPostHref, pr
   async function tag() {
     setTagNote(null);
     startTag(async () => {
-      const res = await fetch("/api/strategy/tag", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId }) }).catch(() => null);
+      const res = await fetch("/api/strategy/tag", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ clientId, language: data.language }) }).catch(() => null);
       const body = (await res?.json().catch(() => ({}))) as { tagged?: number; error?: string } | undefined;
       if (res?.ok) { setTagNote(t("tagged", { count: body?.tagged ?? 0 })); router.refresh(); }
       else setTagNote(body?.error && t.has(`errors.${body.error}`) ? t(`errors.${body.error}`) : t("errors.generic"));

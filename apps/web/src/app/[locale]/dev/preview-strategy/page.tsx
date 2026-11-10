@@ -21,7 +21,7 @@ export default async function Preview({ params, searchParams }: { params: Promis
     plan("g", 21, "static", "Offers", "Website audit: 5 spots this month"), plan("h", 24, "reel", null, "Day in the life of a web designer"),
   ];
   const data: StrategyMapData = {
-    month, today: d(13), hasLive: true, goal: 3, posts,
+    month, language: "en", today: d(13), hasLive: true, goal: 3, posts,
     business: { name: "Dany Designs", business: "Web design and digital marketing studio in Montreal for small businesses.", offers: "Websites from $975, eCommerce, AI solutions.", personas: ["Café and restaurant owners", "Real estate agents", "Wellness clinics"] },
     kpis: { followers: 1240, followersDelta: 38, reach: 18400, reachDelta: 0.22, engagement: 0.046, published30: 4 },
     strategy: { title: "Q4 strategy", period: "quarter", createdAt: `${month}-01T00:00:00Z`, content: {

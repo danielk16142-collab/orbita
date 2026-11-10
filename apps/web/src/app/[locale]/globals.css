@@ -881,6 +881,17 @@ ol.plain.li-fixes { display: grid; gap: .75rem; }
 .channel-tab.on { background: var(--ink); color: #fff; }
 .channel-tab .net-dot { width: .7rem; height: .7rem; border-radius: 50%; border: 2px solid currentColor; }
 @media (hover: hover) { .channel-tab:not(.on):hover { background: var(--brand-soft); } }
+/* Language tabs: each language has its own strategy and calendar */
+.lang-tabs { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin: .25rem 0 .75rem; }
+.lang-tabs-label { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; margin-right: .25rem; }
+.lang-tabs a { display: inline-flex; align-items: baseline; gap: .35rem; border: 2px solid var(--ink); border-radius: 10px; padding: .35rem .75rem; font-weight: 600; text-decoration: none; color: var(--ink); background: var(--card); }
+.lang-tabs a[aria-current="page"] { background: var(--brand); color: #fff; border-color: var(--ink); }
+.lang-tabs .lang-code { font-family: var(--font-mono); font-weight: 700; font-size: .8rem; }
+.lang-tabs .lang-note { font-weight: 400; opacity: .8; }
+@media (hover: hover) { .lang-tabs a:not([aria-current="page"]):hover { background: var(--brand-soft); } }
+.lang-pick { border: 0; padding: 0; margin: 0 0 .5rem; display: grid; gap: .35rem; }
+.lang-pick legend { font-weight: 600; margin-bottom: .35rem; }
+.lang-pick-row { display: flex; flex-wrap: wrap; gap: .4rem; }
 /* Not scheduled yet: each post with its delete button */
 ul.plain.unscheduled-list li { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
 .unscheduled-text { display: grid; gap: .1rem; min-width: 0; overflow-wrap: anywhere; }

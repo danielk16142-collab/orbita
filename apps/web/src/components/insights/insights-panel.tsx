@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { bestPostingWindows, dashboardSummary, rate, type AuditReport } from "@orbita/agent";
 import { loadAnalyticsData, type AnalyticsData } from "@/lib/analytics/load";
 import { resolveAgentActor } from "@/lib/agent/access";
+import { strategyLanguage } from "@/lib/languages";
 import type { ClientContext } from "@/lib/agent/context";
 import { NETWORK_LABEL } from "@/components/posts/shared";
 
@@ -116,10 +117,10 @@ export async function InsightsPanel({ locale, clientId, links }: { locale: strin
   const [data, aud, strat, pending] = await Promise.all([
     loadAnalyticsData(sb, id),
     sb.from("audits").select("report, created_at").eq("client_id", id).order("created_at", { ascending: false }).limit(1),
-    sb.from("strategies").select("title, period, content, created_at").eq("client_id", id).eq("active", true).maybeSingle(),
+    sb.from("strategies").select("title, period, content, created_at, language").eq("client_id", id).eq("active", true).eq("language", strategyLanguage(null, access.actor.client.languages)).maybeSingle(),
     sb.from("proposals").select("id", { count: "exact", head: true }).eq("client_id", id).eq("status", "pending"),
   ]);
   const audit = aud.data?.[0] ? { ...(aud.data[0].report as AuditReport), createdAt: aud.data[0].created_at as string } : null;
-  const strategy = strat.data ? { title: strat.data.title, period: strat.data.period, createdAt: strat.data.created_at, content: strat.data.content as Record<string, unknown> } : null;
+  const strategy = strat.data ? { title: strat.data.title, period: strat.data.period, createdAt: strat.data.created_at, content: strat.data.content as Record<string, unknown>, language: strat.data.language as string } : null;
   return <InsightsView locale={locale} data={data} audit={audit} strategy={strategy} pendingSuggestions={pending.count ?? 0} links={links} />;
 }

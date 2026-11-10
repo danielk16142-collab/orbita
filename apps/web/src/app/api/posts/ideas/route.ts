@@ -14,7 +14,10 @@ export const dynamic = "force-dynamic";
 const Body = z.object({
   clientId: z.string().uuid().optional(), format: z.enum(IDEA_FORMATS),
   networks: z.array(z.enum(NETWORKS)).min(1).max(5), locale: z.enum(["en", "fr", "es"]),
+  /** The post's language: ideas come from that language's strategy and are written in it. */
+  language: z.enum(["en", "fr", "es"]).optional(),
 });
+const LANGUAGE_NAME: Record<string, string> = { en: "English", fr: "French", es: "Spanish" };
 
 /** Without the model (not configured, over the cap, or it failed): ideas straight from the strategy's topic bank and the saved research. */
 function fallbackIdeas(ctx: ClientContext): PostIdea[] {
@@ -31,14 +34,14 @@ export async function POST(req: Request) {
   const access = await resolveAgentActor(body.data.clientId);
   if (!access.ok) return json({ error: "not_found" }, access.status);
   const actor = access.actor;
-  const ctx = await loadClientContext(actor.sb, actor.clientId);
+  const ctx = await loadClientContext(actor.sb, actor.clientId, { language: body.data.language });
   const ai = await resolveModelAccess(actor);
   const fallback = () => json({ ideas: fallbackIdeas(ctx), generated: false, hasStrategy: !!ctx.strategy });
   if (!ai || !(await limiter("post-ideas", 20, 10 * 60_000).hit(actor.userId)).allowed || (await overDailyCap(actor))) return fallback();
   try {
     const r = await runStructured({
       client: ai.client, model: ai.chatModel, system: buildSystemPrompt(promptInput(actor, ctx, body.data.locale)),
-      user: ideasRequest(body.data.format, body.data.networks), tool: IDEAS_TOOL, schema: PostIdeas, serverTools: [], maxSteps: 2,
+      user: ideasRequest(body.data.format, body.data.networks) + (body.data.language ? `\n\nThe post will be in ${LANGUAGE_NAME[body.data.language]}: write every idea in ${LANGUAGE_NAME[body.data.language]}.` : ""), tool: IDEAS_TOOL, schema: PostIdeas, serverTools: [], maxSteps: 2,
     });
     await recordUsage(actor, r.usage);
     if (!r.ok || r.data.ideas.length === 0) return fallback();

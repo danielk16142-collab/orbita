@@ -406,6 +406,9 @@ describe("strategy and research", () => {
     expect((await runTool("propose_strategy", strategyIn, p, fresh())).event).toMatchObject({ target: "strategy" });
     expect((log.proposals[0] as { target: string }).target).toBe("strategy");
     expect(proposalToOps("strategy", { title: "Q4 growth", period: "quarter", content: strategyIn.content })[0]).toMatchObject({ op: "activate_strategy", row: { period: "quarter" } });
+    // One strategy per language: the app sets the language, and it goes into the saved row.
+    expect(proposalToOps("strategy", { title: "Q4 ES", period: "quarter", content: strategyIn.content, language: "es" })[0]).toMatchObject({ op: "activate_strategy", row: { language: "es" } });
+    expect((proposalToOps("strategy", { title: "Q4", period: "quarter", content: strategyIn.content })[0] as { row: Record<string, unknown> }).row).not.toHaveProperty("language");
     expect((await runTool("propose_strategy", { ...strategyIn, content: { ...strategyIn.content, topics: ["a"] } }, p, fresh())).isError).toBe(true);
   });
   it("save_research stores a note directly (information, not a change), keeping only clean https sources", async () => {

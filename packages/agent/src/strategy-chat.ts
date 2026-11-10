@@ -6,9 +6,13 @@ import type { BrandFocus } from "./focus";
  */
 export const STRATEGY_CHAT_TOOLS = ["get_brief", "get_account_analytics", "propose_strategy"];
 
-export function strategyChatFocus(hasStrategy: boolean) {
+const LANGUAGE_NAME: Record<string, string> = { en: "English", fr: "French", es: "Spanish" };
+
+export function strategyChatFocus(hasStrategy: boolean, language?: string) {
+  const lang = language ? LANGUAGE_NAME[language] ?? language : null;
   return `\n\n## This conversation: the strategy
-You are editing this client's content strategy in the Strategy section. ${hasStrategy ? "The active strategy is above." : "There is no active strategy yet: build one from the brand profile, goals and research."}
+You are editing this client's content strategy in the Strategy section. ${hasStrategy ? "The active strategy is above." : "There is no active strategy yet: build one from the brand profile, goals and research."}${lang ? `
+- This is the strategy for the client's ${lang} content (each language has its own strategy and calendar). Write every part of it in ${lang}: objectives, pillar angles, series, topics and rationale. Pillar names stay exactly as chosen.` : ""}
 - When the person asks for a change, or pastes a strategy, call propose_strategy ONCE with the COMPLETE updated strategy: keep everything they did not mention exactly as it is, and apply only what they asked. If they paste a strategy, convert it faithfully into the structure (objectives, pillars with share, series, cadence per network, topic bank, rationale); do not "improve" it unless asked.
 - The person is directing the change here, so their instructions win over the usual defaults (for example, they may add, drop or rename a pillar). Never use an Avoid topic. Do not invent numbers or results.
 - The change is applied to the Strategy section as soon as you call the tool; there is no separate approval step. The previous version is kept and can be restored.
