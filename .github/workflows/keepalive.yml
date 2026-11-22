@@ -1,0 +1,21 @@
+name: Keep Supabase awake
+
+# Supabase pauses a project after about a week without activity, and then the whole app times out. This calls the app's
+# /api/keepalive (one tiny database request) every Monday and Thursday. If it fails, this job turns red and GitHub emails you.
+on:
+  schedule:
+    - cron: "17 14 * * 1,4"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call the app
+        run: |
+          code=$(curl -s -o /tmp/out -w '%{http_code}' --max-time 60 --retry 3 --retry-delay 20 --retry-all-errors https://orbita-web-nine.vercel.app/api/keepalive || true)
+          echo "status: $code"; cat /tmp/out || true
+          [ "$code" = "200" ]
