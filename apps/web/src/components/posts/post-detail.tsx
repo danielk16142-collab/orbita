@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { allowedStatusChanges, canDeletePost, formatKey, iso, parseContent, type Status } from "@orbita/content";
+import { allowedStatusChanges, canDeletePost, formatKey, iso, parseContent, type DesignBrand, type Status } from "@orbita/content";
 import { requireStaff, requireUser } from "@/lib/session";
 import { loadPost } from "@/lib/posts/access";
 import { CopyButton } from "./copy-button";
@@ -69,6 +69,11 @@ export async function PostDetail({ locale, id, portal }: { locale: string; id: s
     labels: { scene: t("export.scene"), time: t("seconds"), visual: t("visual"), voiceover: t("voiceover"), onScreen: t("onScreen"), hooks: t("hooks"), cta: t("cta"), audio: t("audio"),
       caption: t("caption"), hashtags: t("hashtags"), slide: t("slide"), titleCol: t("export.titleCol"), body: t("export.body"), duration: t("export.duration") },
   };
+  // The brand for the carousel's design brief (.md): staff already loaded it for the kit; the portal loads it here.
+  const designBrand: DesignBrand | null = post.type !== "carousel" ? null : kitBrand ?? await (async () => {
+    const { data: c } = await s.sb.from("clients").select("name, primary_color, accent_color, palette, font, body_font").eq("id", post.client_id).maybeSingle();
+    return c ? { name: c.name, primary: c.primary_color, accent: c.accent_color, palette: Array.isArray(c.palette) ? c.palette : [], headingFont: c.font, bodyFont: c.body_font } : null;
+  })();
   const arr = (v: unknown) => (Array.isArray(v) ? (v as Record<string, string>[]) : []);
 
   return (
@@ -110,7 +115,7 @@ export async function PostDetail({ locale, id, portal }: { locale: string; id: s
       )}
       {post.type === "carousel" && content && (
         <section className="card" style={{ marginTop: "1.25rem" }}>
-          <div className="section-head"><h2>{t("carouselContent")}</h2><ScriptExport type="carousel" content={content} meta={exportMeta} /></div>
+          <div className="section-head"><h2>{t("carouselContent")}</h2><ScriptExport type="carousel" content={content} meta={exportMeta} brand={designBrand} /></div>
           <ol className="slides">{arr(content.slides).map((sl, i) => <li key={i} className="plan-item"><strong>{sl.title}</strong><span>{sl.body}</span><span className="stat-vs">{sl.visual}</span></li>)}</ol>
           <p><strong>{t("cta")}:</strong> {String(content.cta)}</p>
         </section>

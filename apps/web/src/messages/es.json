@@ -911,7 +911,9 @@
       "scene": "Escena",
       "titleCol": "Título",
       "body": "Texto",
-      "duration": "Duración"
+      "duration": "Duración",
+      "design": "Descargar para diseño (.md)",
+      "designHint": "Un brief en Markdown para un agente de diseño: tamaño, colores y fuentes de la marca, y el texto y el visual de cada diapositiva."
     },
     "allChannels": "Todas las redes",
     "channels": "Redes"

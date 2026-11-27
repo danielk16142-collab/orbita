@@ -911,7 +911,9 @@
       "scene": "Scene",
       "titleCol": "Title",
       "body": "Text",
-      "duration": "Duration"
+      "duration": "Duration",
+      "design": "Download for design (.md)",
+      "designHint": "A Markdown brief for a design agent: size, brand colours and fonts, and every slide's text and visual."
     },
     "allChannels": "All channels",
     "channels": "Channels"
